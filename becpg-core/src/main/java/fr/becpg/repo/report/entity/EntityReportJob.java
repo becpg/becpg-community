@@ -8,6 +8,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.DisallowConcurrentExecution;
@@ -58,18 +59,19 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		EntityVersionService entityVersionService = (EntityVersionService) jobData.get("entityVersionService");
 		EntityReportService entityReportService = (EntityReportService) jobData.get("entityReportService");
 		BatchQueueService batchQueueService = (BatchQueueService) jobData.get("batchQueueService");
-		int total = generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.VERY_HIGH, MAX_RESULTS);
+		TransactionService transactionService = (TransactionService) jobData.get("transactionService");
+		int total = generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.VERY_HIGH, MAX_RESULTS);
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.HIGH, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.HIGH, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.MEDIUM, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.MEDIUM, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.LOW, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.LOW, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.VERY_LOW, MAX_RESULTS - total);
+			generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.VERY_LOW, MAX_RESULTS - total);
 		}
 	}
 	
@@ -80,12 +82,13 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
 	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
 	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
 	 * @param priority a {@link fr.becpg.repo.batch.BatchPriority} object
 	 * @param maxResults a int
 	 * @return a int
 	 */
 	private int generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService,
-			BatchQueueService batchQueueService, BatchPriority priority, int maxResults) {
+			BatchQueueService batchQueueService, TransactionService transactionService, BatchPriority priority, int maxResults) {
 		String batchId = "generatePendingReports-" + priority;
 		String batchDescId = "becpg.batch.entity.generatePendingReports." + priority;
 		String batchFullId = batchId + "|" + batchDescId;
@@ -119,10 +122,16 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 					if (nodeService.exists(nodeRef)) {
 						NodeRef extractedNode = nodeRef;
 						if (VersionHelper.isVersion(nodeRef) && (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-							extractedNode = entityVersionService.extractVersion(nodeRef);
+							extractedNode = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								return entityVersionService.extractVersion(nodeRef);
+							}, false, true);
 						}
-						entityReportService.generateReports(extractedNode, nodeRef);
-						nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+						final NodeRef finalExtractedNode = extractedNode;
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							entityReportService.generateReports(finalExtractedNode, nodeRef);
+							nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+							return null;
+						}, false, true);
 					}
 				}
 				
