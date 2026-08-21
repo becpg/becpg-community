@@ -171,8 +171,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	/** Constant <code>PRODUCT_REPORT_RD_NAME="path.productreportrdtemplate"</code> */
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
-	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuanti.rptdesign";
-	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME = "path.productreportcompoqualiquantitemplate";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuantiForPIF.rptdesign";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME = "path.productreportcompoqualiquantiforpiftemplate";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
@@ -1884,8 +1882,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
-			String productReportCompoQualiQuantiName = I18NUtil.getMessage(PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME, Locale.getDefault());
-			String productReportCompoQualiQuantiForPIFName = I18NUtil.getMessage(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME, Locale.getDefault());
 			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
 			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 
@@ -1898,8 +1894,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
 					productReportPackagingName, productReportSupplierName, productReportClientName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName, productReportCompoQualiQuantiName, productReportCompoQualiQuantiForPIFName }, null, null, null, null, { productReportProductionName, productReportCostName } };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null, { productReportProductionName, productReportCostName } };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
@@ -2050,6 +2046,34 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
 					} catch (Exception e) {
 						logger.error("Failed to create Specification Technique aggregate report template", e);
+					}
+
+					try {
+						ReportTplInformation compoForPifTplInfo = new ReportTplInformation();
+						compoForPifTplInfo.setReportType(ReportType.Document);
+						compoForPifTplInfo.setReportFormat(ReportFormat.PDF);
+						compoForPifTplInfo.setNodeType(productType);
+						compoForPifTplInfo.setDefaultTpl(false);
+						compoForPifTplInfo.setSystemTpl(false);
+						compoForPifTplInfo.setReportKindAspectProperties(reportKindTplAssoc.get(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH));
+						compoForPifTplInfo.setResources(resources);
+						compoForPifTplInfo.setSupportedLocale(supportedLocale);
+
+						String compoForPifReportName = TranslateHelper.getTranslatedPath(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME);
+						if (compoForPifReportName == null || compoForPifReportName.isEmpty()) {
+							compoForPifReportName = "Composition Quali-Quanti pour DIP (PIF)";
+						}
+
+						NodeRef compoForPifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								compoForPifReportName,
+								PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, compoForPifTplInfo, true);
+
+						MLText compoTitleMlt = TranslateHelper.getTranslatedPathMLText(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME);
+						if (compoTitleMlt != null && !compoTitleMlt.isEmpty()) {
+							nodeService.setProperty(compoForPifTplNodeRef, ContentModel.PROP_TITLE, compoTitleMlt);
+						}
+					} catch (Exception e) {
+						logger.error("Failed to create Composition Quali-Quanti for PIF report template", e);
 					}
 
 					try {
