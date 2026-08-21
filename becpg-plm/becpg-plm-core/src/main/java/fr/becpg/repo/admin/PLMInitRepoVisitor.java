@@ -2036,14 +2036,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						aggTplInfo.setReportFormat(ReportFormat.PDF);
 						aggTplInfo.setNodeType(productType);
 						aggTplInfo.setDefaultTpl(false);
-						aggTplInfo.setSystemTpl(true);
+						aggTplInfo.setSystemTpl(false);
 						aggTplInfo.setResources(aggResources);
 						aggTplInfo.setSupportedLocale(supportedLocale);
 
 						NodeRef aggTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
 								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT),
-								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, false);
+								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, true);
 						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT);
+						if (titleMlt != null && !titleMlt.isEmpty()) {
+							nodeService.setProperty(aggTplNodeRef, ContentModel.PROP_TITLE, titleMlt);
+						}
 					} catch (Exception e) {
 						logger.error("Failed to create Specification Technique aggregate report template", e);
 					}
