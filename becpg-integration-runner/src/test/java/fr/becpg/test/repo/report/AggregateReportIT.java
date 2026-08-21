@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -483,8 +484,18 @@ public class AggregateReportIT extends PLMBaseTestCase {
             return null;
         });
 
-        // 3. Retrieve and enable PIF aggregate report template created via init repo
-        final NodeRef pifTemplateNodeRef = getAndEnablePIFTemplate();
+        // 3. Retrieve and enable PIF aggregate report template and Compo Quali-Quanti for PIF template
+        final NodeRef pifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Product Information File.rptdesign",
+                "Dossier d'information produit.rptdesign",
+                "PIFReport.rptdesign"
+        );
+        final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Composition Quali-Quanti pour DIP (PIF).rptdesign",
+                "Quali-Quanti Composition for PIF.rptdesign"
+        );
 
         try {
             // 4. Generate English PIF Report
@@ -564,6 +575,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
             });
         } finally {
             disableTemplate(pifTemplateNodeRef);
+            disableTemplate(compoForPifTemplateNodeRef);
         }
     }
 
@@ -618,8 +630,18 @@ public class AggregateReportIT extends PLMBaseTestCase {
             targetProducts.add(productNodeRef);
         }
 
-        // 2. Retrieve and enable PIF aggregate report template created via init repo
-        final NodeRef pifTemplateNodeRef = getAndEnablePIFTemplate();
+        // 2. Retrieve and enable PIF aggregate report template and Compo Quali-Quanti for PIF template
+        final NodeRef pifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Product Information File.rptdesign",
+                "Dossier d'information produit.rptdesign",
+                "PIFReport.rptdesign"
+        );
+        final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Composition Quali-Quanti pour DIP (PIF).rptdesign",
+                "Quali-Quanti Composition for PIF.rptdesign"
+        );
 
         try {
             // Warm up single run on first product
@@ -692,6 +714,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
             logger.info("========================================================================");
         } finally {
             disableTemplate(pifTemplateNodeRef);
+            disableTemplate(compoForPifTemplateNodeRef);
         }
     }
 
@@ -974,38 +997,50 @@ public class AggregateReportIT extends PLMBaseTestCase {
         canvas.endText();
     }
 
-    private NodeRef getAndEnablePIFTemplate() {
-        NodeRef tpl = inReadTx(() -> {
-            String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
-            NodeRef reportTpl = reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, pifReportName);
-            if (reportTpl == null) {
-                NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-                        TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-                NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
-                        TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-                NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-                        TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+    private NodeRef getAndEnableReportTemplate(String... candidateNames) {
+        NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+                TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+        NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
+                TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+        NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-                List<ChildAssociationRef> children = nodeService.getChildAssocs(productReportTplFolder);
-                if (children != null) {
-                    for (ChildAssociationRef child : children) {
-                        String name = (String) nodeService.getProperty(child.getChildRef(), ContentModel.PROP_NAME);
-                        if (name != null && name.contains("PIF")) {
-                            return child.getChildRef();
+        NodeRef tpl = inReadTx(() -> findChildByName(productReportTplFolder, candidateNames));
+        if (tpl == null) {
+            throw new IllegalStateException("Report template not found among children for names: " + Arrays.toString(candidateNames));
+        }
+
+        inWriteTx(() -> {
+            nodeService.setProperty(tpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
+            return null;
+        });
+
+        return tpl;
+    }
+
+    private NodeRef findChildByName(NodeRef parent, String... candidateNames) {
+        List<ChildAssociationRef> children = nodeService.getChildAssocs(parent);
+        if (children != null) {
+            for (ChildAssociationRef childAssoc : children) {
+                NodeRef child = childAssoc.getChildRef();
+                String name = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
+                if (name != null) {
+                    for (String candidate : candidateNames) {
+                        if (candidate != null && name.equals(candidate)) {
+                            return child;
                         }
                     }
                 }
+                QName type = nodeService.getType(child);
+                if (ContentModel.TYPE_FOLDER.equals(type)) {
+                    NodeRef sub = findChildByName(child, candidateNames);
+                    if (sub != null) {
+                        return sub;
+                    }
+                }
             }
-            return reportTpl;
-        });
-
-        if (tpl != null) {
-            inWriteTx(() -> {
-                nodeService.setProperty(tpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
-                return null;
-            });
         }
-        return tpl;
+        return null;
     }
 
     private void disableTemplate(NodeRef tpl) {
