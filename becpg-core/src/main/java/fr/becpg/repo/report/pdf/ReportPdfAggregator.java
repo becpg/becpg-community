@@ -270,32 +270,77 @@ public class ReportPdfAggregator {
     public static class AnnexDocument {
         private final String componentName;
         private final byte[] pdfBytes;
-        private final boolean isBeCPGDoc;
-        private int pageCount = -1;
+        private boolean metadataLoaded = false;
+        private boolean isBeCPGDoc = false;
+        private int pageCount = 0;
+        private List<PageNumberLocator.FoundPageNumber> locatedPageNumbers = Collections.emptyList();
 
         public AnnexDocument(String componentName, byte[] pdfBytes) {
             this.componentName = componentName;
             this.pdfBytes = pdfBytes;
-            this.isBeCPGDoc = hasExistingBeCPGLayout(pdfBytes);
+        }
+
+        private synchronized void ensureMetadataLoaded() {
+            if (metadataLoaded) {
+                return;
+            }
+            if (pdfBytes != null && pdfBytes.length > 0) {
+                try (PDDocument doc = loadDocumentOrConvertImage(pdfBytes)) {
+                    if (doc != null) {
+                        this.pageCount = doc.getNumberOfPages();
+                        this.isBeCPGDoc = inspectBeCPGDoc(doc);
+                        if (this.isBeCPGDoc && this.pageCount > 0) {
+                            PageNumberLocator pageNumLocator = new PageNumberLocator();
+                            this.locatedPageNumbers = pageNumLocator.locatePageNumbers(doc);
+                        }
+                    }
+                } catch (Exception e) {
+                    this.pageCount = 0;
+                }
+            }
+            this.metadataLoaded = true;
+        }
+
+        private static boolean inspectBeCPGDoc(PDDocument doc) {
+            try {
+                if (doc.getDocumentInformation() != null) {
+                    String producer = doc.getDocumentInformation().getProducer();
+                    String creator = doc.getDocumentInformation().getCreator();
+                    if ((producer != null && (producer.contains("BIRT") || producer.contains("beCPG")))
+                            || (creator != null && (creator.contains("BIRT") || creator.contains("beCPG")))) {
+                        return true;
+                    }
+                }
+                if (doc.getNumberOfPages() > 0) {
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    stripper.setStartPage(1);
+                    stripper.setEndPage(1);
+                    String text = stripper.getText(doc);
+                    if (text != null && text.contains("beCPG")) {
+                        return true;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+            return false;
         }
 
         public String getComponentName() { return componentName; }
         public byte[] getPdfBytes() { return pdfBytes; }
-        public boolean isBeCPGDoc() { return isBeCPGDoc; }
+        public boolean isBeCPGDoc() {
+            ensureMetadataLoaded();
+            return isBeCPGDoc;
+        }
 
         public int getPageCount() {
-            if (pageCount < 0 && pdfBytes != null && pdfBytes.length > 0) {
-                try (PDDocument doc = loadDocumentOrConvertImage(pdfBytes)) {
-                    if (doc != null) {
-                        pageCount = doc.getNumberOfPages();
-                    } else {
-                        pageCount = 0;
-                    }
-                } catch (Exception e) {
-                    pageCount = 0;
-                }
-            }
-            return Math.max(pageCount, 0);
+            ensureMetadataLoaded();
+            return pageCount;
+        }
+
+        public List<PageNumberLocator.FoundPageNumber> getLocatedPageNumbers() {
+            ensureMetadataLoaded();
+            return locatedPageNumbers;
         }
     }
 
@@ -410,6 +455,7 @@ public class ReportPdfAggregator {
             public int pageIndex;
             public float x;
             public float y;
+            public float width;
             public float height;
         }
 
@@ -440,14 +486,20 @@ public class ReportPdfAggregator {
             if (string != null && string.contains("Page") && textPositions != null && !textPositions.isEmpty()) {
                 int startIdx = string.indexOf("Page");
                 if (startIdx >= 0 && startIdx < textPositions.size()) {
-                    TextPosition pageChar = textPositions.get(startIdx);
-                    float yFromBottom = currentPageHeight - pageChar.getYDirAdj();
+                    TextPosition firstChar = textPositions.get(startIdx);
+                    float yFromBottom = currentPageHeight - firstChar.getYDirAdj();
                     if (yFromBottom <= MAX_FOOTER_Y) {
+                        TextPosition lastChar = textPositions.get(textPositions.size() - 1);
+                        float totalWidth = (lastChar.getXDirAdj() + lastChar.getWidth()) - firstChar.getXDirAdj();
+                        if (totalWidth <= 0) {
+                            totalWidth = firstChar.getWidth();
+                        }
                         FoundPageNumber fpn = new FoundPageNumber();
                         fpn.pageIndex = currentPageIndex;
-                        fpn.x = pageChar.getXDirAdj();
+                        fpn.x = firstChar.getXDirAdj();
                         fpn.y = yFromBottom;
-                        fpn.height = pageChar.getHeightDir();
+                        fpn.width = totalWidth;
+                        fpn.height = firstChar.getHeightDir();
                         pageNumbers.add(fpn);
                     }
                 }
@@ -847,15 +899,14 @@ public class ReportPdfAggregator {
                     if (ad.isBeCPGDoc()) {
                         Integer startPageIdx = docToMergedPageMap.get(ad);
                         if (startPageIdx != null) {
-                            try (PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes())) {
-                                if (adDoc != null) {
-                                    PageNumberLocator pageNumLocator = new PageNumberLocator();
-                                    List<PageNumberLocator.FoundPageNumber> annexPageNums = pageNumLocator.locatePageNumbers(adDoc);
-                                    for (PageNumberLocator.FoundPageNumber fpn : annexPageNums) {
-                                        fpn.pageIndex = startPageIdx + fpn.pageIndex;
-                                        birtPageNums.add(fpn);
-                                    }
-                                }
+                            for (PageNumberLocator.FoundPageNumber fpn : ad.getLocatedPageNumbers()) {
+                                PageNumberLocator.FoundPageNumber mappedFpn = new PageNumberLocator.FoundPageNumber();
+                                mappedFpn.pageIndex = startPageIdx + fpn.pageIndex;
+                                mappedFpn.x = fpn.x;
+                                mappedFpn.y = fpn.y;
+                                mappedFpn.width = fpn.width;
+                                mappedFpn.height = fpn.height;
+                                birtPageNums.add(mappedFpn);
                             }
                         }
                     }
@@ -869,7 +920,8 @@ public class ReportPdfAggregator {
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     canvas.setNonStrokingColor(Color.WHITE);
-                    canvas.addRect(fpn.x - 10, pdfY - 5, 150, fpn.height + 10);
+                    float rectWidth = Math.max(fpn.width + 10, 50.0f);
+                    canvas.addRect(fpn.x - 5, pdfY - 5, rectWidth, fpn.height + 10);
                     canvas.fill();
                 }
             }
@@ -1307,32 +1359,6 @@ public class ReportPdfAggregator {
         }
         result = result.replaceAll("\\$\\{[^}]+\\}", "");
         return result.trim();
-    }
-
-    private static boolean hasExistingBeCPGLayout(byte[] pdfBytes) {
-        if (pdfBytes == null || pdfBytes.length == 0) return false;
-        try (PDDocument doc = loadPdf(pdfBytes)) {
-            if (doc.getDocumentInformation() != null) {
-                String producer = doc.getDocumentInformation().getProducer();
-                String creator = doc.getDocumentInformation().getCreator();
-                if ((producer != null && (producer.contains("BIRT") || producer.contains("beCPG")))
-                        || (creator != null && (creator.contains("BIRT") || creator.contains("beCPG")))) {
-                    return true;
-                }
-            }
-            if (doc.getNumberOfPages() > 0) {
-                PDFTextStripper stripper = new PDFTextStripper();
-                stripper.setStartPage(1);
-                stripper.setEndPage(1);
-                String text = stripper.getText(doc);
-                if (text != null && text.contains("beCPG")) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return false;
     }
 
     private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, TableOfContentsModel config, Map<String, String> customI18n) throws IOException {
