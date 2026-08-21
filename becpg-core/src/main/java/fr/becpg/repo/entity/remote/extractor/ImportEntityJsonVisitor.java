@@ -165,6 +165,17 @@ public class ImportEntityJsonVisitor {
 				}
 				context.setRetry(false);
 				ret = visit(entity, JsonVisitNodeType.ENTITY, null, context);
+				if (ret != null) {
+					/*
+					 * A retry replays the whole document, entity included. Without its id the
+					 * entity is looked up again by findNode, and that lookup can fall back on
+					 * the search index — which cannot see a node created by the transaction
+					 * still running. The entity was then created a second time under the same
+					 * name and the request died on DuplicateChildNodeNameException, after
+					 * having done all of its work twice.
+					 */
+					entity.put(RemoteEntityService.ATTR_ID, ret.getId());
+				}
 				retryCount++;
 				logger.debug("Retrying count:" + retryCount);
 			}
