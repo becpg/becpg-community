@@ -7721,7 +7721,6 @@
                     <show id="bcpg:compoListDeclType" />
                     <show id="bcpg:variantIds" force="true" />
                     <show id="bcpg:instruction" force="true" />
-                    <show id="bcpg:glopTarget" force="true" />
                 </field-visibility>
 
                 <appearance>
@@ -11102,7 +11101,6 @@
                     <show id="bcpg:nutListMeasurementPrecision" />
                     <show id="bcpg:parentLevel" />
                     <show id="rep:reportKinds" force="true" />
-                    <show id="bcpg:glopTarget" force="true" />
                 </field-visibility>
 
                 <appearance>
@@ -11651,7 +11649,6 @@
                     <show id="bcpg:pclTextCriteria" />
                     <show id="bcpg:pclMethod" />
                     <show id="rep:reportKinds" force="true" />
-                    <show id="bcpg:glopTarget" force="true" />
                 </field-visibility>
 
                 <appearance>

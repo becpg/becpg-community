@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -482,100 +484,99 @@ public class AggregateReportIT extends PLMBaseTestCase {
             return null;
         });
 
-        // 3. Retrieve PIF aggregate report template created via init repo
-        final NodeRef pifTemplateNodeRef = inReadTx(() -> {
-            String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
-            NodeRef tpl = reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, pifReportName);
-            if (tpl == null) {
-                List<NodeRef> userTpls = reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, null);
-                if (userTpls != null) {
-                    for (NodeRef userTpl : userTpls) {
-                        Boolean isAgg = (Boolean) nodeService.getProperty(userTpl, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE);
-                        String name = (String) nodeService.getProperty(userTpl, ContentModel.PROP_NAME);
-                        if (Boolean.TRUE.equals(isAgg) && name != null && name.contains("PIF")) {
-                            return userTpl;
+        // 3. Retrieve and enable PIF aggregate report template and Compo Quali-Quanti for PIF template
+        final NodeRef pifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Product Information File.rptdesign",
+                "Dossier d'information produit.rptdesign",
+                "PIFReport.rptdesign"
+        );
+        final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Composition Quali-Quanti pour DIP (PIF).rptdesign",
+                "Quali-Quanti Composition for PIF.rptdesign"
+        );
+
+        try {
+            // 4. Generate English PIF Report
+            inWriteTx(() -> {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                EntityReportParameters reportParameters = new EntityReportParameters();
+
+                try {
+                    entityReportService.generateReport(pfNodeRef, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
+                    byte[] finalPdfBytes = out.toByteArray();
+
+                    if (finalPdfBytes == null || finalPdfBytes.length == 0) {
+                        logger.warn("[PIFReportEclairIT] BIRT report server returned empty bytes (server may be offline).");
+                        return null;
+                    }
+
+                    try (PDDocument doc = Loader.loadPDF(finalPdfBytes)) {
+                        assertTrue("Expected PDF to contain pages", doc.getNumberOfPages() > 0);
+                        logger.info("[PIFReportEclairIT Success] Generated English PIF PDF Size: " + finalPdfBytes.length + " bytes, Pages: " + doc.getNumberOfPages());
+
+                        PDFTextStripper stripper = new PDFTextStripper();
+                        String fullText = stripper.getText(doc);
+                        assertNotNull(fullText);
+
+                        assertTrue("Expected English Title", fullText.contains("PRODUCT INFORMATION FILE (PIF)"));
+                        assertTrue("Expected English ToC", fullText.contains("TABLE OF CONTENTS"));
+                    }
+                } catch (Exception e) {
+                    logger.warn("Skipping BIRT PIF report assertion due to execution exception (BIRT server offline): " + e.getMessage(), e);
+                }
+                return null;
+            });
+
+            // 5. Generate PIF Report directly into repository document node and verify committed content
+            inWriteTx(() -> {
+                try {
+                    NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfNodeRef, RepoConsts.PATH_DOCUMENTS,
+                            TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
+                    String docName = "PIF_Report_Eclair.pdf";
+                    NodeRef reportDocNodeRef = nodeService.getChildByName(docsFolder, ContentModel.ASSOC_CONTAINS, docName);
+                    if (reportDocNodeRef == null) {
+                        reportDocNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                                QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, docName),
+                                ReportModel.TYPE_REPORT).getChildRef();
+                        associationService.update(reportDocNodeRef, ReportModel.ASSOC_REPORT_TPL, pifTemplateNodeRef);
+                    }
+
+                    ContentWriter initialWriter = contentService.getWriter(reportDocNodeRef, ContentModel.PROP_CONTENT, true);
+                    initialWriter.putContent("Loading ...");
+                    nodeService.setProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+
+                    entityReportService.generateReport(pfNodeRef, reportDocNodeRef);
+
+                    ContentReader reader = contentService.getReader(reportDocNodeRef, ContentModel.PROP_CONTENT);
+                    assertNotNull("ContentReader should exist for committed report node", reader);
+                    assertTrue("ContentReader should exist on storage", reader.exists());
+
+                    Boolean isDirty = (Boolean) nodeService.getProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY);
+                    assertFalse("Report document should not be dirty after generation", Boolean.TRUE.equals(isDirty));
+
+                    try (InputStream in = reader.getContentInputStream()) {
+                        byte[] nodeBytes = in.readAllBytes();
+                        if (nodeBytes != null && nodeBytes.length > 0) {
+                            String header = new String(nodeBytes, 0, Math.min(nodeBytes.length, 10));
+                            assertFalse("Committed node content must not remain 'Loading ...'", header.startsWith("Loading"));
+                            assertTrue("Committed node content must be a valid PDF starting with %PDF-", header.startsWith("%PDF-"));
+
+                            try (PDDocument doc = Loader.loadPDF(nodeBytes)) {
+                                assertTrue("Committed PDF document should contain pages", doc.getNumberOfPages() > 0);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    logger.warn("Skipping repository report node assertion if report server offline: " + e.getMessage(), e);
                 }
-            }
-            return tpl;
-        });
-
-        // 4. Generate English PIF Report
-        inWriteTx(() -> {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            EntityReportParameters reportParameters = new EntityReportParameters();
-
-            try {
-                entityReportService.generateReport(pfNodeRef, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
-                byte[] finalPdfBytes = out.toByteArray();
-
-                if (finalPdfBytes == null || finalPdfBytes.length == 0) {
-                    logger.warn("[PIFReportEclairIT] BIRT report server returned empty bytes (server may be offline).");
-                    return null;
-                }
-
-                try (PDDocument doc = Loader.loadPDF(finalPdfBytes)) {
-                    assertTrue("Expected PDF to contain pages", doc.getNumberOfPages() > 0);
-                    logger.info("[PIFReportEclairIT Success] Generated English PIF PDF Size: " + finalPdfBytes.length + " bytes, Pages: " + doc.getNumberOfPages());
-
-                    PDFTextStripper stripper = new PDFTextStripper();
-                    String fullText = stripper.getText(doc);
-                    assertNotNull(fullText);
-
-                    assertTrue("Expected English Title", fullText.contains("PRODUCT INFORMATION FILE (PIF)"));
-                    assertTrue("Expected English ToC", fullText.contains("TABLE OF CONTENTS"));
-                }
-            } catch (Exception e) {
-                logger.warn("Skipping BIRT PIF report assertion due to execution exception (BIRT server offline): " + e.getMessage(), e);
-            }
-            return null;
-        });
-
-        // 5. Generate PIF Report directly into repository document node and verify committed content
-        inWriteTx(() -> {
-            try {
-                NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfNodeRef, RepoConsts.PATH_DOCUMENTS,
-                        TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
-                String docName = "PIF_Report_Eclair.pdf";
-                NodeRef reportDocNodeRef = nodeService.getChildByName(docsFolder, ContentModel.ASSOC_CONTAINS, docName);
-                if (reportDocNodeRef == null) {
-                    reportDocNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
-                            QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, docName),
-                            ReportModel.TYPE_REPORT).getChildRef();
-                    associationService.update(reportDocNodeRef, ReportModel.ASSOC_REPORT_TPL, pifTemplateNodeRef);
-                }
-
-                ContentWriter initialWriter = contentService.getWriter(reportDocNodeRef, ContentModel.PROP_CONTENT, true);
-                initialWriter.putContent("Loading ...");
-                nodeService.setProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
-
-                entityReportService.generateReport(pfNodeRef, reportDocNodeRef);
-
-                ContentReader reader = contentService.getReader(reportDocNodeRef, ContentModel.PROP_CONTENT);
-                assertNotNull("ContentReader should exist for committed report node", reader);
-                assertTrue("ContentReader should exist on storage", reader.exists());
-
-                Boolean isDirty = (Boolean) nodeService.getProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY);
-                assertFalse("Report document should not be dirty after generation", Boolean.TRUE.equals(isDirty));
-
-                try (InputStream in = reader.getContentInputStream()) {
-                    byte[] nodeBytes = in.readAllBytes();
-                    if (nodeBytes != null && nodeBytes.length > 0) {
-                        String header = new String(nodeBytes, 0, Math.min(nodeBytes.length, 10));
-                        assertFalse("Committed node content must not remain 'Loading ...'", header.startsWith("Loading"));
-                        assertTrue("Committed node content must be a valid PDF starting with %PDF-", header.startsWith("%PDF-"));
-
-                        try (PDDocument doc = Loader.loadPDF(nodeBytes)) {
-                            assertTrue("Committed PDF document should contain pages", doc.getNumberOfPages() > 0);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                logger.warn("Skipping repository report node assertion if report server offline: " + e.getMessage(), e);
-            }
-            return null;
-        });
+                return null;
+            });
+        } finally {
+            disableTemplate(pifTemplateNodeRef);
+            disableTemplate(compoForPifTemplateNodeRef);
+        }
     }
 
 //    @Test
@@ -629,93 +630,92 @@ public class AggregateReportIT extends PLMBaseTestCase {
             targetProducts.add(productNodeRef);
         }
 
-        // 2. Retrieve PIF aggregate report template created via init repo
-        final NodeRef pifTemplateNodeRef = inReadTx(() -> {
-            String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
-            NodeRef tpl = reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, pifReportName);
-            if (tpl == null) {
-                List<NodeRef> userTpls = reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, null);
-                if (userTpls != null) {
-                    for (NodeRef userTpl : userTpls) {
-                        Boolean isAgg = (Boolean) nodeService.getProperty(userTpl, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE);
-                        String name = (String) nodeService.getProperty(userTpl, ContentModel.PROP_NAME);
-                        if (Boolean.TRUE.equals(isAgg) && name != null && name.contains("PIF")) {
-                            return userTpl;
-                        }
-                    }
-                }
-            }
-            return tpl;
-        });
+        // 2. Retrieve and enable PIF aggregate report template and Compo Quali-Quanti for PIF template
+        final NodeRef pifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Product Information File.rptdesign",
+                "Dossier d'information produit.rptdesign",
+                "PIFReport.rptdesign"
+        );
+        final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
+                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                "Composition Quali-Quanti pour DIP (PIF).rptdesign",
+                "Quali-Quanti Composition for PIF.rptdesign"
+        );
 
-        // Warm up single run on first product
-        inWriteTx(() -> {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            entityReportService.generateReport(targetProducts.get(0), pifTemplateNodeRef, new EntityReportParameters(), Locale.ENGLISH, ReportFormat.PDF, out);
-            return null;
-        });
-
-        // 3. Parallel Benchmark Execution (Each thread targets its own distinct product)
-        CountDownLatch readyLatch = new CountDownLatch(threadCount);
-        CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch finishLatch = new CountDownLatch(threadCount);
-        List<Long> durations = Collections.synchronizedList(new ArrayList<>());
-        List<Integer> pdfSizes = Collections.synchronizedList(new ArrayList<>());
-        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
-
-        long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        long wallClockStart = System.currentTimeMillis();
-
-        for (int i = 0; i < threadCount; i++) {
-            final int threadIdx = i;
-            final NodeRef productForThread = targetProducts.get(threadIdx);
-            pool.submit(() -> {
-            	inWriteTx(() -> {
-            		return AuthenticationUtil.runAsSystem(() -> {
-            			readyLatch.countDown();
-            			try {
-            				startLatch.await();
-            				long t0 = System.currentTimeMillis();
-            				
-            				ByteArrayOutputStream out = new ByteArrayOutputStream();
-            				EntityReportParameters reportParameters = new EntityReportParameters();
-            				entityReportService.generateReport(productForThread, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
-            				
-            				long t1 = System.currentTimeMillis();
-            				byte[] result = out.toByteArray();
-            				durations.add(t1 - t0);
-            				if (result != null) {
-            					pdfSizes.add(result.length);
-            				}
-            			} catch (Exception e) {
-            				logger.error("[PARALLEL BENCHMARK Thread " + threadIdx + "] Failed: " + e.getMessage(), e);
-            			} finally {
-            				finishLatch.countDown();
-            			}
-            			return null;
-            		});
-            	});
+        try {
+            // Warm up single run on first product
+            inWriteTx(() -> {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                entityReportService.generateReport(targetProducts.get(0), pifTemplateNodeRef, new EntityReportParameters(), Locale.ENGLISH, ReportFormat.PDF, out);
+                return null;
             });
+
+            // 3. Parallel Benchmark Execution (Each thread targets its own distinct product)
+            CountDownLatch readyLatch = new CountDownLatch(threadCount);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch finishLatch = new CountDownLatch(threadCount);
+            List<Long> durations = Collections.synchronizedList(new ArrayList<>());
+            List<Integer> pdfSizes = Collections.synchronizedList(new ArrayList<>());
+            ExecutorService pool = Executors.newFixedThreadPool(threadCount);
+
+            long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            long wallClockStart = System.currentTimeMillis();
+
+            for (int i = 0; i < threadCount; i++) {
+                final int threadIdx = i;
+                final NodeRef productForThread = targetProducts.get(threadIdx);
+                pool.submit(() -> {
+                	inWriteTx(() -> {
+                		return AuthenticationUtil.runAsSystem(() -> {
+                			readyLatch.countDown();
+                			try {
+                				startLatch.await();
+                				long t0 = System.currentTimeMillis();
+                				
+                				ByteArrayOutputStream out = new ByteArrayOutputStream();
+                				EntityReportParameters reportParameters = new EntityReportParameters();
+                				entityReportService.generateReport(productForThread, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
+                				
+                				long t1 = System.currentTimeMillis();
+                				byte[] result = out.toByteArray();
+                				durations.add(t1 - t0);
+                				if (result != null) {
+                					pdfSizes.add(result.length);
+                				}
+                			} catch (Exception e) {
+                				logger.error("[PARALLEL BENCHMARK Thread " + threadIdx + "] Failed: " + e.getMessage(), e);
+                			} finally {
+                				finishLatch.countDown();
+                			}
+                			return null;
+                		});
+                	});
+                });
+            }
+
+            readyLatch.await(); // Wait for all worker threads to get ready
+            startLatch.countDown(); // Start all parallel requests simultaneously
+            finishLatch.await(); // Wait for all requests to finish
+            pool.shutdown();
+
+            long wallClockDuration = System.currentTimeMillis() - wallClockStart;
+            long endMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+            logger.info("========================================================================");
+            logger.info("[PARALLEL PIF BENCHMARK RESULTS]");
+            logger.info("  * Parallel Threads / Requests: " + threadCount);
+            logger.info("  * Total Wall-Clock Time: " + wallClockDuration + " ms");
+            logger.info("  * Average Duration per Report: " + (durations.isEmpty() ? 0 : (durations.stream().mapToLong(Long::longValue).sum() / durations.size())) + " ms");
+            logger.info("  * Min Duration: " + durations.stream().mapToLong(Long::longValue).min().orElse(0) + " ms");
+            logger.info("  * Max Duration: " + durations.stream().mapToLong(Long::longValue).max().orElse(0) + " ms");
+            logger.info("  * Average PDF Size: " + (pdfSizes.isEmpty() ? 0 : (pdfSizes.stream().mapToInt(Integer::intValue).sum() / pdfSizes.size())) + " bytes");
+            logger.info("  * Heap Memory Delta: " + ((endMem - startMem) / (1024 * 1024)) + " MB");
+            logger.info("========================================================================");
+        } finally {
+            disableTemplate(pifTemplateNodeRef);
+            disableTemplate(compoForPifTemplateNodeRef);
         }
-
-        readyLatch.await(); // Wait for all worker threads to get ready
-        startLatch.countDown(); // Start all parallel requests simultaneously
-        finishLatch.await(); // Wait for all requests to finish
-        pool.shutdown();
-
-        long wallClockDuration = System.currentTimeMillis() - wallClockStart;
-        long endMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
-        logger.info("========================================================================");
-        logger.info("[PARALLEL PIF BENCHMARK RESULTS]");
-        logger.info("  * Parallel Threads / Requests: " + threadCount);
-        logger.info("  * Total Wall-Clock Time: " + wallClockDuration + " ms");
-        logger.info("  * Average Duration per Report: " + (durations.isEmpty() ? 0 : (durations.stream().mapToLong(Long::longValue).sum() / durations.size())) + " ms");
-        logger.info("  * Min Duration: " + durations.stream().mapToLong(Long::longValue).min().orElse(0) + " ms");
-        logger.info("  * Max Duration: " + durations.stream().mapToLong(Long::longValue).max().orElse(0) + " ms");
-        logger.info("  * Average PDF Size: " + (pdfSizes.isEmpty() ? 0 : (pdfSizes.stream().mapToInt(Integer::intValue).sum() / pdfSizes.size())) + " bytes");
-        logger.info("  * Heap Memory Delta: " + ((endMem - startMem) / (1024 * 1024)) + " MB");
-        logger.info("========================================================================");
     }
 
     @Test
@@ -995,5 +995,60 @@ public class AggregateReportIT extends PLMBaseTestCase {
             }
         }
         canvas.endText();
+    }
+
+    private NodeRef getAndEnableReportTemplate(String... candidateNames) {
+        NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+                TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+        NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
+                TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+        NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+
+        NodeRef tpl = inReadTx(() -> findChildByName(productReportTplFolder, candidateNames));
+        if (tpl == null) {
+            throw new IllegalStateException("Report template not found among children for names: " + Arrays.toString(candidateNames));
+        }
+
+        inWriteTx(() -> {
+            nodeService.setProperty(tpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
+            return null;
+        });
+
+        return tpl;
+    }
+
+    private NodeRef findChildByName(NodeRef parent, String... candidateNames) {
+        List<ChildAssociationRef> children = nodeService.getChildAssocs(parent);
+        if (children != null) {
+            for (ChildAssociationRef childAssoc : children) {
+                NodeRef child = childAssoc.getChildRef();
+                String name = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
+                if (name != null) {
+                    for (String candidate : candidateNames) {
+                        if (candidate != null && name.equals(candidate)) {
+                            return child;
+                        }
+                    }
+                }
+                QName type = nodeService.getType(child);
+                if (ContentModel.TYPE_FOLDER.equals(type)) {
+                    NodeRef sub = findChildByName(child, candidateNames);
+                    if (sub != null) {
+                        return sub;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private void disableTemplate(NodeRef tpl) {
+        if (tpl != null) {
+            inWriteTx(() -> {
+                nodeService.setProperty(tpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
+                return null;
+            });
+        }
     }
 }
