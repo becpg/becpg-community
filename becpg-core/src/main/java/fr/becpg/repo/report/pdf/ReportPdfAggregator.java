@@ -410,6 +410,7 @@ public class ReportPdfAggregator {
             public int pageIndex;
             public float x;
             public float y;
+            public float width;
             public float height;
         }
 
@@ -440,14 +441,20 @@ public class ReportPdfAggregator {
             if (string != null && string.contains("Page") && textPositions != null && !textPositions.isEmpty()) {
                 int startIdx = string.indexOf("Page");
                 if (startIdx >= 0 && startIdx < textPositions.size()) {
-                    TextPosition pageChar = textPositions.get(startIdx);
-                    float yFromBottom = currentPageHeight - pageChar.getYDirAdj();
+                    TextPosition firstChar = textPositions.get(startIdx);
+                    float yFromBottom = currentPageHeight - firstChar.getYDirAdj();
                     if (yFromBottom <= MAX_FOOTER_Y) {
+                        TextPosition lastChar = textPositions.get(textPositions.size() - 1);
+                        float totalWidth = (lastChar.getXDirAdj() + lastChar.getWidth()) - firstChar.getXDirAdj();
+                        if (totalWidth <= 0) {
+                            totalWidth = firstChar.getWidth();
+                        }
                         FoundPageNumber fpn = new FoundPageNumber();
                         fpn.pageIndex = currentPageIndex;
-                        fpn.x = pageChar.getXDirAdj();
+                        fpn.x = firstChar.getXDirAdj();
                         fpn.y = yFromBottom;
-                        fpn.height = pageChar.getHeightDir();
+                        fpn.width = totalWidth;
+                        fpn.height = firstChar.getHeightDir();
                         pageNumbers.add(fpn);
                     }
                 }
@@ -869,7 +876,8 @@ public class ReportPdfAggregator {
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     canvas.setNonStrokingColor(Color.WHITE);
-                    canvas.addRect(fpn.x - 10, pdfY - 5, 150, fpn.height + 10);
+                    float rectWidth = Math.max(fpn.width + 10, 50.0f);
+                    canvas.addRect(fpn.x - 5, pdfY - 5, rectWidth, fpn.height + 10);
                     canvas.fill();
                 }
             }
