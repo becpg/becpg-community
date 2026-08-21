@@ -161,7 +161,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 				}
 				
 
-				boolean writeContent = false;
 				if (reportTplNodeRef != null) {
 					if (overrideTpl || (!nodeService.hasAspect(reportTplNodeRef, ContentModel.ASPECT_VERSIONABLE)
 							|| RepoConsts.INITIAL_VERSION.equals(nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_VERSION_LABEL)))) {
@@ -171,7 +170,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 							if (reportTplInformation.getResources() != null) {
 								associationService.update(reportTplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, reportTplInformation.getResources());
 							}
-							writeContent = true;
 						} else {
 							logger.info("Updating report content: " + tplFullName);
 							
@@ -201,21 +199,19 @@ public class ReportTplServiceImpl implements ReportTplService {
 					if(reportTplInformation.getResources()!=null ) {
 						associationService.update(reportTplNodeRef,  ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, reportTplInformation.getResources());
 					}
-					writeContent = true;
+					
 				}
 
-				if (writeContent) {
-					ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
+				ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
 
-					String mimetype = mimetypeService.guessMimetype(tplFilePath);
-					ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-					Charset charset = charsetFinder.getCharset(in, mimetype);
-					String encoding = charset.name();
+				String mimetype = mimetypeService.guessMimetype(tplFilePath);
+				ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+				Charset charset = charsetFinder.getCharset(in, mimetype);
+				String encoding = charset.name();
 
-					writer.setMimetype(mimetype);
-					writer.setEncoding(encoding);
-					writer.putContent(in);
-				}
+				writer.setMimetype(mimetype);
+				writer.setEncoding(encoding);
+				writer.putContent(in);
 			}
 		} else {
 			logger.error("Path doesn't exists: " + tplFilePath);
