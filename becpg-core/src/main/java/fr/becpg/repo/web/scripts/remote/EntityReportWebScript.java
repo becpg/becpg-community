@@ -1,7 +1,6 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
@@ -135,14 +135,15 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		} catch (IOException e1) {
 
 			/*
-			 * A caller giving up mid-stream surfaces as a ClientAbortException, which is
-			 * an IOException but not a SocketException. Letting it through would fail the
-			 * request with a partially written response.
+			 * A caller giving up mid-stream is an IOException like any other; only
+			 * ReportUtils can tell them apart. Letting it through would fail the request
+			 * with a partially written response — and, since the response is already
+			 * committed, the runtime cannot even render the failure.
 			 *
 			 * Only the client abort is swallowed: a genuine IO error must keep
 			 * propagating rather than be hidden.
 			 */
-			if (!isClientAbort(e1)) {
+			if (!ReportUtils.isClientAbort(e1)) {
 				throw e1;
 			}
 
@@ -154,23 +155,6 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 
 		}
 
-	}
-
-	/**
-	 * A client abort takes different shapes depending on the connector: a
-	 * SocketException, or the container's ClientAbortException, matched by name so
-	 * that this class does not depend on container internals.
-	 */
-	private boolean isClientAbort(IOException e) {
-		for (Throwable cause = e; cause != null; cause = cause.getCause()) {
-			if ((cause instanceof SocketException) || cause.getClass().getName().endsWith("ClientAbortException")) {
-				return true;
-			}
-			if (cause.getCause() == cause) {
-				break;
-			}
-		}
-		return false;
 	}
 
 }
