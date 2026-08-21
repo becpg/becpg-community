@@ -90,6 +90,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
+	private static final String FIELD_PATH_SEPARATOR = "|";
+
 	@Autowired
 	@Qualifier("mlAwareNodeService")
 	protected NodeService mlNodeService;
@@ -1203,7 +1205,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				for (Map.Entry<String, Object> entry : comp.entrySet()) {
 					String compKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-					if (critKey.equals(compKey)) {
+					if (isCriterionOn(critKey, compKey)) {
 						Object tmp = entry.getValue();
 						if (tmp != null) {
 							List<Map<String, Object>> dataList = new ArrayList<>();
@@ -1235,6 +1237,30 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 	}
 
+	/**
+	 * <p>Tells whether a criterion applies to an extracted field.</p>
+	 *
+	 * A criterion targets either the field itself, or a property reached through it: the criterion
+	 * <code>bcpg:allergenListAllergen|bcpg:allergenCode</code> is carried by the extracted field
+	 * <code>bcpg:allergenListAllergen</code>, whose data {@link #matchData} then walks down.
+	 *
+	 * @param critKey a {@link java.lang.String} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean isCriterionOn(String critKey, String compKey) {
+		return critKey.equals(compKey) || critKey.startsWith(compKey + FIELD_PATH_SEPARATOR);
+	}
+
+	/**
+	 * <p>matchData.</p>
+	 *
+	 * @param data a {@link java.util.Map} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @return a boolean
+	 */
+	@SuppressWarnings("unchecked")
 	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
 		if ((data == null) || data.isEmpty()) {
 			return false;
@@ -1249,7 +1275,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			for (Map.Entry<String, Object> propEntry : data.entrySet()) {
 				String propKey = propEntry.getKey();
 				Object propValue = propEntry.getValue();
-				String newCritKey = critKey + "|" + propKey.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+				String newCritKey = critKey + FIELD_PATH_SEPARATOR
+						+ propKey.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
 				if (propValue instanceof Map) {
 					if (matchData((Map<String, Object>) propValue, newCritKey, criteriaMap)) {
