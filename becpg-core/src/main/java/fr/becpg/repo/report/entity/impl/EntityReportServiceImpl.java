@@ -1845,21 +1845,28 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			for (NodeRef dbReport : currentReports) {
-				if (!newReports.contains(dbReport) && isReportOfKind(dbReport, reportKind)) {
-					logger.debug("delete old report: " + dbReport);
-					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(dbReport);
+				if (!newReports.contains(dbReport)) {
+					boolean shouldDelete = (reportKind != null && !reportKind.isEmpty()) ? isReportOfKind(dbReport, reportKind) : true;
+					if (shouldDelete) {
+						logger.debug("delete old report: " + dbReport);
+						nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(dbReport);
+					}
 				}
 			}
 		}
 
-		List<NodeRef> finalReports = new ArrayList<>(newReports);
-		for (NodeRef dbReport : currentReports) {
-			if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && !isReportOfKind(dbReport, reportKind)) {
-				finalReports.add(dbReport);
+		if (reportKind != null && !reportKind.isEmpty()) {
+			List<NodeRef> finalReports = new ArrayList<>(newReports);
+			for (NodeRef dbReport : currentReports) {
+				if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && !isReportOfKind(dbReport, reportKind)) {
+					finalReports.add(dbReport);
+				}
 			}
+			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
+		} else {
+			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
 		}
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
 	}
 
 	/**

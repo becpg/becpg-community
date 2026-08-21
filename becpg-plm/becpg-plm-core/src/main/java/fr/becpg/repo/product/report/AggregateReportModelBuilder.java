@@ -38,9 +38,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,17 +55,26 @@ public class AggregateReportModelBuilder {
     private static final Log logger = LogFactory.getLog(AggregateReportModelBuilder.class);
 
     private static final int SUB_REPORT_MAX_THREADS = 2;
+    private static final int SUB_REPORT_QUEUE_CAPACITY = 10;
 
-    private final ExecutorService subReportExecutor = Executors.newFixedThreadPool(SUB_REPORT_MAX_THREADS, new ThreadFactory() {
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final ExecutorService subReportExecutor = new ThreadPoolExecutor(
+            SUB_REPORT_MAX_THREADS,
+            SUB_REPORT_MAX_THREADS,
+            0L,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(SUB_REPORT_QUEUE_CAPACITY),
+            new ThreadFactory() {
+                private final AtomicInteger threadNumber = new AtomicInteger(1);
 
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r, "aggregate-subreport-" + threadNumber.getAndIncrement());
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r, "aggregate-subreport-" + threadNumber.getAndIncrement());
+                    thread.setDaemon(true);
+                    return thread;
+                }
+            },
+            new ThreadPoolExecutor.CallerRunsPolicy()
+    );
 
     @PreDestroy
     public void destroy() {
@@ -244,6 +254,16 @@ public class AggregateReportModelBuilder {
     private List<AnnexDocument> collectDocumentsForNodesParallel(List<NodeRef> entityNodeRefs, String reportKind, List<String> mimeTypes) {
         if (entityNodeRefs == null || entityNodeRefs.isEmpty()) {
             return Collections.emptyList();
+        }
+
+        if (entityNodeRefs.size() == 1) {
+            NodeRef singleNode = entityNodeRefs.get(0);
+            try {
+                return collectDocumentsForNode(singleNode, reportKind, mimeTypes, false);
+            } catch (Exception e) {
+                logger.error("Failed to generate/collect sub-report for component " + singleNode + ": " + e.getMessage(), e);
+                return Collections.emptyList();
+            }
         }
 
         String runAsUser = AuthenticationUtil.getRunAsUser();
