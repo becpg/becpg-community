@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="author">beCPG</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <simple-property-list name="includeResource">
+        <value>./ProductReport</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <list-property name="cssStyleSheets">
+        <structure>
+            <property name="fileName">becpg-report.css</property>
+            <property name="useExternalCss">true</property>
+        </structure>
+    </list-property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
+            <property name="FILELIST">beCPG/birt/document/product/default/ProductReport.xml</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="Product" id="453">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">versionLabelToShow</property>
+                    <expression name="expression">if(row["versionLabelBcpg"] != null){
+	row["versionLabelBcpg"]
+} else if(row["versionLabel"] != null){
+	row["versionLabel"]
+} else "1.0"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{erpCode;STRING;/erpCode}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="compoListDirect" id="9991">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{compoListProduct;STRING;/@compoListProduct},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingListDirect" id="9992">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="2">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="becpg-header-type" id="12189">
+            <property name="color">black</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontSize">12pt</property>
+            <property name="textAlign">center</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="marginBottom">2pt</property>
+        </style>
+        <style name="becpg-meta-grid" id="12190">
+            <property name="fontSize">7.5pt</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="textAlign">left</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-meta-cell-label" id="12191"/>
+        <style name="becpg-meta-cell-data" id="12192">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-header-table" id="12193">
+            <property name="width">100%</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-header-title" id="12194">
+            <property name="marginTop">2pt</property>
+        </style>
+        <style name="becpg-chapter-header" id="4">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textAlign">center</property>
+            <property name="paddingTop">5pt</property>
+            <property name="paddingBottom">5pt</property>
+        </style>
+        <style name="becpg-cell-header" id="11">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">8pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <property name="paddingTop">4pt</property>
+            <property name="paddingBottom">4pt</property>
+        </style>
+        <style name="becpg-cell-data" id="10">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingRight">2pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-cell-data-left" id="12">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">8pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">left</property>
+            <property name="paddingLeft">4pt</property>
+            <property name="paddingRight">2pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="10">
+            <property name="type">a4</property>
+            <property name="orientation">portrait</property>
+            <property name="topMargin">1cm</property>
+            <property name="leftMargin">1.5cm</property>
+            <property name="bottomMargin">0.4cm</property>
+            <property name="rightMargin">1.5cm</property>
+            <property name="headerHeight">1.2in</property>
+            <property name="footerHeight">0.3in</property>
+            <page-header>
+                <grid id="765">
+                    <property name="style">becpg-header-table</property>
+                    <column id="766"/>
+                    <column id="767">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="768"/>
+                    <row id="769">
+                        <cell id="770">
+                            <property name="paddingLeft">1pt</property>
+                            <property name="textAlign">left</property>
+                            <image name="defaultLogo" id="12230">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["imgTradeMark"]!=null || row["imgLogo"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgTradeMark</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgLogo</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
+                            <image name="customLogo" id="12231">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["imgTradeMark"]!=null || row["img"]==null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgTradeMark</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image name="trademarkLogo" id="12188">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                        </cell>
+                        <cell id="772">
+                            <label id="773">
+                                <property name="style">becpg-header-type</property>
+                                <text-property name="text" key="compoQualiQuantiTitle">COMPOSITION QUALITATIVE ET QUANTITATIVE</text-property>
+                            </label>
+                            <data id="3333">
+                                <property name="style">becpg-header-title</property>
+                                <property name="fontSize">9pt</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">title</property>
+                                        <expression name="expression" type="javascript">if(dataSetRow["title"] != null &amp;&amp; dataSetRow["title"] != ""){ dataSetRow["title"] } else { dataSetRow["name"] }</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">title</property>
+                            </data>
+                        </cell>
+                        <cell id="776">
+                            <grid id="777">
+                                <property name="style">becpg-meta-grid</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">created</property>
+                                        <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">modified</property>
+                                        <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">code</property>
+                                        <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">versionLabelToShow</property>
+                                        <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <column id="778">
+                                    <property name="width">55%</property>
+                                </column>
+                                <column id="1519"/>
+                                <row id="7352">
+                                    <cell id="7260">
+                                        <label id="3406">
+                                            <text-property name="text" key="created">Créé le :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="7261">
+                                        <data id="3407">
+                                            <property name="resultSetColumn">created</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="779">
+                                    <cell id="780">
+                                        <label id="1520">
+                                            <text-property name="text" key="modified">Modifié le :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1516">
+                                        <data id="1522">
+                                            <property name="resultSetColumn">modified</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="783">
+                                    <cell id="784">
+                                        <label id="1521">
+                                            <text-property name="text" key="codeWithColon">Code beCPG :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1517">
+                                        <data id="1523">
+                                            <property name="resultSetColumn">code</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="785">
+                                    <cell id="786">
+                                        <label id="787">
+                                            <text-property name="text" key="version">Version :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="788">
+                                        <data id="789">
+                                            <property name="resultSetColumn">versionLabelToShow</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <!-- Table 1: Formula Composition -->
+        <table id="12270">
+            <property name="style">becpg-table</property>
+            <property name="width">100%</property>
+            <property name="dataSet">compoListDirect</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">erpCode</property>
+                    <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListProduct</property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListProduct"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListQty</property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQty"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListUnit</property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="12271">
+                <property name="width">20%</property>
+            </column>
+            <column id="12272">
+                <property name="width">55%</property>
+            </column>
+            <column id="12273">
+                <property name="width">25%</property>
+            </column>
+            <header>
+                <row id="12252">
+                    <property name="style">becpg-chapter-header</property>
+                    <cell id="12253">
+                        <property name="colSpan">3</property>
+                        <property name="style">becpg-chapter-header</property>
+                        <label id="12254">
+                            <property name="style">becpg-chapter-header</property>
+                            <text-property name="text" key="formulaComposition">COMPOSITION DE LA FORMULE</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="12274">
+                    <cell id="12275">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12276">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="rawMaterialCode">Code MP</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12277">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12278">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="rawMaterialName">Intitulé MP / Composant</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12279">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12280">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="quantityProportion">Quantité / Proportion</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="12281">
+                    <cell id="12282">
+                        <data id="12283">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">erpCode</property>
+                        </data>
+                    </cell>
+                    <cell id="12284">
+                        <data id="12285">
+                            <property name="style">becpg-cell-data-left</property>
+                            <property name="resultSetColumn">compoListProduct</property>
+                        </data>
+                    </cell>
+                    <cell id="12286">
+                        <data id="12287">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">compoListQty</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+
+        <label id="12289">
+            <text-property name="text"> </text-property>
+        </label>
+
+        <!-- Table 2: INCI Ingredient List (Matching Image 1 / Image 3) -->
+        <table id="12300">
+            <property name="style">becpg-table</property>
+            <property name="marginTop">12pt</property>
+            <property name="width">100%</property>
+            <property name="dataSet">ingListDirect</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ingListIng</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListQtyPerc</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListIsGMO</property>
+                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) : (dataSetRow["ingListIsGMO"] != null ? dataSetRow["ingListIsGMO"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListIsIonized</property>
+                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) : (dataSetRow["ingListIsIonized"] != null ? dataSetRow["ingListIsIonized"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">auxTech</property>
+                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">support</property>
+                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListGeoOrigin</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"] != null ? dataSetRow["ingListGeoOrigin"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListGeoTransfo</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"] != null ? dataSetRow["ingListGeoTransfo"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListBioOrigin</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"] != null ? dataSetRow["ingListBioOrigin"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListClaims</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListClaims"] != null ? dataSetRow["ingListClaims"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="12301">
+                <property name="width">18%</property>
+            </column>
+            <column id="12302">
+                <property name="width">10%</property>
+            </column>
+            <column id="12303">
+                <property name="width">8%</property>
+            </column>
+            <column id="12304">
+                <property name="width">8%</property>
+            </column>
+            <column id="12305">
+                <property name="width">10%</property>
+            </column>
+            <column id="12306">
+                <property name="width">8%</property>
+            </column>
+            <column id="12307">
+                <property name="width">10%</property>
+            </column>
+            <column id="12308">
+                <property name="width">10%</property>
+            </column>
+            <column id="12309">
+                <property name="width">9%</property>
+            </column>
+            <column id="12310">
+                <property name="width">9%</property>
+            </column>
+            <header>
+                <row id="12292">
+                    <property name="style">becpg-chapter-header</property>
+                    <cell id="12293">
+                        <property name="colSpan">10</property>
+                        <property name="style">becpg-chapter-header</property>
+                        <label id="12294">
+                            <property name="style">becpg-chapter-header</property>
+                            <text-property name="text" key="ingredientsListTitle">LISTE D'INGRÉDIENTS</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="12311">
+                    <cell id="12312">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12313">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="ingredient">Ingrédient</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12314">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12315">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12316">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12317">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="gmo">OGM</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12318">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12319">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="ionization">Ionisation</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12320">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12321">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="processingAid">Auxiliaire techno.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12322">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12323">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="carrier">Support</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12324">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12325">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="geographicOrigin">Origine géo.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12326">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12327">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="transformationCountry">Pays de transformation</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12328">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12329">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="organicOrigin">Origine bio.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12330">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="12331">
+                            <property name="style">becpg-cell-header</property>
+                            <text-property name="text" key="claims">Allégations</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="12332">
+                    <cell id="12333">
+                        <data id="12334">
+                            <property name="style">becpg-cell-data-left</property>
+                            <property name="resultSetColumn">ingListIng</property>
+                        </data>
+                    </cell>
+                    <cell id="12335">
+                        <data id="12336">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListQtyPerc</property>
+                        </data>
+                    </cell>
+                    <cell id="12337">
+                        <data id="12338">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListIsGMO</property>
+                        </data>
+                    </cell>
+                    <cell id="12339">
+                        <data id="12340">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListIsIonized</property>
+                        </data>
+                    </cell>
+                    <cell id="12341">
+                        <data id="12342">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">auxTech</property>
+                        </data>
+                    </cell>
+                    <cell id="12343">
+                        <data id="12344">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">support</property>
+                        </data>
+                    </cell>
+                    <cell id="12345">
+                        <data id="12346">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListGeoOrigin</property>
+                        </data>
+                    </cell>
+                    <cell id="12347">
+                        <data id="12348">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListGeoTransfo</property>
+                        </data>
+                    </cell>
+                    <cell id="12349">
+                        <data id="12350">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListBioOrigin</property>
+                        </data>
+                    </cell>
+                    <cell id="12351">
+                        <data id="12352">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListClaims</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

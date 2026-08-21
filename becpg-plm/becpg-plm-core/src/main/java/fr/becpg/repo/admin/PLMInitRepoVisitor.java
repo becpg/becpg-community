@@ -173,6 +173,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuanti.rptdesign";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME = "path.productreportcompoqualiquantitemplate";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuantiForPIF.rptdesign";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME = "path.productreportcompoqualiquantiforpiftemplate";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -228,7 +230,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
-		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH, "annexe-compo-quali-quanti");
+		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, "annexe-compo-quali-quanti");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -1883,6 +1885,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
 			String productReportCompoQualiQuantiName = I18NUtil.getMessage(PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME, Locale.getDefault());
+			String productReportCompoQualiQuantiForPIFName = I18NUtil.getMessage(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME, Locale.getDefault());
 			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
 			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 
@@ -1895,8 +1898,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
 					productReportPackagingName, productReportSupplierName, productReportClientName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName, productReportCompoQualiQuantiName }, null, null, null, null, { productReportProductionName, productReportCostName } };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName, productReportCompoQualiQuantiName, productReportCompoQualiQuantiForPIFName }, null, null, null, null, { productReportProductionName, productReportCostName } };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
