@@ -393,7 +393,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
             reportTplInformation.setReportFormat(ReportFormat.PDF);
             reportTplInformation.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
             reportTplInformation.setDefaultTpl(false);
-            reportTplInformation.setSystemTpl(true);
+            reportTplInformation.setSystemTpl(false);
             reportTplInformation.setResources(aggResources);
             
             NodeRef templateNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "SpecTechAggIT", "beCPG/birt/document/product/default/TestAggregateReport.rptdesign",
