@@ -47,6 +47,7 @@ import fr.becpg.common.dom.DOMUtils;
 public class OlapChart {
 
 	private NodeRef nodeRef;
+	private String fileName;
 	private String queryName;
 	private String queryId;
 	private String mdx;
@@ -64,8 +65,26 @@ public class OlapChart {
 	 */
 	public OlapChart(FileInfo fileInfo) {
 		super();
-		this.queryName = fileInfo.getName().replace(".saiku", "");
+		this.fileName = fileInfo.getName();
+		// #24931: queryName is the display label and drops the extension. Strip it from the end
+		// only: a plain replace turns "Sales.saikudash" into "Salesdash", which is neither a
+		// usable label nor a name any caller can map back to the stored file.
+		this.queryName = stripExtension(fileInfo.getName());
 		this.nodeRef = fileInfo.getNodeRef();
+	}
+
+	private static String stripExtension(String name) {
+		int dot = name.lastIndexOf('.');
+		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	/**
+	 * <p>Getter for the field <code>fileName</code>.</p>
+	 *
+	 * @return the stored file name, extension included
+	 */
+	public String getFileName() {
+		return fileName;
 	}
 
 	/**
@@ -191,6 +210,7 @@ public class OlapChart {
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
+		obj.put("fileName", fileName);
 		obj.put("queryId", queryId);
 		obj.put("cube", cube);
 		obj.put("type", type);
