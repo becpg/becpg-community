@@ -154,9 +154,6 @@
 				<Level name="state" caption="${msg("jsolap.supplierState.title")}" column="supplierState" type="String">
 				</Level>
 			</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     their ancestors they were qualified by them, so one family produced one row per
-			     ancestor instead of a single aggregated row. -->
 			<Hierarchy name="supplierFamily" caption="${msg("jsolap.supplierFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entityNodeRef">
 				<View name="suppliers" alias="suppliers">
 								<SQL dialect="generic">
@@ -263,9 +260,6 @@
 				</MemberFormatter>
 				</Level>
 			</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     their ancestors they were qualified by them, so one family produced one row per
-			     ancestor instead of a single aggregated row. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">
 				<View name="products_dim" alias="products_dim">
 					<SQL dialect="generic">
@@ -546,9 +540,6 @@
 				</MemberFormatter>
 				</Level>
 			</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     their ancestors they were qualified by them, so one family produced one row per
-			     ancestor instead of a single aggregated row. -->
 			<Hierarchy name="sourceProductFamily" caption="${msg("jsolap.srcProductFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="dataListNodeRef">
 				<View name="rclSources" alias="rclSources">
 						<SQL dialect="generic">
@@ -1002,9 +993,6 @@
 			<Hierarchy name="entity_dim" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
 				<Level name="entity_noderef" caption="${msg("jsolap.entity.title")}" column="entityNodeRef" nameColumn="entityName" type="String" highCardinality="true"  />
 				</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     their ancestors they were qualified by them, so one family produced one row per
-			     ancestor instead of a single aggregated row. -->
 			<Hierarchy name="entityFamily" caption="${msg("jsolap.entityFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
 				<Level name="entityHierarchy1" caption="${msg("jsolap.entityFamily.title")}" column="entityHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="entityHierarchy2" caption="${msg("jsolap.entitySubFamily.title")}" column="entityHierarchy2" type="String" />
@@ -1435,9 +1423,6 @@
 				</MemberFormatter>
 				</Level>
 			</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     productState they were qualified by their ancestors, so one family produced one row
-			     per state instead of a single aggregated row. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -1579,9 +1564,6 @@
 				</MemberFormatter>
 				</Level>
 			</Hierarchy>
-			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
-			     productState they were qualified by their ancestors, so one family produced one row
-			     per state instead of a single aggregated row. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2174,7 +2156,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2285,7 +2266,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2393,7 +2373,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2500,7 +2479,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2606,7 +2584,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
@@ -2712,7 +2689,6 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName" type="String" highCardinality="true" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" />
 			</Hierarchy>
-			<!-- beCPG #23077: family lives in its own hierarchy so that it aggregates over its ancestors. -->
 			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
 				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
