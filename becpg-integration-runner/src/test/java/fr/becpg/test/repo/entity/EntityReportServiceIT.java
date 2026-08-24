@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -731,10 +733,18 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		}
 
 		inReadTx(() -> {
-			assertFalse("reports should have been generated",
-					associationService.getTargetAssocs(productNodeRef, ReportModel.ASSOC_REPORTS).isEmpty());
+			List<NodeRef> reports = associationService.getTargetAssocs(productNodeRef, ReportModel.ASSOC_REPORTS);
+			assertFalse("reports should have been generated", reports.isEmpty());
 			assertEquals("generating a report must leave cm:modified alone on the entity", modifiedBefore,
 					nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED));
+
+			// One run stamps every report it writes with the same generation date. Distinct dates
+			// mean the auditable behaviour overwrote the value the service set on the document.
+			Set<Object> stamps = new HashSet<>();
+			for (NodeRef report : reports) {
+				stamps.add(nodeService.getProperty(report, ContentModel.PROP_MODIFIED));
+			}
+			assertEquals("the reports of one generation should all carry its date, got " + stamps, 1, stamps.size());
 			return null;
 		});
 	}

@@ -228,26 +228,27 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	}
 
 	/**
-	 * Runs the callback in its own transaction, with the auditable behaviour of the entity
-	 * suppressed inside that transaction.
+	 * Runs the callback in its own transaction, with the auditable behaviour of the given node
+	 * suppressed inside that transaction. Pass the node the callback writes to: the entity for
+	 * the ones that touch the product, the report document for the ones that touch the report.
 	 *
 	 * Alfresco binds the behaviour filter to the transaction and clears it on completion, so a
 	 * suppression taken around several transactions holds for the first one only. Now that
 	 * generation no longer runs in a single transaction, suppressing it inside each of them is
-	 * what keeps cm:modified off the entity. Rules need no such care: their suppression is bound
-	 * to the thread, not to the transaction.
+	 * what keeps cm:modified where the caller put it. Rules need no such care: their suppression
+	 * is bound to the thread, not to the transaction.
 	 */
-	private <T> T inTransaction(NodeRef entityNodeRef, RetryingTransactionCallback<T> callback, boolean readOnly) {
+	private <T> T inTransaction(NodeRef auditableOff, RetryingTransactionCallback<T> callback, boolean readOnly) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			boolean auditableEnabled = policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			boolean auditableEnabled = policyBehaviourFilter.isEnabled(auditableOff, ContentModel.ASPECT_AUDITABLE);
 			if (auditableEnabled) {
-				policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(auditableOff, ContentModel.ASPECT_AUDITABLE);
 			}
 			try {
 				return callback.execute();
 			} finally {
 				if (auditableEnabled) {
-					policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.enableBehaviour(auditableOff, ContentModel.ASPECT_AUDITABLE);
 				}
 			}
 		}, readOnly);
@@ -555,7 +556,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									 */
 									ReportEngineSetup setup = inTransaction(entityNodeRef, () -> {
 										BeCPGReportEngine reportEngine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
-										policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 										return new ReportEngineSetup(reportEngine, retrieveExtractor(entityNodeRef, reportEngine),
 												contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true));
 									}, false);
@@ -657,7 +657,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 											engineErrors.addAll(reportData.getLogs());
 											
-											inTransaction(entityNodeRef, () -> {
+											inTransaction(documentNodeRef, () -> {
 												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
 												return null;
 											}, false);
@@ -667,7 +667,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 											logger.debug("Mark durty report: " + entityNodeRef + " for document " + documentName + " ("
 													+ documentNodeRef + ")");
 											
-											inTransaction(entityNodeRef, () -> {
+											inTransaction(documentNodeRef, () -> {
 												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
 												return null;
 											}, false);
@@ -679,7 +679,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 										final Boolean reportIsDefault = isDefault;
 
 										/* Writes only, in one short transaction of their own. */
-										inTransaction(entityNodeRef, () -> {
+										inTransaction(documentNodeRef, () -> {
 
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
@@ -719,8 +719,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(tplNodeRef)));
 									
 									logger.error(message, e);
-								} finally {
-									policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 								}
 								
 								// Set Assoc
