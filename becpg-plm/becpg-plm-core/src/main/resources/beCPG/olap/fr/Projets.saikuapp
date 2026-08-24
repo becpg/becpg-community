@@ -1,1 +1,168 @@
-{"id": "projets", "name": "Projets", "version": 1, "theme": {"mode": "light", "ground": "#f4f7f8", "surface": "#ffffff", "fg": "#0d2b33", "muted": "#5b7780", "accent": "#009dcc"}, "nav": {"position": "rail", "railFullHeight": true, "footer": {"settings": true}}, "header": {"wordmarkAccent": "jets", "eyebrow": "beCPG", "liveBadge": "En direct"}, "assistantSlot": {"enabled": true, "title": "Assistant projets", "persona": "Analyste du portefeuille projets beCPG", "scope": "Répondre uniquement sur les cubes projects, projectsSteps et evaluation.", "greeting": "Posez une question sur l'avancement, l'entonnoir ou les évaluations.", "suggestedPrompts": ["Tâches par étape du processus", "Avancement moyen par chef de projet", "Notes d'évaluation par critère"]}, "tags": ["beCPG", "projet"], "pages": [{"id": "entonnoir", "title": "Entonnoir", "icon": "filter", "heading": "Entonnoir des projets", "subheading": "Répartition par étape et par famille", "grid": {"cols": 12, "tiles": [{"id": "t1", "x": 0, "y": 0, "w": 7, "h": 6, "type": "chart", "title": "Tâches par étape", "query": {"kind": "reference", "path": "/Entonnoir - taches par etape.saiku"}, "chartType": "bar"}, {"id": "t2", "x": 7, "y": 0, "w": 5, "h": 6, "type": "chart", "title": "Projets par famille", "query": {"kind": "reference", "path": "/Entonnoir - projets par famille.saiku"}, "chartType": "pie"}, {"id": "t3", "x": 0, "y": 6, "w": 12, "h": 4, "type": "chart", "title": "Projets créés par mois", "query": {"kind": "reference", "path": "/Nombre de projets créés par années-mois.saiku"}, "chartType": "line"}]}}, {"id": "avancement", "title": "Avancement", "icon": "activity", "heading": "Avancement et retards", "subheading": "Suivi par chef de projet", "grid": {"cols": 12, "tiles": [{"id": "t1", "x": 0, "y": 0, "w": 12, "h": 6, "type": "table", "title": "Avancement et retard", "query": {"kind": "reference", "path": "/Projets - suivi de l'avancement.saiku"}}]}}, {"id": "evaluation", "title": "Évaluation", "icon": "star", "heading": "Évaluation des projets", "subheading": "Notes par critère et par projet", "grid": {"cols": 12, "tiles": [{"id": "t1", "x": 0, "y": 0, "w": 6, "h": 6, "type": "chart", "title": "Notes par critère", "query": {"kind": "reference", "path": "/Evaluation - notes par critere.saiku"}, "chartType": "bar"}, {"id": "t2", "x": 6, "y": 0, "w": 6, "h": 6, "type": "chart", "title": "Notes par projet", "query": {"kind": "reference", "path": "/Evaluation - notes par projet.saiku"}, "chartType": "bar"}]}}]}
+{
+ "id": "projets",
+ "name": "Projets",
+ "version": 1,
+ "theme": {
+  "mode": "light",
+  "ground": "#f4f7f8",
+  "surface": "#ffffff",
+  "fg": "#0d2b33",
+  "muted": "#5b7780",
+  "accent": "#009dcc"
+ },
+ "nav": {
+  "position": "rail",
+  "railFullHeight": true,
+  "footer": {
+   "settings": true
+  }
+ },
+ "header": {
+  "wordmarkAccent": "jets",
+  "eyebrow": "beCPG",
+  "liveBadge": "En direct"
+ },
+ "assistantSlot": {
+  "enabled": true,
+  "title": "Assistant projets",
+  "persona": "Analyste du portefeuille projets beCPG",
+  "scope": "Répondre uniquement sur les cubes projects, projectsSteps et evaluation.",
+  "greeting": "Posez une question sur l'avancement, l'entonnoir ou les évaluations.",
+  "suggestedPrompts": [
+   "Tâches par étape du processus",
+   "Avancement moyen par chef de projet",
+   "Notes d'évaluation par critère"
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "projects"
+  }
+ },
+ "tags": [
+  "beCPG",
+  "projet"
+ ],
+ "pages": [
+  {
+   "id": "entonnoir",
+   "title": "Entonnoir",
+   "icon": "filter",
+   "heading": "Entonnoir des projets",
+   "subheading": "Répartition par étape et par famille",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 7,
+      "h": 6,
+      "type": "chart",
+      "title": "Tâches par étape",
+      "query": {
+       "kind": "reference",
+       "path": "/Entonnoir - taches par etape.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 7,
+      "y": 0,
+      "w": 5,
+      "h": 6,
+      "type": "chart",
+      "title": "Projets par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/Entonnoir - projets par famille.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 6,
+      "w": 12,
+      "h": 4,
+      "type": "chart",
+      "title": "Projets créés par mois",
+      "query": {
+       "kind": "reference",
+       "path": "/Nombre de projets créés par années-mois.saiku"
+      },
+      "chartType": "line"
+     }
+    ]
+   }
+  },
+  {
+   "id": "avancement",
+   "title": "Avancement",
+   "icon": "activity",
+   "heading": "Avancement et retards",
+   "subheading": "Suivi par chef de projet",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 6,
+      "type": "table",
+      "title": "Avancement et retard",
+      "query": {
+       "kind": "reference",
+       "path": "/Projets - suivi de l'avancement.saiku"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "evaluation",
+   "title": "Évaluation",
+   "icon": "star",
+   "heading": "Évaluation des projets",
+   "subheading": "Notes par critère et par projet",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 6,
+      "type": "chart",
+      "title": "Notes par critère",
+      "query": {
+       "kind": "reference",
+       "path": "/Evaluation - notes par critere.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 6,
+      "type": "chart",
+      "title": "Notes par projet",
+      "query": {
+       "kind": "reference",
+       "path": "/Evaluation - notes par projet.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  }
+ ]
+}

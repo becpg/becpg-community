@@ -32,7 +32,13 @@
    "Top 10 suppliers",
    "Planned versus actual duration of portal tasks",
    "Unmet requirements"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "products"
+  }
  },
  "tags": [
   "beCPG",

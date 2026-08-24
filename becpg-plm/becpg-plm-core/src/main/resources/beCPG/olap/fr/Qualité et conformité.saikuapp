@@ -32,7 +32,13 @@
    "Score réglementaire par classe",
    "Certifications par organisme",
    "Exigences non respectées"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "regulatoryScores"
+  }
  },
  "tags": [
   "conformite",

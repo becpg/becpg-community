@@ -32,7 +32,13 @@
    "Répartition des produits par état",
    "Rentabilité moyenne par famille",
    "Produits par Nutri-Score"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "products"
+  }
  },
  "tags": [
   "beCPG",

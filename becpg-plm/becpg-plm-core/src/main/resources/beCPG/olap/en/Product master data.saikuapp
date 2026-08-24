@@ -32,7 +32,13 @@
    "Breakdown of products per state",
    "Average profitability per family",
    "Products per Nutri-Score"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "products"
+  }
  },
  "tags": [
   "beCPG",

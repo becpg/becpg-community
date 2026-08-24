@@ -32,7 +32,13 @@
    "Regulatory score by class",
    "Certifications by body",
    "Unmet requirements"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "regulatoryScores"
+  }
  },
  "tags": [
   "conformite",

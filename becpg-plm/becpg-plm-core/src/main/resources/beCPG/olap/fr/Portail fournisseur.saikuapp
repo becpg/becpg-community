@@ -32,7 +32,13 @@
    "Top 10 des fournisseurs",
    "Durée prévue contre réelle des tâches du portail",
    "Exigences non respectées"
-  ]
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "products"
+  }
  },
  "tags": [
   "beCPG",
