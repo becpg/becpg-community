@@ -175,10 +175,10 @@
       "w": 6,
       "h": 5,
       "type": "chart",
-      "title": "Average packaging cost per family",
+      "title": "Packaging weight by family",
       "query": {
        "kind": "reference",
-       "path": "/Average packaging cost per family.saiku"
+       "path": "/Packaging materials - weight by product family.saiku"
       },
       "chartType": "bar"
      },
@@ -349,6 +349,73 @@
       "query": {
        "kind": "reference",
        "path": "/Packaging - most used components.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "scores",
+   "title": "Scores",
+   "icon": "gauge",
+   "heading": "Product scores",
+   "subheading": "Nutri-Score, Eco-Score and the beCPG regulatory score framework",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t19",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Scores by definition",
+      "query": {
+       "kind": "reference",
+       "path": "/Scores - breakdown by definition.saiku"
+      }
+     },
+     {
+      "id": "t20",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Nutri-Score breakdown",
+      "query": {
+       "kind": "reference",
+       "path": "/FP per Nutri-Score.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t21",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Eco-Score breakdown",
+      "query": {
+       "kind": "reference",
+       "path": "/FP per Eco-Score.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t22",
+      "x": 0,
+      "y": 10,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Classes by definition",
+      "query": {
+       "kind": "reference",
+       "path": "/Scores - classes by definition.saiku"
       },
       "chartType": "bar"
      }
