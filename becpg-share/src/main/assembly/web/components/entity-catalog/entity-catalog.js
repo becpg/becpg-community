@@ -70,6 +70,24 @@
         },
 
         /**
+         * Announces that the catalog call has formulated the entity.
+         *
+         * The catalog webscript formulates the entity when it is out of date, but it runs
+         * next to the rendering of the properties, not before it: the formulated values on
+         * screen are the ones from before the formulation. Views showing those values
+         * listen to this event to put themselves back in step, in the background, without
+         * delaying the first render.
+         *
+         * @method fireFormulatedEvent
+         * @param json {Object} the catalog response
+         */
+        fireFormulatedEvent: function EntityCatalog_fireFormulatedEvent(json) {
+            if (json && json.formulated === true) {
+                YAHOO.Bubbling.fire("entityFormulated", { nodeRef: this.options.entityNodeRef });
+            }
+        },
+
+        /**
          * Updates the Save button state based on catalog loading.
          *
          * @method updateSubmitButtonState
@@ -354,6 +372,8 @@
                             instance.updateSubmitButtonState();
                         }
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
+
+                        instance.fireFormulatedEvent(response.json);
                     },
                     scope: instance
                 },
