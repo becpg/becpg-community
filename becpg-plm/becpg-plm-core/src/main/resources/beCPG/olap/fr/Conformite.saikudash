@@ -1,0 +1,1 @@
+{"id": "conformite", "name": "Conformite", "version": 1, "layout": {"cols": 12, "tiles": [{"id": "t1", "x": 0, "y": 0, "w": 12, "h": 6, "type": "chart", "title": "Exigences non respectées", "query": {"kind": "reference", "path": "/Conformite - exigences non respectees.saiku"}, "chartType": "bar"}]}, "filters": [], "tags": ["beCPG"]}

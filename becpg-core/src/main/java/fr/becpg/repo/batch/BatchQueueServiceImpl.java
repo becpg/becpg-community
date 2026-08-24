@@ -3,6 +3,8 @@ package fr.becpg.repo.batch;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Deque;
@@ -497,23 +499,19 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						stepCount++;
 					}
 					
-					BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.toJson().toString(),
-							transactionService.getRetryingTransactionHelper(),
-							getNextWorkWrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(),
-							batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
+					StepOutcome outcome = Boolean.FALSE.equals(batchStep.getTransactional()) ? runStepOutsideTransaction(batchStep)
+							: runStepInTransaction(batchStep);
 
-					batchProcessor.processLong(runAsWrapper(batchStep), true);
+					totalItems += outcome.items();
+					totalErrors += outcome.errors();
 
-					totalItems += batchProcessor.getTotalResultsLong();
-					totalErrors += batchProcessor.getTotalErrorsLong();
-
-					if (batchProcessor.getTotalErrorsLong() > 0) {
+					if (outcome.errors() > 0) {
 						hasError = true;
 						if (batchStep.getBatchStepListener() != null) {
 							AuthenticationUtil
 							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
-										batchProcessor.getLastError());
+								batchStep.getBatchStepListener().onError(outcome.lastErrorEntryId(),
+										outcome.lastError());
 								return null;
 								
 							}, false, true), batchInfo.getBatchUser());
@@ -649,6 +647,75 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 				
 			};
+		}
+
+		/** What a step reported, whichever way it was run. */
+		private record StepOutcome(long items, long errors, String lastErrorEntryId, String lastError) {
+		}
+
+		/** The default: Alfresco's BatchProcessor opens a transaction around every entry. */
+		private StepOutcome runStepInTransaction(BatchStep<T> batchStep) {
+			BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.toJson().toString(),
+					transactionService.getRetryingTransactionHelper(),
+					getNextWorkWrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(),
+					batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
+
+			batchProcessor.processLong(runAsWrapper(batchStep), true);
+
+			return new StepOutcome(batchProcessor.getTotalResultsLong(), batchProcessor.getTotalErrorsLong(),
+					batchProcessor.getLastErrorEntryId(), batchProcessor.getLastError());
+		}
+
+		/**
+		 * Runs the step without opening a transaction around it, for work that waits
+		 * on something other than the database and must not hold a transaction while
+		 * it does. The worker takes care of its own transactions.
+		 *
+		 * Everything the transactional path offers is kept: the same wrapper, so the
+		 * same authentication, pause and cancellation handling and the same progress
+		 * counter; one entry at a time, so a pause is honoured between entries; and an
+		 * entry that throws is counted and logged without stopping the rest, as
+		 * BatchProcessor does.
+		 */
+		private StepOutcome runStepOutsideTransaction(BatchStep<T> batchStep) {
+			BatchProcessWorker<T> worker = runAsWrapper(batchStep);
+			BatchProcessWorkProvider<T> workProvider = getNextWorkWrapper(batchStep.getWorkProvider());
+
+			long items = 0;
+			long errors = 0;
+			String lastErrorEntryId = null;
+			String lastError = null;
+
+			for (Collection<T> batch = workProvider.getNextWork(); (batch != null) && !batch.isEmpty(); batch = workProvider
+					.getNextWork()) {
+				for (T entry : batch) {
+					try {
+						worker.beforeProcess();
+						try {
+							worker.process(entry);
+							items++;
+						} finally {
+							worker.afterProcess();
+						}
+					} catch (Throwable t) { //NOSONAR - an entry must not take the batch down with it
+						errors++;
+						lastErrorEntryId = worker.getIdentifier(entry);
+						lastError = asReportedByBatchProcessor(t);
+						logger.error("Batch '" + batchId + "' failed on entry '" + lastErrorEntryId + "'", t);
+					}
+				}
+			}
+
+			return new StepOutcome(items, errors, lastErrorEntryId, lastError);
+		}
+
+		/** Same shape as BatchProcessor.getLastError, so listeners see one thing. */
+		private String asReportedByBatchProcessor(Throwable t) {
+			StringWriter buff = new StringWriter(1024);
+			try (PrintWriter out = new PrintWriter(buff)) {
+				t.printStackTrace(out);
+			}
+			return buff.toString();
 		}
 
 		private BatchProcessWorker<T> runAsWrapper(BatchStep<T> batchStep) {

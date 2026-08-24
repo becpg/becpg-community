@@ -45,11 +45,12 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 		NodeRef entityNodeRef = findEntity(req);
 
 		/*
-		 * Une fois le flux de la réponse pris, le conteneur ne peut plus rendre
-		 * d'erreur : renderErrorResponse demande le writer et échoue sur
-		 * « getOutputStream() a déjà été appelé », ce qui remplace la cause réelle
-		 * par un message sur la réponse. Passé ce point, on journalise et on rend
-		 * la main, l'appelant a déjà le corps tronqué.
+		 * Once the response output stream has been taken, the container can no longer
+		 * render an error into it: renderErrorResponse asks for the writer and fails
+		 * on "getOutputStream() has already been called", which replaces the real
+		 * cause with a message about the response. Past that point the cause is
+		 * logged here instead, and the request ends on the truncated body the caller
+		 * already holds.
 		 */
 		boolean streaming = false;
 

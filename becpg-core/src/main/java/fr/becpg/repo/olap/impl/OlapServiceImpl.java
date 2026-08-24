@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
@@ -41,6 +45,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.OlapUtils;
 import fr.becpg.repo.olap.data.OlapChart;
@@ -77,6 +82,12 @@ public class OlapServiceImpl implements OlapService {
 	private FileFolderService fileFolderService;
 
 	@Autowired
+	private PersonService personService;
+
+	@Autowired
+	private NodeService nodeService;
+
+	@Autowired
 	private ContentService contentService;
 
 	@Autowired
@@ -91,31 +102,103 @@ public class OlapServiceImpl implements OlapService {
 	public List<OlapChart> retrieveOlapCharts() {
 		List<OlapChart> olapCharts = new ArrayList<>();
 
-		NodeRef olapQueriesFolder = getOlapQueriesFolder();
-		if (olapQueriesFolder == null) {
+		NodeRef sharedFolder = getOlapQueriesFolder();
+		if (sharedFolder == null) {
 			logger.warn("OLAP queries folder not found, returning empty chart list");
-			return olapCharts;
+		} else {
+			collectCharts(sharedFolder, olapCharts);
 		}
 
-		for (FileInfo fileInfo : fileFolderService.list(olapQueriesFolder)) {
-
-			if (fileInfo.getName().endsWith(".saiku")) {
-				try {
-					OlapChart chart = new OlapChart(fileInfo);
-
-					ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
-
-					chart.load(reader.getContentString());
-
-					olapCharts.add(chart);
-				} catch (Exception e) {
-					logger.error(e, e);
-				}
-			}
-
-		}
+		collectCharts(getPersonalOlapQueriesFolder(), olapCharts);
 
 		return olapCharts;
+	}
+
+	/**
+	 * Adds every {@code .saiku} document of a folder to the chart list.
+	 *
+	 * @param folder the folder to read, ignored when null
+	 * @param olapCharts the list to fill
+	 */
+	private void collectCharts(NodeRef folder, List<OlapChart> olapCharts) {
+		if (folder == null) {
+			return;
+		}
+
+		for (FileInfo fileInfo : fileFolderService.list(folder)) {
+			if (!fileInfo.getName().endsWith(OlapChart.SAIKU_EXTENSION)) {
+				continue;
+			}
+			try {
+				OlapChart chart = new OlapChart(fileInfo);
+				ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
+				chart.load(reader.getContentString());
+				olapCharts.add(chart);
+			} catch (Exception e) {
+				logger.error(e, e);
+			}
+		}
+	}
+
+	/**
+	 * Resolves the current user's personal OLAP query folder.
+	 *
+	 * <p>beCPG OLAP saves a user's own queries under their home folder rather than in the shared
+	 * system space, so the dashlet has to read both. The folder carries the localised name of
+	 * {@code path.olapqueries}; every translation is accepted, because the folder may have been
+	 * created by an OLAP session running in another language than this repository's default.
+	 *
+	 * @return the folder, or null when the user has none
+	 */
+	private NodeRef getPersonalOlapQueriesFolder() {
+		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		if (userName == null) {
+			return null;
+		}
+
+		NodeRef person = personService.getPersonOrNull(userName);
+		if (person == null) {
+			return null;
+		}
+
+		NodeRef homeFolder = (NodeRef) nodeService.getProperty(person, ContentModel.PROP_HOMEFOLDER);
+		if (homeFolder == null) {
+			return null;
+		}
+
+		for (String candidate : personalFolderNames()) {
+			NodeRef folder = nodeService.getChildByName(homeFolder, ContentModel.ASSOC_CONTAINS, candidate);
+			if (folder != null) {
+				return folder;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Names the personal query folder can carry: this repository's locale first, then every other
+	 * translation of {@code path.olapqueries}.
+	 *
+	 * @return the candidate folder names, never null
+	 */
+	private static List<String> personalFolderNames() {
+		List<String> names = new ArrayList<>();
+
+		String preferred = TranslateHelper.getTranslatedPath(RepoConsts.PATH_OLAP_QUERIES);
+		if (preferred != null) {
+			names.add(preferred);
+		}
+
+		MLText translations = TranslateHelper.getTranslatedPathMLText(RepoConsts.PATH_OLAP_QUERIES);
+		if (translations != null) {
+			for (String translation : translations.values()) {
+				if ((translation != null) && !names.contains(translation)) {
+					names.add(translation);
+				}
+			}
+		}
+
+		return names;
 	}
 
 	/** {@inheritDoc} */

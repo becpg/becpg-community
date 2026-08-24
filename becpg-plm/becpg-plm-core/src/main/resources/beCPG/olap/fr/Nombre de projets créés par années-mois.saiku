@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="EE36F407-9891-6450-B96E-F6FA4E2FC798" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="4FD75DF2-9B18-4023-A011-B70CE48CC087" type="QM" connection="beCPG" cube="[projects]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true">
         <Dimensions>
-          <Dimension name="productDateModified" hierarchizeMode="PRE" hierarchyConsistent="true">
+          <Dimension name="Measures">
             <Inclusions>
-              <Selection dimension="productDateModified" type="level" node="[productDateModified.date].[Year]" operator="MEMBERS" />
-              <Selection dimension="productDateModified" type="level" node="[productDateModified.date].[Month]" operator="MEMBERS" />
+              <Selection dimension="Measures" type="member" node="[Measures].[projectsNumber]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -15,9 +14,10 @@
       </Axis>
       <Axis location="COLUMNS" nonEmpty="true">
         <Dimensions>
-          <Dimension name="Measures">
+          <Dimension name="projectDateCreated" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="Measures" type="member" node="[Measures].[productNumber]" operator="MEMBER" />
+              <Selection dimension="projectDateCreated" type="level" node="[projectDateCreated.date].[Year]" operator="MEMBERS" />
+              <Selection dimension="projectDateCreated" type="level" node="[projectDateCreated.date].[Month]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -27,9 +27,9 @@
     </Axes>
   </QueryModel>
   <MDX>SELECT
-NON EMPTY {[Measures].[productNumber]} ON COLUMNS,
-NON EMPTY {Hierarchize({{[productDateModified.date].[Year].Members}, {[productDateModified.date].[Month].Members}})} ON ROWS
-FROM [products]</MDX>
+NON EMPTY {Hierarchize({{[projectDateCreated.date].[Year].Members}, {[projectDateCreated.date].[Month].Members}})} ON COLUMNS,
+NON EMPTY {[Measures].[projectsNumber]} ON ROWS
+FROM [projects]</MDX>
   <Properties>
     <Property name="saiku.ui.render.mode" value="table" />
     <Property name="org.saiku.query.explain" value="true" />

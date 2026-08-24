@@ -788,6 +788,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
 		if (Boolean.TRUE.equals(isOlapEnabled) && Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
+			// #24931: queries and dashboards carry their labels in the file, so they ship in two
+			// languages and the repository locale picks one, as the nutrient databases above do.
+			// The dashboards need their own pattern: ".saikudash" does not end with ".saiku".
+			String olapLanguage = Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage()) ? "fr" : "en";
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saiku");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikudash");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikuapp");
+			// Kept for anything another module drops straight into beCPG/olap.
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {

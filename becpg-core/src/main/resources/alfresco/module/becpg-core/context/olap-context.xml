@@ -26,4 +26,7 @@
 		<property name="olapService" ref="olapService" />
 	</bean>
 
+	<bean id="webscript.fr.becpg.olap.olapPaths.get" class="fr.becpg.repo.olap.webscripts.OlapPathsWebScript"
+		parent="webscript" />
+
 </beans>

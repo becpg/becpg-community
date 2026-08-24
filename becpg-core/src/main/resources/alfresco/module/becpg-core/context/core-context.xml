@@ -370,6 +370,9 @@
 				<entry key="transactionService">
 					<ref bean="transactionService" />
 				</entry>
+				<entry key="policyBehaviourFilter">
+					<ref bean="policyBehaviourFilter" />
+				</entry>
 			</map>
 		</property>
 	</bean>

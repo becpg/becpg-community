@@ -16,18 +16,18 @@
          "bcpg:legalName",
          "bcpg:erpCode",
          "bcpg:geoOrigin",
-         "formulaNutriscoreValues|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
          "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
-         "formulaIngOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
       ],
       "protectedFields": [
          "bcpg:productState"
       ],
       "modifiedField": "bcpg:modifiedCatalog1",
       "i18nMessages": {
-         "formulaNutriscoreValues": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
          "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
-         "formulaIngOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
       }
    },
    {
@@ -47,18 +47,18 @@
          "bcpg:legalName",
          "bcpg:erpCode",
          "cm:title",
-         "formulaNutriscoreValues|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
          "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
-         "formulaIngOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
       ],
       "protectedFields": [
          "bcpg:productState"
       ],
       "modifiedField": "bcpg:modifiedCatalog1",
       "i18nMessages": {
-         "formulaNutriscoreValues": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
          "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
-         "formulaIngOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
       }
    },
    {
@@ -77,18 +77,18 @@
       "fields": [
          "bcpg:legalName",
          "bcpg:erpCode",
-         "formulaNutriscoreValues|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
          "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
-         "formulaIngOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
       ],
       "protectedFields": [
          "bcpg:productState"
       ],
       "modifiedField": "bcpg:modifiedCatalog1",
       "i18nMessages": {
-         "formulaNutriscoreValues": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
          "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
-         "formulaIngOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
       }
    },
    {

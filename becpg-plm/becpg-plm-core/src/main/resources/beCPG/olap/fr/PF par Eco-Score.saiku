@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="A1B2C3D4-0003-4A00-9000-000000000003" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="A1B2C3D4-0002-4A00-9000-000000000002" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true">
         <Dimensions>
-          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+          <Dimension name="lcaScale" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="designation" type="level" node="[designation.productPerFamily].[productHierarchy1]" operator="MEMBERS" />
+              <Selection dimension="lcaScale" type="level" node="[lcaScale].[ecoScore]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -16,7 +16,7 @@
         <Dimensions>
           <Dimension name="Measures">
             <Inclusions>
-              <Selection dimension="Measures" type="member" node="[Measures].[unitProfitability]" operator="MEMBER" />
+              <Selection dimension="Measures" type="member" node="[Measures].[productNumber]" operator="MEMBER" />
             </Inclusions>
             <Exclusions />
           </Dimension>
@@ -35,8 +35,8 @@
     </Axes>
   </QueryModel>
   <MDX>SELECT
-NON EMPTY {[Measures].[unitProfitability]} ON COLUMNS,
-NON EMPTY {Hierarchize({[designation.productPerFamily].[productHierarchy1].Members})} ON ROWS
+NON EMPTY {[Measures].[productNumber]} ON COLUMNS,
+NON EMPTY {Hierarchize({[lcaScale].[ecoScore].Members})} ON ROWS
 FROM [products]
 WHERE {[productType].[Produit fini]}</MDX>
   <Properties>

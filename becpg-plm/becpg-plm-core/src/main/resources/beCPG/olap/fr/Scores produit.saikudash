@@ -1,0 +1,98 @@
+{
+ "id": "scores-produit",
+ "name": "Scores produit",
+ "version": 1,
+ "layout": {
+  "cols": 12,
+  "tiles": [
+   {
+    "id": "t1",
+    "x": 0,
+    "y": 0,
+    "w": 12,
+    "h": 6,
+    "type": "table",
+    "title": "Scores par définition",
+    "query": {
+     "kind": "reference",
+     "path": "/Scores - repartition par definition.saiku"
+    }
+   },
+   {
+    "id": "t2",
+    "x": 0,
+    "y": 6,
+    "w": 6,
+    "h": 6,
+    "type": "chart",
+    "title": "Classes par définition",
+    "query": {
+     "kind": "reference",
+     "path": "/Scores - classes par definition.saiku"
+    },
+    "chartType": "bar"
+   },
+   {
+    "id": "t3",
+    "x": 6,
+    "y": 6,
+    "w": 6,
+    "h": 6,
+    "type": "chart",
+    "title": "Score réglementaire par classe",
+    "query": {
+     "kind": "reference",
+     "path": "/Score reglementaire par classe.saiku"
+    },
+    "chartType": "bar"
+   },
+   {
+    "id": "t4",
+    "x": 0,
+    "y": 12,
+    "w": 6,
+    "h": 6,
+    "type": "chart",
+    "title": "Répartition Nutri-Score",
+    "query": {
+     "kind": "reference",
+     "path": "/PF par Nutri-Score.saiku"
+    },
+    "chartType": "pie"
+   },
+   {
+    "id": "t5",
+    "x": 6,
+    "y": 12,
+    "w": 6,
+    "h": 6,
+    "type": "chart",
+    "title": "Répartition Eco-Score",
+    "query": {
+     "kind": "reference",
+     "path": "/PF par Eco-Score.saiku"
+    },
+    "chartType": "pie"
+   },
+   {
+    "id": "t6",
+    "x": 0,
+    "y": 18,
+    "w": 12,
+    "h": 6,
+    "type": "chart",
+    "title": "Évolution du score par famille",
+    "query": {
+     "kind": "reference",
+     "path": "/Score reglementaire - evolution par famille.saiku"
+    },
+    "chartType": "bar"
+   }
+  ]
+ },
+ "filters": [],
+ "tags": [
+  "beCPG",
+  "scores"
+ ]
+}

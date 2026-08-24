@@ -47,6 +47,7 @@ import fr.becpg.common.dom.DOMUtils;
 public class OlapChart {
 
 	private NodeRef nodeRef;
+	private String fileName;
 	private String queryName;
 	private String queryId;
 	private String mdx;
@@ -55,6 +56,9 @@ public class OlapChart {
 	private String xml;
 
 	/** Constant <code>logger</code> */
+	/** Extension of a saved OLAP query document. */
+	public static final String SAIKU_EXTENSION = ".saiku";
+
 	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
 	/**
@@ -64,8 +68,26 @@ public class OlapChart {
 	 */
 	public OlapChart(FileInfo fileInfo) {
 		super();
-		this.queryName = fileInfo.getName().replace(".saiku", "");
+		this.fileName = fileInfo.getName();
+		// #24931: queryName is the display label and drops the extension. Strip it from the end
+		// only: a plain replace turns "Sales.saikudash" into "Salesdash", which is neither a
+		// usable label nor a name any caller can map back to the stored file.
+		this.queryName = stripExtension(fileInfo.getName());
 		this.nodeRef = fileInfo.getNodeRef();
+	}
+
+	private static String stripExtension(String name) {
+		int dot = name.lastIndexOf('.');
+		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	/**
+	 * <p>Getter for the field <code>fileName</code>.</p>
+	 *
+	 * @return the stored file name, extension included
+	 */
+	public String getFileName() {
+		return fileName;
 	}
 
 	/**
@@ -166,6 +188,16 @@ public class OlapChart {
 		logger.trace("Get XML data query from xml" + xml);
 		this.xml = xml;
 
+		// #24931: a query re-saved from the Saiku 4.8 workspace is stored as JSON, not as the
+		// Saiku 2.x XML this method was written for. Parsing it as XML throws, the caller skips the
+		// chart, and it silently disappears from the beCPG BI dashlet. The document is still passed
+		// on verbatim to the OLAP server, which accepts both forms, so only the few attributes read
+		// here need a second reading.
+		if (isJsonQuery(xml)) {
+			loadFromJson(xml);
+			return;
+		}
+
 		try (InputStream is = new ByteArrayInputStream(xml.getBytes())) {
 
 			Document doc = DOMUtils.parse(is);
@@ -182,6 +214,27 @@ public class OlapChart {
 		}
 	}
 
+	private static boolean isJsonQuery(String content) {
+		return (content != null) && content.trim().startsWith("{");
+	}
+
+	/**
+	 * Reads the few attributes this class exposes from a Saiku 4.8 query document.
+	 *
+	 * @param json the query as stored by the 4.8 workspace
+	 * @throws JSONException if the document is not readable
+	 */
+	private void loadFromJson(String json) throws JSONException {
+		JSONObject root = new JSONObject(json);
+		queryId = root.optString("name", null);
+		type = root.optString("type", null);
+		mdx = root.optString("mdx", null);
+		JSONObject cubeObject = root.optJSONObject("cube");
+		if (cubeObject != null) {
+			cube = cubeObject.optString("name", null);
+		}
+	}
+
 	/**
 	 * <p>toJSONObject.</p>
 	 *
@@ -191,6 +244,7 @@ public class OlapChart {
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
+		obj.put("fileName", fileName);
 		obj.put("queryId", queryId);
 		obj.put("cube", cube);
 		obj.put("type", type);
