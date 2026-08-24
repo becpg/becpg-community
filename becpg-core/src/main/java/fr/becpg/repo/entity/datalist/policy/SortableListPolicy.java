@@ -36,7 +36,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class SortableListPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy,
-		CopyServicePolicies.OnCopyNodePolicy, CopyServicePolicies.OnCopyCompletePolicy {
+		CopyServicePolicies.OnCopyNodePolicy, CopyServicePolicies.OnCopyCompletePolicy, NodeServicePolicies.OnRestoreNodePolicy {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SortableListPolicy.class);
@@ -102,6 +102,9 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onCopyComplete"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRestoreNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
+				new JavaBehaviour(this, "onRestoreNode", NotificationFrequency.TRANSACTION_COMMIT));
 
 		logger.debug("Init SortableListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
@@ -316,6 +319,17 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 			policyBehaviourFilter.enableBehaviour( BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onRestoreNode(ChildAssociationRef childAssocRef) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+			NodeRef nodeRef = childAssocRef.getChildRef();
+			if (nodeRef != null && nodeService.exists(nodeRef) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+				queueNode(nodeRef);
+			}
+		}
 	}
 
 }
