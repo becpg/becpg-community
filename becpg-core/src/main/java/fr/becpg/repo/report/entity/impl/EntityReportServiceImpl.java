@@ -292,10 +292,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		generateReports(nodeRefFrom, nodeRefTo, generateAllReports, null);
+		generateReports(nodeRefFrom, nodeRefTo, generateAllReports, null, null);
 	}
 
-	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind) {
+	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind,
+			Locale targetLocale) {
 		String mutexKey = "report-" + nodeRefTo.getId();
 		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
 		boolean lockAcquiredInThisCall = false;
@@ -309,7 +310,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}
 
 		try {
-			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports, reportKind);
+			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports, reportKind, targetLocale);
 		} finally {
 			if (lockAcquiredInThisCall) {
 				lock.unlock();
@@ -324,8 +325,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param generateAllReports a boolean
+	 * @param reportKind the report kind to restrict the templates to, or <code>null</code>
+	 * @param targetLocale the only locale to generate, or <code>null</code> for all of them
 	 */
-	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind) {
+	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind,
+			Locale targetLocale) {
 
 		if (nodeRefFrom == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -357,7 +361,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							}
 							
 							try {
-								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind);
+								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind, targetLocale);
 								updateReportsAssoc(nodeRefTo, newReports, reportKind);
 							} finally {
 								if (rulesEnabled) {
@@ -389,11 +393,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param entityNodeTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param defaultLocale a {@link java.util.Locale} object
 	 * @param generateAllReports a boolean
-	 * @param reportKind 
+	 * @param reportKind
+	 * @param targetLocale the only locale to generate, or <code>null</code> for all of them
 	 * @return a {@link java.util.List} object
 	 */
 	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports,
-			String reportKind) {
+			String reportKind, Locale targetLocale) {
 
 		Set<ReportableError> engineErrors = new HashSet<>();
 
@@ -439,8 +444,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			} else {
 				hideDefaultLocal = false;
 			}
-			
-			for (Locale locale : entityReportLocales) {
+
+			for (Locale locale : restrictToTargetLocale(entityReportLocales, targetLocale, defaultLocale)) {
 				
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
@@ -1814,6 +1819,37 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/**
+	 * Keeps the locale a caller asked for, so that refreshing one report does not regenerate the
+	 * entity in every language it declares.
+	 *
+	 * The default locale is kept alongside it: a template that declares no locale of its own is
+	 * only ever generated in that one, so dropping it would silently produce nothing.
+	 *
+	 * The whole list is returned when no locale is requested, and when the requested one has no
+	 * counterpart on the entity: generating the wrong language beats generating nothing.
+	 */
+	private List<Locale> restrictToTargetLocale(List<Locale> entityReportLocales, Locale targetLocale, Locale defaultLocale) {
+		if (targetLocale == null) {
+			return entityReportLocales;
+		}
+
+		Locale nearestLocale = MLTextHelper.getNearestLocale(targetLocale, new HashSet<>(entityReportLocales));
+
+		if (nearestLocale == null) {
+			return entityReportLocales;
+		}
+
+		List<Locale> restrictedLocales = nearestLocale.equals(defaultLocale) ? List.of(nearestLocale) : List.of(nearestLocale, defaultLocale);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Restricting report generation to " + restrictedLocales + " out of " + entityReportLocales + " (asked for " + targetLocale
+					+ ")");
+		}
+
+		return restrictedLocales;
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<String> extractReportKindsList(Serializable propVal) {
 		if (propVal instanceof List<?> list) {
@@ -2144,6 +2180,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
+		return getOrRefreshReportsOfKind(entityNodeRef, reportKind, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale locale) {
 		List<NodeRef> reportsOfKind = getReportsOfKind(entityNodeRef, reportKind);
 		boolean shouldGenerate = reportsOfKind.isEmpty()
 				|| shouldGenerateReport(entityNodeRef, null)
@@ -2152,7 +2194,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			return reportsOfKind;
 		}
 		logger.debug("Entity report is not up to date for entity " + entityNodeRef);
-		generateReports(entityNodeRef, entityNodeRef, false, reportKind);
+		generateReports(entityNodeRef, entityNodeRef, false, reportKind, locale);
 		return getReportsOfKind(entityNodeRef, reportKind);
 	}
 

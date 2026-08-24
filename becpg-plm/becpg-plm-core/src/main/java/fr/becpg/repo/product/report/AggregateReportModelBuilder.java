@@ -76,6 +76,8 @@ public class AggregateReportModelBuilder {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
+    private final ThreadLocal<Boolean> collectingSubReport = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
     @PreDestroy
     public void destroy() {
         subReportExecutor.shutdown();
@@ -256,14 +258,8 @@ public class AggregateReportModelBuilder {
             return Collections.emptyList();
         }
 
-        if (entityNodeRefs.size() == 1) {
-            NodeRef singleNode = entityNodeRefs.get(0);
-            try {
-                return collectDocumentsForNode(singleNode, reportKind, mimeTypes, false);
-            } catch (Exception e) {
-                logger.error("Failed to generate/collect sub-report for component " + singleNode + ": " + e.getMessage(), e);
-                return Collections.emptyList();
-            }
+        if (entityNodeRefs.size() == 1 || Boolean.TRUE.equals(collectingSubReport.get())) {
+            return collectDocumentsSequentially(entityNodeRefs, reportKind, mimeTypes);
         }
 
         String runAsUser = AuthenticationUtil.getRunAsUser();
@@ -283,7 +279,7 @@ public class AggregateReportModelBuilder {
                     return AuthenticationUtil.runAs(() -> {
                         I18NUtil.setLocale(locale);
                         I18NUtil.setContentLocale(contentLocale);
-                        return collectDocumentsForNode(compNode, reportKind, mimeTypes, false);
+                        return collectSubReportDocuments(compNode, reportKind, mimeTypes);
                     }, finalRunAsUser);
                 }, tenantDomain);
             }));
@@ -305,6 +301,38 @@ public class AggregateReportModelBuilder {
             }
         }
         return allDocuments;
+    }
+
+    /**
+     * Collects the components one after the other on the calling thread.
+     *
+     * Used for a single component, and for every component once we are already running a
+     * sub-report: the pool has two threads and each of them waits on the futures it submitted,
+     * so a nested aggregate report would queue its own components behind the threads that must
+     * run them. CallerRunsPolicy only rescues a full queue, which ten nested components never
+     * fill.
+     */
+    private List<AnnexDocument> collectDocumentsSequentially(List<NodeRef> entityNodeRefs, String reportKind, List<String> mimeTypes) {
+        List<AnnexDocument> documents = new ArrayList<>();
+
+        for (NodeRef entityNodeRef : entityNodeRefs) {
+            documents.addAll(collectSubReportDocuments(entityNodeRef, reportKind, mimeTypes));
+        }
+
+        return documents;
+    }
+
+    private List<AnnexDocument> collectSubReportDocuments(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes) {
+        Boolean wasCollecting = collectingSubReport.get();
+        collectingSubReport.set(Boolean.TRUE);
+        try {
+            return collectDocumentsForNode(entityNodeRef, reportKind, mimeTypes, false);
+        } catch (Exception e) {
+            logger.error("Failed to generate/collect sub-report for component " + entityNodeRef + ": " + e.getMessage(), e);
+            return Collections.emptyList();
+        } finally {
+            collectingSubReport.set(wasCollecting);
+        }
     }
 
     private void collectCompoComponents(NodeRef productNodeRef, List<NodeRef> collected, Set<NodeRef> visited, boolean recurse, List<String> allowedTypes) {
@@ -423,18 +451,20 @@ public class AggregateReportModelBuilder {
             logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", reportKind: " + reportKind + ", mimeTypes: " + mimeTypes);
         }
 
+        final Locale reportLocale = I18NUtil.getLocale();
+
         try {
         	if (isRootEntityDocument) {
         		if (logger.isDebugEnabled()) {
         			logger.debug("Triggering getOrRefreshReportsOfKind in same transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
         		}
-    			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+    			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind, reportLocale);
         	} else {
         		if (logger.isDebugEnabled()) {
         			logger.debug("Triggering getOrRefreshReportsOfKind in isolated transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
         		}
         		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-        			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+        			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind, reportLocale);
         			return null;
         		}, false, true);
         	}
@@ -453,7 +483,7 @@ public class AggregateReportModelBuilder {
             compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
         }
 
-        collectReportsOfKind(entityNodeRef, reportKind, compName, results, collectedNodeRefs);
+        collectReportsOfKind(entityNodeRef, reportKind, reportLocale, compName, results, collectedNodeRefs);
         if (logger.isDebugEnabled()) {
             logger.debug("After collectReportsOfKind: " + results.size() + " documents for node " + entityNodeRef);
         }
@@ -466,11 +496,13 @@ public class AggregateReportModelBuilder {
         return results;
     }
 
-    private void collectReportsOfKind(NodeRef entityNodeRef, String reportKind, String compName, List<AnnexDocument> results, Set<NodeRef> collectedNodeRefs) {
+    private void collectReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale reportLocale, String compName, List<AnnexDocument> results,
+            Set<NodeRef> collectedNodeRefs) {
         try {
-            List<NodeRef> reportsOfKind = entityReportService.getReportsOfKind(entityNodeRef, reportKind);
+            List<NodeRef> reportsOfKind = filterReportsForLocale(entityReportService.getReportsOfKind(entityNodeRef, reportKind), reportLocale);
             if (logger.isDebugEnabled()) {
-                logger.debug("entityReportService.getReportsOfKind(" + entityNodeRef + ", '" + reportKind + "') returned: " + reportsOfKind);
+                logger.debug("entityReportService.getReportsOfKind(" + entityNodeRef + ", '" + reportKind + "') returned for locale " + reportLocale
+                        + ": " + reportsOfKind);
             }
             if (reportsOfKind != null) {
                 for (NodeRef reportNodeRef : reportsOfKind) {
@@ -505,6 +537,52 @@ public class AggregateReportModelBuilder {
         } catch (Exception e) {
             logger.error("Failed to collect rep:report files for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Keeps the reports written in the language the aggregate is being built in.
+     *
+     * A component that declares several report locales holds one report per language, and
+     * embedding them all would repeat every annex in each language of the entity.
+     *
+     * The unfiltered list is returned when no report carries the requested language, so a
+     * component whose report predates the locale property still contributes its annex.
+     */
+    private List<NodeRef> filterReportsForLocale(List<NodeRef> reportNodeRefs, Locale reportLocale) {
+        if (reportNodeRefs == null || reportNodeRefs.isEmpty() || reportLocale == null) {
+            return reportNodeRefs;
+        }
+
+        List<NodeRef> matchingReports = new ArrayList<>();
+
+        for (NodeRef reportNodeRef : reportNodeRefs) {
+            Locale nearestLocale = MLTextHelper.getNearestLocale(reportLocale, getReportLocales(reportNodeRef));
+            if (nearestLocale != null && nearestLocale.getLanguage().equals(reportLocale.getLanguage())) {
+                matchingReports.add(reportNodeRef);
+            }
+        }
+
+        return matchingReports.isEmpty() ? reportNodeRefs : matchingReports;
+    }
+
+    private Set<Locale> getReportLocales(NodeRef reportNodeRef) {
+        Serializable localesProp = nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
+
+        if (localesProp instanceof List<?> list) {
+            List<String> langs = new ArrayList<>(list.size());
+            for (Object lang : list) {
+                if (lang != null) {
+                    langs.add(lang.toString());
+                }
+            }
+            return MLTextHelper.extractLocales(langs);
+        }
+
+        if (localesProp instanceof String lang && !lang.isEmpty()) {
+            return MLTextHelper.extractLocales(List.of(lang));
+        }
+
+        return Collections.emptySet();
     }
 
     private void collectFilesRecursively(NodeRef folderNodeRef, String reportKind, List<String> mimeTypes, String compName, List<AnnexDocument> results, int depth, Set<NodeRef> collectedNodeRefs) {
