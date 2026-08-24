@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -492,7 +493,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 "PIFReport.rptdesign"
         );
         final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
-                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
                 "Composition Quali-Quanti pour DIP (PIF).rptdesign",
                 "Quali-Quanti Composition for PIF.rptdesign"
         );
@@ -638,7 +639,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 "PIFReport.rptdesign"
         );
         final NodeRef compoForPifTemplateNodeRef = getAndEnableReportTemplate(
-                TranslateHelper.getTranslatedPath("productreportcompoqualiquantiforpiftemplate") + "." + RepoConsts.REPORT_EXTENSION_BIRT,
+                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF) + "." + RepoConsts.REPORT_EXTENSION_BIRT,
                 "Composition Quali-Quanti pour DIP (PIF).rptdesign",
                 "Quali-Quanti Composition for PIF.rptdesign"
         );
@@ -998,27 +999,53 @@ public class AggregateReportIT extends PLMBaseTestCase {
     }
 
     private NodeRef getAndEnableReportTemplate(String... candidateNames) {
-        NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-                TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-        NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
-                TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-        NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-                TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+        NodeRef tpl = inWriteTx(() -> {
+            NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+            NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
+                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+            NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+                    TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-        NodeRef tpl = inReadTx(() -> findChildByName(productReportTplFolder, candidateNames));
+            ClassDefinition pfClassDef = serviceRegistry.getDictionaryService().getClass(PLMModel.TYPE_FINISHEDPRODUCT);
+            String pfFolderTitle = pfClassDef != null ? pfClassDef.getTitle(serviceRegistry.getDictionaryService()) : null;
+            NodeRef pfFolder = null;
+            if (pfFolderTitle != null) {
+                pfFolder = customRepoService.getFolderByPath(productReportTplFolder, pfFolderTitle);
+                if (pfFolder == null) {
+                    pfFolder = nodeService.getChildByName(productReportTplFolder, ContentModel.ASSOC_CONTAINS, pfFolderTitle);
+                }
+            }
+
+            NodeRef foundTpl = null;
+            if (pfFolder != null) {
+                foundTpl = findChildByName(pfFolder, candidateNames);
+            }
+            if (foundTpl == null) {
+                foundTpl = findChildByName(productReportTplFolder, candidateNames);
+            }
+            if (foundTpl == null) {
+                foundTpl = findChildByName(reportsFolder, candidateNames);
+            }
+
+            if (foundTpl != null) {
+                nodeService.setProperty(foundTpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
+            }
+
+            return foundTpl;
+        });
+
         if (tpl == null) {
             throw new IllegalStateException("Report template not found among children for names: " + Arrays.toString(candidateNames));
         }
-
-        inWriteTx(() -> {
-            nodeService.setProperty(tpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
-            return null;
-        });
 
         return tpl;
     }
 
     private NodeRef findChildByName(NodeRef parent, String... candidateNames) {
+        if (parent == null) {
+            return null;
+        }
         List<ChildAssociationRef> children = nodeService.getChildAssocs(parent);
         if (children != null) {
             for (ChildAssociationRef childAssoc : children) {
@@ -1026,13 +1053,13 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 String name = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
                 if (name != null) {
                     for (String candidate : candidateNames) {
-                        if (candidate != null && name.equals(candidate)) {
+                        if (candidate != null && (name.equals(candidate) || name.equalsIgnoreCase(candidate))) {
                             return child;
                         }
                     }
                 }
                 QName type = nodeService.getType(child);
-                if (ContentModel.TYPE_FOLDER.equals(type)) {
+                if (serviceRegistry.getDictionaryService().isSubClass(type, ContentModel.TYPE_FOLDER)) {
                     NodeRef sub = findChildByName(child, candidateNames);
                     if (sub != null) {
                         return sub;
