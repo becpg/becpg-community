@@ -789,6 +789,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 		if (Boolean.TRUE.equals(isOlapEnabled) && Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
+			// #24931: dashboards are seeded alongside the queries they reference. The pattern above
+			// does not catch them — ".saikudash" does not end with ".saiku" — so they need their own.
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saikudash");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
 			if (Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage())) {
