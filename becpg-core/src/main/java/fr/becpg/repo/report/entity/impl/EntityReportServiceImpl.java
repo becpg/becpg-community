@@ -227,8 +227,30 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	private record ReportEngineSetup(BeCPGReportEngine engine, EntityReportExtractorPlugin extractor, ContentWriter writer) {
 	}
 
-	private <T> T inTransaction(RetryingTransactionCallback<T> callback, boolean readOnly) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(callback, readOnly);
+	/**
+	 * Runs the callback in its own transaction, with the auditable behaviour of the entity
+	 * suppressed inside that transaction.
+	 *
+	 * Alfresco binds the behaviour filter to the transaction and clears it on completion, so a
+	 * suppression taken around several transactions holds for the first one only. Now that
+	 * generation no longer runs in a single transaction, suppressing it inside each of them is
+	 * what keeps cm:modified off the entity. Rules need no such care: their suppression is bound
+	 * to the thread, not to the transaction.
+	 */
+	private <T> T inTransaction(NodeRef entityNodeRef, RetryingTransactionCallback<T> callback, boolean readOnly) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			boolean auditableEnabled = policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			if (auditableEnabled) {
+				policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			}
+			try {
+				return callback.execute();
+			} finally {
+				if (auditableEnabled) {
+					policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+				}
+			}
+		}, readOnly);
 	}
 
 	@Autowired
@@ -374,7 +396,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		L2CacheSupport.doInCacheContext(() -> {
 
 			RunAsWork<Object> actionRunAs = () -> {
-				if (nodeService.exists(nodeRefFrom)) {
+				if (Boolean.TRUE.equals(inTransaction(nodeRefFrom, () -> nodeService.exists(nodeRefFrom), true))) {
 
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -387,24 +409,23 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							I18NUtil.setContentLocale(defaultLocale);
 							
 							boolean rulesEnabled = ruleService.isEnabled();
-							boolean auditableEnabled = policyBehaviourFilter.isEnabled(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 							
 							if (rulesEnabled) {
 								ruleService.disableRules();
 							}
-							if (auditableEnabled) {
-								policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
-							}
 							
+							// The auditable behaviour is suppressed by inTransaction, once per transaction: the
+							// filter is bound to the transaction, so suppressing it here would cover the first
+							// transaction generation opens and none of the ones that write.
 							try {
 								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind, targetLocale);
-								updateReportsAssoc(nodeRefTo, newReports, reportKind, targetLocale, defaultLocale);
+								inTransaction(nodeRefFrom, () -> {
+									updateReportsAssoc(nodeRefTo, newReports, reportKind, targetLocale, defaultLocale);
+									return null;
+								}, false);
 							} finally {
 								if (rulesEnabled) {
 									ruleService.enableRules();
-								}
-								if (auditableEnabled) {
-									policyBehaviourFilter.enableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 								}
 							}
 							
@@ -441,7 +462,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		Date generatedDate = Calendar.getInstance().getTime();
 
 		/* Reads that decide what to produce, in one transaction of their own. */
-		List<NodeRef> tplsNodeRef = inTransaction(() -> {
+		List<NodeRef> tplsNodeRef = inTransaction(entityNodeRef, () -> {
 
 			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
 			Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
@@ -492,13 +513,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 				finalTplsNodeRef.stream().forEach(tplNodeRef -> {
 					
-					for (EntityReportParameters reportParameters : inTransaction(
+					for (EntityReportParameters reportParameters : inTransaction(entityNodeRef, 
 							() -> getEntityReportParametersList(tplNodeRef, entityNodeRef, engineErrors), true)) {
 							
-						if (Boolean.TRUE.equals(inTransaction(() -> isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal), true))) {
+						if (Boolean.TRUE.equals(inTransaction(entityNodeRef, () -> isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal), true))) {
 							
 							// prepare: reads, plus the document node itself when it has to be created
-							ReportTarget target = inTransaction(() -> {
+							ReportTarget target = inTransaction(entityNodeRef, () -> {
 								Boolean tplIsDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 								String tplFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 								String name = getReportDocumentName(entityNodeRef, tplNodeRef, tplFormat, locale, reportParameters,
@@ -532,7 +553,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									 * read the repository: they get a transaction of their own, closed
 									 * before the report server is called.
 									 */
-									ReportEngineSetup setup = inTransaction(() -> {
+									ReportEngineSetup setup = inTransaction(entityNodeRef, () -> {
 										BeCPGReportEngine reportEngine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
 										policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 										return new ReportEngineSetup(reportEngine, retrieveExtractor(entityNodeRef, reportEngine),
@@ -550,7 +571,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									if (writer != null) {
 										
 										final Boolean generateForDefault = isDefault;
-										if (Boolean.TRUE.equals(inTransaction(() -> shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports,
+										if (Boolean.TRUE.equals(inTransaction(entityNodeRef, () -> shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports,
 												selectedReportNodeRef, generateForDefault, documentNodeRef, tplNodeRef, reportKind), true))) {
 											
 											String reportKindCode = "";
@@ -569,7 +590,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 											 * Reads only: build the datasource the report server will be given.
 											 * Kept in its own transaction so it closes before the call below.
 											 */
-											EntityReportData reportData = inTransaction(() -> {
+											EntityReportData reportData = inTransaction(entityNodeRef, () -> {
 
 												EntityReportData data = dataExtractor.extract(entityNodeRef, reportParameters.getPreferences());
 
@@ -603,7 +624,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 											params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 											params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 											params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-													inTransaction(() -> associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES), true));
+													inTransaction(entityNodeRef, () -> associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES), true));
 											params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 											params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
 
@@ -636,7 +657,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 											engineErrors.addAll(reportData.getLogs());
 											
-											inTransaction(() -> {
+											inTransaction(entityNodeRef, () -> {
 												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
 												return null;
 											}, false);
@@ -646,7 +667,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 											logger.debug("Mark durty report: " + entityNodeRef + " for document " + documentName + " ("
 													+ documentNodeRef + ")");
 											
-											inTransaction(() -> {
+											inTransaction(entityNodeRef, () -> {
 												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
 												return null;
 											}, false);
@@ -658,7 +679,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 										final Boolean reportIsDefault = isDefault;
 
 										/* Writes only, in one short transaction of their own. */
-										inTransaction(() -> {
+										inTransaction(entityNodeRef, () -> {
 
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
@@ -714,7 +735,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 			}
 			
-			inTransaction(() -> {
+			inTransaction(entityNodeRef, () -> {
 				reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
 				return null;
 			}, false);
@@ -724,7 +745,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			logger.debug("No report tpls found, delete existing ones");
 		}
 
-		inTransaction(() -> {
+		inTransaction(entityNodeRef, () -> {
 			// set reportNodeGenerated property to now
 			nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 

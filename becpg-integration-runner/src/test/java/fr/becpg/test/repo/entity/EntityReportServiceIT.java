@@ -6,11 +6,14 @@ package fr.becpg.test.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -687,6 +690,51 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			Element dataListsElt = (Element) xmlDoc.selectSingleNode("//dataLists");
 			assertNotNull("dataLists section should exist in report XML", dataListsElt);
 			
+			return null;
+		});
+	}
+
+
+	/**
+	 * The report job calls generateReports with no transaction around it, and the service has to
+	 * open the ones it needs itself. Every other test here goes through inWriteTx, so none of them
+	 * covers that path. A test body runs inside the runner's own transaction, so handing the work
+	 * to a thread that carries none is the only way to reproduce the job.
+	 */
+	@Test
+	public void testGenerateReportsWithoutASurroundingTransaction() throws Exception {
+
+		final NodeRef productNodeRef = inWriteTx(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setName("PF generated outside a transaction");
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		});
+
+		Date modifiedBefore = inReadTx(() -> (Date) nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED));
+
+		AtomicReference<Throwable> failure = new AtomicReference<>();
+		Thread worker = new Thread(() -> AuthenticationUtil.runAsSystem(() -> {
+			try {
+				entityReportService.generateReports(productNodeRef);
+			} catch (Throwable t) {
+				failure.set(t);
+			}
+			return null;
+		}), "report-generation-without-transaction");
+
+		worker.start();
+		worker.join(TimeUnit.MINUTES.toMillis(5));
+
+		assertFalse("generation should have finished", worker.isAlive());
+		if (failure.get() != null) {
+			throw new AssertionError("generation failed outside a transaction: " + failure.get(), failure.get());
+		}
+
+		inReadTx(() -> {
+			assertFalse("reports should have been generated",
+					associationService.getTargetAssocs(productNodeRef, ReportModel.ASSOC_REPORTS).isEmpty());
+			assertEquals("generating a report must leave cm:modified alone on the entity", modifiedBefore,
+					nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED));
 			return null;
 		});
 	}
