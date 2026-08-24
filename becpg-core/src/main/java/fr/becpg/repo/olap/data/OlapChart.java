@@ -56,6 +56,9 @@ public class OlapChart {
 	private String xml;
 
 	/** Constant <code>logger</code> */
+	/** Extension of a saved OLAP query document. */
+	public static final String SAIKU_EXTENSION = ".saiku";
+
 	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
 	/**

@@ -22,11 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
@@ -73,8 +76,17 @@ public class OlapServiceImpl implements OlapService {
 	@Value("${becpg.olap.enabled}")
 	private Boolean enabled;
 
+	/** Folder beCPG OLAP creates in a user's home folder for their own queries. */
+	private static final String PERSONAL_QUERIES_FOLDER = "Requêtes OLAP";
+
 	@Autowired
 	private FileFolderService fileFolderService;
+
+	@Autowired
+	private PersonService personService;
+
+	@Autowired
+	private NodeService nodeService;
 
 	@Autowired
 	private ContentService contentService;
@@ -91,31 +103,70 @@ public class OlapServiceImpl implements OlapService {
 	public List<OlapChart> retrieveOlapCharts() {
 		List<OlapChart> olapCharts = new ArrayList<>();
 
-		NodeRef olapQueriesFolder = getOlapQueriesFolder();
-		if (olapQueriesFolder == null) {
+		NodeRef sharedFolder = getOlapQueriesFolder();
+		if (sharedFolder == null) {
 			logger.warn("OLAP queries folder not found, returning empty chart list");
-			return olapCharts;
+		} else {
+			collectCharts(sharedFolder, olapCharts);
 		}
 
-		for (FileInfo fileInfo : fileFolderService.list(olapQueriesFolder)) {
-
-			if (fileInfo.getName().endsWith(".saiku")) {
-				try {
-					OlapChart chart = new OlapChart(fileInfo);
-
-					ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
-
-					chart.load(reader.getContentString());
-
-					olapCharts.add(chart);
-				} catch (Exception e) {
-					logger.error(e, e);
-				}
-			}
-
-		}
+		collectCharts(getPersonalOlapQueriesFolder(), olapCharts);
 
 		return olapCharts;
+	}
+
+	/**
+	 * Adds every {@code .saiku} document of a folder to the chart list.
+	 *
+	 * @param folder the folder to read, ignored when null
+	 * @param olapCharts the list to fill
+	 */
+	private void collectCharts(NodeRef folder, List<OlapChart> olapCharts) {
+		if (folder == null) {
+			return;
+		}
+
+		for (FileInfo fileInfo : fileFolderService.list(folder)) {
+			if (!fileInfo.getName().endsWith(OlapChart.SAIKU_EXTENSION)) {
+				continue;
+			}
+			try {
+				OlapChart chart = new OlapChart(fileInfo);
+				ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
+				chart.load(reader.getContentString());
+				olapCharts.add(chart);
+			} catch (Exception e) {
+				logger.error(e, e);
+			}
+		}
+	}
+
+	/**
+	 * Resolves the current user's personal OLAP query folder.
+	 *
+	 * <p>beCPG OLAP saves a user's own queries in {@value #PERSONAL_QUERIES_FOLDER} under their home
+	 * folder rather than in the shared system space. The dashlet listed the shared space only, so a
+	 * user never saw the queries they had just saved.
+	 *
+	 * @return the folder, or null when the user has none
+	 */
+	private NodeRef getPersonalOlapQueriesFolder() {
+		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		if (userName == null) {
+			return null;
+		}
+
+		NodeRef person = personService.getPersonOrNull(userName);
+		if (person == null) {
+			return null;
+		}
+
+		NodeRef homeFolder = (NodeRef) nodeService.getProperty(person, ContentModel.PROP_HOMEFOLDER);
+		if (homeFolder == null) {
+			return null;
+		}
+
+		return nodeService.getChildByName(homeFolder, ContentModel.ASSOC_CONTAINS, PERSONAL_QUERIES_FOLDER);
 	}
 
 	/** {@inheritDoc} */
