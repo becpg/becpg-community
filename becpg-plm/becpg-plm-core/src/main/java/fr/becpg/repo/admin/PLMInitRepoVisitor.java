@@ -794,6 +794,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String olapLanguage = Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage()) ? "fr" : "en";
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saiku");
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikudash");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikuapp");
 			// Kept for anything another module drops straight into beCPG/olap.
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
