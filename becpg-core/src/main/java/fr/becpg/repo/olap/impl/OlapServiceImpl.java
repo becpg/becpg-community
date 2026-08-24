@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.OlapUtils;
 import fr.becpg.repo.olap.data.OlapChart;
@@ -75,9 +77,6 @@ public class OlapServiceImpl implements OlapService {
 	
 	@Value("${becpg.olap.enabled}")
 	private Boolean enabled;
-
-	/** Folder beCPG OLAP creates in a user's home folder for their own queries. */
-	private static final String PERSONAL_QUERIES_FOLDER = "Requêtes OLAP";
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -144,9 +143,10 @@ public class OlapServiceImpl implements OlapService {
 	/**
 	 * Resolves the current user's personal OLAP query folder.
 	 *
-	 * <p>beCPG OLAP saves a user's own queries in {@value #PERSONAL_QUERIES_FOLDER} under their home
-	 * folder rather than in the shared system space. The dashlet listed the shared space only, so a
-	 * user never saw the queries they had just saved.
+	 * <p>beCPG OLAP saves a user's own queries under their home folder rather than in the shared
+	 * system space, so the dashlet has to read both. The folder carries the localised name of
+	 * {@code path.olapqueries}; every translation is accepted, because the folder may have been
+	 * created by an OLAP session running in another language than this repository's default.
 	 *
 	 * @return the folder, or null when the user has none
 	 */
@@ -166,7 +166,39 @@ public class OlapServiceImpl implements OlapService {
 			return null;
 		}
 
-		return nodeService.getChildByName(homeFolder, ContentModel.ASSOC_CONTAINS, PERSONAL_QUERIES_FOLDER);
+		for (String candidate : personalFolderNames()) {
+			NodeRef folder = nodeService.getChildByName(homeFolder, ContentModel.ASSOC_CONTAINS, candidate);
+			if (folder != null) {
+				return folder;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Names the personal query folder can carry: this repository's locale first, then every other
+	 * translation of {@code path.olapqueries}.
+	 *
+	 * @return the candidate folder names, never null
+	 */
+	private static List<String> personalFolderNames() {
+		List<String> names = new ArrayList<>();
+
+		String preferred = TranslateHelper.getTranslatedPath(RepoConsts.PATH_OLAP_QUERIES);
+		if (preferred != null) {
+			names.add(preferred);
+		}
+
+		MLText translations = TranslateHelper.getTranslatedPathMLText(RepoConsts.PATH_OLAP_QUERIES);
+		if (translations != null) {
+			for (String translation : translations.values()) {
+				if ((translation != null) && !names.contains(translation)) {
+					names.add(translation);
+				}
+			}
+		}
+
+		return names;
 	}
 
 	/** {@inheritDoc} */
