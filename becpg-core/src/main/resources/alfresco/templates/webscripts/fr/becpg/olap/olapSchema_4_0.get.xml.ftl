@@ -109,12 +109,28 @@
 				</View>
 				<Level name="name" caption="${msg("jsolap.clientName.title")}" table="clients" nameColumn="name" column="nodeRef"  type="String"   >
 				</Level>
-				<Level name="family" caption="${msg("jsolap.clientFamily.title")}" column="clientHierarchy1" type="String">
-				</Level>
-				<Level name="subfamily" caption="${msg("jsolap.clientSubFamily.title")}" column="clientHierarchy2" type="String">
-				</Level>
 				<Level name="state" caption="${msg("jsolap.clientState.title")}" column="clientState" type="String">
 				</Level>
+			</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     their ancestors they were qualified by them, so one family produced one row per
+			     ancestor instead of a single aggregated row. -->
+			<Hierarchy name="clientFamily" caption="${msg("jsolap.clientFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entityNodeRef">
+				<View name="clients" alias="clients">
+								<SQL dialect="generic">
+									select  
+										a.entityNodeRef as entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.bcpg_clientState" as clientState,
+										b.doc->>"$.bcpg_clientHierarchy1[0]" as clientHierarchy1,
+										b.doc->>"$.bcpg_clientHierarchy2[0]" as clientHierarchy2
+									from
+										assoc_bcpg_clients a left join bcpg_client b on a.nodeRef = b.nodeRef	
+								</SQL>
+				</View>
+				<Level name="family" caption="${msg("jsolap.clientFamily.title")}" table="clients" column="clientHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="subfamily" caption="${msg("jsolap.clientSubFamily.title")}" table="clients" column="clientHierarchy2" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -135,12 +151,28 @@
 				</View>
 				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String">
 				</Level>
-				<Level name="family" caption="${msg("jsolap.supplierFamily.title")}" column="supplierHierarchy1" type="String">
-				</Level>
-				<Level name="subfamily" caption="${msg("jsolap.supplierSubFamily.title")}" column="supplierHierarchy2" type="String">
-				</Level>
 				<Level name="state" caption="${msg("jsolap.supplierState.title")}" column="supplierState" type="String">
 				</Level>
+			</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     their ancestors they were qualified by them, so one family produced one row per
+			     ancestor instead of a single aggregated row. -->
+			<Hierarchy name="supplierFamily" caption="${msg("jsolap.supplierFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entityNodeRef">
+				<View name="suppliers" alias="suppliers">
+								<SQL dialect="generic">
+									select  
+										a.entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.bcpg_supplierState" as supplierState,
+										b.doc->>"$.bcpg_supplierHierarchy1[0]" as supplierHierarchy1,
+										b.doc->>"$.bcpg_supplierHierarchy2[0]" as supplierHierarchy2
+									from
+										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
+								</SQL>
+				</View>
+				<Level name="family" caption="${msg("jsolap.supplierFamily.title")}" table="suppliers" column="supplierHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="subfamily" caption="${msg("jsolap.supplierSubFamily.title")}" table="suppliers" column="supplierHierarchy2" type="String" />
 			</Hierarchy>
 		</Dimension>	
 		
@@ -188,7 +220,7 @@
 						</Script>
 					</MemberFormatter>
 				</Level>
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" table="products_dim" column="productType" nameColumn="productType" type="String"   >
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" table="products_dim" column="productType" nameColumn="productType" type="String" uniqueMembers="true"   >
 					<MemberFormatter>
 						<Script language="JavaScript">
 							switch (member.getName()) {
@@ -214,8 +246,6 @@
 						</Script>
 					</MemberFormatter>
 				</Level>		
-				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" table="products_dim" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" table="products_dim" column="productHierarchy2"  type="String"    />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"  highCardinality="true"  />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String" uniqueMembers="true" highCardinality="true"  />
 				<Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
@@ -233,7 +263,31 @@
 				</MemberFormatter>
 				</Level>
 			</Hierarchy>
-			
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     their ancestors they were qualified by them, so one family produced one row per
+			     ancestor instead of a single aggregated row. -->
+			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">
+				<View name="products_dim" alias="products_dim">
+					<SQL dialect="generic">
+						select
+							nodeRef,
+							doc->>"$.cm_name" as name,
+							doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+							doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+							doc->>"$.bcpg_code" as code,
+							doc->>"$.bcpg_erpCode" as erpCode,
+							doc->>"$.bcpg_eanCode" as eanCode,
+							doc->>"$.bcpg_legalName" as legalName,
+							doc->>"$.bcpg_productState" as productState,
+							doc->>"$.type" as productType,
+							doc->>"$.cm_versionLabel" as versionLabel
+						from
+							bcpg_product
+					</SQL>
+				</View>
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" table="products_dim" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" table="products_dim" column="productHierarchy2" type="String" />
+			</Hierarchy>
 		</Dimension>
 	
 	
@@ -452,7 +506,7 @@
 						</Script>
 					</MemberFormatter>
 				</Level>	
-				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.srcProductType.title")}" column="productType" nameColumn="productType" type="String"   >
+				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.srcProductType.title")}" column="productType" nameColumn="productType" type="String" uniqueMembers="true"   >
 					<MemberFormatter>
 						<Script language="JavaScript">
 							switch (member.getName()) {
@@ -478,10 +532,6 @@
 						</Script>
 					</MemberFormatter>
 				</Level>
-				<Level name="productHierarchy1" caption="${msg("jsolap.srcProductFamily.title")}" table="rclSources" column="productHierarchy1" type="String"   >
-				</Level>
-				<Level name="productHierarchy2" caption="${msg("jsolap.srcProductSubFamily.title")}" table="rclSources" column="productHierarchy2" type="String"   >
-				</Level>
 				<Level name="entity_noderef" caption="${msg("jsolap.srcProductComponent.title")}" table="rclSources" column="nodeRef" nameColumn="name" type="String"   >
 				</Level>
 				<Level name="versionLabel" caption="${msg("jsolap.srcProductVersionLabel.title")}" table="rclSources" column="versionLabel" type="String" >
@@ -495,6 +545,27 @@
 					</Script>
 				</MemberFormatter>
 				</Level>
+			</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     their ancestors they were qualified by them, so one family produced one row per
+			     ancestor instead of a single aggregated row. -->
+			<Hierarchy name="sourceProductFamily" caption="${msg("jsolap.srcProductFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.sourceProducts.caption")}" primaryKey="dataListNodeRef">
+				<View name="rclSources" alias="rclSources">
+						<SQL dialect="generic">
+							select  a.dataListNodeRef,
+								b.doc->>"$.cm_name" as name,
+								b.nodeRef,
+								b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+								b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+								b.doc->>"$.bcpg_productState" as productState,
+								b.doc->>"$.type" as productType,
+								b.doc->>"$.cm_versionLabel" as versionLabel
+							from
+								assoc_bcpg_rclSources a left join  bcpg_product b on a.nodeRef = b.nodeRef
+						</SQL>
+				</View>
+				<Level name="productHierarchy1" caption="${msg("jsolap.srcProductFamily.title")}" table="rclSources" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.srcProductSubFamily.title")}" table="rclSources" column="productHierarchy2" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -930,9 +1001,14 @@
 		<Dimension name="entity" caption="${msg("jsolap.entity.title")}">
 			<Hierarchy name="entity_dim" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
 				<Level name="entity_noderef" caption="${msg("jsolap.entity.title")}" column="entityNodeRef" nameColumn="entityName" type="String" highCardinality="true"  />
-				<Level name="entityHierarchy1" caption="${msg("jsolap.entityFamily.title")}" column="entityHierarchy1" type="String"   />
-				<Level name="entityHierarchy2" caption="${msg("jsolap.entitySubFamily.title")}" column="entityHierarchy2" type="String"   />
 				</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     their ancestors they were qualified by them, so one family produced one row per
+			     ancestor instead of a single aggregated row. -->
+			<Hierarchy name="entityFamily" caption="${msg("jsolap.entityFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
+				<Level name="entityHierarchy1" caption="${msg("jsolap.entityFamily.title")}" column="entityHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="entityHierarchy2" caption="${msg("jsolap.entitySubFamily.title")}" column="entityHierarchy2" type="String" />
+			</Hierarchy>
 		</Dimension>
 		
 		<Dimension  name="state" caption="${msg("jsolap.entityState.title")}" >
@@ -1342,8 +1418,6 @@
 						</Script>
 					</MemberFormatter>
 				</Level>
-				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="productCode"  type="String" highCardinality="true" uniqueMembers="true"  />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName"  type="String" highCardinality="true" />
 			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="productErpCode"  type="String" />
@@ -1360,6 +1434,13 @@
 					</Script>
 				</MemberFormatter>
 				</Level>
+			</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     productState they were qualified by their ancestors, so one family produced one row
+			     per state instead of a single aggregated row. -->
+			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -1481,8 +1562,6 @@
 						</Script>
 					</MemberFormatter>
 				</Level>
-				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1"  type="String"    />
-				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2"  type="String"    />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="productCode"  type="String" highCardinality="true" uniqueMembers="true"  />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName"  type="String" highCardinality="true" />
 			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="productErpCode"  type="String" />
@@ -1499,6 +1578,13 @@
 					</Script>
 				</MemberFormatter>
 				</Level>
+			</Hierarchy>
+			<!-- beCPG #23077: family and sub-family live in their own hierarchy. Chained under
+			     productState they were qualified by their ancestors, so one family produced one row
+			     per state instead of a single aggregated row. -->
+			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
 			</Hierarchy>
 		</Dimension>
 		
