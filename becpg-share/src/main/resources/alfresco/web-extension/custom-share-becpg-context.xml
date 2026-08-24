@@ -169,6 +169,9 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
   	<!-- Locale resolver -->
    <bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />   
    
+    <!-- WebSocket Initializer -->
+	<bean id="becpgWebSocketInitializer" class="fr.becpg.web.experimental.BeCPGWebSocketInitializer" />
+
     <!-- WS AI Proxy -->
 	<bean id="aiWSProxyConfigurator" class="fr.becpg.web.experimental.AIWSProxyConfigurator" >
 	  <property name="connectorService" ref="connector.service"/>
