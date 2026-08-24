@@ -147,9 +147,14 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 						}, false, true);
 					}
 
-					final NodeRef finalExtractedNode = extractedNode;
+					/*
+					 * Not wrapped: generation waits on the report server, and the service
+					 * opens the short transactions it needs around its reads and its
+					 * writes. Wrapping it here would put them all back inside one.
+					 */
+					entityReportService.generateReports(extractedNode, nodeRef);
+
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						entityReportService.generateReports(finalExtractedNode, nodeRef);
 						nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
 						return null;
 					}, false, true);

@@ -218,6 +218,15 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * rather than open another - and gains nothing. Only a caller that holds none,
 	 * as the report job now does, gets the shorter transactions.
 	 */
+	/** What the preparation phase resolved about the document to produce. */
+	private record ReportTarget(Boolean isDefault, String reportFormat, String documentName, String documentTitle,
+			NodeRef documentNodeRef) {
+	}
+
+	/** What the preparation phase resolved about how to produce it. */
+	private record ReportEngineSetup(BeCPGReportEngine engine, EntityReportExtractorPlugin extractor, ContentWriter writer) {
+	}
+
 	private <T> T inTransaction(RetryingTransactionCallback<T> callback, boolean readOnly) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(callback, readOnly);
 	}
@@ -431,28 +440,32 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 		Date generatedDate = Calendar.getInstance().getTime();
 
-		Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
-		Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+		/* Reads that decide what to produce, in one transaction of their own. */
+		List<NodeRef> tplsNodeRef = inTransaction(() -> {
 
-		if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
-			logger.trace("Using formulated date instead of modified");
-			modified = formulatedDate;
-		}
+			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
 
-		Calendar deprecatedDate = Calendar.getInstance();
-		deprecatedDate.setTime(modified);
-		deprecatedDate.add(Calendar.HOUR, -1);
+			if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
+				logger.trace("Using formulated date instead of modified");
+				modified = formulatedDate;
+			}
 
-		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
+			Calendar deprecatedDate = Calendar.getInstance();
+			deprecatedDate.setTime(modified);
+			deprecatedDate.add(Calendar.HOUR, -1);
 
-		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+			List<NodeRef> tpls = reportTplService.cleanDefaultTpls(getReportTplsToGenerate(entityNodeRef));
 
-		if (reportKind != null && !reportKind.isEmpty()) {
-			tplsNodeRef = tplsNodeRef.stream().filter(tplNodeRef -> {
-				List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
-				return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
-			}).collect(Collectors.toList());
-		}
+			if (reportKind != null && !reportKind.isEmpty()) {
+				tpls = tpls.stream().filter(tplNodeRef -> {
+					List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+					return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
+				}).collect(Collectors.toList());
+			}
+
+			return tpls;
+		}, true);
 
 		List<NodeRef> newReports = new ArrayList<>();
 
@@ -479,21 +492,28 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 				finalTplsNodeRef.stream().forEach(tplNodeRef -> {
 					
-					for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef, engineErrors)) {
+					for (EntityReportParameters reportParameters : inTransaction(
+							() -> getEntityReportParametersList(tplNodeRef, entityNodeRef, engineErrors), true)) {
 							
-						if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
+						if (Boolean.TRUE.equals(inTransaction(() -> isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal), true))) {
 							
-							Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-							
-							// prepare
-							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-									reportParameters.getReportNameFormat(reportNameFormat()));
-							
-							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-									reportParameters.getReportTitleFormat(reportTitleFormat()));
-							
-							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters, engineErrors);
+							// prepare: reads, plus the document node itself when it has to be created
+							ReportTarget target = inTransaction(() -> {
+								Boolean tplIsDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+								String tplFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+								String name = getReportDocumentName(entityNodeRef, tplNodeRef, tplFormat, locale, reportParameters,
+										reportParameters.getReportNameFormat(reportNameFormat()));
+								String title = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
+										reportParameters.getReportTitleFormat(reportTitleFormat()));
+								return new ReportTarget(tplIsDefault, tplFormat, name, title,
+										getReportDocumentNodeRef(entityNodeTo, tplNodeRef, name, locale, reportParameters, engineErrors));
+							}, false);
+
+							Boolean isDefault = target.isDefault();
+							String reportFormat = target.reportFormat();
+							String documentName = target.documentName();
+							String documentTitle = target.documentTitle();
+							NodeRef documentNodeRef = target.documentNodeRef();
 							
 							if (documentNodeRef != null) {
 								
@@ -507,13 +527,21 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									auditScope.putAttribute(ReportAuditPlugin.FORMAT, reportFormat);
 									auditScope.putAttribute(ReportAuditPlugin.NAME, documentName);
 									
-									BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
-									
-									extractor = retrieveExtractor(entityNodeRef, engine);
-									
-									policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
-									
-									ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+									/*
+									 * Resolving the engine and the extractor, and opening the writer, all
+									 * read the repository: they get a transaction of their own, closed
+									 * before the report server is called.
+									 */
+									ReportEngineSetup setup = inTransaction(() -> {
+										BeCPGReportEngine reportEngine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
+										policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+										return new ReportEngineSetup(reportEngine, retrieveExtractor(entityNodeRef, reportEngine),
+												contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true));
+									}, false);
+
+									BeCPGReportEngine engine = setup.engine();
+									extractor = setup.extractor();
+									ContentWriter writer = setup.writer();
 									
 									if ((entityReportLocales.size() > 1) && !MLTextHelper.isDefaultLocale(locale)) {
 										isDefault = false;
@@ -521,8 +549,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									if (writer != null) {
 										
-										if (shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports, selectedReportNodeRef, isDefault,
-												documentNodeRef, tplNodeRef, reportKind)) {
+										final Boolean generateForDefault = isDefault;
+										if (Boolean.TRUE.equals(inTransaction(() -> shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports,
+												selectedReportNodeRef, generateForDefault, documentNodeRef, tplNodeRef, reportKind), true))) {
 											
 											String reportKindCode = "";
 											if (tplNodeRef != null) {
@@ -607,14 +636,20 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 											engineErrors.addAll(reportData.getLogs());
 											
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
+											inTransaction(() -> {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
+												return null;
+											}, false);
 										} else {
 											writer.setMimetype("text/plain");
 											writer.putContent("Loading ...");
 											logger.debug("Mark durty report: " + entityNodeRef + " for document " + documentName + " ("
 													+ documentNodeRef + ")");
 											
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+											inTransaction(() -> {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+												return null;
+											}, false);
 										}
 										
 										I18NUtil.setLocale(Locale.getDefault());
@@ -679,17 +714,24 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 			}
 			
-			reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
+			inTransaction(() -> {
+				reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
+				return null;
+			}, false);
 				
 			
 		} else {
 			logger.debug("No report tpls found, delete existing ones");
 		}
 
-		// set reportNodeGenerated property to now
-		nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
+		inTransaction(() -> {
+			// set reportNodeGenerated property to now
+			nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 
-		entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+			entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+			return null;
+		}, false);
+
 		return newReports;
 	}
 
