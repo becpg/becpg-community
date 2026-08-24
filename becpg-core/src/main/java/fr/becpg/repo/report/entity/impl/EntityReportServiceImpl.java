@@ -107,6 +107,7 @@ import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtra
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportParameters.EntityReportParameter;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -1441,11 +1442,20 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 				} catch (ReportException e) {
 
-					String message = "Failed to execute report for template : " + templateNodeRef;
+					/*
+					 * A caller that gave up mid-stream is not a report error: nothing is
+					 * wrong with the entity or the template, and recording an error on the
+					 * entity would tell its next reader otherwise.
+					 */
+					if (ReportUtils.isClientAbort(e)) {
+						logger.info("Report for template " + templateNodeRef + " was not delivered: " + e.getMessage());
+					} else {
+						String message = "Failed to execute report for template : " + templateNodeRef;
 
-					engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(templateNodeRef)));
+						engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(templateNodeRef)));
 
-					logger.error(message, e);
+						logger.error(message, e);
+					}
 				}
 
 			} finally {

@@ -46,6 +46,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
@@ -60,6 +61,8 @@ import fr.becpg.report.client.ReportParams;
  * @version $Id: $Id
  */
 public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
+
+	private static final String CLIENT_GAVE_UP = "Caller gave up before the report was delivered";
 
 	private NodeService nodeService;
 
@@ -291,9 +294,17 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				}
 			} catch (IOException e) {
 				/*
-				 * This block also covers sending the report, so a caller giving up surfaces
-				 * here too. The message names both causes rather than blaming the datasource.
+				 * This block also covers sending the report back, so a caller giving up
+				 * surfaces here too — and that is not a failure of ours. The report was
+				 * produced, there is simply nobody left to hand it to. Logging it as an
+				 * error with a stack buries the real failures under the noise of every
+				 * client that timed out.
 				 */
+				if (ReportUtils.isClientAbort(e)) {
+					logger.info("Caller gave up while the report was streamed back: " + e.getMessage());
+					throw new ReportException(CLIENT_GAVE_UP, e);
+				}
+
 				logger.error("Failed to write XML datasource or to stream the report to the report server", e);
 				throw new ReportException("Failed to process datasource", e);
 			}

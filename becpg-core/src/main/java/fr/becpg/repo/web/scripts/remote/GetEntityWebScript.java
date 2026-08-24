@@ -44,6 +44,15 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef entityNodeRef = findEntity(req);
 
+		/*
+		 * Une fois le flux de la réponse pris, le conteneur ne peut plus rendre
+		 * d'erreur : renderErrorResponse demande le writer et échoue sur
+		 * « getOutputStream() a déjà été appelé », ce qui remplace la cause réelle
+		 * par un message sur la réponse. Passé ce point, on journalise et on rend
+		 * la main, l'appelant a déjà le corps tronqué.
+		 */
+		boolean streaming = false;
+
 		try {
 			if(logger.isDebugEnabled()) {
 				logger.debug("Get entity: " + entityNodeRef);
@@ -59,6 +68,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 		
+			streaming = true;
 			try (OutputStream out = resp.getOutputStream()) {
 				remoteEntityService.getEntity(entityNodeRef, out, params);
 				resp.setStatus(Status.STATUS_OK);
@@ -93,7 +103,16 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 				logger.info("Client aborted connection due to network issue for entity: " + entityNodeRef);
 				return;
 			}
+			if (streaming) {
+				logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
+				return;
+			}
 			throw e;
+		} catch (RuntimeException e) {
+			if (!streaming) {
+				throw e;
+			}
+			logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
 		}
 
 	}
