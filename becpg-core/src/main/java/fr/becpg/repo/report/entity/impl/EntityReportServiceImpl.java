@@ -420,7 +420,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							// transaction generation opens and none of the ones that write.
 							try {
 								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind, targetLocale);
-								inTransaction(nodeRefFrom, () -> {
+								inTransaction(nodeRefTo, () -> {
 									updateReportsAssoc(nodeRefTo, newReports, reportKind, targetLocale, defaultLocale);
 									return null;
 								}, false);
