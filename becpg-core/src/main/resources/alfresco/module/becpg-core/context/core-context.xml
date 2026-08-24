@@ -88,37 +88,6 @@
 	</bean>
 
 
-	<!--
-		Reclaims a pooled connection that was borrowed and never given back.
-
-		The repository wires db.pool.abandoned.detect to removeAbandonedOnBorrow
-		alone. That path only fires when the pool is nearly exhausted - DBCP2 wants
-		more than maxTotal - 3 active connections and fewer than two idle ones - so
-		with a pool of 100 and a single leaked connection it never fires.
-
-		A leaked connection is not one connection lost. It holds its transaction
-		open, so it keeps that transaction's row locks and, worse, its read view:
-		InnoDB cannot purge any undo record newer than it. The undo history then
-		grows without bound - measured at ~470 entries per minute on dev, including
-		while the instance was idle - and every write pays for it until restart.
-
-		removeAbandonedOnMaintenance reclaims it on the eviction run that
-		db.pool.evict.interval already schedules. It follows the same switch as the
-		borrow path, so a deployment that does not want the behaviour turns
-		db.pool.abandoned.detect off and keeps both disabled.
-	-->
-	<bean id="becpgAbandonedConnectionOnMaintenance"
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="defaultDataSource" />
-		<property name="targetMethod" value="setRemoveAbandonedOnMaintenance" />
-		<property name="arguments">
-			<list>
-				<value type="boolean">${db.pool.abandoned.detect}</value>
-			</list>
-		</property>
-	</bean>
-
-
 	<bean id="associationService" parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImplV2">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />
