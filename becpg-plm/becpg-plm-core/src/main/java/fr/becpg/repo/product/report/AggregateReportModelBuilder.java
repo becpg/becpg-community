@@ -219,11 +219,12 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Collecting COMPO_CHILDREN annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind() + ", recurse: " + annex.isRecurse() + ", allowedTypes: " + annex.getComponentTypes());
         }
-        List<NodeRef> compoComponents = new ArrayList<>();
-        collectCompoComponents(fpNodeRef, compoComponents, new HashSet<>(), annex.isRecurse(), annex.getComponentTypes());
-        if (annex.isDedup()) {
-            compoComponents = new ArrayList<>(new LinkedHashSet<>(compoComponents));
-        }
+        final List<NodeRef> collectedComponents = new ArrayList<>();
+        transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+            collectCompoComponents(fpNodeRef, collectedComponents, new HashSet<>(), annex.isRecurse(), annex.getComponentTypes());
+            return null;
+        }, true);
+        List<NodeRef> compoComponents = annex.isDedup() ? new ArrayList<>(new LinkedHashSet<>(collectedComponents)) : collectedComponents;
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + compoComponents.size() + " composition components for node: " + fpNodeRef + ": " + compoComponents);
         }
@@ -238,11 +239,12 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Collecting PACKAGING_CHILDREN annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind() + ", pkgLevel: " + annex.getPkgLevel());
         }
-        List<NodeRef> packagingComponents = new ArrayList<>();
-        collectPackagingComponents(fpNodeRef, packagingComponents, annex.getPkgLevel());
-        if (annex.isDedup()) {
-            packagingComponents = new ArrayList<>(new LinkedHashSet<>(packagingComponents));
-        }
+        final List<NodeRef> collectedComponents = new ArrayList<>();
+        transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+            collectPackagingComponents(fpNodeRef, collectedComponents, annex.getPkgLevel());
+            return null;
+        }, true);
+        List<NodeRef> packagingComponents = annex.isDedup() ? new ArrayList<>(new LinkedHashSet<>(collectedComponents)) : collectedComponents;
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + packagingComponents.size() + " packaging components for node: " + fpNodeRef + ": " + packagingComponents);
         }
@@ -444,15 +446,19 @@ public class AggregateReportModelBuilder {
     }
 
     private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, boolean isRootEntityDocument) {
-        List<AnnexDocument> results = new ArrayList<>();
-        Set<NodeRef> collectedNodeRefs = new HashSet<>();
-
         if (logger.isDebugEnabled()) {
             logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", reportKind: " + reportKind + ", mimeTypes: " + mimeTypes);
         }
 
         final Locale reportLocale = I18NUtil.getLocale();
 
+        refreshReportsOfKind(entityNodeRef, reportKind, reportLocale, isRootEntityDocument);
+
+        return transactionService.getRetryingTransactionHelper()
+                .doInTransaction(() -> collectDocuments(entityNodeRef, reportKind, mimeTypes, reportLocale), true);
+    }
+
+    private void refreshReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale reportLocale, boolean isRootEntityDocument) {
         try {
         	if (isRootEntityDocument) {
         		if (logger.isDebugEnabled()) {
@@ -471,17 +477,23 @@ public class AggregateReportModelBuilder {
         } catch (Exception e) {
             logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
+    }
 
-        Object titleProp = nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
-        String compName = null;
-        if (titleProp instanceof MLText mlText) {
-            compName = MLTextHelper.getClosestValue(mlText, I18NUtil.getLocale());
-        } else if (titleProp != null) {
-            compName = titleProp.toString();
-        }
-        if (compName == null || compName.isEmpty()) {
-            compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-        }
+    /**
+     * Reads one component's annexes in a transaction of its own.
+     *
+     * The engine is called with no transaction around it when the report comes from the batch, and
+     * Alfresco's transactional structures do not object: they bind themselves to the thread and
+     * wait for a completion callback that was never registered, so the caches they fill are never
+     * flushed and the behaviours they suppress are never restored. One short read-only transaction
+     * per component gives the reads a consistent view and a defined end, without holding the read
+     * view open for the whole assembly - which is what would keep InnoDB from purging its undo.
+     */
+    private List<AnnexDocument> collectDocuments(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, Locale reportLocale) {
+        List<AnnexDocument> results = new ArrayList<>();
+        Set<NodeRef> collectedNodeRefs = new HashSet<>();
+
+        String compName = readComponentName(entityNodeRef, reportLocale);
 
         collectReportsOfKind(entityNodeRef, reportKind, reportLocale, compName, results, collectedNodeRefs);
         if (logger.isDebugEnabled()) {
@@ -494,6 +506,23 @@ public class AggregateReportModelBuilder {
         }
 
         return results;
+    }
+
+    private String readComponentName(NodeRef entityNodeRef, Locale reportLocale) {
+        Object titleProp = nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
+        String compName = null;
+
+        if (titleProp instanceof MLText mlText) {
+            compName = MLTextHelper.getClosestValue(mlText, reportLocale);
+        } else if (titleProp != null) {
+            compName = titleProp.toString();
+        }
+
+        if (compName == null || compName.isEmpty()) {
+            compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+        }
+
+        return compName;
     }
 
     private void collectReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale reportLocale, String compName, List<AnnexDocument> results,
