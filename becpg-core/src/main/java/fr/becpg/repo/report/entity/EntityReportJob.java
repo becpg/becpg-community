@@ -3,6 +3,8 @@ package fr.becpg.repo.report.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
@@ -60,18 +62,19 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		EntityReportService entityReportService = (EntityReportService) jobData.get("entityReportService");
 		BatchQueueService batchQueueService = (BatchQueueService) jobData.get("batchQueueService");
 		TransactionService transactionService = (TransactionService) jobData.get("transactionService");
-		int total = generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.VERY_HIGH, MAX_RESULTS);
+		BehaviourFilter policyBehaviourFilter = (BehaviourFilter) jobData.get("policyBehaviourFilter");
+		int total = generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, policyBehaviourFilter, BatchPriority.VERY_HIGH, MAX_RESULTS);
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.HIGH, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, policyBehaviourFilter, BatchPriority.HIGH, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.MEDIUM, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, policyBehaviourFilter, BatchPriority.MEDIUM, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.LOW, MAX_RESULTS - total);
+			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, policyBehaviourFilter, BatchPriority.LOW, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, BatchPriority.VERY_LOW, MAX_RESULTS - total);
+			generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService, policyBehaviourFilter, BatchPriority.VERY_LOW, MAX_RESULTS - total);
 		}
 	}
 	
@@ -83,12 +86,14 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
 	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
 	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
 	 * @param priority a {@link fr.becpg.repo.batch.BatchPriority} object
 	 * @param maxResults a int
 	 * @return a int
 	 */
 	private int generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService,
-			BatchQueueService batchQueueService, TransactionService transactionService, BatchPriority priority, int maxResults) {
+			BatchQueueService batchQueueService, TransactionService transactionService, BehaviourFilter policyBehaviourFilter,
+			BatchPriority priority, int maxResults) {
 		String batchId = "generatePendingReports-" + priority;
 		String batchDescId = "becpg.batch.entity.generatePendingReports." + priority;
 		String batchFullId = batchId + "|" + batchDescId;
@@ -155,7 +160,15 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 					entityReportService.generateReports(extractedNode, nodeRef);
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+						// Clearing the pending flag is bookkeeping, not a change to the product:
+						// without this the entity would come back modified every time a report is
+						// generated, which reformulation and synchronisation both react to.
+						policyBehaviourFilter.disableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
+						try {
+							nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+						} finally {
+							policyBehaviourFilter.enableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
+						}
 						return null;
 					}, false, true);
 				}
