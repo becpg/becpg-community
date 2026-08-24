@@ -2050,7 +2050,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 						NodeRef aggTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
 								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT),
-								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, true);
+								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, false);
 						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
 
 						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT);
@@ -2079,7 +2079,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 						NodeRef compoForPifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
 								compoForPifReportName,
-								PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, compoForPifTplInfo, true);
+								PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, compoForPifTplInfo, false);
 
 						MLText compoTitleMlt = TranslateHelper.getTranslatedPathMLText(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME);
 						if (compoTitleMlt != null && !compoTitleMlt.isEmpty()) {
@@ -2117,7 +2117,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
 								pifReportName,
-								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, true);
+								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, false);
 						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
 
 						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PIF_REPORT);
