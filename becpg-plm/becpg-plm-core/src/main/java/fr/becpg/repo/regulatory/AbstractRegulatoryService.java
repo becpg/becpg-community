@@ -283,13 +283,12 @@ public abstract class AbstractRegulatoryService {
                 mergeItems(productData, items);
             }
         }
-
-        List<IngRegulatoryListDataItem> filteredList = productData
-                .getIngRegulatoryList().stream().filter(
-                        item -> ingRegulatoryListDataItems.stream()
-                                .anyMatch(ingRegulatoryListDataItem -> Objects.equals(item.getIng(), ingRegulatoryListDataItem.getIng())
-                                        && Objects.equals(item.getRegulatoryCountries(), ingRegulatoryListDataItem.getRegulatoryCountries())))
-                .toList();
+        // deduplicate with present items, prioritizing incoming ones
+        List<IngRegulatoryListDataItem> filteredList = productData.getIngRegulatoryList().stream().filter(item ->
+                ingRegulatoryListDataItems.stream().anyMatch(ingRegulatoryListDataItem ->
+                        Objects.equals(item.getIng(), ingRegulatoryListDataItem.getIng()) &&
+                                Objects.equals(item.getRegulatoryCountries(), ingRegulatoryListDataItem.getRegulatoryCountries())
+                )).toList();
 
         productData.getIngRegulatoryList().retainAll(filteredList);
 

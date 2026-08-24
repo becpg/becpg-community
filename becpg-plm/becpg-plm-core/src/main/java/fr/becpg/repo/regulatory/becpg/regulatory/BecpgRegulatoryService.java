@@ -16,6 +16,7 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -30,6 +31,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -188,6 +190,14 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
             return false;
         JSONObject json = new JSONObject(analysisResult);
 
+        // acts like DecernisRegulatoryService::fetchIngredients
+        // For decernis - the dedicated endpoint is requested, for becpg - we extract from the response
+        productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach((id, regCodes) -> {
+            IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
+            ingItem.setRegulatoryCode(regCodes);
+            alfrescoRepository.save(ingItem);
+        });
+
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
         context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
@@ -196,6 +206,16 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 context.getProduct().getRegulatoryList(), parsedRequirements);
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);
+
+        // Eelements without requirements are indicating that ingredient was resolved and providing regulatoryCode.
+        // Remove, so they won't fill the datalist view with empty rows
+        context.getIngRegulatoryListDataItems().removeIf(ingRegListDataItem ->
+                (ingRegListDataItem.getCitation() == null || ingRegListDataItem.getCitation().isEmpty()) &&
+                        (ingRegListDataItem.getRestrictionLevels() == null || ingRegListDataItem.getRestrictionLevels().isEmpty()) &&
+                        (ingRegListDataItem.getResultIndicator() == null || ingRegListDataItem.getResultIndicator().isEmpty()) &&
+                        (ingRegListDataItem.getPrecautions() == null || ingRegListDataItem.getPrecautions().isEmpty()) &&
+                        (ingRegListDataItem.getComment() == null || ingRegListDataItem.getComment().isEmpty())
+        );
         List<RequirementListDataItem> allRequirementAlerts = Streams.concat(
                 parsedRequirements.stream(), alertsForNotCoveredCountryToUsagePairs, alertsForNotCoveredIngredients
         ).toList();

@@ -18,8 +18,11 @@ import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -38,6 +41,8 @@ import java.util.stream.Stream;
  */
 @Service
 public class ProductDataEntityJsonService {
+    private static final Logger log = LoggerFactory.getLogger(ProductDataEntityJsonService.class);
+
     public static final String MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND = "message.regulatory.usage-to-country.missing";
     public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 
@@ -118,6 +123,37 @@ public class ProductDataEntityJsonService {
                 item.setCharact(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
         }
         return item;
+    }
+
+    /**
+     * Extracts ingredient id:regulatoryCode pairs to update ingredient characts
+     */
+    public Map<String, String> extractIngIdToRegulatoryCodes(JSONObject ingRegulatoryListJson) {
+        JSONObject datalists = ingRegulatoryListJson.getJSONObject("datalists");
+
+        String listTypeName = qnameToString(PLMModel.TYPE_ING_REGULATORY_LIST);
+        String ingAssocTypeName = qnameToString(PLMModel.ASSOC_IRL_ING);
+        String regCodeTypeName = qnameToString(PLMModel.PROP_REGULATORY_CODE);
+
+        if (datalists.has(listTypeName)) {
+            JSONArray array = datalists.getJSONArray(listTypeName);
+            return IntStream.range(0, array.length())
+                    .mapToObj(i -> array.getJSONObject(i).optJSONObject("attributes"))
+                    .filter(attributes -> attributes != null && attributes.has(ingAssocTypeName))
+                    .collect(Collectors.toMap(
+                            attributes -> attributes.getJSONObject(ingAssocTypeName).getString("id"),
+                            attributes -> attributes.getJSONObject(ingAssocTypeName).optJSONObject("attributes").getString(regCodeTypeName),
+                            (v1, v2) -> {
+                                if (StringUtils.hasText(v1) && StringUtils.hasText(v2)) {
+                                    if (v1.equals(v2))
+                                        return v1;
+                                    log.warn("becpg-regulatory returned different regulatory codes for the same ingredient: {} and {}", v1, v2);
+                                }
+                                return StringUtils.hasText(v1) ? v1 : StringUtils.hasText(v2) ? v2 : "";
+                            }
+                    ));
+        }
+        return Map.of();
     }
 
     /**
