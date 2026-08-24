@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -67,6 +68,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
@@ -194,6 +196,31 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	@Autowired
 	private ContentService contentService;
+
+	@Autowired
+	private TransactionService transactionService;
+
+	/*
+	 * Report generation waits on the report server, and a transaction held across
+	 * that wait keeps its row locks and stops InnoDB from purging its undo records
+	 * - every other write on the instance then pays for it, and the repository only
+	 * recovers when it restarts.
+	 *
+	 * The work splits cleanly: every read happens before the report server is
+	 * called and every write after it, nothing touches the database in between. So
+	 * each side runs in its own short transaction and the call itself runs in none.
+	 * Writing the report content is safe there: contentService.getWriter streams
+	 * straight to the node's final location in the content store, and the listener
+	 * that records cm:content on stream close opens its own transaction when there
+	 * is none.
+	 *
+	 * A caller that already holds a transaction simply keeps it - these join it
+	 * rather than open another - and gains nothing. Only a caller that holds none,
+	 * as the report job now does, gets the shorter transactions.
+	 */
+	private <T> T inTransaction(RetryingTransactionCallback<T> callback, boolean readOnly) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(callback, readOnly);
+	}
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -507,44 +534,60 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 											reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
 											reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
-											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
-											
-											auditScope.addCheckpoint(EXTRACT);
-											
-											reportData.setParameters(reportParameters);
-											
+											final EntityReportExtractorPlugin dataExtractor = extractor;
+
+											/*
+											 * Reads only: build the datasource the report server will be given.
+											 * Kept in its own transaction so it closes before the call below.
+											 */
+											EntityReportData reportData = inTransaction(() -> {
+
+												EntityReportData data = dataExtractor.extract(entityNodeRef, reportParameters.getPreferences());
+
+												auditScope.addCheckpoint(EXTRACT);
+
+												data.setParameters(reportParameters);
+
+												if (engine.isXmlEngine()) {
+													if (data.getXmlDataSource() == null) {
+														throw new IllegalArgumentException("nodeElt is null");
+													}
+
+													if (logger.isTraceEnabled()) {
+														logger.trace("DataSource XML : \n" + getTruncatedXml(data.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+													}
+
+													filterByReportKind(data.getXmlDataSource(), tplNodeRef);
+
+													if (logger.isTraceEnabled()) {
+														logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(data.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+													}
+												}
+
+												return data;
+											}, false);
+
 											String mimetype = mimetypeService.guessMimetype(documentName);
 											writer.setMimetype(mimetype);
 											Map<String, Object> params = new HashMap<>();
-											
+
 											params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 											params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 											params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-													associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+													inTransaction(() -> associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES), true));
 											params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 											params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
-											
+
 											if (logger.isDebugEnabled()) {
 												logger.debug("Update report: " + entityNodeRef + " for document " + documentName + " (" + documentNodeRef + ")");
 											}
-											
-											if (engine.isXmlEngine()) {
-												if (reportData.getXmlDataSource() == null) {
-													throw new IllegalArgumentException("nodeElt is null");
-												}
-												
-												if (logger.isTraceEnabled()) {
-													logger.trace("DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
-												}
-												
-												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
-												
-												if (logger.isTraceEnabled()) {
-													logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
-												}
-												
-											}
-											
+
+											/*
+											 * No transaction around this: it waits on the report server. The bytes
+											 * go straight to the node's place in the content store, and the
+											 * listener that records cm:content on stream close opens the short
+											 * transaction it needs by itself.
+											 */
 											try {
 												engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 											} finally {
@@ -559,9 +602,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 													auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
 												}
 											}
-											
+
 											auditScope.addCheckpoint(CREATE_REPORT);
-											
+
 											engineErrors.addAll(reportData.getLogs());
 											
 											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
@@ -577,29 +620,37 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 										I18NUtil.setLocale(Locale.getDefault());
 										I18NUtil.setContentLocale(Locale.getDefault());
 										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
-										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
-										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
-										
-										if (!Boolean.TRUE.equals(includeReportInSearch())) {
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
-										} else {
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
-										}
-										
-										if (reportParameters.isEmpty()) {
-											nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
-										} else {
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
-													reportParameters.toJSONString());
-										}
-										
-										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, MLTextHelper.localeKey(locale));
-										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
+										final Boolean reportIsDefault = isDefault;
+
+										/* Writes only, in one short transaction of their own. */
+										inTransaction(() -> {
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
+
+											if (!Boolean.TRUE.equals(includeReportInSearch())) {
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
+											} else {
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
+											}
+
+											if (reportParameters.isEmpty()) {
+												nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
+											} else {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
+														reportParameters.toJSONString());
+											}
+
+											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, MLTextHelper.localeKey(locale));
+											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, reportIsDefault);
+
+											return null;
+										}, false);
 										
 										I18NUtil.setLocale(locale);
 										I18NUtil.setContentLocale(locale);
