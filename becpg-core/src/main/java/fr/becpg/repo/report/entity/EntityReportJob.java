@@ -119,23 +119,45 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 					new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 				@Override
 				public void process(NodeRef nodeRef) throws Throwable {
-					if (nodeService.exists(nodeRef)) {
-						NodeRef extractedNode = nodeRef;
-						if (VersionHelper.isVersion(nodeRef) && (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-							extractedNode = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								return entityVersionService.extractVersion(nodeRef);
-							}, false, true);
-						}
-						final NodeRef finalExtractedNode = extractedNode;
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							entityReportService.generateReports(finalExtractedNode, nodeRef);
-							nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
-							return null;
+
+					/*
+					 * The step declares itself non transactional, so nothing wraps this
+					 * method: each phase opens the transaction it needs and closes it.
+					 *
+					 * Wrapped, the entry held one transaction from the first read to the
+					 * last write, generation included - and generation waits on the report
+					 * server. A transaction held across that wait keeps its row locks and
+					 * stops InnoDB from purging its undo records, which every other write
+					 * on the instance then pays for.
+					 */
+					Boolean pending = transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> nodeService.exists(nodeRef), true, true);
+
+					if (!Boolean.TRUE.equals(pending)) {
+						return;
+					}
+
+					NodeRef extractedNode = nodeRef;
+
+					if (Boolean.TRUE.equals(transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> VersionHelper.isVersion(nodeRef)
+									&& (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null), true, true))) {
+						extractedNode = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							return entityVersionService.extractVersion(nodeRef);
 						}, false, true);
 					}
+
+					final NodeRef finalExtractedNode = extractedNode;
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						entityReportService.generateReports(finalExtractedNode, nodeRef);
+						nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+						return null;
+					}, false, true);
 				}
 				
 			});
+
+			batchStep.setTransactional(false);
 			batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 		}
 		
