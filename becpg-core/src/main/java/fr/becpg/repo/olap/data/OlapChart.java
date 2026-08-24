@@ -185,6 +185,16 @@ public class OlapChart {
 		logger.trace("Get XML data query from xml" + xml);
 		this.xml = xml;
 
+		// #24931: a query re-saved from the Saiku 4.8 workspace is stored as JSON, not as the
+		// Saiku 2.x XML this method was written for. Parsing it as XML throws, the caller skips the
+		// chart, and it silently disappears from the beCPG BI dashlet. The document is still passed
+		// on verbatim to the OLAP server, which accepts both forms, so only the few attributes read
+		// here need a second reading.
+		if (isJsonQuery(xml)) {
+			loadFromJson(xml);
+			return;
+		}
+
 		try (InputStream is = new ByteArrayInputStream(xml.getBytes())) {
 
 			Document doc = DOMUtils.parse(is);
@@ -198,6 +208,27 @@ public class OlapChart {
 				}
 			}
 
+		}
+	}
+
+	private static boolean isJsonQuery(String content) {
+		return (content != null) && content.trim().startsWith("{");
+	}
+
+	/**
+	 * Reads the few attributes this class exposes from a Saiku 4.8 query document.
+	 *
+	 * @param json the query as stored by the 4.8 workspace
+	 * @throws JSONException if the document is not readable
+	 */
+	private void loadFromJson(String json) throws JSONException {
+		JSONObject root = new JSONObject(json);
+		queryId = root.optString("name", null);
+		type = root.optString("type", null);
+		mdx = root.optString("mdx", null);
+		JSONObject cubeObject = root.optJSONObject("cube");
+		if (cubeObject != null) {
+			cube = cubeObject.optString("name", null);
 		}
 	}
 
