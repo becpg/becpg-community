@@ -398,7 +398,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							
 							try {
 								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind, targetLocale);
-								updateReportsAssoc(nodeRefTo, newReports, reportKind);
+								updateReportsAssoc(nodeRefTo, newReports, reportKind, targetLocale, defaultLocale);
 							} finally {
 								if (rulesEnabled) {
 									ruleService.enableRules();
@@ -1979,13 +1979,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param newReports a {@link java.util.List} object
 	 */
-	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports, String reportKind) {
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports, String reportKind, Locale targetLocale, Locale defaultLocale) {
 		List<NodeRef> currentReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			for (NodeRef dbReport : currentReports) {
 				if (!newReports.contains(dbReport)) {
-					boolean shouldDelete = (reportKind != null && !reportKind.isEmpty()) ? isReportOfKind(dbReport, reportKind) : true;
+					boolean shouldDelete = !isKeptByThisRun(dbReport, reportKind, targetLocale, defaultLocale);
 					if (shouldDelete) {
 						logger.debug("delete old report: " + dbReport);
 						nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
@@ -1995,17 +1995,47 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			}
 		}
 
-		if (reportKind != null && !reportKind.isEmpty()) {
-			List<NodeRef> finalReports = new ArrayList<>(newReports);
-			for (NodeRef dbReport : currentReports) {
-				if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && !isReportOfKind(dbReport, reportKind)) {
-					finalReports.add(dbReport);
-				}
+		List<NodeRef> finalReports = new ArrayList<>(newReports);
+		for (NodeRef dbReport : currentReports) {
+			if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && isKeptByThisRun(dbReport, reportKind, targetLocale, defaultLocale)) {
+				finalReports.add(dbReport);
 			}
-			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
-		} else {
-			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
 		}
+
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
+	}
+
+	/**
+	 * Tells whether a report the run did not produce must stay associated to the entity: either
+	 * it belongs to another kind, or it is written in a language this run never looked at.
+	 */
+	private boolean isKeptByThisRun(NodeRef reportNodeRef, String reportKind, Locale targetLocale, Locale defaultLocale) {
+		if ((reportKind != null) && !reportKind.isEmpty() && !isReportOfKind(reportNodeRef, reportKind)) {
+			return true;
+		}
+
+		return !wasRegenerated(reportNodeRef, targetLocale, defaultLocale);
+	}
+
+	/**
+	 * Tells whether this run had a chance to produce that report again.
+	 *
+	 * A report the run never looked at must survive it: when the caller asked for one locale,
+	 * the reports written in the other languages are neither regenerated nor missing, they are
+	 * simply out of scope, and deleting them as stale would lose them.
+	 */
+	private boolean wasRegenerated(NodeRef reportNodeRef, Locale targetLocale, Locale defaultLocale) {
+		if (targetLocale == null) {
+			return true;
+		}
+
+		for (Locale reportLocale : getEntityReportLocales(reportNodeRef)) {
+			if (reportLocale.getLanguage().equals(targetLocale.getLanguage()) || reportLocale.equals(defaultLocale)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
