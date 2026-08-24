@@ -2326,8 +2326,9 @@
 						select
 							a.nodeRef as nodeRef,
 							a.entityNodeRef,
-							a.doc->>"$.pack_pmlMaterial[0]" as materialName,
+							m.doc->>"$.bcpg_lvValue" as materialName,
 							a.doc->>"$.pack_pmlMaterial_bcpg_nodeRef[0]" as materialNodeRef,
+							m.doc->>"$.pack_pmIsNotRecyclable" as materialIsNotRecyclable,
 							a.doc->>"$.pack_pmlLevel" as materialLevel,
 							CAST(a.doc->>"$.pack_pmlPerc" AS DECIMAL(20,6)) as materialPerc,
 							CAST(a.doc->>"$.pack_pmlWeight" AS DECIMAL(20,6)) as materialWeight,
@@ -2343,6 +2344,7 @@
 							b.doc->>"$.metadata_siteName" as siteName
 						from
 							packMaterialList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef
+							left join pack_packMaterial m on a.doc->>"$.pack_pmlMaterial_bcpg_nodeRef[0]" = m.nodeRef
 					</SQL>
 		</View>
 
@@ -2403,7 +2405,14 @@
 
 		<Dimension name="packagingMaterial" caption="${msg("jsolap.packagingMaterial.title")}">
 			<Hierarchy name="packagingMaterial" hasAll="true" allMemberCaption="${msg("jsolap.packagingMaterial.caption")}">
-				<Level name="materialNodeRef" caption="${msg("jsolap.packagingMaterial.title")}" column="materialNodeRef" nameColumn="materialName" type="String" />
+				<Level name="materialName" caption="${msg("jsolap.packagingMaterial.title")}" column="materialName" type="String" uniqueMembers="true" />
+				<Level name="materialNodeRef" caption="${msg("jsolap.packagingMaterialItem.title")}" column="materialNodeRef" nameColumn="materialName" type="String" highCardinality="true" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension name="packagingRecyclability" caption="${msg("jsolap.packagingRecyclability.title")}">
+			<Hierarchy name="packagingRecyclability" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecyclability.title")}">
+				<Level name="materialIsNotRecyclable" caption="${msg("jsolap.packagingRecyclability.title")}" column="materialIsNotRecyclable" type="String" />
 			</Hierarchy>
 		</Dimension>
 
