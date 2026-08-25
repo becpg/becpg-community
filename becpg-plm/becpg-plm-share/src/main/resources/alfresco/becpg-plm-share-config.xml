@@ -400,6 +400,33 @@
 					listId="surveyList@1" itemId="survey:surveyList"
 					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 			</wizard>
+			<!-- Consultation d'un cahier des charges par le fournisseur.
+
+			     readOnly : ce que le CLIENT exige, pas ce que le fournisseur remplit.
+			     Rien n'est saisissable et aucun bouton de validation n'est offert.
+			     enforceTask : un cahier des charges ne porte pas de tache ; le lire
+			     ne doit pas en exiger une.
+
+			     Additif : aucune instance ne demande cet id aujourd'hui, la
+			     configuration reste donc inerte tant qu'un client ne l'appelle pas. -->
+			<wizard id="supplier-productSpecification" readOnly="true" comments="false"
+					enforceTask="false" skipSecurityRules="false">
+				<step id="step1" labelId="becpg.wizard.spec.forbiddenIngList.label"
+					titleId="becpg.wizard.spec.forbiddenIngList.title" type="entityDataList"
+					listId="forbiddenIngList" itemId="bcpg:forbiddenIngList"></step>
+				<step id="step2" labelId="becpg.wizard.spec.allergenList.label"
+					titleId="becpg.wizard.spec.allergenList.title" type="entityDataList"
+					listId="allergenList" itemId="bcpg:allergenList"></step>
+				<step id="step3" labelId="becpg.wizard.spec.microbioList.label"
+					titleId="becpg.wizard.spec.microbioList.title" type="entityDataList"
+					listId="microbioList" itemId="bcpg:microbioList"></step>
+				<step id="step4" labelId="becpg.wizard.spec.nutList.label"
+					titleId="becpg.wizard.spec.nutList.title" type="entityDataList"
+					listId="nutList" itemId="bcpg:nutList"></step>
+				<step id="step5" labelId="becpg.wizard.spec.physicoChemList.label"
+					titleId="becpg.wizard.spec.physicoChemList.title" type="entityDataList"
+					listId="physicoChemList" itemId="bcpg:physicoChemList"></step>
+			</wizard>
 		</wizards>
 	</config>
 	
