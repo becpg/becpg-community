@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.search.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
@@ -72,6 +74,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final String SUFFIX_OR_ADDED = "_or_added";
 	private static final String PREFIX_ASSOC = "assoc_";
+
+	private static final int ISO_DATE_LENGTH = 10;
+
+	/** Matches the "NOW" date token and its optional offset, as in "NOW+7DAY" or "NOW-1MONTH". */
+	private static final Pattern DATE_RANGE_TOKEN_PATTERN = Pattern.compile("NOW(?:([+-])(\\d+)(DAY|WEEK|MONTH|YEAR)S?)?");
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -357,12 +364,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 										// work out if "from" and/or "to" are
 										// specified - use MIN and MAX
-										// or
-										// we only want the "YYYY-MM-DD" part of
-										// the ISO date value - so crop the
-										// strings
-										from = (sepindex == 0 ? "MIN" : cropDateRangeValue(propValue));
-										to = (sepindex == (propValue.length() - 1) ? "MAX" : cropDateRangeValue(propValue.substring(sepindex + 1)));
+										// otherwise, and resolve each bound to
+										// its "YYYY-MM-DD" day
+										from = (sepindex == 0 ? "MIN" : resolveDateRangeValue(propValue));
+										to = (sepindex == (propValue.length() - 1) ? "MAX" : resolveDateRangeValue(propValue.substring(sepindex + 1)));
 									} else {
 										// simple range found
 										propName = propName.substring(0, propName.length() - "-range".length());
@@ -507,14 +512,42 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	/**
-	 * Crops a date-range bound to the leading "YYYY-MM-DD" part of an ISO date value,
-	 * while preserving shorter query tokens such as "NOW".
+	 * Resolves a date-range bound to the "YYYY-MM-DD" form expected by the search engine.
 	 *
-	 * @param value the raw range bound (ISO date or query token)
-	 * @return the value cropped to at most 10 characters
+	 * The engine does not evaluate date arithmetic on range bounds, so the "NOW" token and its
+	 * offsets are computed here; any other value is an ISO date of which only the day part is kept.
+	 *
+	 * @param value the raw range bound (ISO date or "NOW" token)
+	 * @return the bound as a "YYYY-MM-DD" date
 	 */
-	private static String cropDateRangeValue(String value) {
-		return value.length() > 10 ? value.substring(0, 10) : value;
+	private static String resolveDateRangeValue(String value) {
+		Matcher matcher = DATE_RANGE_TOKEN_PATTERN.matcher(value.trim().toUpperCase());
+		if (matcher.matches()) {
+			return shiftToday(matcher.group(1), matcher.group(2), matcher.group(3)).toString();
+		}
+		return value.length() > ISO_DATE_LENGTH ? value.substring(0, ISO_DATE_LENGTH) : value;
+	}
+
+	/**
+	 * Shifts the current day by the offset of a "NOW" token.
+	 *
+	 * @param sign the offset sign, or <code>null</code> for a bare "NOW"
+	 * @param amount the offset amount
+	 * @param unit the offset unit (DAY, WEEK, MONTH or YEAR)
+	 * @return the shifted day
+	 */
+	private static LocalDate shiftToday(String sign, String amount, String unit) {
+		LocalDate today = LocalDate.now();
+		if (unit == null) {
+			return today;
+		}
+		long offset = "-".equals(sign) ? -Long.parseLong(amount) : Long.parseLong(amount);
+		return switch (unit) {
+		case "WEEK" -> today.plusWeeks(offset);
+		case "MONTH" -> today.plusMonths(offset);
+		case "YEAR" -> today.plusYears(offset);
+		default -> today.plusDays(offset);
+		};
 	}
 
 	/**

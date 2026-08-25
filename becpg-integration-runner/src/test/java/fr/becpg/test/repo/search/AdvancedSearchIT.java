@@ -3,6 +3,9 @@
  */
 package fr.becpg.test.repo.search;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -251,6 +254,46 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return null;
 		});
+	}
+
+	/**
+	 * A date-range criterion may be expressed with the "NOW" token and an offset, as the sample
+	 * saved searches shipped with the product do. The search engine does not evaluate that
+	 * arithmetic, so the bounds must be resolved to real dates before the query is run.
+	 */
+	@Test
+	public void testAdvancedSearchOnRelativeDateRange() {
+
+		NodeRef inTwoDays = inWriteTx(() -> createRawMaterialEndingOn(LocalDate.now().plusDays(2), "MP relative date test 1"));
+		NodeRef inThirtyDays = inWriteTx(() -> createRawMaterialEndingOn(LocalDate.now().plusDays(30), "MP relative date test 2"));
+		NodeRef tenDaysAgo = inWriteTx(() -> createRawMaterialEndingOn(LocalDate.now().minusDays(10), "MP relative date test 3"));
+
+		waitForSolr();
+
+		inReadTx(() -> {
+
+			List<NodeRef> upcoming = queryAdvancedSearch(
+					"{\"prop_bcpg_endEffectivity-date-range\":\"NOW|NOW+7DAY\",\"datatype\":\"bcpg:rawMaterial\"}");
+
+			assertTrue(upcoming.contains(inTwoDays));
+			assertFalse(upcoming.contains(inThirtyDays));
+			assertFalse(upcoming.contains(tenDaysAgo));
+
+			List<NodeRef> obsolete = queryAdvancedSearch("{\"prop_bcpg_endEffectivity-date-range\":\"|NOW\",\"datatype\":\"bcpg:rawMaterial\"}");
+
+			assertTrue(obsolete.contains(tenDaysAgo));
+			assertFalse(obsolete.contains(inTwoDays));
+			assertFalse(obsolete.contains(inThirtyDays));
+
+			return null;
+		});
+	}
+
+	private NodeRef createRawMaterialEndingOn(LocalDate endOfEffectivity, String name) {
+		NodeRef rawMaterial = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), name);
+		Date endDate = Date.from(endOfEffectivity.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		nodeService.addAspect(rawMaterial, BeCPGModel.ASPECT_EFFECTIVITY, Map.of(BeCPGModel.PROP_END_EFFECTIVITY, endDate));
+		return rawMaterial;
 	}
 
 	private List<NodeRef> queryAdvancedSearch(String query) throws InvalidQNameException, NamespaceException, JSONException {
