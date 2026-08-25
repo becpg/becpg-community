@@ -157,6 +157,11 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
    <!-- Interceptors -->
 
 	<bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
+
+
+   <!-- Surf object cache -->
+
+	<bean id="becpgSingleNodeClusterService" class="fr.becpg.web.site.SingleNodeClusterService" />
    
    
      <!-- Filter for performing SSO Authentication such as NTLM -->
