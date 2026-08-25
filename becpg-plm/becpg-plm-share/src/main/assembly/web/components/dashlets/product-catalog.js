@@ -395,6 +395,39 @@
                   },
 
                   /**
+                   * Localizes an entity state, falling back to its raw value when the dashlet
+                   * carries no label for it.
+                   * 
+                   * @method getStateLabel
+                   * @param state
+                   *            {string} The raw state value
+                   * @return {string} The state label to display
+                   */
+                  getStateLabel : function BeCPGCatalog_getStateLabel(state) {
+                     var key = "filter." + state, label = this.msg(key);
+
+                     return label === key ? state : label;
+                  },
+
+                  /**
+                   * Renders the entity state as a badge, using the same markup as the search
+                   * results and the product list.
+                   * 
+                   * @method generateStateBadge
+                   * @param record
+                   *            {object} The data table record
+                   * @return {string} The badge markup, empty when the entity carries no state
+                   */
+                  generateStateBadge : function BeCPGCatalog_generateStateBadge(record) {
+                     if (!record.entityState) {
+                        return "";
+                     }
+
+                     return ' <span class="product-state entity-' + $html(record.entityState) + '">[' + $html(this
+                           .getStateLabel(record.entityState)) + ']</span>';
+                  },
+
+                  /**
                    * Detail custom datacell formatter
                    * 
                    * @method renderCellDetail
@@ -449,13 +482,13 @@
                            /**
                             * Simple View
                             */
-                           desc += '<h3 class="filename simple-view"><a class="theme-color-1" href="' + docDetailsUrl + '">' + $html(record.displayName) + '</a></h3>';
+                           desc += '<h3 class="filename simple-view"><a class="theme-color-1" href="' + docDetailsUrl + '">' + $html(record.displayName) + '</a>' + this.generateStateBadge(record) + '</h3>';
                            desc += '<div class="detail"><span class="item-simple">' + dateLine + '</span></div>';
                         } else {
                            /**
                             * Detailed View
                             */
-                           desc += '<h3 class="filename"><a class="theme-color-1" href="' + docDetailsUrl + '">' + $html(record.displayName) + '</a>' + version + '</h3>';
+                           desc += '<h3 class="filename"><a class="theme-color-1" href="' + docDetailsUrl + '">' + $html(record.displayName) + '</a>' + this.generateStateBadge(record) + version + '</h3>';
 
                            desc += '<div class="detail">';
                            desc += '<span class="item">' + dateLine + '</span>';

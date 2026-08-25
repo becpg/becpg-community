@@ -466,6 +466,7 @@
 								        "prop_bcpg_clientState",
 								        "prop_bcpg_documentState",
 								        "prop_bcpg_productCollectionState",
+								        "prop_ecm_ecoState",
 								        "prop_pjt_projectState",
 								        "prop_qa_batchState",
 								        "prop_qa_ncState",

@@ -812,7 +812,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:productState", "bcpg:supplierState", "bcpg:clientState", "bcpg:documentState",
-            "bcpg:productCollectionState", "qa:batchState", "qa:ncState", "qa:qcState"],
+            "bcpg:productCollectionState", "ecm:ecoState", "qa:batchState", "qa:ncState", "qa:qcState"],
         renderer: function(oRecord, data, label, scope) {
             if (data.value != null && data.value !== "") {
                 return '<span class="product-state entity-' + data.value + '">'

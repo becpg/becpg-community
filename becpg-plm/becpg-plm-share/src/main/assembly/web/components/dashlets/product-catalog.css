@@ -103,3 +103,66 @@
 {
    opacity: 0.5;
 }
+
+
+/* Entity state badges, matching the search results and the product list */
+
+.product-catalog .product-state.entity-Simulation,
+.product-catalog .product-state.entity-ToValidate,
+.product-catalog .product-state.entity-Valid,
+.product-catalog .product-state.entity-Refused,
+.product-catalog .product-state.entity-Stopped,
+.product-catalog .product-state.entity-Archived,
+.product-catalog .product-state.entity-Planned,
+.product-catalog .product-state.entity-InProgress,
+.product-catalog .product-state.entity-OnHold,
+.product-catalog .product-state.entity-Cancelled,
+.product-catalog .product-state.entity-Completed,
+.product-catalog .product-state.entity-new,
+.product-catalog .product-state.entity-analysis,
+.product-catalog .product-state.entity-treatment,
+.product-catalog .product-state.entity-response,
+.product-catalog .product-state.entity-classification,
+.product-catalog .product-state.entity-closing,
+.product-catalog .product-state.entity-closed,
+.product-catalog .product-state.entity-Compliant,
+.product-catalog .product-state.entity-Automatic,
+.product-catalog .product-state.entity-ToCalculateWUsed,
+.product-catalog .product-state.entity-WUsedCalculated,
+.product-catalog .product-state.entity-Simulated,
+.product-catalog .product-state.entity-Applied,
+.product-catalog .product-state.entity-InError,
+.product-catalog .product-state.entity-NonCompliant {
+   display: inline-block;
+   padding: 0 6px;
+   border-radius: 3px;
+   font-weight: bold;
+   white-space: nowrap;
+}
+
+.product-catalog .product-state.entity-Simulation { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-ToValidate { color: #e65100; background-color: #fff3e0; }
+.product-catalog .product-state.entity-Valid { color: #2e7d32; background-color: #e8f5e9; }
+.product-catalog .product-state.entity-Refused { color: #c62828; background-color: #ffebee; }
+.product-catalog .product-state.entity-Stopped { color: #ffffff; background-color: #90a4ae; }
+.product-catalog .product-state.entity-Archived { color: #607d8b; background-color: #eceff1; }
+.product-catalog .product-state.entity-Planned { color: #1565c0; background-color: #e3f2fd; }
+.product-catalog .product-state.entity-InProgress { color: #e65100; background-color: #fff3e0; }
+.product-catalog .product-state.entity-OnHold { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-Cancelled { color: #c62828; background-color: #ffebee; }
+.product-catalog .product-state.entity-Completed { color: #2e7d32; background-color: #e8f5e9; }
+.product-catalog .product-state.entity-new { color: #1565c0; background-color: #e3f2fd; }
+.product-catalog .product-state.entity-analysis { color: #e65100; background-color: #fff3e0; }
+.product-catalog .product-state.entity-treatment { color: #e65100; background-color: #fff3e0; }
+.product-catalog .product-state.entity-response { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-classification { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-closing { color: #607d8b; background-color: #eceff1; }
+.product-catalog .product-state.entity-closed { color: #2e7d32; background-color: #e8f5e9; }
+.product-catalog .product-state.entity-Compliant { color: #2e7d32; background-color: #e8f5e9; }
+.product-catalog .product-state.entity-NonCompliant { color: #c62828; background-color: #ffebee; }
+.product-catalog .product-state.entity-Automatic { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-ToCalculateWUsed { color: #e65100; background-color: #fff3e0; }
+.product-catalog .product-state.entity-WUsedCalculated { color: #1565c0; background-color: #e3f2fd; }
+.product-catalog .product-state.entity-Simulated { color: #546e7a; background-color: #eceff1; }
+.product-catalog .product-state.entity-Applied { color: #2e7d32; background-color: #e8f5e9; }
+.product-catalog .product-state.entity-InError { color: #c62828; background-color: #ffebee; }
