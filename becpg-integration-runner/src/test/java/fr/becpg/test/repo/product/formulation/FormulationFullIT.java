@@ -716,9 +716,6 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			assertNull("@beCPG.assocPropValue must return null on a deleted node",
 					evaluateOnDeletedNode("@beCPG.assocPropValue(#deleted,'bcpg:clients','cm:name')", productData, deletedNodeRef));
 
-			assertFalse("@beCPG.exists must report a deleted node", (Boolean) evaluateOnDeletedNode("@beCPG.exists(#deleted)", productData,
-					deletedNodeRef));
-
 			assertEquals("A formula must still be able to test the deleted node", "Deleted", evaluateOnDeletedNode(
 					"@beCPG.propValue(#deleted,'bcpg:erpCode') != null ? @beCPG.propValue(#deleted,'bcpg:erpCode') : 'Deleted'", productData,
 					deletedNodeRef));

@@ -140,20 +140,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper {@code @beCPG.exists($nodeRef)}
-		 *
-		 * <code>
-		 * 	Example : {@code @beCPG.exists(nodeRef) ? @beCPG.propValue(nodeRef,'bcpg:erpCode') : 'Deleted'}
-		 *</code>
-		 *
-		 * @param nodeRef Alfresco node reference
-		 * @return true when the node reference points to a node that still exists
-		 */
-		public boolean exists(NodeRef nodeRef) {
-			return (nodeRef != null) && nodeService.exists(nodeRef);
-		}
-
-		/**
 		 * Helper {@code @beCPG.findOne($nodeRef)}
 		 *
 		 * <code>
@@ -1430,7 +1416,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return true when there is nothing to read
 		 */
 		private boolean isMissingNode(NodeRef nodeRef) {
-			if (exists(nodeRef)) {
+			if ((nodeRef != null) && nodeService.exists(nodeRef)) {
 				return false;
 			}
 			if ((nodeRef != null) && logger.isDebugEnabled()) {
