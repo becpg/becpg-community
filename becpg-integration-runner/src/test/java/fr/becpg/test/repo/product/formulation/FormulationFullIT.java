@@ -29,10 +29,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ProductData;
@@ -55,6 +58,9 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationFullIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationFullIT.class);
+
+	@Autowired
+	private SpelFormulaService spelFormulaService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -658,6 +664,74 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			return null;
 
 		}, false, true);
+	}
+
+	@Test
+	public void testSpelHelpersOnDeletedNode() {
+
+		logger.info("testSpelHelpersOnDeletedNode");
+
+		final NodeRef deletedNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			RawMaterialData rm = new RawMaterialData();
+			rm.setName(toTestName("RM to delete"));
+			rm.setUnit(ProductUnit.kg);
+			rm.setErpCode("ERP-DELETED");
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rm).getNodeRef();
+
+		}, false, true);
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(toTestName("Product with a deleted node"));
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(2d);
+
+			NodeRef productNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+			nodeService.deleteNode(deletedNodeRef);
+
+			return productNodeRef;
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProductData productData = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertFalse("The node must have been deleted", nodeService.exists(deletedNodeRef));
+
+			assertNull("@beCPG.propValue must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.propValue(#deleted,'bcpg:erpCode')", productData, deletedNodeRef));
+			assertNull("@beCPG.propMLValue must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.propMLValue(#deleted,'cm:name')", productData, deletedNodeRef));
+			assertNull("@beCPG.findOne must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.findOne(#deleted)", productData, deletedNodeRef));
+			assertNull("@beCPG.assocValue must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.assocValue(#deleted,'bcpg:clients')", productData, deletedNodeRef));
+			assertNull("@beCPG.assocValues must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.assocValues(#deleted,'bcpg:clients')", productData, deletedNodeRef));
+			assertNull("@beCPG.assocPropValue must return null on a deleted node",
+					evaluateOnDeletedNode("@beCPG.assocPropValue(#deleted,'bcpg:clients','cm:name')", productData, deletedNodeRef));
+
+			assertFalse("@beCPG.exists must report a deleted node", (Boolean) evaluateOnDeletedNode("@beCPG.exists(#deleted)", productData,
+					deletedNodeRef));
+
+			assertEquals("A formula must still be able to test the deleted node", "Deleted", evaluateOnDeletedNode(
+					"@beCPG.propValue(#deleted,'bcpg:erpCode') != null ? @beCPG.propValue(#deleted,'bcpg:erpCode') : 'Deleted'", productData,
+					deletedNodeRef));
+
+			return null;
+
+		}, false, true);
+	}
+
+	private Object evaluateOnDeletedNode(String formula, ProductData productData, NodeRef deletedNodeRef) {
+		StandardEvaluationContext context = spelFormulaService.createEntitySpelContext(productData);
+		context.setVariable("deleted", deletedNodeRef);
+		return spelFormulaService.parseExpression(formula).getValue(context);
 	}
 
 	@Test
