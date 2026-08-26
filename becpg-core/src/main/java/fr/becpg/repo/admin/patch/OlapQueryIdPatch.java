@@ -261,12 +261,18 @@ public class OlapQueryIdPatch extends AbstractBeCPGPatch {
 	 * Rewrites the OLAP dashlet preference of every user, which holds the query id it must select.
 	 *
 	 * <p>A preference pointing at something no longer shipped is left untouched: the dashlet falls
-	 * back to its first query, which is a better outcome than silently choosing another one.
+	 * back to its first query, which is a better outcome than silently choosing another one. When
+	 * nothing was migrated there is nothing to rewrite either, and the users are not walked at all.
 	 *
 	 * @param idByOldIdentity the mapping from the old identity to the technical id
 	 * @return the number of preferences rewritten
 	 */
 	private int rewritePreferences(Map<String, String> idByOldIdentity) {
+		if (idByOldIdentity.isEmpty()) {
+			logger.info("No OLAP resource migrated, leaving the dashlet preferences alone");
+			return 0;
+		}
+
 		int rewritten = 0;
 
 		Set<String> userNames = new HashSet<>();
