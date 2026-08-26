@@ -366,7 +366,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										// specified - use MIN and MAX
 										// otherwise, and resolve each bound to
 										// its "YYYY-MM-DD" day
-										from = (sepindex == 0 ? "MIN" : resolveDateRangeValue(propValue));
+										String rawFrom = (sepindex < 0) ? propValue : propValue.substring(0, sepindex);
+										from = (sepindex == 0 ? "MIN" : resolveDateRangeValue(rawFrom));
 										to = (sepindex == (propValue.length() - 1) ? "MAX" : resolveDateRangeValue(propValue.substring(sepindex + 1)));
 									} else {
 										// simple range found
