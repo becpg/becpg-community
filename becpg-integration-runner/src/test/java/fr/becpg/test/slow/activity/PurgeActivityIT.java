@@ -1,4 +1,4 @@
-package fr.becpg.test.slow;
+package fr.becpg.test.slow.activity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
