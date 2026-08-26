@@ -1257,3 +1257,14 @@ div.yui-dialog {
 	padding-left: 2em;
 	margin: 0.2em 0;
 }
+
+/** Keep the group, authority and people pickers inside their container **/
+
+.group-finder h3.itemname,
+.group-finder .detail,
+.authority-finder h3.itemname,
+.authority-finder .detail,
+.people-finder h3.itemname,
+.people-finder .detail {
+	overflow-wrap: anywhere;
+}
