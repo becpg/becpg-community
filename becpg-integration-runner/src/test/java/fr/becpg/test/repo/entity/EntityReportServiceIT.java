@@ -64,6 +64,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	private static final String TEST_DOCUMENT_PRODUCT_NAME = "PF Document Test";
 	private static final String SUPPLIER_DOCS_FOLDER = "Supplier documents";
 	private static final String ARTWORK_FOLDER = "Artwork";
+	private static final String CYCLIC_TPL_NAME = "Cyclic Entity Tpl";
 	private static final int EXPECTED_SYSTEM_TEMPLATES = 5;
 	private static final int EXPECTED_REPORTS_COUNT = 5;
 
@@ -567,6 +568,44 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			assertNotNull("plant should exist in report XML 2", xmlDoc2.selectSingleNode("//plant"));
 			assertNull("certification should NOT exist inside plantCertifications in XML 2", xmlDoc2.selectSingleNode("//plant/plantCertifications/certification"));
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testCyclicAssocFallsBackOnName() {
+		logger.debug("testCyclicAssocFallsBackOnName()");
+
+		final NodeRef rootProductRef = inWriteTx(() -> {
+			FinishedProductData tplData = new FinishedProductData();
+			tplData.setName(CYCLIC_TPL_NAME);
+			NodeRef tplRef = alfrescoRepository.create(getTestFolderNodeRef(), tplData).getNodeRef();
+
+			FinishedProductData pfData = new FinishedProductData();
+			pfData.setName("Root Product Cyclic Assoc Test");
+			NodeRef rootRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+
+			associationService.update(tplRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, tplRef);
+			associationService.update(rootRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, tplRef);
+
+			return rootRef;
+		});
+
+		inReadTx(() -> {
+			Map<String, String> preferences = new HashMap<>();
+			preferences.put("assocsToExtract", "bcpg:entityTplRef");
+
+			EntityReportData reportData = defaultEntityReportExtractor.extract(rootProductRef, preferences);
+			assertNotNull("Report data should not be null", reportData);
+			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();
+			assertNotNull("XML document should not be null", xmlDoc);
+
+			assertNotNull("template should be extracted on the root entity", xmlDoc.selectSingleNode("//entityTplRef/finishedProduct"));
+
+			Node cutAssoc = xmlDoc.selectSingleNode("//entityTplRef/finishedProduct/entityTplRef");
+			assertNotNull("the self referencing template assoc should still be rendered", cutAssoc);
+			assertEquals("a cut assoc should render the target name instead of an empty element", CYCLIC_TPL_NAME, cutAssoc.getText());
 
 			return null;
 		});

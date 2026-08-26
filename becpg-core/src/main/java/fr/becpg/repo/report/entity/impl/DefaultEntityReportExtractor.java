@@ -1625,39 +1625,64 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				continue;
 			}
 
-			if (context != null && !context.getExtractedNodes().contains(nodeRef)) {
-
-				context.getExtractedNodes().add(nodeRef);
-				QName qName = nodeService.getType(nodeRef);
-
-				Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
-				appendPrefix(qName, nodeElt);
-
-				EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
-				if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
-					((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
-				} else {
-
-					if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
-						List<QName> hiddentAttributes = new ArrayList<>();
-						hiddentAttributes.addAll(hiddenNodeAttributes);
-						hiddentAttributes.addAll(hiddenDataListItemAttributes);
-
-						loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
-					} else {
-						loadNodeAttributes(nodeRef, nodeElt, true, context);
-					}
-					if (extractDataList) {
-
-						Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
-						loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
-					}
-				}
-				assocElt.add(nodeElt);
-				context.cacheProductData(cacheKey, nodeElt);
-
-				context.getExtractedNodes().remove(nodeRef);
+			if (context == null) {
+				continue;
 			}
+
+			if (context.getExtractedNodes().contains(nodeRef)) {
+				appendCutAssocName(assocElt, assocDef, nodeRef);
+				continue;
+			}
+
+			context.getExtractedNodes().add(nodeRef);
+			QName qName = nodeService.getType(nodeRef);
+
+			Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
+			appendPrefix(qName, nodeElt);
+
+			EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
+			if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
+				((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
+			} else {
+
+				if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
+					List<QName> hiddentAttributes = new ArrayList<>();
+					hiddentAttributes.addAll(hiddenNodeAttributes);
+					hiddentAttributes.addAll(hiddenDataListItemAttributes);
+
+					loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
+				} else {
+					loadNodeAttributes(nodeRef, nodeElt, true, context);
+				}
+				if (extractDataList) {
+
+					Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+					loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
+				}
+			}
+			assocElt.add(nodeElt);
+			context.cacheProductData(cacheKey, nodeElt);
+
+			context.getExtractedNodes().remove(nodeRef);
+		}
+	}
+
+	/**
+	 * Renders the target name when the extraction of an association has to be cut.
+	 *
+	 * A node already being extracted higher in the stack is skipped to avoid an infinite loop, the
+	 * most common case being an entity template referencing itself through bcpg:entityTplRef. The
+	 * cut used to leave an empty element behind, so the name is rendered instead, the very way a
+	 * non-extracted association is rendered.
+	 *
+	 * @param assocElt the association element being filled
+	 * @param assocDef the association definition
+	 * @param nodeRef the target node whose extraction is cut
+	 */
+	private void appendCutAssocName(Element assocElt, AssociationDefinition assocDef, NodeRef nodeRef) {
+		String name = extractName(assocDef.getTargetClass().getName(), nodeRef);
+		if ((name != null) && !name.isEmpty()) {
+			assocElt.addCDATA(XMLTextHelper.writeCData(name));
 		}
 	}
 
