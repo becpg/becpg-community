@@ -162,6 +162,14 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
    <!-- Surf object cache -->
 
 	<bean id="becpgSingleNodeClusterService" class="fr.becpg.web.site.SingleNodeClusterService" />
+
+	<bean id="webframework.slingshot.persister.remote" class="fr.becpg.web.site.TransientAwarePathStoreObjectPersister"
+		parent="webframework.sitedata.persister.abstract">
+		<property name="store" ref="webframework.webapp.store.remote" />
+		<property name="pathPrefix">
+			<value>alfresco/site-data/${objectTypeIds}</value>
+		</property>
+	</bean>
    
    
      <!-- Filter for performing SSO Authentication such as NTLM -->
