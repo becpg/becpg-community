@@ -92,12 +92,14 @@ public class RemoteRateLimiter {
 	public boolean allowRequest() {
 		String client = currentClient();
 
-		if (!clientBucket(client).take(clientCapacity(), clientRefillRate())) {
+		long now = currentTimeMillis();
+
+		if (!clientBucket(client).take(clientCapacity(), clientRefillRate(), now)) {
 			logRejection(client, "its own");
 			return false;
 		}
 
-		if (!globalBucket.take(remoteRateLimiterCapacity(), remoteRateLimiterRefillRate())) {
+		if (!globalBucket.take(remoteRateLimiterCapacity(), remoteRateLimiterRefillRate(), now)) {
 			logRejection(client, "the global");
 			return false;
 		}
@@ -116,6 +118,16 @@ public class RemoteRateLimiter {
 		return (user != null) ? user : UNAUTHENTICATED;
 	}
 
+	/**
+	 * <p>The clock the buckets refill on. Reading it once per request keeps every bucket of that
+	 * request on the same instant, and lets a test drive the refill without sleeping.</p>
+	 *
+	 * @return the current time in milliseconds
+	 */
+	protected long currentTimeMillis() {
+		return Instant.now().toEpochMilli();
+	}
+
 	private Bucket clientBucket(String client) {
 		Bucket bucket = clientBuckets.get(client);
 		if (bucket == null) {
@@ -129,7 +141,7 @@ public class RemoteRateLimiter {
 		if (clientBuckets.size() < MAX_TRACKED_CLIENTS) {
 			return;
 		}
-		long threshold = Instant.now().toEpochMilli() - CLIENT_IDLE_MILLIS;
+		long threshold = currentTimeMillis() - CLIENT_IDLE_MILLIS;
 		for (Iterator<Map.Entry<String, Bucket>> it = clientBuckets.entrySet().iterator(); it.hasNext();) {
 			if (it.next().getValue().lastRefillMillis() < threshold) {
 				it.remove();
@@ -138,7 +150,7 @@ public class RemoteRateLimiter {
 	}
 
 	private void logRejection(String client, String which) {
-		if (logger.isWarnEnabled() && clientBucket(client).shouldLog()) {
+		if (logger.isWarnEnabled() && clientBucket(client).shouldLog(currentTimeMillis())) {
 			logger.warn("Remote API rate limit reached by client '" + client + "' on " + which
 					+ " bucket - its calls are being rejected with a 429 until it slows down");
 		}
@@ -151,13 +163,13 @@ public class RemoteRateLimiter {
 	private static class Bucket {
 
 		private double tokens = -1;
-		private long lastRefillMillis = Instant.now().toEpochMilli();
+		private long lastRefillMillis;
 		private long lastLoggedMillis;
 
-		synchronized boolean take(int capacity, double refillRate) {
-			long now = Instant.now().toEpochMilli();
+		synchronized boolean take(int capacity, double refillRate, long now) {
 			if (tokens < 0) {
 				tokens = capacity;
+				lastRefillMillis = now;
 			}
 			tokens = Math.min(capacity, tokens + ((now - lastRefillMillis) * refillRate));
 			lastRefillMillis = now;
@@ -172,8 +184,7 @@ public class RemoteRateLimiter {
 			return lastRefillMillis;
 		}
 
-		synchronized boolean shouldLog() {
-			long now = Instant.now().toEpochMilli();
+		synchronized boolean shouldLog(long now) {
 			if ((now - lastLoggedMillis) < LOG_THROTTLE_MILLIS) {
 				return false;
 			}

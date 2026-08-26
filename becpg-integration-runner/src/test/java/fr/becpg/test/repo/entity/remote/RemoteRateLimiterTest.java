@@ -20,17 +20,27 @@ public class RemoteRateLimiterTest {
 
 	private SystemConfigurationService config;
 
-	/** Lets the test choose who is calling, without an authenticated Alfresco session. */
+	/** Lets the test choose who is calling and when, without an authenticated Alfresco session. */
 	private static class TestableRateLimiter extends RemoteRateLimiter {
 		private String client = "connector-a";
+		private long millis;
 
 		void callingAs(String client) {
 			this.client = client;
 		}
 
+		void elapse(long millis) {
+			this.millis += millis;
+		}
+
 		@Override
 		protected String currentClient() {
 			return client;
+		}
+
+		@Override
+		protected long currentTimeMillis() {
+			return millis;
 		}
 	}
 
@@ -90,7 +100,7 @@ public class RemoteRateLimiterTest {
 	}
 
 	@Test
-	public void tokensAreRefilledOverTime() throws InterruptedException {
+	public void tokensAreRefilledOverTime() {
 		// 1 token, refilled at 1 per millisecond
 		withLimits("100", "1", "1", "1");
 
@@ -98,7 +108,7 @@ public class RemoteRateLimiterTest {
 		assertTrue(limiter.allowRequest());
 		assertFalse("the single token is spent", limiter.allowRequest());
 
-		Thread.sleep(5);
+		limiter.elapse(5);
 		assertTrue("the bucket should have refilled", limiter.allowRequest());
 	}
 }
