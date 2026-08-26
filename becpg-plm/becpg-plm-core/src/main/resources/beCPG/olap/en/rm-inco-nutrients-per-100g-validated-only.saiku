@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="8B9C2E34-D558-F518-B4D9-F8D4DB3510A6" type="QM" connection="beCPG" cube="[nutrients]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="043E37B6-F5A0-569A-B846-CE0A60A3326A" type="QM" connection="beCPG" cube="[nutrients]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true">
@@ -50,9 +50,9 @@
   </QueryModel>
   <MDX>SELECT
 NON EMPTY Order(Hierarchize(Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Energie kJ]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Energie kcal]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Lipides]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[AG saturés]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Glucides]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[Sucres]}), Union(CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 1].[Protéines]}), CrossJoin({[Measures].[nutValue]}, {[nutrient.nutrientPerGroup].[Groupe 2].[Sel]}))))))))), [nutrient.nutrientPerGroup].CurrentMember.Name, BASC) ON COLUMNS,
-NON EMPTY {Hierarchize({{[designation].[Validé]}, Filter({{[designation].[name].Members}}, (Exists(Ancestor([designation].CurrentMember, [designation].[productState]), {[designation].[Validé]}).Count  &gt; 0))})} ON ROWS
+NON EMPTY {Hierarchize({{[designation.productPerFamily].[Valid]}, Filter({{[designation.productPerFamily].[name].Members}}, (Exists(Ancestor([designation.productPerFamily].CurrentMember, [designation.productPerFamily].[productState]), {[designation.productPerFamily].[Valid]}).Count  &gt; 0))})} ON ROWS
 FROM [nutrients]
-WHERE {[productType].[Matière première]}</MDX>
+WHERE {[productType].[bcpg:rawMaterial]}</MDX>
   <Properties>
     <Property name="saiku.ui.render.mode" value="table" />
     <Property name="org.saiku.query.explain" value="true" />

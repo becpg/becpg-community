@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="EE36F407-9891-6450-B96E-F6FA4E2FC798" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="919D669B-0EF3-5C32-AF65-5C77C8D4CA44" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true">

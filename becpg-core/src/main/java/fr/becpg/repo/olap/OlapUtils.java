@@ -19,6 +19,8 @@ package fr.becpg.repo.olap;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -27,8 +29,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.StopWatch;
 
@@ -115,9 +118,15 @@ public class OlapUtils {
 			builder.setParameter("ticket", olapContext.getAuthToken());
 
 			HttpPost httpPost = new HttpPost(builder.build());
-			HttpEntity entity = new StringEntity("xml=" + xml, "UTF-8");
-			
-			httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+			// The query definition carries French captions, and JSON punctuation that a form body
+			// reads as separators. Concatenating "xml=" + xml and forcing the Content-Type by hand
+			// dropped the charset the entity had set, so Tomcat decoded the body with its default,
+			// failed on the accents and silently discarded the whole parameter: Saiku then received
+			// no query at all and answered with an empty result set. UrlEncodedFormEntity escapes
+			// the value and states the charset in the header it writes itself.
+			HttpEntity entity = new UrlEncodedFormEntity(List.of(new BasicNameValuePair("xml", xml)),
+					StandardCharsets.UTF_8);
 
 			httpPost.setEntity(entity);
 			try (CloseableHttpResponse response = olapContext.getSession().execute(httpPost)) {

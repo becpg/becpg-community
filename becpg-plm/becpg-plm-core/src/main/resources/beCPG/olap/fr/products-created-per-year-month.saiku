@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Query name="EE36F407-9891-6450-B96E-F6FA4E2FC798" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="82147D75-EEC4-5FA8-A649-1D5FECE90651" type="QM" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <QueryModel>
     <Axes>
       <Axis location="ROWS" nonEmpty="true" sortOrder="BASC" sortEvaluationLiteral="[productDateCreated.date].CurrentMember.Name">
