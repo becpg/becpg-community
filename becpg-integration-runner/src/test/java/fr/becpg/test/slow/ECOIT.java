@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.test.repo.ecm;
+package fr.becpg.test.slow;
 
 import static org.junit.Assert.assertNotEquals;
 

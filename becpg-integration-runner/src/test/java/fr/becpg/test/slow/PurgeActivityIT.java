@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.activity;
+package fr.becpg.test.slow;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.test.repo.activity.PlmActivityServiceIT;
 
 /**
  * This <code>class</code> is a test case of the purge functionality
