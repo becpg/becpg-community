@@ -161,7 +161,11 @@ public class OlapChart {
 	}
 
 	/**
-	 * <p>Getter for the field <code>queryId</code>.</p>
+	 * Returns the identity callers address this chart by: the technical id when beCPG ships the
+	 * resource, the id its content declares otherwise.
+	 *
+	 * <p>Every caller must go through this getter rather than the field, the dashlet preference and
+	 * {@code getOlapChart} being matched on what it returns.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
@@ -297,7 +301,7 @@ public class OlapChart {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
 		obj.put("fileName", fileName);
-		obj.put("queryId", queryId);
+		obj.put("queryId", getQueryId());
 		obj.put("cube", cube);
 		obj.put("type", type);
 		obj.put("noderef", nodeRef);
