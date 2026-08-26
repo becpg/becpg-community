@@ -2412,7 +2412,23 @@
 
 		<Dimension name="packagingRecyclability" caption="${msg("jsolap.packagingRecyclability.title")}">
 			<Hierarchy name="packagingRecyclability" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecyclability.title")}">
-				<Level name="materialIsNotRecyclable" caption="${msg("jsolap.packagingRecyclability.title")}" column="materialIsNotRecyclable" type="String" />
+				<#-- The column holds the raw boolean of bcpg:isNotRecyclable, and its meaning is
+				     inverted: true means NOT recyclable. Without a formatter the axis reads
+				     "true / false / null", which says nothing to a reader and reads backwards. -->
+				<Level name="materialIsNotRecyclable" caption="${msg("jsolap.packagingRecyclability.title")}" column="materialIsNotRecyclable" type="String">
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+								case 'true' :
+									return '${msg("jsolap.recyclable.no")}';
+								case 'false' :
+									return '${msg("jsolap.recyclable.yes")}';
+								default:
+									return '${msg("jsolap.recyclable.unknown")}';
+							}
+						</Script>
+					</MemberFormatter>
+				</Level>
 			</Hierarchy>
 		</Dimension>
 
