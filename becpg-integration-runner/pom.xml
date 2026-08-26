@@ -216,9 +216,71 @@
 			convention
                  "**/IT*.java", "**/*IT.java", and
 			"**/*ITCase.java" will be considered an integration test -->
+			<!-- ECOIT and PurgeActivityIT churn thousands of nodes each, and the Solr tracker
+			     indexes transactions in order: the class that runs next pays for their backlog in
+			     waitForSolr. Running them in a second pass keeps that cost off everybody else. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/ECOIT.java</exclude>
+								<exclude>**/PurgeActivityIT.java</exclude>
+							</excludes>
+							<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+						</configuration>
+					</execution>
+					<execution>
+						<id>integration-test-purge-activity</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/PurgeActivityIT.java</include>
+							</includes>
+							<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+							<summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary-purge-activity.xml</summaryFile>
+						</configuration>
+					</execution>
+					<!-- ECOIT is the one that never calls waitForSolr, so it runs last: the backlog
+					     it leaves behind is nobody's problem once the campaign is over. -->
+					<execution>
+						<id>integration-test-eco</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/ECOIT.java</include>
+							</includes>
+							<failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+							<summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary-eco.xml</summaryFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>verify-test</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<summaryFiles>
+								<summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary-purge-activity.xml</summaryFile>
+								<summaryFile>${project.build.directory}/failsafe-reports/failsafe-summary-eco.xml</summaryFile>
+							</summaryFiles>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
