@@ -1027,6 +1027,24 @@ public class AggregateReportIT extends PLMBaseTestCase {
             if (foundTpl == null) {
                 foundTpl = findChildByName(reportsFolder, candidateNames);
             }
+            if (foundTpl == null) {
+                initRepoVisitorService.run(repositoryHelper.getCompanyHome());
+                if (pfFolder == null && pfFolderTitle != null) {
+                    pfFolder = customRepoService.getFolderByPath(productReportTplFolder, pfFolderTitle);
+                    if (pfFolder == null) {
+                        pfFolder = nodeService.getChildByName(productReportTplFolder, ContentModel.ASSOC_CONTAINS, pfFolderTitle);
+                    }
+                }
+                if (pfFolder != null) {
+                    foundTpl = findChildByName(pfFolder, candidateNames);
+                }
+                if (foundTpl == null) {
+                    foundTpl = findChildByName(productReportTplFolder, candidateNames);
+                }
+                if (foundTpl == null) {
+                    foundTpl = findChildByName(reportsFolder, candidateNames);
+                }
+            }
 
             if (foundTpl != null) {
                 nodeService.setProperty(foundTpl, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
