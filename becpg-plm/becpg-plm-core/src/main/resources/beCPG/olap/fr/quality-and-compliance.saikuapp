@@ -1,5 +1,5 @@
 {
- "id": "qualite-conformite",
+ "id": "quality-and-compliance",
  "name": "Qualité et conformité",
  "version": 1,
  "theme": {
@@ -65,7 +65,7 @@
       "title": "Score réglementaire par classe",
       "query": {
        "kind": "reference",
-       "path": "/Score reglementaire par classe.saiku"
+       "path": "/regulatory-score-by-class.saiku"
       }
      },
      {
@@ -78,7 +78,7 @@
       "title": "Évolution par famille",
       "query": {
        "kind": "reference",
-       "path": "/Score reglementaire - evolution par famille.saiku"
+       "path": "/regulatory-score-trend-by-family.saiku"
       },
       "chartType": "bar"
      },
@@ -92,7 +92,7 @@
       "title": "Exigences non respectées",
       "query": {
        "kind": "reference",
-       "path": "/Conformite - exigences non respectees.saiku"
+       "path": "/compliance-unmet-requirements.saiku"
       },
       "chartType": "bar"
      }
@@ -118,7 +118,7 @@
       "title": "Valeurs par agent",
       "query": {
        "kind": "reference",
-       "path": "/Toxicologie - valeurs par agent.saiku"
+       "path": "/toxicology-values-by-agent.saiku"
       }
      },
      {
@@ -131,7 +131,7 @@
       "title": "Allergènes majeurs",
       "query": {
        "kind": "reference",
-       "path": "/Top 10 des allergènes.saiku"
+       "path": "/top-10-allergens.saiku"
       },
       "chartType": "bar"
      },
@@ -145,7 +145,7 @@
       "title": "Répartition par état",
       "query": {
        "kind": "reference",
-       "path": "/Nombre de produits par état.saiku"
+       "path": "/products-per-state.saiku"
       },
       "chartType": "pie"
      }
@@ -171,7 +171,7 @@
       "title": "Par organisme",
       "query": {
        "kind": "reference",
-       "path": "/Certifications par organisme.saiku"
+       "path": "/certifications-by-body.saiku"
       }
      },
      {
@@ -184,7 +184,7 @@
       "title": "Par usine",
       "query": {
        "kind": "reference",
-       "path": "/Certifications par usine.saiku"
+       "path": "/certifications-by-plant.saiku"
       }
      },
      {
@@ -197,7 +197,7 @@
       "title": "Allégations portées",
       "query": {
        "kind": "reference",
-       "path": "/PF Allégations (filtré selon l'état validé).saiku"
+       "path": "/fp-label-claims-validated-only.saiku"
       },
       "chartType": "bar"
      }

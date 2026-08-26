@@ -1,5 +1,5 @@
 {
- "id": "referentiel-produit",
+ "id": "product-master-data",
  "name": "Product master data",
  "version": 1,
  "theme": {
@@ -64,7 +64,7 @@
       "title": "Volumes, prices, costs and profitability",
       "query": {
        "kind": "reference",
-       "path": "/Portfolio - volumes and margins.saiku"
+       "path": "/portfolio-volumes-and-margins.saiku"
       }
      },
      {
@@ -77,7 +77,7 @@
       "title": "Profit per family",
       "query": {
        "kind": "reference",
-       "path": "/Portfolio - profit per family.saiku"
+       "path": "/portfolio-profit-per-family.saiku"
       },
       "chartType": "bar"
      },
@@ -91,7 +91,7 @@
       "title": "Breakdown per state",
       "query": {
        "kind": "reference",
-       "path": "/Products per state.saiku"
+       "path": "/products-per-state.saiku"
       },
       "chartType": "pie"
      }
@@ -117,7 +117,7 @@
       "title": "Breakdown per Nutri-Score",
       "query": {
        "kind": "reference",
-       "path": "/FP per Nutri-Score.saiku"
+       "path": "/fp-per-nutri-score.saiku"
       },
       "chartType": "bar"
      },
@@ -131,7 +131,7 @@
       "title": "Breakdown per Eco-Score",
       "query": {
        "kind": "reference",
-       "path": "/FP per Eco-Score.saiku"
+       "path": "/fp-per-eco-score.saiku"
       },
       "chartType": "bar"
      },
@@ -145,7 +145,7 @@
       "title": "Formulated nutrients per product type",
       "query": {
        "kind": "reference",
-       "path": "/Formulated nutrients per product type.saiku"
+       "path": "/formulated-nutrients-per-product-type.saiku"
       }
      }
     ]
@@ -170,7 +170,7 @@
       "title": "Products per storage condition",
       "query": {
        "kind": "reference",
-       "path": "/Products per storage condition.saiku"
+       "path": "/products-per-storage-condition.saiku"
       },
       "chartType": "bar"
      },
@@ -184,7 +184,7 @@
       "title": "Packaging weight by family",
       "query": {
        "kind": "reference",
-       "path": "/Packaging materials - weight by product family.saiku"
+       "path": "/packaging-materials-weight-by-product-family.saiku"
       },
       "chartType": "bar"
      },
@@ -198,7 +198,7 @@
       "title": "Projected quantities per family",
       "query": {
        "kind": "reference",
-       "path": "/FP Projected quantities per family.saiku"
+       "path": "/fp-projected-quantities-per-family.saiku"
       }
      }
     ]
@@ -223,7 +223,7 @@
       "title": "Breakdown by item",
       "query": {
        "kind": "reference",
-       "path": "/Costs - breakdown by item.saiku"
+       "path": "/costs-breakdown-by-item.saiku"
       }
      },
      {
@@ -236,7 +236,7 @@
       "title": "Trend by family",
       "query": {
        "kind": "reference",
-       "path": "/Costs - trend by family.saiku"
+       "path": "/costs-trend-by-family.saiku"
       },
       "chartType": "bar"
      },
@@ -250,7 +250,7 @@
       "title": "Gap to maximum",
       "query": {
        "kind": "reference",
-       "path": "/Costs - gap to maximum by family.saiku"
+       "path": "/costs-gap-to-maximum-by-family.saiku"
       },
       "chartType": "bar"
      }
@@ -276,7 +276,7 @@
       "title": "Quantities by level",
       "query": {
        "kind": "reference",
-       "path": "/Packaging - quantities by level.saiku"
+       "path": "/packaging-quantities-by-level.saiku"
       }
      },
      {
@@ -289,7 +289,7 @@
       "title": "Recycled content by material",
       "query": {
        "kind": "reference",
-       "path": "/Packaging materials - recycled content.saiku"
+       "path": "/packaging-materials-recycled-content.saiku"
       }
      },
      {
@@ -302,7 +302,7 @@
       "title": "Packaging weight by family",
       "query": {
        "kind": "reference",
-       "path": "/Packaging materials - weight by product family.saiku"
+       "path": "/packaging-materials-weight-by-product-family.saiku"
       },
       "chartType": "bar"
      }
@@ -328,7 +328,7 @@
       "title": "Loss and yield",
       "query": {
        "kind": "reference",
-       "path": "/Composition - loss and yield by family.saiku"
+       "path": "/composition-loss-and-yield-by-family.saiku"
       }
      },
      {
@@ -341,7 +341,7 @@
       "title": "Most used components",
       "query": {
        "kind": "reference",
-       "path": "/Composition - most used components.saiku"
+       "path": "/composition-most-used-components.saiku"
       }
      },
      {
@@ -354,7 +354,7 @@
       "title": "Packaging components",
       "query": {
        "kind": "reference",
-       "path": "/Packaging - most used components.saiku"
+       "path": "/packaging-most-used-components.saiku"
       },
       "chartType": "bar"
      }
@@ -380,7 +380,7 @@
       "title": "Scores by definition",
       "query": {
        "kind": "reference",
-       "path": "/Scores - breakdown by definition.saiku"
+       "path": "/scores-breakdown-by-definition.saiku"
       }
      },
      {
@@ -393,7 +393,7 @@
       "title": "Nutri-Score breakdown",
       "query": {
        "kind": "reference",
-       "path": "/FP per Nutri-Score.saiku"
+       "path": "/fp-per-nutri-score.saiku"
       },
       "chartType": "pie"
      },
@@ -407,7 +407,7 @@
       "title": "Eco-Score breakdown",
       "query": {
        "kind": "reference",
-       "path": "/FP per Eco-Score.saiku"
+       "path": "/fp-per-eco-score.saiku"
       },
       "chartType": "pie"
      },
@@ -421,7 +421,7 @@
       "title": "Classes by definition",
       "query": {
        "kind": "reference",
-       "path": "/Scores - classes by definition.saiku"
+       "path": "/scores-classes-by-definition.saiku"
       },
       "chartType": "bar"
      }

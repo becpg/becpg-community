@@ -21,6 +21,12 @@
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<bean id="olapResourceImporter" class="fr.becpg.repo.olap.OlapResourceImporter">
+		<property name="nodeService" ref="NodeService" />
+		<property name="contentService" ref="ContentService" />
+		<property name="mimetypeService" ref="MimetypeService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.olap.olapChart.get" class="fr.becpg.repo.olap.webscripts.OlapChartWebScript"
 		parent="webscript">
 		<property name="olapService" ref="olapService" />

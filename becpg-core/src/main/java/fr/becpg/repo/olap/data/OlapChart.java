@@ -20,13 +20,16 @@ package fr.becpg.repo.olap.data;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +39,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import org.springframework.extensions.surf.util.I18NUtil;
+
 import fr.becpg.common.dom.DOMUtils;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.MLTextHelper;
 
 /**
  * Store Chart infos
@@ -48,6 +55,7 @@ public class OlapChart {
 
 	private NodeRef nodeRef;
 	private String fileName;
+	private String olapQueryId;
 	private String queryName;
 	private String queryId;
 	private String mdx;
@@ -68,17 +76,61 @@ public class OlapChart {
 	 */
 	public OlapChart(FileInfo fileInfo) {
 		super();
-		this.fileName = fileInfo.getName();
-		// #24931: queryName is the display label and drops the extension. Strip it from the end
-		// only: a plain replace turns "Sales.saikudash" into "Salesdash", which is neither a
-		// usable label nor a name any caller can map back to the stored file.
-		this.queryName = stripExtension(fileInfo.getName());
+		this.olapQueryId = (String) fileInfo.getProperties().get(BeCPGModel.PROP_OLAP_QUERY_ID);
+		this.fileName = readFileName(fileInfo);
+		this.queryName = readQueryName(fileInfo);
 		this.nodeRef = fileInfo.getNodeRef();
+	}
+
+	/**
+	 * Reads the identity of a stored chart.
+	 *
+	 * <p>#24931: a resource shipped by beCPG is identified by {@code bcpg:olapQueryId}, which no
+	 * translation touches, while its name carries the label the user reads. A query the user saved
+	 * from Saiku has no such id, so its name remains its identity, as it was before.
+	 *
+	 * @param fileInfo the stored document
+	 * @return the name every reference resolves on, extension included
+	 */
+	private String readFileName(FileInfo fileInfo) {
+		if (olapQueryId == null) {
+			return fileInfo.getName();
+		}
+		return olapQueryId + extensionOf(fileInfo.getName());
+	}
+
+	/**
+	 * Reads the display label of a stored chart, in the locale of the caller.
+	 *
+	 * <p>The label falls back to the name without its extension. Strip it from the end only: a
+	 * plain replace turns "Sales.saikudash" into "Salesdash", which is neither a usable label nor
+	 * a name any caller can map back to the stored file.
+	 *
+	 * @param fileInfo the stored document
+	 * @return the label to display
+	 */
+	private static String readQueryName(FileInfo fileInfo) {
+		Serializable title = fileInfo.getProperties().get(ContentModel.PROP_TITLE);
+		if (title instanceof MLText mlText) {
+			String value = MLTextHelper.getClosestValue(mlText, I18NUtil.getLocale());
+			if ((value != null) && !value.isBlank()) {
+				return value;
+			}
+		} else if ((title instanceof String value) && !value.isBlank()) {
+			return value;
+		}
+
+		return stripExtension(fileInfo.getName());
 	}
 
 	private static String stripExtension(String name) {
 		int dot = name.lastIndexOf('.');
 		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	private static String extensionOf(String name) {
+		int dot = name.lastIndexOf('.');
+		return dot > 0 ? name.substring(dot) : "";
 	}
 
 	/**
@@ -114,7 +166,7 @@ public class OlapChart {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getQueryId() {
-		return queryId;
+		return (olapQueryId != null) ? olapQueryId : queryId;
 	}
 
 	/**

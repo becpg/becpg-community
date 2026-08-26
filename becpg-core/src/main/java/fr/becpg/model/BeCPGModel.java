@@ -301,6 +301,10 @@ public final class BeCPGModel {
 	/** Constant <code>PROP_USER_CONTENT_LOCAL</code> */
 	public static final QName PROP_USER_CONTENT_LOCAL = QName.createQName(BECPG_URI, "userContentLocale");
 	// code aspect
+	/** Constant <code>ASPECT_OLAP_QUERY</code> */
+	public static final QName ASPECT_OLAP_QUERY = QName.createQName(BECPG_URI, "olapQueryAspect");
+	/** Constant <code>PROP_OLAP_QUERY_ID</code> */
+	public static final QName PROP_OLAP_QUERY_ID = QName.createQName(BECPG_URI, "olapQueryId");
 	/** Constant <code>ASPECT_ERP_CODE</code> */
 	public static final QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI, "erpCodeAspect");
 	/** Constant <code>PROP_ERP_CODE</code> */

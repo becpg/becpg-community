@@ -1,5 +1,5 @@
 {
- "id": "qualite-conformite",
+ "id": "quality-and-compliance",
  "name": "Quality and compliance",
  "version": 1,
  "theme": {
@@ -65,7 +65,7 @@
       "title": "Regulatory score by class",
       "query": {
        "kind": "reference",
-       "path": "/Regulatory score by class.saiku"
+       "path": "/regulatory-score-by-class.saiku"
       }
      },
      {
@@ -78,7 +78,7 @@
       "title": "Trend by family",
       "query": {
        "kind": "reference",
-       "path": "/Regulatory score - trend by family.saiku"
+       "path": "/regulatory-score-trend-by-family.saiku"
       },
       "chartType": "bar"
      },
@@ -92,7 +92,7 @@
       "title": "Unmet requirements",
       "query": {
        "kind": "reference",
-       "path": "/Compliance - unmet requirements.saiku"
+       "path": "/compliance-unmet-requirements.saiku"
       },
       "chartType": "bar"
      }
@@ -118,7 +118,7 @@
       "title": "Values by agent",
       "query": {
        "kind": "reference",
-       "path": "/Toxicology - values by agent.saiku"
+       "path": "/toxicology-values-by-agent.saiku"
       }
      },
      {
@@ -131,7 +131,7 @@
       "title": "Major allergens",
       "query": {
        "kind": "reference",
-       "path": "/Top 10 allergens.saiku"
+       "path": "/top-10-allergens.saiku"
       },
       "chartType": "bar"
      },
@@ -145,7 +145,7 @@
       "title": "Breakdown by state",
       "query": {
        "kind": "reference",
-       "path": "/Products per state.saiku"
+       "path": "/products-per-state.saiku"
       },
       "chartType": "pie"
      }
@@ -171,7 +171,7 @@
       "title": "By body",
       "query": {
        "kind": "reference",
-       "path": "/Certifications by body.saiku"
+       "path": "/certifications-by-body.saiku"
       }
      },
      {
@@ -184,7 +184,7 @@
       "title": "By plant",
       "query": {
        "kind": "reference",
-       "path": "/Certifications by plant.saiku"
+       "path": "/certifications-by-plant.saiku"
       }
      },
      {
@@ -197,7 +197,7 @@
       "title": "Label claims",
       "query": {
        "kind": "reference",
-       "path": "/FP Label claims (validated only).saiku"
+       "path": "/fp-label-claims-validated-only.saiku"
       },
       "chartType": "bar"
      }

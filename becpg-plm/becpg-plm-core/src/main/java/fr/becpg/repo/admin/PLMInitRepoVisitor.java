@@ -91,6 +91,7 @@ import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
+import fr.becpg.repo.olap.OlapResourceImporter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -382,6 +383,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private ContentHelper contentHelper;
+
+	@Autowired
+	private OlapResourceImporter olapResourceImporter;
 
 	@Autowired
 	private DictionaryService dictionaryService;
@@ -788,14 +792,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
 		if (Boolean.TRUE.equals(isOlapEnabled) && Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
-			// #24931: queries and dashboards carry their labels in the file, so they ship in two
-			// languages and the repository locale picks one, as the nutrient databases above do.
-			// The dashboards need their own pattern: ".saikudash" does not end with ".saiku".
+			// #24931: the resources are named by technical id and their labels live in the
+			// olapQueries bundles, so the importer sets cm:name in the repository locale and
+			// cm:title in every language shipped. Dashboards and applications still hold
+			// translated prose, hence one tree per language; the queries they reference are the
+			// same ids in both. Each extension needs its own pattern: ".saikudash" does not end
+			// with ".saiku".
 			String olapLanguage = Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage()) ? "fr" : "en";
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saiku");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikudash");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikuapp");
-			// Kept for anything another module drops straight into beCPG/olap.
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saiku");
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikudash");
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikuapp");
+			// Kept for anything another module drops straight into beCPG/olap: no technical id,
+			// so the file name stays the identity, as it was before #24931.
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {

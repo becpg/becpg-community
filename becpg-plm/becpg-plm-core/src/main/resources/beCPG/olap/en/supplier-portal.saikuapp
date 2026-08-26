@@ -1,6 +1,6 @@
 {
- "id": "portail-fournisseur",
- "name": "Portail fournisseur",
+ "id": "supplier-portal",
+ "name": "Supplier portal",
  "version": 1,
  "theme": {
   "mode": "light",
@@ -20,18 +20,18 @@
  "header": {
   "wordmarkAccent": "fournisseur",
   "eyebrow": "beCPG",
-  "liveBadge": "En direct"
+  "liveBadge": "Live"
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant fournisseur",
-  "persona": "Analyste des fournisseurs et de la conformité beCPG",
-  "scope": "Répondre uniquement sur les cubes products, projectsSteps et requirements.",
-  "greeting": "Posez une question sur les fournisseurs, leurs tâches ou la conformité.",
+  "title": "Supplier assistant",
+  "persona": "beCPG supplier and compliance analyst",
+  "scope": "Answer only about the cubes products, projectsSteps et requirements.",
+  "greeting": "Ask about suppliers, their tasks or compliance.",
   "suggestedPrompts": [
-   "Top 10 des fournisseurs",
-   "Durée prévue contre réelle des tâches du portail",
-   "Exigences non respectées"
+   "Top 10 suppliers",
+   "Planned versus actual duration of portal tasks",
+   "Unmet requirements"
   ],
   "cube": {
    "connectionName": "beCPG",
@@ -47,10 +47,10 @@
  "pages": [
   {
    "id": "fournisseurs",
-   "title": "Fournisseurs",
+   "title": "Suppliers",
    "icon": "users",
-   "heading": "Panel fournisseurs",
-   "subheading": "Poids des fournisseurs dans le référentiel",
+   "heading": "Supplier panel",
+   "subheading": "Supplier weight in the master data",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -61,10 +61,10 @@
       "w": 12,
       "h": 6,
       "type": "chart",
-      "title": "Top 10 des fournisseurs",
+      "title": "Top 10 suppliers",
       "query": {
        "kind": "reference",
-       "path": "/Top 10 fournisseurs.saiku"
+       "path": "/top-10-suppliers.saiku"
       },
       "chartType": "bar"
      },
@@ -75,10 +75,10 @@
       "w": 12,
       "h": 5,
       "type": "chart",
-      "title": "Matières premières les plus chères",
+      "title": "Most expensive raw materials",
       "query": {
        "kind": "reference",
-       "path": "/Top 10 des MP les plus chères dans les produits.saiku"
+       "path": "/top-10-most-expensive-raw-materials-in-products.saiku"
       },
       "chartType": "bar"
      }
@@ -87,10 +87,10 @@
   },
   {
    "id": "taches",
-   "title": "Tâches",
+   "title": "Tasks",
    "icon": "clipboard",
-   "heading": "Tâches du portail",
-   "subheading": "Durées prévues et réelles",
+   "heading": "Portal tasks",
+   "subheading": "Planned and actual durations",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -101,10 +101,10 @@
       "w": 12,
       "h": 6,
       "type": "table",
-      "title": "Durée prévisionnelle contre réelle",
+      "title": "Planned versus actual duration",
       "query": {
        "kind": "reference",
-       "path": "/Tâches Portail fournisseur (durée prévi-réelle).saiku"
+       "path": "/supplier-portal-tasks-planned-vs-actual.saiku"
       }
      }
     ]
@@ -112,10 +112,10 @@
   },
   {
    "id": "conformite",
-   "title": "Conformité",
+   "title": "Compliance",
    "icon": "shield",
-   "heading": "Conformité",
-   "subheading": "Exigences non respectées et allergènes",
+   "heading": "Compliance",
+   "subheading": "Unmet requirements and allergens",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -126,10 +126,10 @@
       "w": 7,
       "h": 6,
       "type": "chart",
-      "title": "Exigences non respectées",
+      "title": "Unmet requirements",
       "query": {
        "kind": "reference",
-       "path": "/Conformite - exigences non respectees.saiku"
+       "path": "/compliance-unmet-requirements.saiku"
       },
       "chartType": "bar"
      },
@@ -140,10 +140,10 @@
       "w": 5,
       "h": 6,
       "type": "chart",
-      "title": "Top 10 des allergènes",
+      "title": "Top 10 allergens",
       "query": {
        "kind": "reference",
-       "path": "/Top 10 des allergènes.saiku"
+       "path": "/top-10-allergens.saiku"
       },
       "chartType": "bar"
      }
@@ -154,8 +154,8 @@
    "id": "certifications",
    "title": "Certifications",
    "icon": "award",
-   "heading": "Certifications des sites",
-   "subheading": "Certifications par organisme et par usine",
+   "heading": "Site certifications",
+   "subheading": "Certifications by body and by plant",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -166,10 +166,10 @@
       "w": 6,
       "h": 5,
       "type": "table",
-      "title": "Par organisme",
+      "title": "By body",
       "query": {
        "kind": "reference",
-       "path": "/Certifications par organisme.saiku"
+       "path": "/certifications-by-body.saiku"
       }
      },
      {
@@ -179,10 +179,10 @@
       "w": 6,
       "h": 5,
       "type": "table",
-      "title": "Par usine",
+      "title": "By plant",
       "query": {
        "kind": "reference",
-       "path": "/Certifications par usine.saiku"
+       "path": "/certifications-by-plant.saiku"
       }
      }
     ]

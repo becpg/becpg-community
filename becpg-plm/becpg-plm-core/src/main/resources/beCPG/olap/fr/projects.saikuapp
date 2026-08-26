@@ -1,6 +1,6 @@
 {
- "id": "projets",
- "name": "Projects",
+ "id": "projects",
+ "name": "Projets",
  "version": 1,
  "theme": {
   "mode": "light",
@@ -20,18 +20,18 @@
  "header": {
   "wordmarkAccent": "jets",
   "eyebrow": "beCPG",
-  "liveBadge": "Live"
+  "liveBadge": "En direct"
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Projects assistant",
-  "persona": "beCPG project portfolio analyst",
-  "scope": "Answer only about the cubes projects, projectsSteps et evaluation.",
-  "greeting": "Ask about progress, the funnel or evaluations.",
+  "title": "Assistant projets",
+  "persona": "Analyste du portefeuille projets beCPG",
+  "scope": "Répondre uniquement sur les cubes projects, projectsSteps et evaluation.",
+  "greeting": "Posez une question sur l'avancement, l'entonnoir ou les évaluations.",
   "suggestedPrompts": [
-   "Tasks per process stage",
-   "Average progress per project manager",
-   "Evaluation scores per criterion"
+   "Tâches par étape du processus",
+   "Avancement moyen par chef de projet",
+   "Notes d'évaluation par critère"
   ],
   "cube": {
    "connectionName": "beCPG",
@@ -47,10 +47,10 @@
  "pages": [
   {
    "id": "entonnoir",
-   "title": "Funnel",
+   "title": "Entonnoir",
    "icon": "filter",
-   "heading": "Project funnel",
-   "subheading": "Breakdown per stage and per family",
+   "heading": "Entonnoir des projets",
+   "subheading": "Répartition par étape et par famille",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -61,10 +61,10 @@
       "w": 7,
       "h": 6,
       "type": "chart",
-      "title": "Tasks per stage",
+      "title": "Tâches par étape",
       "query": {
        "kind": "reference",
-       "path": "/Funnel - tasks per stage.saiku"
+       "path": "/funnel-tasks-per-stage.saiku"
       },
       "chartType": "bar"
      },
@@ -75,10 +75,10 @@
       "w": 5,
       "h": 6,
       "type": "chart",
-      "title": "Projects per family",
+      "title": "Projets par famille",
       "query": {
        "kind": "reference",
-       "path": "/Funnel - projects per family.saiku"
+       "path": "/funnel-projects-per-family.saiku"
       },
       "chartType": "pie"
      },
@@ -89,10 +89,10 @@
       "w": 12,
       "h": 4,
       "type": "chart",
-      "title": "Projects created per month",
+      "title": "Projets créés par mois",
       "query": {
        "kind": "reference",
-       "path": "/Projects created per year-month.saiku"
+       "path": "/projects-created-per-year-month.saiku"
       },
       "chartType": "line"
      }
@@ -101,10 +101,10 @@
   },
   {
    "id": "avancement",
-   "title": "Progress",
+   "title": "Avancement",
    "icon": "activity",
-   "heading": "Progress and delays",
-   "subheading": "Tracking per project manager",
+   "heading": "Avancement et retards",
+   "subheading": "Suivi par chef de projet",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -115,10 +115,10 @@
       "w": 12,
       "h": 6,
       "type": "table",
-      "title": "Progress and delay",
+      "title": "Avancement et retard",
       "query": {
        "kind": "reference",
-       "path": "/Projects - progress tracking.saiku"
+       "path": "/projects-progress-tracking.saiku"
       }
      }
     ]
@@ -126,10 +126,10 @@
   },
   {
    "id": "evaluation",
-   "title": "Evaluation",
+   "title": "Évaluation",
    "icon": "star",
-   "heading": "Project evaluation",
-   "subheading": "Scores per criterion and per project",
+   "heading": "Évaluation des projets",
+   "subheading": "Notes par critère et par projet",
    "grid": {
     "cols": 12,
     "tiles": [
@@ -140,10 +140,10 @@
       "w": 6,
       "h": 6,
       "type": "chart",
-      "title": "Scores per criterion",
+      "title": "Notes par critère",
       "query": {
        "kind": "reference",
-       "path": "/Evaluation - scores per criterion.saiku"
+       "path": "/evaluation-scores-per-criterion.saiku"
       },
       "chartType": "bar"
      },
@@ -154,10 +154,10 @@
       "w": 6,
       "h": 6,
       "type": "chart",
-      "title": "Scores per project",
+      "title": "Notes par projet",
       "query": {
        "kind": "reference",
-       "path": "/Evaluation - scores per project.saiku"
+       "path": "/evaluation-scores-per-project.saiku"
       },
       "chartType": "bar"
      }
