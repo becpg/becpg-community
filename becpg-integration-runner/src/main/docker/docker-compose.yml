@@ -51,6 +51,19 @@ services:
       MYSQL_PASSWORD: becpg
       MYSQL_ROOT_PASSWORD: becpg
       MYSQL_USER: becpg
+    # The image carries the on-premise profile, sized for the 3276m an installed instance gives
+    # the database. A workstation runs the whole stack at once and spares the 2g below, which the
+    # 1536M buffer pool alone does not fit in: the container climbed to its limit during a test
+    # campaign and was killed. These options bring it back inside that budget - the performance
+    # schema costs 252M of instrumentation nobody reads here, and the slow query log writes a line
+    # for every query without an index, which is most of what Alfresco runs.
+    command:
+      - --innodb-buffer-pool-size=1G
+      - --innodb-log-buffer-size=16M
+      - --performance-schema=OFF
+      - --slow-query-log=OFF
+      - --tmp-table-size=32M
+      - --max-heap-table-size=32M
     mem_limit: 2g
     volumes:
       - becpg_data_db:/var/lib/mysql
