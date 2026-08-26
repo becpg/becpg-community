@@ -97,6 +97,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	private static final Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
+	/** The tracker polls the repository every 10s, so a node is never searchable straight away. */
+	private static final long SOLR_POLL_INTERVAL_MS = 500;
+
+	/** A class churning thousands of nodes leaves a backlog the tracker has to drain first. */
+	private static final long SOLR_TIMEOUT_MS = 120_000;
+
 	private Map<String, NodeRef> testFolders = new HashMap<>();
 
 	@Rule
@@ -340,6 +346,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		super.tearDown();
 	}
 	
+	/**
+	 * Blocks until a marker node created here is searchable, which means the tracker has caught up
+	 * with everything this test committed. Transactions are indexed in order, so the wait also
+	 * covers the backlog left behind by the classes that ran before.
+	 */
 	public void waitForSolr() {
 
 		Date startTime = new Date();
@@ -357,24 +368,31 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		});
 
 		inReadTx(() -> {
-			int j = 0;
-			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
-					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
-					&& (j < 30)) {
+			long waitStart = System.currentTimeMillis();
+			long waited = 0;
 
-				logger.info("Wait for solr (2s) : serverIdx retry *" + j);
-				Thread.sleep(2000);
-				j++;
+			while (!isMarkerIndexed(startTime) && (waited < SOLR_TIMEOUT_MS)) {
+				Thread.sleep(SOLR_POLL_INTERVAL_MS);
+				waited = System.currentTimeMillis() - waitStart;
 			}
-			
-			if(j == 30) {
-				Assert.fail("Solr is taking too long!");
+
+			if (waited >= SOLR_TIMEOUT_MS) {
+				Assert.fail("Solr is taking too long! Waited " + (waited / 1000) + "s for the tracker to index the marker node - "
+						+ "the tracker is most likely still draining the backlog of the previous test class");
 			}
+
+			logger.info("Waited " + waited + "ms for solr");
 
 			return null;
 
 		});
 
+	}
+
+	private boolean isMarkerIndexed(Date startTime) {
+		return BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
+				.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage()
+				.singleValue() != null;
 	}
 	
 
