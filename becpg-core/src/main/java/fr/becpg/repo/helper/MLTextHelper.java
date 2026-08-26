@@ -527,6 +527,10 @@ public class MLTextHelper {
 	 * translations are resolved by the resource bundles themselves, there is no reason to force
 	 * every other language to English here.
 	 *
+	 * That fallback is reduced to the nearest supported locale, so a server running in "fr_FR"
+	 * works in "fr" like the rest of the repository - Alfresco stamps sys:locale with it. A
+	 * language beCPG is translated in but that is not a supported locale is kept as it is.
+	 *
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link java.util.Locale} object
@@ -534,7 +538,9 @@ public class MLTextHelper {
 	public static Locale getUserLocale(NodeService nodeService, NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
-			return useBrowserLocale() ? I18NUtil.getLocale() : Locale.getDefault();
+			Locale requested = useBrowserLocale() ? I18NUtil.getLocale() : Locale.getDefault();
+			Locale nearest = getNearestLocale(requested);
+			return (nearest != null) ? nearest : requested;
 		}
 		return MLTextHelper.parseLocale(loc);
 	}
