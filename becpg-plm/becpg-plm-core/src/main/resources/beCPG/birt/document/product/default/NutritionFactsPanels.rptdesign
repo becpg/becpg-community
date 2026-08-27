@@ -164,40 +164,12 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="marginBottom">3pt</property>
                     <text-property name="content"><![CDATA[<value-of>row["code"]</value-of>]]></text-property>
                 </text>
-                <image id="100">
-                    <property name="source">expr</property>
-                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
-                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">3.8in</property>
-                    <property name="height">4.803in</property>
-                    <property name="fitToContainer">false</property>
-                    <list-property name="visibility">
-                        <structure>
-                            <property name="format">all</property>
-                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Dual_column"</expression>
-                        </structure>
-                    </list-property>
-                </image>
-                <image id="101">
+                                <image id="200">
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
                     <property name="width">2.9in</property>
-                    <property name="height">3.373in</property>
-                    <property name="fitToContainer">false</property>
-                    <list-property name="visibility">
-                        <structure>
-                            <property name="format">all</property>
-                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Linear"</expression>
-                        </structure>
-                    </list-property>
-                </image>
-                <image id="102">
-                    <property name="source">expr</property>
-                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
-                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">2.9in</property>
-                    <property name="height">5.694in</property>
+                    <property name="height">3.180in</property>
                     <property name="fitToContainer">false</property>
                     <list-property name="visibility">
                         <structure>
@@ -206,17 +178,73 @@ and the rules of a regulated panel exact in the PDF.</property>
                         </structure>
                     </list-property>
                 </image>
-                <image id="103">
+                <image id="201">
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">5.0in</property>
-                    <property name="height">2.578in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">3.591in</property>
                     <property name="fitToContainer">false</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
-                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Tabular"</expression>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Standard_bilingual"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="202">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">5.0in</property>
+                    <property name="height">0.879in</property>
+                    <property name="fitToContainer">false</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Horizontal"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="203">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">5.0in</property>
+                    <property name="height">1.017in</property>
+                    <property name="fitToContainer">false</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Horizontal_bilingual"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="204">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">5.0in</property>
+                    <property name="height">0.482in</property>
+                    <property name="fitToContainer">false</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Linear"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="205">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">5.0in</property>
+                    <property name="height">0.634in</property>
+                    <property name="fitToContainer">false</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Linear_bilingual"</expression>
                         </structure>
                     </list-property>
                 </image>

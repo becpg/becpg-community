@@ -71,7 +71,7 @@
   runs wider than both, so the wrap counts a line with the ratio matching what it holds.
 -->
 <#assign GLYPH_RATIO = 0.45>
-<#assign FIGURE_GLYPH_RATIO = 0.5>
+<#assign FIGURE_GLYPH_RATIO = 0.53>
 <#assign HEAVY_GLYPH_RATIO = 0.56>
 
 <#--
