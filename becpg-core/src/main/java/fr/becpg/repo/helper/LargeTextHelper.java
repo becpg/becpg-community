@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -23,10 +24,41 @@ public class LargeTextHelper {
 	/** Constant <code>TEXT_SIZE_LIMIT=50000</code> */
 	public static final int TEXT_SIZE_LIMIT = 50000;
 
+	/**
+	 * Maximum size of a single locale value, in UTF-8 bytes.
+	 *
+	 * Alfresco keys {@code alf_node_properties} on the locale, so every language of a d:mltext
+	 * property lands in its own {@code string_value} row. On MySQL that column is a {@code TEXT},
+	 * capped at 65535 bytes, and the InnoDB dialect never spills strings to {@code serializable_value}
+	 * (SchemaBootstrap sets its threshold to Integer.MAX_VALUE), so the column is the hard wall.
+	 * The margin absorbs the encoding of the notice replacing an oversized value.
+	 */
+	public static final int MAX_LOCALE_SIZE_BYTES = 60000;
+
 	private LargeTextHelper() {
 		//Do Nothing
 	}
 	
+	/**
+	 * <p>Tells whether a single locale value can be persisted, measured in UTF-8 bytes rather than in
+	 * characters: the underlying column is capped in bytes, and a character weighs from one byte
+	 * (markup, digits) to four, so a limit counted in characters would be either too lax for Chinese
+	 * or needlessly strict for Latin scripts.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return true when the value fits {@link #MAX_LOCALE_SIZE_BYTES}
+	 */
+	public static boolean fitsInProperty(String value) {
+		if (value == null) {
+			return true;
+		}
+		// A character never exceeds 4 UTF-8 bytes, so below that ratio the value fits without encoding it
+		if (value.length() <= (MAX_LOCALE_SIZE_BYTES / 4)) {
+			return true;
+		}
+		return value.getBytes(StandardCharsets.UTF_8).length <= MAX_LOCALE_SIZE_BYTES;
+	}
+
 	/**
 	 * <p>elipse.</p>
 	 *
