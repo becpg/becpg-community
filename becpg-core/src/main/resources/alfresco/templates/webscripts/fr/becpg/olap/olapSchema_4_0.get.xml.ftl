@@ -2475,6 +2475,31 @@
 			</Hierarchy>
 		</Dimension>
 
+		<#-- #35025: the geographical origin of a packaging material, carried by pack:pmlGeoOrigin.
+		     The association is multiple, so this is a many-to-many dimension: a material line with
+		     two origins is counted once per origin by any additive measure below.
+
+		     The join is on dataListNodeRef, not entityNodeRef. In an association table the former
+		     holds the data list line and the latter the owning entity - so the products cube joins
+		     entityNodeRef (its fact is the product) while this cube, whose fact is the material
+		     line, joins dataListNodeRef. Verified on assoc_pjt_tlResources, the populated
+		     equivalent. -->
+		<Dimension foreignKey="nodeRef" name="materialGeoOrigin" caption="${msg("jsolap.materialGeoOrigin.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="dataListNodeRef">
+				<View name="packMaterialGeoOrigin" alias="packMaterialGeoOrigin">
+					<SQL dialect="generic">
+						select
+							dataListNodeRef,
+							doc->>"$.name" as name,
+							nodeRef
+						from
+							assoc_pack_pmlGeoOrigin
+					</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.materialGeoOrigin.title")}" column="nodeRef" nameColumn="name" type="String" />
+			</Hierarchy>
+		</Dimension>
+
 		<Dimension name="packagingRecyclability" caption="${msg("jsolap.packagingRecyclability.title")}">
 			<Hierarchy name="packagingRecyclability" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecyclability.title")}">
 				<#-- The column holds the raw boolean of bcpg:isNotRecyclable, and its meaning is
