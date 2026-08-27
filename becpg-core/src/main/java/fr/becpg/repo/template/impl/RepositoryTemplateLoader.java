@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import freemarker.cache.TemplateLoader;
 
 /**
@@ -78,13 +77,18 @@ public class RepositoryTemplateLoader implements TemplateLoader {
 		return AuthenticationUtil.runAsSystem(() -> findTemplateNode(name));
 	}
 
+	/**
+	 * The child is looked up by name and never by XPath: a template name carries its extension,
+	 * and the dot of "nutritionFacts-canada.ftlx" is not a valid XPath step, so the query threw
+	 * and every override silently fell through to the classpath.
+	 */
 	private NodeRef findTemplateNode(String name) {
 		try {
 			NodeRef folderNodeRef = repoService.getFolderByPath(folderPath);
 			if (folderNodeRef == null) {
 				return null;
 			}
-			return BeCPGQueryBuilder.createQuery().selectNodeByPath(folderNodeRef, name);
+			return nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
 		} catch (Exception e) {
 			logger.debug("Cannot look up template '" + name + "' in " + folderPath, e);
 			return null;
