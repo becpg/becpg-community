@@ -1486,6 +1486,71 @@
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 	</Cube>
 	
+	<#-- Catalogue completeness (#24931). bcpg:entityScore is a d:text holding the JSON the catalog
+	     formulation produces: one entry per catalog, with its score and the fields still missing.
+	     JSON_TABLE unnests it so the completeness becomes a cube like any other.
+
+	     CAST(NULLIF(...,'') AS JSON) on a product carrying no score yields NULL, and JSON_TABLE on
+	     NULL returns no row rather than failing - which matters, because a view that errors takes
+	     the whole schema down with it, not just its own cube. A product is scored only once it has
+	     been formulated, so an instance that never formulates simply gets an empty cube. -->
+	<Cube name="catalogCompleteness" caption="${msg("jsolap.catalogCompleteness.title")}" cache="true" enabled="true" defaultMeasure="catalogScore">
+
+		<View name="catalogCompletenessView" alias="catalogCompletenessView">
+			<SQL dialect="generic">
+				select
+					p.nodeRef as productNodeRef,
+					p.doc->>"$.cm_name" as productName,
+					p.doc->>"$.type" as productType,
+					p.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+					p.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+					p.doc->>"$.bcpg_productState" as productState,
+					p.doc->>"$.metadata_siteId" as siteId,
+					p.doc->>"$.metadata_siteName" as siteName,
+					c.catalogId,
+					c.catalogName,
+					c.catalogScore,
+					JSON_LENGTH(c.missingFields) as missingFieldCount
+				from
+					bcpg_product p,
+					JSON_TABLE(CAST(NULLIF(p.doc->>"$.bcpg_entityScore", '') AS JSON), '$.catalogs[*]'
+						COLUMNS (
+							catalogId VARCHAR(255) PATH '$.id',
+							catalogName VARCHAR(255) PATH '$.displayName',
+							catalogScore DECIMAL(20,6) PATH '$.score',
+							missingFields JSON PATH '$.missingFields'
+						)) c
+			</SQL>
+		</View>
+
+		<Dimension name="catalog" caption="${msg("jsolap.catalog.title")}">
+			<Hierarchy name="catalog" hasAll="true" allMemberCaption="${msg("jsolap.catalog.caption")}">
+				<Level name="catalogName" caption="${msg("jsolap.catalog.title")}" column="catalogId" nameColumn="catalogName" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension name="designation" caption="${msg("jsolap.designation.title")}">
+			<Hierarchy name="productPerFamily" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState" type="String" />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productNodeRef" nameColumn="productName" type="String" highCardinality="true" />
+			</Hierarchy>
+			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId" nameColumn="siteName" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Measure name="catalogScore" caption="${msg("jsolap.catalogScore.title")}" column="catalogScore" datatype="Numeric" aggregator="avg" visible="true" />
+		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="scoredProducts" caption="${msg("jsolap.scoredProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
+	</Cube>
+
 	<Cube name="lca" caption="${msg("jsolap.lca.title")}" cache="true" enabled="true">
 	
 		<View name="lcaList" alias="lcaList">
