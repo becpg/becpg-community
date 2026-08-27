@@ -5,8 +5,10 @@ import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,7 +48,12 @@ public class PpwrRecyclabilityTest {
 
 	private static final String RANGE = "A: [95;100] B: [80;95) C: [70;80) NR: [0;70)";
 
+	/** Eco-tax category of the Citeo scale for a rigid PET packaging */
+	private static final String RIGID_PET_CATEGORY = "6.3.3";
+
 	private final Set<String> flagged = new HashSet<>();
+
+	private final Map<String, String> categories = new HashMap<>();
 
 	private PpwrRecyclability plugin;
 
@@ -55,6 +62,7 @@ public class PpwrRecyclabilityTest {
 	@Before
 	public void setUp() {
 		flagged.clear();
+		categories.clear();
 		product = new FinishedProductData();
 		product.setPackMaterialList(new ArrayList<>());
 		plugin = new PpwrRecyclability(null, null, null) {
@@ -66,6 +74,11 @@ public class PpwrRecyclabilityTest {
 			@Override
 			protected boolean isFlaggedNotRecyclable(NodeRef material) {
 				return flagged.contains(material.getId());
+			}
+
+			@Override
+			protected String ecoTaxeCategory(NodeRef material) {
+				return categories.get(material.getId());
 			}
 		};
 	}
@@ -124,6 +137,24 @@ public class PpwrRecyclabilityTest {
 		assertNull(context().getValue());
 	}
 
+	@Test
+	public void testAMaterialOfAnotherCodeGenerationIsMatchedByItsEcoTaxCategory() {
+		pack("PLASTIC_RIGID_PET", 50d, PackagingLevel.Primary);
+		categories.put("PLASTIC_RIGID_PET", RIGID_PET_CATEGORY);
+
+		// the code says nothing to the reference data, the category names the same family
+		assertEquals(80d, value(), PRECISION);
+		assertEquals("B", grade(PackagingLevel.Primary));
+	}
+
+	@Test
+	public void testTheMaterialCodeWinsOverItsCategory() {
+		pack(CLEAR_PET, 50d, PackagingLevel.Primary);
+		categories.put(CLEAR_PET, RIGID_PET_CATEGORY);
+
+		assertEquals(95d, value(), PRECISION);
+	}
+
 	/**
 	 * <p>Adds one packaging material line to the product.</p>
 	 *
@@ -146,7 +177,7 @@ public class PpwrRecyclabilityTest {
 
 		definition.setRange(RANGE);
 		definition.setThresholdList(List.of(threshold(CLEAR_PET, 95d), threshold(PVC, 0d), threshold(COMPLEX, 30d),
-				threshold(CARDBOARD, 95d)));
+				threshold(CARDBOARD, 95d), threshold(RIGID_PET_CATEGORY, 80d)));
 
 		return definition;
 	}

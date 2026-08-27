@@ -38,6 +38,10 @@ import fr.becpg.repo.score.data.ScoreThresholdListDataItem;
  * supplier or a laboratory report states. The plugin only weighs those rates by the weight
  * each material takes in the packaging.</p>
  *
+ * <p>A material is matched by its code, then by its eco-tax category. Reading the code alone
+ * would only serve a repository holding the current generation of the material referential,
+ * where the category names the same families and is filled far more widely.</p>
+ *
  * <p>The regulation grades a packaging unit, not a product: the primary, secondary and
  * tertiary packaging are each assessed on their own. The score of the product is therefore
  * the worst of its levels, since that is the one blocking the placing on the market, and the
@@ -232,7 +236,13 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 			return NOT_RECYCLABLE;
 		}
 
-		return findRate(definition, materialCode(material)).map(ScoreThresholdListDataItem::getPoints).orElse(null);
+		Optional<ScoreThresholdListDataItem> rate = findRate(definition, materialCode(material));
+
+		if (rate.isEmpty()) {
+			rate = findRate(definition, ecoTaxeCategory(material));
+		}
+
+		return rate.map(ScoreThresholdListDataItem::getPoints).orElse(null);
 	}
 
 	/**
@@ -246,6 +256,23 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 		String code = (String) nodeService.getProperty(material, BeCPGModel.PROP_LV_CODE);
 
 		return ((code == null) || code.isBlank()) ? null : code.trim();
+	}
+
+	/**
+	 * Eco-tax category of a material, the fallback key of the reference data.
+	 *
+	 * <p>Material codes come in generations, and a repository holds materials of its own that
+	 * carry none. The category of the extended producer responsibility names the same
+	 * families and is the one such repositories do fill, so it catches the materials the code
+	 * misses.</p>
+	 *
+	 * @param material a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object, null when the material declares none
+	 */
+	protected String ecoTaxeCategory(NodeRef material) {
+		String category = (String) nodeService.getProperty(material, PackModel.PROP_PACK_MATERIAL_ECOTAXE_CATEGORY);
+
+		return ((category == null) || category.isBlank()) ? null : category.trim();
 	}
 
 	/**
