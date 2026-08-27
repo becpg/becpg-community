@@ -65,6 +65,9 @@ public class OlapServiceImpl implements OlapService {
 	/** Constant <code>ROW_HEADER="ROW_HEADER_HEADER"</code> */
 	private static final String ROW_HEADER = "ROW_HEADER_HEADER";
 
+	/** Separates the levels of a multi-level row axis inside the single label published. */
+	private static final String LEVEL_SEPARATOR = " / ";
+
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
@@ -282,21 +285,29 @@ public class OlapServiceImpl implements OlapService {
 	
 						if (jsonArray != null) {
 	
-							int lowestLevel = 0;
+							// A query putting several levels on rows - a year and a month, a family and a
+							// product - used to lose every level but the innermost: the outer metadata
+							// was shifted out and the records started at the last row header. "Products
+							// created per year-month" came back as (month, count), the year silently
+							// gone. The levels are joined into one label instead, so nothing is lost and
+							// the consumers still receive one label column followed by the measures.
+							int rowHeaders = 0;
 							for (int row = 0; row < jsonArray.length(); row++) {
 								JSONArray cur = jsonArray.getJSONArray(row);
 								if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
-									for (int field = 0; field < cur.length(); field++) {
-										if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
-											ret.shiftMetadata();
-											lowestLevel = field;
-										}
-										ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field)), cur.getJSONObject(field)
-												.getString("value")));
+									rowHeaders = countRowHeaders(cur);
+									ret.addMetadata(new OlapChartMetadata(0,
+											retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(0)),
+											joinHeaderLabels(cur, rowHeaders)));
+									for (int field = rowHeaders; field < cur.length(); field++) {
+										ret.addMetadata(new OlapChartMetadata((field - rowHeaders) + 1,
+												retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field)),
+												cur.getJSONObject(field).getString("value")));
 									}
 								} else if (cur.getJSONObject(0).getString("value") != null) {
 									List<Object> olapRecord = new ArrayList<>();
-									for (int col = lowestLevel; col < cur.length(); col++) {
+									olapRecord.add(joinRowLabels(cur, rowHeaders));
+									for (int col = rowHeaders; col < cur.length(); col++) {
 										olapRecord.add(cellValue(cur.getJSONObject(col)));
 									}
 									ret.getResultsets().add(olapRecord);
@@ -315,6 +326,51 @@ public class OlapServiceImpl implements OlapService {
 			}
 			return ret;
 		}
+	}
+
+	/**
+	 * Counts the leading row-header columns of a cell set, which is how many levels the query put
+	 * on rows.
+	 *
+	 * @param headerRow the first row of the cell set
+	 * @return the number of row-header columns, at least one
+	 */
+	private static int countRowHeaders(JSONArray headerRow) throws JSONException {
+		int count = 0;
+		while ((count < headerRow.length()) && ROW_HEADER.equals(headerRow.getJSONObject(count).getString("type"))) {
+			count++;
+		}
+		return Math.max(count, 1);
+	}
+
+	/**
+	 * Joins the captions of the row levels into the single column name the consumers expect.
+	 *
+	 * @param headerRow the first row of the cell set
+	 * @param rowHeaders how many of its columns are row headers
+	 * @return the joined caption
+	 */
+	private static String joinHeaderLabels(JSONArray headerRow, int rowHeaders) throws JSONException {
+		List<String> labels = new ArrayList<>();
+		for (int col = 0; col < rowHeaders; col++) {
+			labels.add(headerRow.getJSONObject(col).getString("value"));
+		}
+		return String.join(LEVEL_SEPARATOR, labels);
+	}
+
+	/**
+	 * Joins the row-header values of one data row into a single label.
+	 *
+	 * @param row a data row of the cell set
+	 * @param rowHeaders how many of its columns are row headers
+	 * @return the joined label
+	 */
+	private String joinRowLabels(JSONArray row, int rowHeaders) throws JSONException {
+		List<String> labels = new ArrayList<>();
+		for (int col = 0; col < rowHeaders; col++) {
+			labels.add(String.valueOf(cellValue(row.getJSONObject(col))));
+		}
+		return String.join(LEVEL_SEPARATOR, labels);
 	}
 
 	private String xmlEscape(String input) {
