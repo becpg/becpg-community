@@ -4,9 +4,9 @@
     <Axes>
       <Axis location="ROWS" nonEmpty="true">
         <Dimensions>
-          <Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+          <Dimension name="projectModel" hierarchizeMode="PRE" hierarchyConsistent="true">
             <Inclusions>
-              <Selection dimension="designation" type="level" node="[designation.projectPerFamily].[projectHierarchy1]" operator="MEMBERS" />
+              <Selection dimension="projectModel" type="level" node="[projectModel.projectModel].[entityTplRef]" operator="MEMBERS" />
               <Selection dimension="designation" type="level" node="[designation.projectPerFamily].[name]" operator="MEMBERS" />
             </Inclusions>
             <Exclusions />
@@ -29,7 +29,7 @@
   </QueryModel>
   <MDX>SELECT
 NON EMPTY {Hierarchize({[Measures].[lastProgress], [Measures].[delay]})} ON COLUMNS,
-NON EMPTY {Hierarchize({{[designation.projectPerFamily].[projectHierarchy1].Members}, {[designation.projectPerFamily].[name].Members}})} ON ROWS
+NON EMPTY {Hierarchize({{[projectModel.projectModel].[entityTplRef].Members}, {[designation.projectPerFamily].[name].Members}})} ON ROWS
 FROM [projects]</MDX>
   <Properties>
     <Property name="saiku.ui.render.mode" value="table" />

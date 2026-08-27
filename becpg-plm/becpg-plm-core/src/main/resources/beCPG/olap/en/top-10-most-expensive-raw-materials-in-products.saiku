@@ -38,7 +38,7 @@
 NON EMPTY {[Measures].[unitTotalCost]} ON COLUMNS,
 NON EMPTY TopCount({Hierarchize({[designation.productPerFamily].[name].Members})}, 10, [Measures].[unitTotalCost]) ON ROWS
 FROM [products]
-WHERE {[productType].[bcpg:rawMaterial]}</MDX>
+WHERE ([productType].[bcpg:rawMaterial], [state].[Valid])</MDX>
   <Properties>
     <Property name="saiku.ui.render.mode" value="table" />
     <Property name="org.saiku.query.explain" value="true" />

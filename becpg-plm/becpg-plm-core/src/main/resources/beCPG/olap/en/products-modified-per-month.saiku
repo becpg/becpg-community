@@ -22,12 +22,22 @@
           </Dimension>
         </Dimensions>
       </Axis>
-      <Axis location="FILTER" nonEmpty="false" />
+      <Axis location="FILTER" nonEmpty="false">
+        <Dimensions>
+          <Dimension name="state">
+            <Inclusions>
+              <Selection dimension="state" type="member" node="[state].[Valid]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
     </Axes>
   </QueryModel>
   <MDX>SELECT
 NON EMPTY {Hierarchize({[productType].[entity_type].Members})} ON COLUMNS,
 NON EMPTY {Hierarchize({[productDateModified.date].[Month].Members})} ON ROWS
-FROM [products]</MDX>
+FROM [products]
+WHERE {[state].[Valid]}</MDX>
 </Query>
 

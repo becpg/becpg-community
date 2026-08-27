@@ -23,13 +23,23 @@
           </Dimension>
         </Dimensions>
       </Axis>
-      <Axis location="FILTER" nonEmpty="false" />
+      <Axis location="FILTER" nonEmpty="false">
+        <Dimensions>
+          <Dimension name="state">
+            <Inclusions>
+              <Selection dimension="state" type="member" node="[state].[Valid]" operator="MEMBER" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
     </Axes>
   </QueryModel>
   <MDX>SELECT
 NON EMPTY {[Measures].[productNumber]} ON COLUMNS,
 NON EMPTY Order({Hierarchize({{[productDateCreated.date].[Year].Members}, {[productDateCreated.date].[Month].Members}})}, [productDateCreated.date].CurrentMember.Name, BASC) ON ROWS
-FROM [products]</MDX>
+FROM [products]
+WHERE {[state].[Valid]}</MDX>
   <Properties>
     <Property name="saiku.ui.render.mode" value="table" />
     <Property name="org.saiku.query.explain" value="true" />
