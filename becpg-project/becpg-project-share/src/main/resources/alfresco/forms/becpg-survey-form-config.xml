@@ -197,6 +197,8 @@
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<!--surveyQuestion -->
+					<show id="bcpg:code" />
+					<show id="bcpg:sort" />
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
 					<show id="survey:questionNote" />
@@ -235,6 +237,8 @@
 					<set id="surveyCriteria" appearance="bordered-panel" label-id="becpg.forms.set.criteria.label" />
 					
 					<!--surveyQuestion -->
+					<field id="bcpg:code" set="surveyQuestion" read-only="true" />
+					<field id="bcpg:sort" set="surveyQuestion" />
 					<field id="bcpg:parentLevel" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel
