@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -26,6 +27,7 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -165,6 +167,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * two share the same template, only the model they are given differs.
 	 */
 	private static final String BILINGUAL_FORMAT_SUFFIX = "Bilingual";
+
+	/**
+	 * Code of the report parameter that declares the nutrients the regulation authorises without
+	 * requiring them. The technical sheet reads it by this code, and a panel of the same product
+	 * has to declare the same nutrients, so it reads the very same parameter.
+	 */
+	private static final String SHOW_OPTIONAL_NUTRIENTS_PARAMETER = "showOptionalNutrients";
 
 	private final BeCPGTemplateRenderService templateRenderService;
 
@@ -552,7 +561,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	/**
 	 * <p>Setter for the field <code>nutritionFactsShowOptional</code>, whether the panel carries the
-	 * nutrients the regulation allows but does not require.</p>
+	 * nutrients the regulation allows but does not require. The panel carries them anyway when the
+	 * product asks its reports for them, through the report parameter the technical sheet reads.</p>
 	 *
 	 * @param nutritionFactsShowOptional a boolean
 	 */
@@ -564,7 +574,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		String regulation = (regulationKey != null) && !regulationKey.isBlank() ? regulationKey
 				: RegulationFormulationHelper.getLocalKey(locale);
 		NutritionFactsOptions options = NutritionFactsOptions.forRegulation(regulation);
-		if (nutritionFactsShowOptional) {
+		if (nutritionFactsShowOptional || showsOptionalNutrients()) {
 			options = options.withOptionalNutrients();
 		}
 		if (isBilingualFormat(format)) {
@@ -575,6 +585,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private boolean isBilingualFormat(String format) {
 		return format.endsWith(BILINGUAL_FORMAT_SUFFIX);
+	}
+
+	/**
+	 * Tells whether the product asks its reports for the nutrients the regulation merely authorises.
+	 * A single value is accepted as well as a list: a property declared multiple still comes back as
+	 * a bare string when only one value was ever written to it.
+	 */
+	private boolean showsOptionalNutrients() {
+		NodeRef entityNodeRef = getEntity().getNodeRef();
+		if ((entityNodeRef == null) || !mlNodeService.exists(entityNodeRef)) {
+			return false;
+		}
+		Serializable parameters = mlNodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_PARAMETERS);
+		if (parameters instanceof Collection<?> values) {
+			return values.contains(SHOW_OPTIONAL_NUTRIENTS_PARAMETER);
+		}
+		return SHOW_OPTIONAL_NUTRIENTS_PARAMETER.equals(parameters);
 	}
 
 	private String nutritionFactsTemplateName(String format) {
