@@ -308,6 +308,7 @@
 							<ref bean="lcaAggregatedScore"/>
 							<ref bean="planetScore"/>
 							<ref bean="repEcoModulation"/>
+							<ref bean="ppwrRecyclability"/>
 							<ref bean="novaClassification"/>
 							<ref bean="yukaScore"/>
 							<ref bean="animalWelfareLabel"/>
@@ -365,6 +366,7 @@
 							<ref bean="lcaAggregatedScore"/>
 							<ref bean="planetScore"/>
 							<ref bean="repEcoModulation"/>
+							<ref bean="ppwrRecyclability"/>
 							<ref bean="novaClassification"/>
 							<ref bean="yukaScore"/>
 							<ref bean="animalWelfareLabel"/>

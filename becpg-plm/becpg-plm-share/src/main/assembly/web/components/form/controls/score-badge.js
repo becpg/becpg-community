@@ -177,9 +177,10 @@
     var LETTER_COLOURS = { A: "#00853f", B: "#64bf21", C: "#ffc800", D: "#ff7600", E: "#ff0100" };
 
     /**
-     * Each mark keeps its own look. They all grade from A to E, but a consumer recognises
+     * Each mark keeps its own look. Most of them grade from A to E, but a consumer recognises
      * them by their drawing, not by their letter: reusing the Nutri-Score strip everywhere
-     * would make five different schemes look like one.
+     * would make five different schemes look like one. A theme naming its own classes grades
+     * on a scale of its own, the PPWR holding three grades and a failing one.
      */
     var LETTER_THEMES = {
         ANIMALWELFARE: {
@@ -195,11 +196,23 @@
         FLORINDEX: {
             layout: "strip",
             colours: { A: "#1f6f4a", B: "#5aa469", C: "#c8b560", D: "#c98a3c", E: "#a8503a" }
+        },
+        PPWR: {
+            layout: "strip",
+            classes: ["A", "B", "C", "NR"],
+            colours: { A: "#00853f", B: "#64bf21", C: "#ffc800", NR: "#ff0100" }
         }
     };
 
     function letterTheme(code) {
-        return LETTER_THEMES[code] || { layout: "strip", colours: LETTER_COLOURS };
+        var theme = LETTER_THEMES[code] || { layout: "strip", colours: LETTER_COLOURS };
+
+        return {
+            layout: theme.layout,
+            colours: theme.colours,
+            caption: theme.caption,
+            classes: theme.classes || LETTER_CLASSES
+        };
     }
 
     /**
@@ -214,16 +227,15 @@
         }
 
         var upper = scoreClass.toString().toUpperCase();
+        var theme = letterTheme(details.code);
         var reached = false;
 
-        for (var c = 0; c < LETTER_CLASSES.length; c++) {
-            reached = reached || LETTER_CLASSES[c] === upper;
+        for (var c = 0; c < theme.classes.length; c++) {
+            reached = reached || theme.classes[c] === upper;
         }
         if (!reached) {
             return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
         }
-
-        var theme = letterTheme(details.code);
 
         return theme.layout === "tag" ? renderLetterTag(upper, theme) : renderLetterStrip(upper, theme);
     }
@@ -236,12 +248,12 @@
         var cell = 17;
         var grown = 25;
         var height = grown + 4;
-        var width = (LETTER_CLASSES.length * cell) + (grown - cell) + 4;
+        var width = (theme.classes.length * cell) + (grown - cell) + 4;
         var html = svgOpen(width, height, "score-badge-scale", upper);
         var x = 2;
 
-        for (var i = 0; i < LETTER_CLASSES.length; i++) {
-            var letter = LETTER_CLASSES[i];
+        for (var i = 0; i < theme.classes.length; i++) {
+            var letter = theme.classes[i];
             var current = letter === upper;
             var size = current ? grown : cell;
             var y = (height - size) / 2;
@@ -249,12 +261,17 @@
             html += '<rect x="' + x + '" y="' + y + '" width="' + size + '" height="' + size + '" rx="3"'
                 + ' fill="' + theme.colours[letter] + '"' + (current ? ' stroke="#333" stroke-width="1.5"' : "")
                 + (current ? "" : ' opacity="0.45"') + " />";
-            html += svgText(x + (size / 2), y + (size / 2), letter, "#fff", current ? 16 : 11);
+            html += svgText(x + (size / 2), y + (size / 2), letter, "#fff", classFontSize(letter, current ? 16 : 11));
 
             x += size;
         }
 
         return html + "</svg>";
+    }
+
+    /** A grade named by more than one character has to shrink to stay inside its square */
+    function classFontSize(letter, base) {
+        return letter.length > 1 ? Math.round(base / letter.length) + 2 : base;
     }
 
     /**
@@ -269,13 +286,13 @@
         html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2) + '" rx="9" fill="'
             + theme.colours[upper] + '" />';
         html += svgText(width / 2, 12, theme.caption, "#fff", 6);
-        html += svgText(width / 2, 32, upper, "#fff", 26);
+        html += svgText(width / 2, 32, upper, "#fff", classFontSize(upper, 26));
 
         var pip = 7;
-        var x = (width - (LETTER_CLASSES.length * pip)) / 2;
+        var x = (width - (theme.classes.length * pip)) / 2;
 
-        for (var i = 0; i < LETTER_CLASSES.length; i++) {
-            var current = LETTER_CLASSES[i] === upper;
+        for (var i = 0; i < theme.classes.length; i++) {
+            var current = theme.classes[i] === upper;
 
             html += '<circle cx="' + (x + (pip / 2)) + '" cy="52" r="' + (current ? 3 : 2)
                 + '" fill="#fff"' + (current ? "" : ' opacity="0.45"') + " />";
