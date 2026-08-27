@@ -686,26 +686,6 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<#-- #35025: the packaging origins the formulation rolled up onto the finished product.
-		     Here the fact is the product, so the join is entityNodeRef - the owning entity of the
-		     association - exactly as the ingredient origin above. The material-line view of the
-		     same data lives on the packagingMaterials cube and joins dataListNodeRef instead. -->
-		<Dimension foreignKey="nodeRef"  name="packagingGeoOrigin" caption="${msg("jsolap.packagingGeoOrigin.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entityNodeRef">
-				<View name="productPackagingGeoOrigin" alias="productPackagingGeoOrigin">
-								<SQL dialect="generic">
-									select
-										entityNodeRef,
-										doc->>"$.name" as name,
-										nodeRef
-									from
-										assoc_pack_pmlGeoOrigin
-								</SQL>
-				</View>
-				<Level name="name" caption="${msg("jsolap.packagingGeoOrigin.title")}" column="nodeRef" nameColumn="name" type="String" />
-			</Hierarchy>
-		</Dimension>
-
 		<Dimension foreignKey="nodeRef"  name="plant" caption="${msg("jsolap.plant.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}" primaryKey="entityNodeRef">
 				<View name="plant" alias="plant">
@@ -1835,6 +1815,27 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
+
+		<#-- #35025: the packaging origins the formulation rolled up onto the finished product.
+		     Here the fact is the product, so the join is entityNodeRef - the owning entity of the
+		     association - exactly as the ingredient origin above. The material-line view of the
+		     same data lives on the packagingMaterials cube and joins dataListNodeRef instead. -->
+		<Dimension foreignKey="nodeRef"  name="packagingGeoOrigin" caption="${msg("jsolap.packagingGeoOrigin.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.geoOrigin.caption")}" primaryKey="entityNodeRef">
+				<View name="productPackagingGeoOrigin" alias="productPackagingGeoOrigin">
+								<SQL dialect="generic">
+									select
+										entityNodeRef,
+										doc->>"$.name" as name,
+										nodeRef
+									from
+										assoc_pack_pmlGeoOrigin
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.packagingGeoOrigin.title")}" column="nodeRef" nameColumn="name" type="String" />
+			</Hierarchy>
+		</Dimension>
+
 		
 		<Dimension foreignKey="nodeRef"  name="plant" caption="${msg("jsolap.plant.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}" primaryKey="entityNodeRef">
