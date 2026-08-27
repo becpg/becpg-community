@@ -13,7 +13,7 @@
   where the FDA gives it a line of its own.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#assign W = nf_data.isBilingual()?then(180, 162) in nf>
+<#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>

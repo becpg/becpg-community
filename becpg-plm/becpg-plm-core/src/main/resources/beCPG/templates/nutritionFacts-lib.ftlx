@@ -390,6 +390,22 @@
 </#function>
 
 <#--
+  Width a Canadian panel needs, never less than the minimum its format states. The calories and
+  the daily value header share one line, and the header is where the wording varies most from one
+  language to the next: "% valeur quotidienne*" runs half again as long as "% Daily Value*" and
+  would be printed over the calories at the width the English panel needs.
+-->
+<#function canadianWidth data minimum>
+	<#local caloriesText = (data.calories()??)?then(data.calories().label() + " " + (data.calories().value()!""), "")>
+	<#local headerWidth = 0>
+	<#list dailyValueHeaders(data) as header>
+		<#local headerWidth = [headerWidth, header?length * CAPTION_SIZE * HEAVY_GLYPH_RATIO]?max>
+	</#list>
+	<#local needed = 2 * PAD + caloriesText?length * CA_CALORIES_SIZE * HEAVY_GLYPH_RATIO + CAPTION_SIZE + headerWidth>
+	<#return [minimum, needed?ceiling]?max>
+</#function>
+
+<#--
   Opening block of a Canadian panel: the title and the serving, each stated once per language.
 
   The title is set in the largest type of the panel but is not condensed to its width, which is
