@@ -40,6 +40,8 @@ public class NutritionFactsDataBuilderTest {
 
 	private static final String VERTICAL_FORMAT = "vertical";
 
+	private static final String CANADA_FORMAT = "canada";
+
 	private static final String US_REGULATION_KEY = NutritionFactsOptions.US_REGULATION_KEY;
 
 	private static final String CA_REGULATION_KEY = NutritionFactsOptions.CA_REGULATION_KEY;
@@ -235,6 +237,51 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	@Test
+	public void testBilingualCanadianPanelJoinsTheTwoLanguagesOfEachNutrient() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(
+				List.of(nutListItem("FAT", "Fat, total", 8d, 10d, CA_REGULATION_KEY), nutListItem("NA", "Sodium", 160d, 7d, CA_REGULATION_KEY)));
+
+		NutritionFactsData data = buildBilingualCanadian(product);
+
+		Assert.assertEquals("A nutrient states its two languages on its own line, and a wording that reads the same in both only once",
+				List.of("Fat / Lipides", "Sodium"), data.nutrients().stream().map(NutritionFactsLine::label).toList());
+	}
+
+	@Test
+	public void testBilingualCanadianPanelCarriesTheFixedWordingOfBothLanguages() {
+
+		NutritionFactsData data = buildBilingualCanadian(canadianProduct());
+
+		Assert.assertTrue("A bilingual panel is a bilingual panel", data.isBilingual());
+		Assert.assertEquals("Nutrition Facts", data.label(NutritionFactsLabelResolver.LABEL_TITLE));
+		Assert.assertEquals("Valeur nutritive", data.secondaryLabel(NutritionFactsLabelResolver.LABEL_TITLE));
+		Assert.assertTrue("Its footnote is stated in both languages", data.footNote().startsWith("* 5% or less"));
+		Assert.assertTrue(data.secondaryFootNote().startsWith("* 5 % ou moins"));
+	}
+
+	@Test
+	public void testUnilingualPanelCarriesNoSecondLanguage() {
+
+		Assert.assertFalse("A panel written in a single language must not print anything twice", build(standardProduct()).isBilingual());
+		Assert.assertEquals("", build(standardProduct()).secondaryLabel(NutritionFactsLabelResolver.LABEL_TITLE));
+	}
+
+	@Test
+	public void testCanadianPanelDropsTheCountOfServings() {
+
+		mockMlProperty(PLMModel.PROP_PRODUCT_NUMBER_OF_SERVINGS, "8");
+
+		NutritionFactsData data = builder.build(canadianProduct(), Locale.CANADA, CANADA_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertFalse("B.01.401 opens on the serving alone, a bare count would state nothing",
+				data.serving().hasServingsPerContainer());
+	}
+
+	@Test
 	public void testTheUnitedStatesKeepSaturatedAndTransFatApart() {
 
 		ProductData product = new ProductData();
@@ -295,6 +342,18 @@ public class NutritionFactsDataBuilderTest {
 
 	private NutritionFactsData build(ProductData product) {
 		return builder.build(product, Locale.US, VERTICAL_FORMAT);
+	}
+
+	private NutritionFactsData buildBilingualCanadian(ProductData product) {
+		return builder.build(product, Locale.CANADA, CANADA_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY).withBothOfficialLanguages());
+	}
+
+	private ProductData canadianProduct() {
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(nutListItem("FAT", "Fat, total", 8d, 10d, CA_REGULATION_KEY)));
+		return product;
 	}
 
 	private ProductData standardProduct() {

@@ -1,0 +1,51 @@
+<#--
+  Canadian linear panel, B.01.401 linear format.
+
+  The whole declaration is a single sentence, heading and calories included, which is what the
+  format is for: a package too small to carry a table. The percentages are stated bare and a
+  legend at the foot of the panel says what they are, the footnote closing on the little/lot rule.
+
+  A sentence needs width rather than height, so the panel is drawn across the package.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#assign W = 504 in nf>
+
+<#-- Heading of the sentence: the title, the serving and the calories, each in both languages. -->
+<#function opening data>
+	<#local segments = [nf.emphasis(nf.joined(data.label("title"), data.secondaryLabel("title")))]>
+	<#local segments = segments + [nf.text(serving(data) + ":")]>
+	<#if data.calories()??>
+	<#local segments = segments + [nf.emphasis(data.calories().label() + (data.calories().value()??)?then(" " + data.calories().value(), "") + ",")]>
+	</#if>
+	<#return segments>
+</#function>
+
+<#function serving data>
+	<#local wording = data.label("servingSize") + (data.serving().servingSize()??)?then(" " + data.serving().servingSize(), "")>
+	<#if !data.isBilingual()>
+	<#return wording>
+	</#if>
+	<#local secondaryServing = data.secondary().hasServingSize()?then(data.secondary().servingSize(), data.serving().servingSize()!"")>
+	<#return nf.joined(wording, data.secondaryLabel("servingSize") + (secondaryServing?has_content)?then(" " + secondaryServing, ""))>
+</#function>
+
+<#assign y = nf.BORDER + 3>
+<#assign body>
+
+	<@nf.paragraph segments=opening(nf_data) + nf.linearSegments(nf_data) y=y/>
+	<#assign y = nf.cursorY + 1>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 2>
+
+	<@nf.emphasisedFootNote data=nf_data y=y/>
+	<#assign y = nf.cursorY>
+
+	<#if nf_data.label("linearLegend")?has_content>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${nf.joined(nf_data.label("linearLegend"), nf_data.isBilingual()?then(nf_data.secondaryLabel("linearLegend"), ""))}</text>
+	<#assign y = y + nf.lineHeight(nf.FOOTNOTE_SIZE)>
+	</#if>
+
+	<#assign y = y + nf.BORDER + 2>
+</#assign>
+<@nf.panel height=y>${body}</@nf.panel>

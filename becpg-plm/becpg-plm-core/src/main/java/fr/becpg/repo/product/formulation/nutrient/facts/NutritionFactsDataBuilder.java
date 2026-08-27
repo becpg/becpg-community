@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -61,6 +62,15 @@ public class NutritionFactsDataBuilder {
 
 	/** Serving size shown without trailing zeros: "55g" and not "55.0g". */
 	private static final String SERVING_SIZE_PATTERN = "#.##";
+
+	/** What joins the two languages of a bilingual line: "Fat / Lipides". */
+	private static final String LANGUAGE_SEPARATOR = " / ";
+
+	/**
+	 * Marker a Canadian panel puts in front of a nutrient folded into the line above, "+ Trans".
+	 * It belongs to the layout and not to the name, so a bilingual line carries it once.
+	 */
+	private static final String CONTINUATION_MARKER = "+ ";
 
 	private final NodeService mlNodeService;
 
@@ -100,13 +110,29 @@ public class NutritionFactsDataBuilder {
 	 */
 	public NutritionFactsData build(ProductData product, Locale locale, String format, NutritionFactsOptions options) {
 
-		RegulatedNutrients regulated = collectNutrients(product, locale, options);
+		List<Locale> languages = options.languages(locale);
+		Locale panelLocale = languages.get(0);
+		Map<String, String> labels = NutritionFactsLabelResolver.panelLabels(options.regulationKey(), panelLocale);
+		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options);
 
-		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, locale),
-				buildCalories(regulated, locale, options), buildLines(regulated, locale, options, false),
-				buildLines(regulated, locale, options, true), NutritionFactsLabelResolver.footNote(options.regulationKey(), locale),
-				NutritionFactsLabelResolver.notSignificantSource(options.regulationKey(), locale),
-				NutritionFactsLabelResolver.panelLabels(options.regulationKey(), locale));
+		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, languages, labels),
+				buildCalories(regulated, languages, options), buildLines(regulated, languages, options, false),
+				buildLines(regulated, languages, options, true), NutritionFactsLabelResolver.footNote(options.regulationKey(), panelLocale),
+				NutritionFactsLabelResolver.notSignificantSource(options.regulationKey(), panelLocale), labels,
+				buildTranslation(product, languages, options));
+	}
+
+	/**
+	 * Wording of the panel in the second official language, which a bilingual table prints under
+	 * the first one.
+	 */
+	private NutritionFactsTranslation buildTranslation(ProductData product, List<Locale> languages, NutritionFactsOptions options) {
+		if (languages.size() < 2) {
+			return NutritionFactsTranslation.none();
+		}
+		Locale secondary = languages.get(1);
+		return new NutritionFactsTranslation(NutritionFactsLabelResolver.panelLabels(options.regulationKey(), secondary),
+				secondaryServingSize(product, languages), NutritionFactsLabelResolver.footNote(options.regulationKey(), secondary));
 	}
 
 	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options) {
@@ -233,22 +259,22 @@ public class NutritionFactsDataBuilder {
 		return (regulated.value() != null) && (Math.abs(regulated.value()) > ZERO_THRESHOLD);
 	}
 
-	private NutritionFactsLine buildCalories(RegulatedNutrients regulated, Locale locale, NutritionFactsOptions options) {
+	private NutritionFactsLine buildCalories(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options) {
 		for (RegulatedNutrient nutrient : regulated.nutrients()) {
 			if (isSort(nutrient, NutritionFactsOptions.CALORIES_SORT)) {
-				return toLine(nutrient, regulated, locale, options);
+				return toLine(nutrient, regulated, languages, options);
 			}
 		}
 		return null;
 	}
 
-	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, Locale locale, NutritionFactsOptions options,
+	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options,
 			boolean micronutrients) {
 
 		List<NutritionFactsLine> lines = new ArrayList<>();
 		for (RegulatedNutrient nutrient : regulated.nutrients()) {
 			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (isMicronutrient(nutrient, options) == micronutrients)) {
-				lines.add(toLine(nutrient, regulated, locale, options));
+				lines.add(toLine(nutrient, regulated, languages, options));
 			}
 		}
 		return lines;
@@ -263,16 +289,15 @@ public class NutritionFactsDataBuilder {
 		return (nutrient.displayRule().sort() != null) && (nutrient.displayRule().sort() == sort);
 	}
 
-	private NutritionFactsLine toLine(RegulatedNutrient regulated, RegulatedNutrients regulatedNutrients, Locale locale,
+	private NutritionFactsLine toLine(RegulatedNutrient regulated, RegulatedNutrients regulatedNutrients, List<Locale> languages,
 			NutritionFactsOptions options) {
 
 		String unit = carriesUnit(regulated) ? regulated.displayRule().unit() : null;
 		String value = withUnit(regulated.displayValuePerServing(), unit);
 
-		String rawLabel = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
-				regulatedNutrients.charactNames().get(regulated.nutCode()), locale);
-		Wordings wordings = Wordings.of(rawLabel,
-				NutritionFactsLabelResolver.nutrientAbbreviation(options.regulationKey(), regulated.nutCode(), rawLabel, locale), value, locale);
+		Locale panelLocale = languages.get(0);
+		Wordings wordings = Wordings.of(nutrientLabel(regulated, regulatedNutrients, languages, options),
+				nutrientAbbreviation(regulated, regulatedNutrients, languages, options), value, panelLocale);
 
 		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
 
@@ -280,6 +305,61 @@ public class NutritionFactsDataBuilder {
 				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit), toPercent(shared.percentOf(regulated)),
 				toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
 				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel());
+	}
+
+	/**
+	 * Regulated wording of a nutrient in every language the panel is written in, joined into the
+	 * single wording its line carries, "Fat / Lipides".
+	 */
+	private String nutrientLabel(RegulatedNutrient regulated, RegulatedNutrients nutrients, List<Locale> languages,
+			NutritionFactsOptions options) {
+
+		List<String> wordings = new ArrayList<>();
+		for (Locale language : languages) {
+			wordings.add(regulatedWording(regulated, nutrients, language, options));
+		}
+		return joinLanguages(wordings);
+	}
+
+	/** Same, for the shortened wording a linear panel names its nutrients by. */
+	private String nutrientAbbreviation(RegulatedNutrient regulated, RegulatedNutrients nutrients, List<Locale> languages,
+			NutritionFactsOptions options) {
+
+		List<String> wordings = new ArrayList<>();
+		for (Locale language : languages) {
+			wordings.add(NutritionFactsLabelResolver.nutrientAbbreviation(options.regulationKey(), regulated.nutCode(),
+					regulatedWording(regulated, nutrients, language, options), language));
+		}
+		return joinLanguages(wordings);
+	}
+
+	private String regulatedWording(RegulatedNutrient regulated, RegulatedNutrients nutrients, Locale language,
+			NutritionFactsOptions options) {
+		return NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
+				nutrients.charactNames().get(regulated.nutCode()), language);
+	}
+
+	/**
+	 * Wordings of the languages of the panel gathered into one. A wording that reads the same in
+	 * both languages is printed once, the way the regulation prints "Sodium", and the marker of a
+	 * nutrient folded into the line above is carried by the first language only.
+	 */
+	private String joinLanguages(List<String> wordings) {
+		List<String> distinct = new ArrayList<>();
+		for (String wording : wordings) {
+			String candidate = distinct.isEmpty() ? wording : withoutContinuationMarker(wording, distinct.get(0));
+			if ((candidate != null) && !candidate.isBlank() && !distinct.contains(candidate)) {
+				distinct.add(candidate);
+			}
+		}
+		return String.join(LANGUAGE_SEPARATOR, distinct);
+	}
+
+	private String withoutContinuationMarker(String wording, String firstWording) {
+		if ((wording == null) || !wording.startsWith(CONTINUATION_MARKER) || !firstWording.startsWith(CONTINUATION_MARKER)) {
+			return wording;
+		}
+		return wording.substring(CONTINUATION_MARKER.length());
 	}
 
 	/**
@@ -306,8 +386,27 @@ public class NutritionFactsDataBuilder {
 		return gdaPerc != null ? Math.round(gdaPerc) + "%" : null;
 	}
 
-	private NutritionFactsServing buildServing(ProductData product, Locale locale) {
-		return new NutritionFactsServing(closestValue(product, PLMModel.PROP_PRODUCT_NUMBER_OF_SERVINGS, locale), servingSize(product, locale));
+	private NutritionFactsServing buildServing(ProductData product, List<Locale> languages, Map<String, String> labels) {
+		Locale panelLocale = languages.get(0);
+		return new NutritionFactsServing(servingsPerContainer(product, panelLocale, labels), servingSize(product, panelLocale));
+	}
+
+	/**
+	 * The count of servings only earns its line where the regulation words it: a Canadian panel
+	 * opens on the serving alone, and a bare figure with nothing to name it states nothing.
+	 */
+	private String servingsPerContainer(ProductData product, Locale locale, Map<String, String> labels) {
+		if (labels.getOrDefault(NutritionFactsLabelResolver.LABEL_SERVINGS_PER_CONTAINER, "").isBlank()) {
+			return null;
+		}
+		return closestValue(product, PLMModel.PROP_PRODUCT_NUMBER_OF_SERVINGS, locale);
+	}
+
+	/** Serving wording of the second language, left out when it reads the same as the first. */
+	private String secondaryServingSize(ProductData product, List<Locale> languages) {
+		String panelServingSize = servingSize(product, languages.get(0));
+		String secondary = servingSize(product, languages.get(1));
+		return Objects.equals(panelServingSize, secondary) ? null : secondary;
 	}
 
 	/**

@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <p>What to put on a nutrition facts panel, beyond the product data itself.</p>
@@ -26,10 +27,13 @@ import java.util.List;
  * in the regulation CSV; it is what separates the two blocks a panel draws on either side of its
  * thick rule. Under the 2016 FDA regulation, protein sorts at 22 and vitamin D at 23.</p>
  *
+ * <p>{@code bilingual} asks for a panel stating everything in both official languages of the
+ * regulation, which only Canada has.</p>
+ *
  * @author matthieu
  * @version $Id: $Id
  */
-public record NutritionFactsOptions(String regulationKey, boolean showOptional, int micronutrientStartSort,
+public record NutritionFactsOptions(String regulationKey, boolean showOptional, boolean bilingual, int micronutrientStartSort,
 		List<SharedDailyValue> sharedDailyValues) {
 
 	/**
@@ -66,6 +70,9 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 
 	private static final String TRANS_FAT_NUT_CODE = "FATRN";
 
+	/** The two official languages of Canada, in the order the directory of formats figures them. */
+	private static final List<Locale> CA_OFFICIAL_LANGUAGES = List.of(Locale.ENGLISH, Locale.FRENCH);
+
 	/**
 	 * <p>Default options of a regulation. A regulation without a known vitamin block keeps all its
 	 * nutrients in a single block rather than guessing where to split them.</p>
@@ -75,13 +82,13 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	 */
 	public static NutritionFactsOptions forRegulation(String regulationKey) {
 		if (US_REGULATION_KEY.equals(regulationKey)) {
-			return new NutritionFactsOptions(regulationKey, false, US_MICRONUTRIENT_START_SORT, List.of());
+			return new NutritionFactsOptions(regulationKey, false, false, US_MICRONUTRIENT_START_SORT, List.of());
 		}
 		if (CA_REGULATION_KEY.equals(regulationKey)) {
-			return new NutritionFactsOptions(regulationKey, false, CA_MICRONUTRIENT_START_SORT,
+			return new NutritionFactsOptions(regulationKey, false, false, CA_MICRONUTRIENT_START_SORT,
 					List.of(new SharedDailyValue(SATURATED_FAT_NUT_CODE, TRANS_FAT_NUT_CODE)));
 		}
-		return new NutritionFactsOptions(regulationKey, false, DEFAULT_MICRONUTRIENT_START_SORT, List.of());
+		return new NutritionFactsOptions(regulationKey, false, false, DEFAULT_MICRONUTRIENT_START_SORT, List.of());
 	}
 
 	/**
@@ -90,7 +97,30 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions} object
 	 */
 	public NutritionFactsOptions withOptionalNutrients() {
-		return new NutritionFactsOptions(regulationKey, true, micronutrientStartSort, sharedDailyValues);
+		return new NutritionFactsOptions(regulationKey, true, bilingual, micronutrientStartSort, sharedDailyValues);
+	}
+
+	/**
+	 * <p>Same options, stating the panel in both official languages of the regulation.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions} object
+	 */
+	public NutritionFactsOptions withBothOfficialLanguages() {
+		return new NutritionFactsOptions(regulationKey, showOptional, true, micronutrientStartSort, sharedDailyValues);
+	}
+
+	/**
+	 * <p>Languages the panel is written in: the two official languages of the regulation when both
+	 * are asked for, the language of the label otherwise.</p>
+	 *
+	 * @param labelLocale a {@link java.util.Locale} object, the language the label is produced in
+	 * @return a {@link java.util.List} object
+	 */
+	public List<Locale> languages(Locale labelLocale) {
+		if (bilingual && CA_REGULATION_KEY.equals(regulationKey)) {
+			return CA_OFFICIAL_LANGUAGES;
+		}
+		return List.of(labelLocale != null ? labelLocale : Locale.ENGLISH);
 	}
 
 }

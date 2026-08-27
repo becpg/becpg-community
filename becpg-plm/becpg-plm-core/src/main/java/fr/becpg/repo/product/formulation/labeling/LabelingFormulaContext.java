@@ -159,6 +159,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private static final String DEFAULT_NUTRITION_FACTS_FORMAT = "vertical";
 
+	/**
+	 * What a format code ends with when the panel has to state everything in both official
+	 * languages: "canadaBilingual" is the Canadian standard panel of "canada", written twice. The
+	 * two share the same template, only the model they are given differs.
+	 */
+	private static final String BILINGUAL_FORMAT_SUFFIX = "Bilingual";
+
 	private final BeCPGTemplateRenderService templateRenderService;
 
 	private final NutritionFactsDataBuilder nutritionFactsDataBuilder;
@@ -517,7 +524,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	/**
 	 * <p>Renders the regulatory nutrition facts panel as inline SVG.</p>
 	 *
-	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical"
+	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical",
+	 *            suffixed with "Bilingual" for a panel stating both official languages
 	 * @param regulationKey a {@link java.lang.String} object, overrides the regulation of the locale
 	 * @return a {@link java.lang.String} object
 	 */
@@ -556,12 +564,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		String regulation = (regulationKey != null) && !regulationKey.isBlank() ? regulationKey
 				: RegulationFormulationHelper.getLocalKey(locale);
 		NutritionFactsOptions options = NutritionFactsOptions.forRegulation(regulation);
-		return nutritionFactsDataBuilder.build(getEntity(), locale, format,
-				nutritionFactsShowOptional ? options.withOptionalNutrients() : options);
+		if (nutritionFactsShowOptional) {
+			options = options.withOptionalNutrients();
+		}
+		if (isBilingualFormat(format)) {
+			options = options.withBothOfficialLanguages();
+		}
+		return nutritionFactsDataBuilder.build(getEntity(), locale, format, options);
+	}
+
+	private boolean isBilingualFormat(String format) {
+		return format.endsWith(BILINGUAL_FORMAT_SUFFIX);
 	}
 
 	private String nutritionFactsTemplateName(String format) {
-		return NUTRITION_FACTS_TEMPLATE_PREFIX + format + NUTRITION_FACTS_TEMPLATE_SUFFIX;
+		String template = isBilingualFormat(format) ? format.substring(0, format.length() - BILINGUAL_FORMAT_SUFFIX.length()) : format;
+		return NUTRITION_FACTS_TEMPLATE_PREFIX + template + NUTRITION_FACTS_TEMPLATE_SUFFIX;
 	}
 
 	private String nutritionFactsCacheKey(String format, String regulationKey, Locale locale) {

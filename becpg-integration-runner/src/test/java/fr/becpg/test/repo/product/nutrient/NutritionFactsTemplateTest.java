@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsData;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsLine;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsServing;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsTranslation;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -33,6 +34,14 @@ public class NutritionFactsTemplateTest {
 	private static final String VERTICAL_TEMPLATE = "nutritionFacts-vertical.ftlx";
 
 	private static final String CANADA_TEMPLATE = "nutritionFacts-canada.ftlx";
+
+	private static final String CANADA_LINEAR_TEMPLATE = "nutritionFacts-canadaLinear.ftlx";
+
+	private static final String CANADA_HORIZONTAL_TEMPLATE = "nutritionFacts-canadaHorizontal.ftlx";
+
+	private static final String CANADIAN_FOOTNOTE = "* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup";
+
+	private static final String ENGLISH_CANADIAN_FOOTNOTE = "* 5% or less is a little, 15% or more is a lot";
 
 	private static final String MODEL_KEY = "nf_data";
 
@@ -151,6 +160,18 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testEveryCanadianFormatRendersAWellFormedPanel() throws Exception {
+		for (String format : List.of("canada", "canadaLinear", "canadaHorizontal")) {
+			for (NutritionFactsData data : List.of(canadianPanel(), bilingualCanadianPanel())) {
+				String svg = renderToString("nutritionFacts-" + format + ".ftlx", data);
+
+				Assert.assertEquals(format + " must be a svg", "svg", parse(svg).getDocumentElement().getTagName());
+				Assert.assertFalse(format + " must not carry a DOCTYPE", svg.contains("<!DOCTYPE"));
+			}
+		}
+	}
+
+	@Test
 	public void testLinearFormatUsesTheRegulatedAbbreviations() throws Exception {
 		NutritionFactsData data = panelData(new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "Saturated Fat", "Sat. Fat", "1g", null,
 				"5%", null, 2, false, true, false));
@@ -227,25 +248,101 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
-	public void testCanadianPanelKeepsTheSameRuleVocabulary() throws Exception {
+	public void testCanadianPanelRulesTheGroupsAndNotEveryLine() throws Exception {
 		List<Element> rects = elements(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "rect");
 
-		Assert.assertEquals("A thick rule under the serving line and another above the minerals", 2, countByHeight(rects, 7d));
-		Assert.assertEquals("A medium rule under the calories and another above the footnote", 2, countByHeight(rects, 3d));
+		Assert.assertEquals("One rule closes the serving block, B.01.401 keeping no thick rule inside the panel", 1, countByHeight(rects, 3d));
+		Assert.assertEquals("A hairline above each of the 4 groups and one above the footnote, none inside a group", 5,
+				countByHeight(rects, HAIRLINE));
+	}
+
+	@Test
+	public void testCanadianPercentagesStayInTheBodyFace() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals("The Canadian panel leaves every percentage in the body face", "",
+				findText(panel, "10%").getAttribute("font-family"));
+	}
+
+	@Test
+	public void testCanadianFootnoteSetsItsVerdictsInTheHeavyFace() throws Exception {
+		String svg = renderToString(CANADA_TEMPLATE, canadianPanel());
+
+		Assert.assertTrue("The little/lot rule states its two verdicts in the heavy face",
+				svg.contains("font-weight=\"900\">peu</tspan>") && svg.contains("font-weight=\"900\">beaucoup</tspan>"));
+	}
+
+	@Test
+	public void testBilingualCanadianPanelStatesEveryFixedWordingTwice() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, bilingualCanadianPanel()));
+
+		Assert.assertNotNull("A bilingual panel is titled in both official languages", findText(panel, "Nutrition Facts"));
+		Assert.assertNotNull(findText(panel, "Valeur nutritive"));
+		Assert.assertNotNull("Its serving is stated once per language", findText(panel, "Per 1 tasse"));
+		Assert.assertNotNull(findText(panel, "Pour 1 tasse"));
+		Assert.assertNotNull("So is its daily value header", findText(panel, "% Daily Value*"));
+		Assert.assertNotNull(findText(panel, "% valeur quotidienne*"));
+		Assert.assertNotNull("And so is its footnote", findText(panel, ENGLISH_CANADIAN_FOOTNOTE.substring(0, 12)));
+	}
+
+	@Test
+	public void testBilingualCanadianPanelIsWidened() throws Exception {
+		Element svg = parse(renderToString(CANADA_TEMPLATE, bilingualCanadianPanel())).getDocumentElement();
+
+		Assert.assertEquals("Two languages on one line need more room than one", "180pt", svg.getAttribute("width"));
+	}
+
+	@Test
+	public void testCanadianLinearPanelRunsItsHeadingIntoTheSentence() throws Exception {
+		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel()));
+
+		Assert.assertTrue("The title, the serving and the calories open the same sentence",
+				findText(panel, "Valeur nutritive").getTextContent().startsWith("Valeur nutritive Pour 1 tasse (250 mL): Calories 230,"));
+	}
+
+	@Test
+	public void testCanadianLinearPanelExplainsItsPercentages() throws Exception {
+		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel()));
+
+		Assert.assertTrue("Canada states the bare percentage", findText(panel, "Valeur nutritive").getTextContent().contains("(10%)"));
+		Assert.assertNotNull("and explains it at the foot of the panel", findText(panel, "% = % valeur quotidienne"));
+	}
+
+	@Test
+	public void testCanadianHorizontalPanelIsDrawnAcrossThePackage() throws Exception {
+		Element svg = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())).getDocumentElement();
+
+		Assert.assertEquals("A horizontal panel runs across the width", "504pt", svg.getAttribute("width"));
 	}
 
 	private NutritionFactsData canadianPanel() {
-		Map<String, String> labels = new LinkedHashMap<>();
-		labels.put("title", "Valeur nutritive");
-		labels.put("servingSize", "Pour");
-		labels.put("dailyValue", "% valeur quotidienne*");
+		return canadianPanel(canadianLabels(false), NutritionFactsTranslation.none(), CANADIAN_FOOTNOTE);
+	}
 
+	/** The same panel stating both official languages, which is what B.01.454 asks for. */
+	private NutritionFactsData bilingualCanadianPanel() {
+		NutritionFactsTranslation secondary = new NutritionFactsTranslation(canadianLabels(false), null, CANADIAN_FOOTNOTE);
+		return canadianPanel(canadianLabels(true), secondary, ENGLISH_CANADIAN_FOOTNOTE);
+	}
+
+	private NutritionFactsData canadianPanel(Map<String, String> labels, NutritionFactsTranslation secondary, String footNote) {
 		return new NutritionFactsData("canada", "CA", new NutritionFactsServing(null, "1 tasse (250 mL)"),
 				line("US_ENER-E14", "Calories", "230", null, 1, true),
 				List.of(line("FAT", "Lipides", "8 g", "10%", 1, true), line("FASAT", "saturés", "1 g", "5%", 2, false),
 						line("NA", "Sodium", "160 mg", "7%", 1, true)),
-				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)),
-				"* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup", "", labels);
+				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)), footNote, "",
+				labels, secondary);
+	}
+
+	private Map<String, String> canadianLabels(boolean english) {
+		Map<String, String> labels = new LinkedHashMap<>();
+		labels.put("title", english ? "Nutrition Facts" : "Valeur nutritive");
+		labels.put("servingSize", english ? "Per" : "Pour");
+		labels.put("dailyValue", english ? "% Daily Value*" : "% valeur quotidienne*");
+		labels.put("dailyValueSuffix", "");
+		labels.put("linearLegend", english ? "% = % Daily Value" : "% = % valeur quotidienne");
+		labels.put("footNoteEmphasis", english ? "a little,a lot" : "peu,beaucoup");
+		return labels;
 	}
 
 	/** Tells a drawn line of the disclaimer from any other text of the panel. */
@@ -328,7 +425,7 @@ public class NutritionFactsTemplateTest {
 				List.of(line("VITD-", "Vitamin D", "2mcg", "10%", 1, false), line("CA", "Calcium", "260mg", "20%", 1, false),
 						line("FE", "Iron", "8mg", "45%", 1, false), line("K", "Potassium", "235mg", "6%", 1, false)),
 				FOOTNOTE,
-				"Not a significant source of other nutrients.", panelLabels());
+				"Not a significant source of other nutrients.", panelLabels(), NutritionFactsTranslation.none());
 	}
 
 	private Map<String, String> panelLabels() {
@@ -341,6 +438,7 @@ public class NutritionFactsTemplateTest {
 		labels.put("dailyValue", "% Daily Value*");
 		labels.put("perServing", "Per serving");
 		labels.put("perContainer", "Per container");
+		labels.put("dailyValueSuffix", "DV");
 		return labels;
 	}
 

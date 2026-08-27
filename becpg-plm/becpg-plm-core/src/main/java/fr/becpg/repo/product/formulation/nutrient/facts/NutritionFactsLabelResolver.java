@@ -77,9 +77,18 @@ public class NutritionFactsLabelResolver {
 	/** Key of the "Per container" column header of the dual column format. */
 	public static final String LABEL_PER_CONTAINER = "perContainer";
 
+	/** Key of what closes a parenthesised percentage in a linear panel, "5% DV" for the FDA. */
+	public static final String LABEL_DAILY_VALUE_SUFFIX = "dailyValueSuffix";
+
+	/** Key of the legend a linear panel prints for the percentages it states, Canada only. */
+	public static final String LABEL_LINEAR_LEGEND = "linearLegend";
+
+	/** Key of the wordings of the footnote the regulation sets in the heavy face, comma separated. */
+	public static final String LABEL_FOOTNOTE_EMPHASIS = "footNoteEmphasis";
+
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
 			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING,
-			LABEL_PER_CONTAINER);
+			LABEL_PER_CONTAINER, LABEL_DAILY_VALUE_SUFFIX, LABEL_LINEAR_LEGEND, LABEL_FOOTNOTE_EMPHASIS);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 

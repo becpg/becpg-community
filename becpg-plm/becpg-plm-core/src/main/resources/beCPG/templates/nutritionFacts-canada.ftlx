@@ -1,28 +1,26 @@
 <#--
   Canadian nutrition facts panel, B.01.401.
 
-  Its opening block is a single "Per <serving>" line instead of the two lines of the FDA one,
-  and its footnote states the little/lot rule rather than the daily diet disclaimer. The
-  wording follows the locale, so the same template renders "Valeur nutritive" in French and
-  "Nutrition Facts" in English.
+  It opens on a single "Per <serving>" line instead of the two lines of the FDA one, its footnote
+  states the little/lot rule rather than the daily diet disclaimer, and its percentages stay in
+  the body face.
 
-  Known gap: the regulation prints a single % daily value shared by "Saturated + Trans", which
-  this template still shows as two independent lines.
+  The same template draws the unilingual and the bilingual panel, B.01.454: a bilingual panel
+  states its title, its serving and its footnote once per language, and joins the two languages of
+  a nutrient on the line of that nutrient. It is wider, two languages needing the room.
+
+  Both are wider than an FDA panel: the daily value header shares the line of the calories here,
+  where the FDA gives it a line of its own.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign W = nf_data.isBilingual()?then(180, 162) in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>
 
-	<@nf.title text=nf_data.label("title") y=y/>
-	<#assign y = y + nf.TITLE_SIZE>
+	<@nf.canadianHeading data=nf_data y=y/>
+	<#assign y = nf.cursorY>
 
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE + 1>
-
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
-	<#assign y = y + nf.SERVING_ROW_H>
-
-	<@nf.panelBody data=nf_data y=y/>
+	<@nf.canadianBody data=nf_data y=y/>
 </#assign>
 <@nf.panel height=nf.cursorY>${body}</@nf.panel>

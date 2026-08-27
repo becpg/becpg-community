@@ -27,14 +27,15 @@ import java.util.Map;
  * <p>{@code nutrients} holds the macronutrient block and {@code micronutrients} the vitamin and
  * mineral block, both already filtered and ordered by the regulation. {@code labels} is a snapshot
  * of the fixed wording of the panel ("Serving size", "% Daily Value*"), so a template never calls
- * into Java to translate anything.</p>
+ * into Java to translate anything, and {@code secondary} carries that same wording in the other
+ * official language when the regulation asks for a bilingual table.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
 public record NutritionFactsData(String format, String regulationKey, NutritionFactsServing serving, NutritionFactsLine calories,
 		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, String footNote, String notSignificantSource,
-		Map<String, String> labels) {
+		Map<String, String> labels, NutritionFactsTranslation secondary) {
 
 	/**
 	 * <p>Tells whether the panel carries any nutrient at all, an empty panel being usually the sign
@@ -54,6 +55,36 @@ public record NutritionFactsData(String format, String regulationKey, NutritionF
 	 */
 	public String label(String key) {
 		return labels.getOrDefault(key, "");
+	}
+
+	/**
+	 * <p>Same wording in the second official language, empty on a panel written in a single one.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public String secondaryLabel(String key) {
+		return secondary.label(key);
+	}
+
+	/**
+	 * <p>Disclaimer of the panel in the second official language, empty on a panel written in a
+	 * single one.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String secondaryFootNote() {
+		return secondary.footNote();
+	}
+
+	/**
+	 * <p>Tells whether the panel states everything in both official languages, which is what makes
+	 * a template print the title, the serving and the footnote twice.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isBilingual() {
+		return secondary.isPresent();
 	}
 
 }
