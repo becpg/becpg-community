@@ -1547,7 +1547,7 @@
 		</Dimension>
 
 		<Measure name="catalogScore" caption="${msg("jsolap.catalogScore.title")}" column="catalogScore" datatype="Numeric" aggregator="avg" visible="true" />
-		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Integer" aggregator="sum" visible="true" />
 		<Measure name="scoredProducts" caption="${msg("jsolap.scoredProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 	</Cube>
 
