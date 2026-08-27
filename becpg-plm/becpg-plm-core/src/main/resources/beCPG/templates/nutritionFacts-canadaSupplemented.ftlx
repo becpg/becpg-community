@@ -1,0 +1,24 @@
+<#--
+  Canadian supplemented food facts table, SOR/2022-143.
+
+  It is the nutrition facts table of B.01.401 with two differences the regulation states: its own
+  title, and a closing block declaring the ingredients the food was supplemented with. Everything
+  else — the rounding, the order of the nutrients, the daily values — is that of the standard
+  table, which is why this template only adds to the Canadian body rather than drawing its own.
+
+  A nutrient enters the block by being marked as a supplemental ingredient on its line of the
+  nutrition list, and the block declares nothing else: a substance the regulation does not name
+  has no place in a regulated table.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.canadianHeading data=nf_data y=y titleKey="supplementedTitle" titleSize=13/>
+	<#assign y = nf.cursorY>
+
+	<@nf.canadianBody data=nf_data y=y withSupplemental=true/>
+</#assign>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>

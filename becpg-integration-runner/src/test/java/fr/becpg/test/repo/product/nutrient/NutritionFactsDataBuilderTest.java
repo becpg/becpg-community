@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -282,6 +284,49 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	@Test
+	public void testMarkedNutrientIsDeclaredAsASupplementalIngredient() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY)),
+				nutListItem("VITC-", "Vitamin C", 12d, 13d, CA_REGULATION_KEY)));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertTrue("A marked nutrient is declared even though the regulation only authorises it", data.hasSupplementalIngredients());
+		Assert.assertEquals(List.of("Caffein"), data.supplementalIngredients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertTrue("An authorised nutrient that is not marked stays out of the panel", data.nutrients().isEmpty());
+		Assert.assertTrue(data.micronutrients().isEmpty());
+	}
+
+	@Test
+	public void testMandatoryNutrientStaysInItsBlockEvenWhenMarked() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("NA", "Sodium", 160d, 7d, CA_REGULATION_KEY))));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertEquals("The regulation requires the sodium line where it puts it", List.of("Sodium"),
+				data.nutrients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertFalse(data.hasSupplementalIngredients());
+	}
+
+	@Test
+	public void testMarkedNutrientUnknownToTheRegulationIsDropped() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("NOT_A_NUT_CODE", "Exotic", 12d, 3d, CA_REGULATION_KEY))));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertFalse("A regulated table declares nothing the regulation does not name", data.hasSupplementalIngredients());
+		Assert.assertTrue(data.isEmpty());
+	}
+
+	@Test
 	public void testTheUnitedStatesKeepSaturatedAndTransFatApart() {
 
 		ProductData product = new ProductData();
@@ -340,6 +385,16 @@ public class NutritionFactsDataBuilderTest {
 		return item;
 	}
 
+	/** Marks the line the way a formulator does, with the report kind of a supplemental ingredient. */
+	private NutListDataItem markedAsSupplemental(NutListDataItem nutListItem) {
+		NodeRef nodeRef = new NodeRef("workspace://SpacesStore/marked-" + nutListItem.getNut().getId());
+		nutListItem.setNodeRef(nodeRef);
+		Mockito.when(mlNodeService.exists(nodeRef)).thenReturn(true);
+		Mockito.when(mlNodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_KINDS))
+				.thenReturn((java.io.Serializable) List.of(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT));
+		return nutListItem;
+	}
+
 	private NutritionFactsData build(ProductData product) {
 		return builder.build(product, Locale.US, VERTICAL_FORMAT);
 	}
@@ -394,9 +449,14 @@ public class NutritionFactsDataBuilderTest {
 		return nutListItem;
 	}
 
+	/**
+	 * The rounded values the formulation leaves on a line. A nutrient the regulation gives no daily
+	 * value carries no percentage at all, which is how the formulation writes it: a null entry would
+	 * be a value the reader of that JSON never sees.
+	 */
 	private String roundedValue(Double value, Double gdaPerc, String regulationKey) {
-		return "{\"v\":{\"" + regulationKey + "\":" + value + "},\"vps\":{\"" + regulationKey + "\":" + value + "},\"gda\":{\""
-				+ regulationKey + "\":" + gdaPerc + "}}";
+		String percent = gdaPerc != null ? "{\"" + regulationKey + "\":" + gdaPerc + "}" : "{}";
+		return "{\"v\":{\"" + regulationKey + "\":" + value + "},\"vps\":{\"" + regulationKey + "\":" + value + "},\"gda\":" + percent + "}";
 	}
 
 	private void mockMlProperty(org.alfresco.service.namespace.QName property, String value) {

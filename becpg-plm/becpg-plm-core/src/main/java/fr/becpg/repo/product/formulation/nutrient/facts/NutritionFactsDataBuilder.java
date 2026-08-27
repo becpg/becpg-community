@@ -17,9 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +36,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutDataItem;
@@ -116,8 +120,9 @@ public class NutritionFactsDataBuilder {
 		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options);
 
 		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, languages, labels),
-				buildCalories(regulated, languages, options), buildLines(regulated, languages, options, false),
-				buildLines(regulated, languages, options, true), NutritionFactsLabelResolver.footNote(options.regulationKey(), panelLocale),
+				buildCalories(regulated, languages, options), buildLines(regulated, languages, options, Block.NUTRIENTS),
+				buildLines(regulated, languages, options, Block.MICRONUTRIENTS), buildLines(regulated, languages, options, Block.SUPPLEMENTAL),
+				NutritionFactsLabelResolver.footNote(options.regulationKey(), panelLocale),
 				NutritionFactsLabelResolver.notSignificantSource(options.regulationKey(), panelLocale), labels,
 				buildTranslation(product, languages, options));
 	}
@@ -139,15 +144,16 @@ public class NutritionFactsDataBuilder {
 
 		List<RegulatedNutrient> nutrients = new ArrayList<>();
 		Map<String, String> charactNames = new HashMap<>();
+		Set<String> supplementalNutCodes = new HashSet<>();
 
 		if (product.getNutList() != null) {
 			for (NutListDataItem nutListItem : product.getNutList()) {
-				addNutrient(nutListItem, nutrients, charactNames, locale, options);
+				addNutrient(nutListItem, nutrients, charactNames, supplementalNutCodes, locale, options);
 			}
 		}
 
 		nutrients.sort(Comparator.comparing(nutrient -> nutrient.displayRule().sort(), Comparator.nullsLast(Comparator.naturalOrder())));
-		return new RegulatedNutrients(nutrients, charactNames, shareDailyValues(nutrients, options));
+		return new RegulatedNutrients(nutrients, charactNames, shareDailyValues(nutrients, options), supplementalNutCodes);
 	}
 
 	/**
@@ -212,8 +218,8 @@ public class NutritionFactsDataBuilder {
 		return contentLocale;
 	}
 
-	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Map<String, String> charactNames, Locale locale,
-			NutritionFactsOptions options) {
+	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Map<String, String> charactNames,
+			Set<String> supplementalNutCodes, Locale locale, NutritionFactsOptions options) {
 
 		if (nutListItem.getNut() == null) {
 			return;
@@ -222,11 +228,31 @@ public class NutritionFactsDataBuilder {
 		NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListItem.getNut());
 		RegulatedNutrient regulated = RegulationFormulationHelper.extractRegulatedNutrient(nutListItem, nut.getNutCode(),
 				numberLocale(options.regulationKey(), locale), options.regulationKey());
+		boolean isSupplemental = isSupplementalIngredient(nutListItem);
 
-		if (isDeclared(regulated, options)) {
+		if (isDeclared(regulated, options) || (isSupplemental && regulated.displayRule().isDefined())) {
 			nutrients.add(regulated);
 			charactNames.put(regulated.nutCode(), charactName(nut, locale));
+			if (isSupplemental) {
+				supplementalNutCodes.add(regulated.nutCode());
+			}
 		}
+	}
+
+	/**
+	 * Tells whether the formulator marked that line as an ingredient added to the product, which a
+	 * supplemented food declares in a block of its own. The marking is a report kind carried by the
+	 * line, so that it is done in the nutrition list rather than in a screen of its own.
+	 */
+	private boolean isSupplementalIngredient(NutListDataItem nutListItem) {
+		if ((nutListItem.getNodeRef() == null) || !mlNodeService.exists(nutListItem.getNodeRef())) {
+			return false;
+		}
+		Serializable reportKinds = mlNodeService.getProperty(nutListItem.getNodeRef(), ReportModel.PROP_REPORT_KINDS);
+		if (reportKinds instanceof Collection<?> kinds) {
+			return kinds.contains(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT);
+		}
+		return PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT.equals(reportKinds);
 	}
 
 	/**
@@ -268,16 +294,27 @@ public class NutritionFactsDataBuilder {
 		return null;
 	}
 
-	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options,
-			boolean micronutrients) {
+	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options, Block block) {
 
 		List<NutritionFactsLine> lines = new ArrayList<>();
 		for (RegulatedNutrient nutrient : regulated.nutrients()) {
-			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (isMicronutrient(nutrient, options) == micronutrients)) {
+			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (blockOf(nutrient, regulated, options) == block)) {
 				lines.add(toLine(nutrient, regulated, languages, options));
 			}
 		}
 		return lines;
+	}
+
+	/**
+	 * Block a nutrient is drawn in. A nutrient marked as added is declared as a supplemental
+	 * ingredient, unless the regulation requires its line anyway: a mandatory declaration stays
+	 * where the regulation puts it.
+	 */
+	private Block blockOf(RegulatedNutrient nutrient, RegulatedNutrients regulated, NutritionFactsOptions options) {
+		if (regulated.supplementalNutCodes().contains(nutrient.nutCode()) && !nutrient.isMandatory()) {
+			return Block.SUPPLEMENTAL;
+		}
+		return isMicronutrient(nutrient, options) ? Block.MICRONUTRIENTS : Block.NUTRIENTS;
 	}
 
 	private boolean isMicronutrient(RegulatedNutrient nutrient, NutritionFactsOptions options) {
@@ -493,7 +530,13 @@ public class NutritionFactsDataBuilder {
 	}
 
 	/** Regulated nutrients of a product, with the characteristic names used when a regulation names nothing. */
-	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Map<String, String> charactNames, SharedDailyValues sharedDailyValues) {
+	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Map<String, String> charactNames, SharedDailyValues sharedDailyValues,
+			Set<String> supplementalNutCodes) {
+	}
+
+	/** The three blocks a panel draws its nutrients in. */
+	private enum Block {
+		NUTRIENTS, MICRONUTRIENTS, SUPPLEMENTAL
 	}
 
 }

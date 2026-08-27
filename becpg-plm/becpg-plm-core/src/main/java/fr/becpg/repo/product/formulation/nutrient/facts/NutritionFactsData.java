@@ -24,8 +24,9 @@ import java.util.Map;
  * <p>Everything a nutrition facts template needs, already rounded and already formatted, so that no
  * arithmetic and no lookup ever happens inside a template.</p>
  *
- * <p>{@code nutrients} holds the macronutrient block and {@code micronutrients} the vitamin and
- * mineral block, both already filtered and ordered by the regulation. {@code labels} is a snapshot
+ * <p>{@code nutrients} holds the macronutrient block, {@code micronutrients} the vitamin and mineral
+ * block and {@code supplementalIngredients} what a supplemented food declares as added, all three
+ * already filtered and ordered by the regulation. {@code labels} is a snapshot
  * of the fixed wording of the panel ("Serving size", "% Daily Value*"), so a template never calls
  * into Java to translate anything, and {@code secondary} carries that same wording in the other
  * official language when the regulation asks for a bilingual table.</p>
@@ -34,8 +35,8 @@ import java.util.Map;
  * @version $Id: $Id
  */
 public record NutritionFactsData(String format, String regulationKey, NutritionFactsServing serving, NutritionFactsLine calories,
-		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, String footNote, String notSignificantSource,
-		Map<String, String> labels, NutritionFactsTranslation secondary) {
+		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, List<NutritionFactsLine> supplementalIngredients,
+		String footNote, String notSignificantSource, Map<String, String> labels, NutritionFactsTranslation secondary) {
 
 	/**
 	 * <p>Tells whether the panel carries any nutrient at all, an empty panel being usually the sign
@@ -44,7 +45,17 @@ public record NutritionFactsData(String format, String regulationKey, NutritionF
 	 * @return a boolean
 	 */
 	public boolean isEmpty() {
-		return nutrients.isEmpty() && micronutrients.isEmpty();
+		return nutrients.isEmpty() && micronutrients.isEmpty() && supplementalIngredients.isEmpty();
+	}
+
+	/**
+	 * <p>Tells whether the product declares supplemental ingredients, which is what turns a
+	 * nutrition facts table into a supplemented food facts table.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean hasSupplementalIngredients() {
+		return !supplementalIngredients.isEmpty();
 	}
 
 	/**

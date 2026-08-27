@@ -39,6 +39,8 @@ public class NutritionFactsTemplateTest {
 
 	private static final String CANADA_HORIZONTAL_TEMPLATE = "nutritionFacts-canadaHorizontal.ftlx";
 
+	private static final String CANADA_SUPPLEMENTED_TEMPLATE = "nutritionFacts-canadaSupplemented.ftlx";
+
 	private static final String CANADIAN_FOOTNOTE = "* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup";
 
 	private static final String ENGLISH_CANADIAN_FOOTNOTE = "* 5% or less is a little, 15% or more is a lot";
@@ -161,7 +163,7 @@ public class NutritionFactsTemplateTest {
 
 	@Test
 	public void testEveryCanadianFormatRendersAWellFormedPanel() throws Exception {
-		for (String format : List.of("canada", "canadaLinear", "canadaHorizontal")) {
+		for (String format : List.of("canada", "canadaLinear", "canadaHorizontal", "canadaSupplemented")) {
 			for (NutritionFactsData data : List.of(canadianPanel(), bilingualCanadianPanel())) {
 				String svg = renderToString("nutritionFacts-" + format + ".ftlx", data);
 
@@ -309,6 +311,24 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testSupplementedPanelDeclaresWhatTheFoodWasSupplementedWith() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
+
+		Assert.assertNotNull("A supplemented food carries a title of its own, wrapped to the panel", findText(panel, "Renseignements"));
+		Assert.assertNotNull("Its added ingredients are declared under their own caption", findText(panel, "Supplémenté en"));
+		Assert.assertNotNull(findText(panel, "Caféine"));
+		Assert.assertNotNull(findText(panel, "Vitamine B6"));
+	}
+
+	@Test
+	public void testStandardCanadianPanelIgnoresTheSupplementalBlock() throws Exception {
+		String svg = renderToString(CANADA_TEMPLATE, supplementedCanadianPanel());
+
+		Assert.assertFalse("The standard table declares no supplemental ingredient, whatever the product carries",
+				svg.contains("Supplémenté en") || svg.contains("Caféine"));
+	}
+
+	@Test
 	public void testCanadianHorizontalPanelIsDrawnAcrossThePackage() throws Exception {
 		Element svg = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())).getDocumentElement();
 
@@ -330,8 +350,17 @@ public class NutritionFactsTemplateTest {
 				line("US_ENER-E14", "Calories", "230", null, 1, true),
 				List.of(line("FAT", "Lipides", "8 g", "10%", 1, true), line("FASAT", "saturés", "1 g", "5%", 2, false),
 						line("NA", "Sodium", "160 mg", "7%", 1, true)),
-				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)), footNote, "",
+				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)), List.of(), footNote, "",
 				labels, secondary);
+	}
+
+	/** The same panel, of a food supplemented with caffeine and vitamin B6. */
+	private NutritionFactsData supplementedCanadianPanel() {
+		Map<String, String> labels = canadianLabels(false);
+		NutritionFactsData panel = canadianPanel();
+		return new NutritionFactsData("canadaSupplemented", "CA", panel.serving(), panel.calories(), panel.nutrients(), panel.micronutrients(),
+				List.of(line("CAFFN", "Caféine", "100 mg", null, 1, false), line("VITB6-", "Vitamine B6", "1,3 mg", "76%", 1, false)),
+				panel.footNote(), "", labels, NutritionFactsTranslation.none());
 	}
 
 	private Map<String, String> canadianLabels(boolean english) {
@@ -342,6 +371,8 @@ public class NutritionFactsTemplateTest {
 		labels.put("dailyValueSuffix", "");
 		labels.put("linearLegend", english ? "% = % Daily Value" : "% = % valeur quotidienne");
 		labels.put("footNoteEmphasis", english ? "a little,a lot" : "peu,beaucoup");
+		labels.put("supplementedTitle", english ? "Supplemented Food Facts" : "Renseignements sur les aliments supplémentés");
+		labels.put("supplementedWith", english ? "Supplemented with" : "Supplémenté en");
 		return labels;
 	}
 
@@ -424,7 +455,7 @@ public class NutritionFactsTemplateTest {
 				line("US_ENER-E14", "Calories", "230", null, 1, true), List.of(nutrients),
 				List.of(line("VITD-", "Vitamin D", "2mcg", "10%", 1, false), line("CA", "Calcium", "260mg", "20%", 1, false),
 						line("FE", "Iron", "8mg", "45%", 1, false), line("K", "Potassium", "235mg", "6%", 1, false)),
-				FOOTNOTE,
+				List.of(), FOOTNOTE,
 				"Not a significant source of other nutrients.", panelLabels(), NutritionFactsTranslation.none());
 	}
 

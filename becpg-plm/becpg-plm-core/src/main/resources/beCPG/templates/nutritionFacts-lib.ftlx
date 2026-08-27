@@ -72,7 +72,7 @@
 -->
 <#assign GLYPH_RATIO = 0.45>
 <#assign FIGURE_GLYPH_RATIO = 0.53>
-<#assign HEAVY_GLYPH_RATIO = 0.56>
+<#assign HEAVY_GLYPH_RATIO = 0.62>
 
 <#--
   Baseline of a text whose top edge sits at "top". The y attribute of an SVG text is its
@@ -137,9 +137,17 @@
 <#--
   Title left at its natural width, which is what a panel titling itself in two languages needs:
   condensing each of them to the width of the panel would set them at two different sizes.
+
+  It is wrapped instead, the wording of a supplemented food being far too long for one line, and
+  leaves the ordinate it ended on in cursorY.
 -->
-<#macro heading text y size x=PAD>
-	<text x="${x}" y="${baseline(y, size)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${size}">${text}</text>
+<#macro heading text y size x=PAD width=-1>
+	<#local available = (width gte 0)?then(width, contentWidth())>
+	<#assign cursorY = y>
+	<#list wrap(text, charsPerWidth(available, size, HEAVY_GLYPH_RATIO)) as headingLine>
+	<text x="${x}" y="${baseline(cursorY, size)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${size}">${headingLine}</text>
+	<#assign cursorY = cursorY + size + 1>
+	</#list>
 </#macro>
 
 <#--
@@ -339,7 +347,7 @@
   header sits in the calories band instead of taking a line of its own, a rule separates the
   groups of nutrients and not every single line, and the percentages stay in the body face.
 -->
-<#macro canadianBody data y>
+<#macro canadianBody data y withSupplemental=false>
 	<#assign cursorY = y>
 
 	<@rule y=cursorY height=CA_RULE_HEAVY/>
@@ -356,6 +364,11 @@
 	<@nutrientRow line=line y=cursorY boldPercent=false/>
 	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
 	</#list>
+
+	<#if withSupplemental && data.hasSupplementalIngredients()>
+	<@supplementalBlock data=data y=cursorY/>
+	<#assign cursorY = cursorY>
+	</#if>
 
 	<#if data.footNote()?has_content>
 	<@rule y=cursorY/>
@@ -411,14 +424,12 @@
   The title is set in the largest type of the panel but is not condensed to its width, which is
   what the directory of formats figures and what keeps the two languages the same size.
 -->
-<#macro canadianHeading data y titleSize=15 servingSize=9 x=PAD>
+<#macro canadianHeading data y titleSize=15 servingSize=9 x=PAD width=-1 titleKey="title">
 	<#assign cursorY = y>
 
-	<@heading text=data.label("title") y=cursorY size=titleSize x=x/>
-	<#assign cursorY = cursorY + titleSize + 1>
+	<@heading text=data.label(titleKey) y=cursorY size=titleSize x=x width=width/>
 	<#if data.isBilingual()>
-	<@heading text=data.secondaryLabel("title") y=cursorY size=titleSize x=x/>
-	<#assign cursorY = cursorY + titleSize + 1>
+	<@heading text=data.secondaryLabel(titleKey) y=cursorY size=titleSize x=x width=width/>
 	</#if>
 
 	<text x="${x}" y="${baseline(cursorY, servingSize)}" font-size="${servingSize}">${data.label("servingSize")}<#if data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
@@ -429,6 +440,30 @@
 	</#if>
 
 	<#assign cursorY = cursorY + 1>
+</#macro>
+
+<#--
+  Ingredients a supplemented food was supplemented with, SOR/2022-143. They are declared in a
+  block of their own, under the caption the regulation words, so that the reader tells them from
+  what the food contains on its own.
+-->
+<#macro supplementalBlock data y>
+	<#assign cursorY = y>
+
+	<@rule y=cursorY height=CA_RULE_HEAVY/>
+	<#assign cursorY = cursorY + CA_RULE_HEAVY + 1>
+
+	<text x="${PAD}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H>
+
+	<#list data.supplementalIngredients() as line>
+	<#if (line?index gt 0)>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	</#if>
+	<@nutrientRow line=line y=cursorY boldPercent=false/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
 </#macro>
 
 <#-- Footnote of a panel, wrapped to the width it is given. -->

@@ -224,6 +224,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>NONE_KIND_REPORT="none"</code> */
 	private static final String NONE_KIND_REPORT = "none";
 
+	private static final String REPORT_KIND_MESSAGE_PREFIX = "becpg.reportkind.";
+
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
@@ -1854,6 +1856,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 *
 	 * @param reportKindListDefaultValues a {@link java.util.Map} object
 	 */
+	/** One value of the report kind list, named in both languages from its own message key. */
+	private Map<QName, Serializable> reportKindListValue(String reportKindCode) {
+		MLText value = new MLText();
+		value.put(Locale.FRENCH, I18NUtil.getMessage(REPORT_KIND_MESSAGE_PREFIX + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
+		value.put(Locale.ENGLISH, I18NUtil.getMessage(REPORT_KIND_MESSAGE_PREFIX + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
+
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, reportKindCode);
+		properties.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
+		properties.put(BeCPGModel.PROP_LV_VALUE, value);
+		return properties;
+	}
+
 	private void visitReportKindList(Map<String, Map<QName, Serializable>> reportKindListDefaultValues) {
 		NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
@@ -1963,16 +1978,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					"annexe-subcontractor"
 			);
 			for (String rk : annexReportKinds) {
-				MLText mltValue = new MLText();
-				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.FRENCH));
-				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.ENGLISH));
-
-				Map<QName, Serializable> props = new HashMap<>();
-				props.put(ContentModel.PROP_NAME, rk);
-				props.put(BeCPGModel.PROP_LV_CODE, rk);
-				props.put(BeCPGModel.PROP_LV_VALUE, mltValue);
-				reportKindDefaultValues.put(rk, props);
+				reportKindDefaultValues.put(rk, reportKindListValue(rk));
 			}
+
+			// The marking of a supplemental ingredient rides on the report kinds of a nutrition
+			// line; it is a value of that list, but it is never the kind of a report.
+			reportKindDefaultValues.put(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT,
+					reportKindListValue(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT));
 
 			visitReportKindList(reportKindDefaultValues);
 

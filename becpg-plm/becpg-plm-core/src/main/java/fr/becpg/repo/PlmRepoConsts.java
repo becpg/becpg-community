@@ -23,6 +23,16 @@ public class PlmRepoConsts {
 	public static final String PATH_NUT_TYPES = "NutTypes";
 	/** Constant <code>PATH_NUT_FACTS_METHODS="NutFactsMethods"</code> */
 	public static final String PATH_NUT_FACTS_METHODS = "NutFactsMethods";
+
+	/**
+	 * Report kind marking a nutrient of a product as a supplemental ingredient, which is what the
+	 * Canadian supplemented food facts table declares in a block of its own.
+	 *
+	 * <p>It is a report kind so that the marking is done in the nutrition list itself, in a column
+	 * that already exists. No report template may ever be given this kind: a report kind carried by
+	 * a line filters the other lines out of that report.</p>
+	 */
+	public static final String REPORT_KIND_SUPPLEMENTAL_INGREDIENT = "SupplementalIngredient";
 	/** Constant <code>PATH_NUTS="Nuts"</code> */
 	public static final String PATH_NUTS = "Nuts";
 	/** Constant <code>PATH_INGS="Ings"</code> */

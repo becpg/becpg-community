@@ -59,7 +59,7 @@
 	<@nutrientColumn columnLines=lines[splitIndex..] x=COL2_X y=headerY + 1/>
 	<#assign columnsBottom = [firstBottom, columnBottom]?max>
 
-	<@nf.canadianHeading data=nf_data y=top titleSize=TITLE_LINE x=nf.PAD/>
+	<@nf.canadianHeading data=nf_data y=top titleSize=TITLE_LINE x=nf.PAD width=LEFT_W - 2 * nf.PAD/>
 	<#assign leftBottom = nf.cursorY>
 
 	<#if nf_data.calories()??>
