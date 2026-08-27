@@ -132,6 +132,18 @@
 					json.totalFiles);
 			};
 
+			downloadDialog.deleteDownload = function() {
+				// A search export answers with its download nodeRef only once the whole result set has been
+				// collected, which takes minutes on a large search. Until then _resetGUI has left
+				// _currentArchiveNodeURL empty, and cancelling would delete "api/internal/downloads/" with no
+				// nodeRef at all, which the repository rejects. Guard it the way getArchivingProgress does.
+				if (this._currentArchiveNodeURL != null && this._currentArchiveNodeURL != "") {
+					Alfresco.util.Ajax.jsonDelete({
+						url: Alfresco.constants.PROXY_URI + "api/internal/downloads/" + this._currentArchiveNodeURL
+					});
+				}
+			};
+
 			downloadDialog.handleArchiveComplete = function() {
 				// Hide the panel and initiate the download...
 				this.widgets.cancelOkButton.set("disabled", false);
