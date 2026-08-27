@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -88,7 +90,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					return true;
 				}
 				// CompoList
-				Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = calculateMaterialOfComposition(formulatedProduct);
+				Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
 				// PackagingList
 				if (formulatedProduct.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING) != null) {
@@ -109,26 +111,27 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						continue;
 					}
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial());
-					if (!toUpdate.containsKey(key) || toUpdate.get(key).getFirst().doubleValue() == 0d) {
+					MaterialContribution contribution = toUpdate.get(key);
+					if ((contribution == null) || (contribution.weight().doubleValue() == 0d)) {
 						toRemove.add(packmaterial);
 					} else {
-						packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
-						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
-						packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
-								.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+						packmaterial.setPmlWeight(contribution.weight().doubleValue());
+						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), contribution.weight()));
+						packmaterial.setPmlRecycledPercentage(contribution.recycledPercentage());
+						packmaterial.setGeoOrigins(contribution.geoOriginList());
 						toUpdate.remove(key);
 					}
 				}
 
-				for (Map.Entry<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> entry : toUpdate.entrySet()) {
-					if (entry.getValue().getFirst().doubleValue() != 0d) {
+				for (Map.Entry<Pair<PackagingLevel, NodeRef>, MaterialContribution> entry : toUpdate.entrySet()) {
+					MaterialContribution contribution = entry.getValue();
+					if (contribution.weight().doubleValue() != 0d) {
 
 						formulatedProduct.getPackMaterialList()
 								.add(PackMaterialListDataItem.build().withMaterial(entry.getKey().getSecond())
-										.withWeight(entry.getValue().getFirst().doubleValue())
-										.withPerc(calculatePerc(formulatedProduct, entry.getKey().getFirst(), entry.getValue().getFirst()))
-										.withRecycledPerc(entry.getValue().getSecond().divide(entry.getValue().getFirst(), MathContext.DECIMAL64)
-												.multiply(BigDecimal.valueOf(100d)).doubleValue())
+										.withWeight(contribution.weight().doubleValue())
+										.withPerc(calculatePerc(formulatedProduct, entry.getKey().getFirst(), contribution.weight()))
+										.withRecycledPerc(contribution.recycledPercentage()).withGeoOrigins(contribution.geoOriginList())
 										.withPkgLevel(entry.getKey().getFirst()));
 					}
 				}
@@ -204,9 +207,9 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @return a {@link java.util.Map} object
 	 */
-	private Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> calculateMaterialOfComposition(ProductData formulatedProduct) {
+	private Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> calculateMaterialOfComposition(ProductData formulatedProduct) {
 
-		Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = new HashMap<>();
+		Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> toUpdate = new HashMap<>();
 		if (!Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 
 			if (formulatedProduct.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO) != null) {
@@ -258,13 +261,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 											Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel, packMateriDataItem.getPmlMaterial());
 
-											if (toUpdate.containsKey(key)) {
-												BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
-												BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
-												toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
-											} else {
-												toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
-											}
+											accumulate(toUpdate, key, MaterialContribution.of(plmWeight, pmlRecycledPercentage,
+													packMateriDataItem.getGeoOrigins()));
 										} else {
 											logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty
 													+ " for " + compoList.getProduct());
@@ -292,8 +290,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 * @param toUpdate a {@link java.util.Map} object
 	 * @param subQty a double
 	 */
-	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
-			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
+	private void calculateTareByMaterialItem(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> toUpdate,
+			double subQty) {
 
 		if ((dataItem.getProduct() == null) || Boolean.TRUE.equals(dataItem.getIsRecycle())) {
 			return;
@@ -322,7 +320,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 * @param toUpdate a {@link java.util.Map} object
 	 * @param subQty a double
 	 */
-	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate,
+	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> toUpdate,
 			double subQty) {
 
 		// Keep materials of primary packaging (without packaging kit)
@@ -349,13 +347,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 						Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packMateriDataItem.getPmlMaterial());
 
-						if (toUpdate.containsKey(key)) {
-							BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
-							BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
-							toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
-						} else {
-							toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
-						}
+						accumulate(toUpdate, key,
+								MaterialContribution.of(plmWeight, pmlRecycledPercentage, geoOriginsOf(packMateriDataItem, packagingProduct)));
 					}
 				}
 
@@ -366,16 +359,40 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packagingMaterial);
 
-					if (toUpdate.containsKey(key)) {
-						BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(tareByMaterial);
-						BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(BigDecimal.valueOf(0d));
-						toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
-					} else {
-						toUpdate.put(key, new Pair<>(tareByMaterial, BigDecimal.valueOf(0d)));
-					}
+					accumulate(toUpdate, key, MaterialContribution.of(tareByMaterial, BigDecimal.ZERO, packagingProduct.getGeoOrigins()));
 				}
 			}
 		}
+	}
+
+	/**
+	 * <p>Adds a contribution to the material already accumulated under that key.</p>
+	 *
+	 * @param toUpdate a {@link java.util.Map} object
+	 * @param key a {@link org.alfresco.util.Pair} object
+	 * @param contribution the contribution to add
+	 */
+	private void accumulate(Map<Pair<PackagingLevel, NodeRef>, MaterialContribution> toUpdate, Pair<PackagingLevel, NodeRef> key,
+			MaterialContribution contribution) {
+		MaterialContribution accumulated = toUpdate.get(key);
+		toUpdate.put(key, accumulated != null ? accumulated.add(contribution) : contribution);
+	}
+
+	/**
+	 * <p>Gives the geographical origins to attach to a material coming from a packaging.</p>
+	 *
+	 * The origins declared on the material line win; the packaging falls back on its own
+	 * <code>bcpg:productGeoOrigin</code> when its materials carry none.
+	 *
+	 * @param packMaterialListDataItem a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 * @param packagingProduct a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @return a {@link java.util.List} object
+	 */
+	private List<NodeRef> geoOriginsOf(PackMaterialListDataItem packMaterialListDataItem, PackagingMaterialData packagingProduct) {
+		if ((packMaterialListDataItem.getGeoOrigins() != null) && !packMaterialListDataItem.getGeoOrigins().isEmpty()) {
+			return packMaterialListDataItem.getGeoOrigins();
+		}
+		return packagingProduct.getGeoOrigins();
 	}
 
 	/**
@@ -390,5 +407,36 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 */
 	private boolean hasPackMaterialList(PackagingMaterialData packagingProduct) {
 		return (packagingProduct.getPackMaterialList() != null) && !packagingProduct.getPackMaterialList().isEmpty();
+	}
+
+	/**
+	 * <p>What one packaging material of one packaging level contributes to the formulated product.</p>
+	 *
+	 * @param weight the material weight, in grams
+	 * @param recycledWeight the share of that weight made of recycled material, in grams
+	 * @param geoOrigins the geographical origins declared by the contributing material lines
+	 */
+	private record MaterialContribution(BigDecimal weight, BigDecimal recycledWeight, Set<NodeRef> geoOrigins) {
+
+		static MaterialContribution of(BigDecimal weight, BigDecimal recycledWeight, List<NodeRef> geoOrigins) {
+			return new MaterialContribution(weight, recycledWeight, geoOrigins != null ? new LinkedHashSet<>(geoOrigins) : new LinkedHashSet<>());
+		}
+
+		MaterialContribution add(MaterialContribution other) {
+			Set<NodeRef> mergedGeoOrigins = new LinkedHashSet<>(geoOrigins);
+			mergedGeoOrigins.addAll(other.geoOrigins);
+			return new MaterialContribution(weight.add(other.weight), recycledWeight.add(other.recycledWeight), mergedGeoOrigins);
+		}
+
+		Double recycledPercentage() {
+			if (weight.doubleValue() == 0d) {
+				return null;
+			}
+			return recycledWeight.divide(weight, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue();
+		}
+
+		List<NodeRef> geoOriginList() {
+			return new ArrayList<>(geoOrigins);
+		}
 	}
 }

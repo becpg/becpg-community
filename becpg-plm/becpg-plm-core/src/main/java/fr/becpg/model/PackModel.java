@@ -73,6 +73,9 @@ public class PackModel {
 	/** Constant <code>ASSOC_PACK_MATERIAL_LIST_MATERIAL</code> */
 	public static final QName ASSOC_PACK_MATERIAL_LIST_MATERIAL = QName.createQName(PACK_URI, "pmlMaterial");
 
+	/** Constant <code>ASSOC_PACK_MATERIAL_LIST_GEO_ORIGIN</code> */
+	public static final QName ASSOC_PACK_MATERIAL_LIST_GEO_ORIGIN = QName.createQName(PACK_URI, "pmlGeoOrigin");
+
 	/** Constant <code>ASPECT_TARE</code> */
 	public static final QName ASPECT_TARE = QName.createQName(PACK_URI, "tareAspect");
 

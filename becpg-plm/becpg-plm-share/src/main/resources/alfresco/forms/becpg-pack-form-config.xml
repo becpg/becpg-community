@@ -228,6 +228,7 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlGeoOrigin" />
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
@@ -243,6 +244,9 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="pack:pmlGeoOrigin">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 
@@ -250,6 +254,7 @@
 				<field-visibility>
 					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlGeoOrigin" />
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
@@ -257,6 +262,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="pack:pmlLevel"  read-only="true" />
+					<field id="pack:pmlGeoOrigin">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -265,6 +273,7 @@
                 <field-visibility>
                     <show id="pack:pmlLevel" />
                     <show id="pack:pmlMaterial" />
+                    <show id="pack:pmlGeoOrigin" />
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />
@@ -272,6 +281,9 @@
                 </field-visibility>
                 <appearance>
                     <field id="pack:pmlLevel" read-only="false" />
+                    <field id="pack:pmlGeoOrigin">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -280,6 +292,7 @@
                 <field-visibility>
                     <show id="pack:pmlLevel" />
                     <show id="pack:pmlMaterial" />
+                    <show id="pack:pmlGeoOrigin" />
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />    
@@ -287,6 +300,9 @@
                 </field-visibility>
                 <appearance>
                     <field id="pack:pmlLevel"  read-only="true" />
+                    <field id="pack:pmlGeoOrigin">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -296,6 +312,7 @@
 				<field-visibility>
 					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlGeoOrigin" />
 					<show id="entity_pack:pmlMaterial_bcpg:product"
 						for-mode="view" />
 				</field-visibility>
@@ -305,6 +322,9 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
+					</field>
+					<field id="pack:pmlGeoOrigin">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -318,6 +338,7 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlGeoOrigin" />
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
@@ -332,6 +353,9 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
 							</control-param>
 						</control>
+					</field>
+					<field id="pack:pmlGeoOrigin">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
