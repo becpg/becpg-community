@@ -582,9 +582,9 @@
 						doc->>"$.qa_claimType" as claimType,
 						doc->>"$.qa_claimOriginHierarchy1[0]" as claimOriginHierarchy1,
 						doc->>"$.qa_claimOriginHierarchy2[0]" as claimOriginHierarchy2,
-						CAST(NULLIF(doc->>"$.cm_created", 'null') as DATE) as dateCreated,
-						CAST(NULLIF(doc->>"$.qa_claimResponseDate", 'null') as DATE)  as claimResponseDate,
-						CAST(NULLIF(doc->>"$.qa_claimTreatementDate", 'null') as DATE)  as claimTreatmentDate,
+						CAST(doc->>"$.cm_created" as DATE) as dateCreated,
+						CAST(doc->>"$.qa_claimResponseDate" as DATE)  as claimResponseDate,
+						CAST(doc->>"$.qa_claimTreatementDate" as DATE)  as claimTreatmentDate,
 						doc->>"$.qa_claimClosingDate" as claimClosingDate,
 						doc->>"$.qa_product_bcpg_nodeRef[0]" as productNodeRef
 					from
@@ -733,15 +733,15 @@
 							a.doc->>"$.pjt_tlTaskName" as tlTaskName,
 							CAST(NULLIF(a.doc->>"$.pjt_tlDuration", 'null') AS DECIMAL(20,6)) as tlDuration,
 							CAST(NULLIF(a.doc->>"$.pjt_tlRealDuration", 'null') AS DECIMAL(20,6)) as tlRealDuration,
-							CAST(NULLIF(a.doc->>"$.pjt_tlStart", 'null') as DATE) as tlStart,
-							CAST(NULLIF(a.doc->>"$.pjt_tlEnd", 'null') as DATE) as tlEnd,
-							CAST(NULLIF(a.doc->>"$.pjt_tlTargetStart", 'null') as DATE) as tlTargetStart,
-							CAST(NULLIF(a.doc->>"$.pjt_tlTargetEnd", 'null') as DATE) as tlTargetEnd,
+							CAST(a.doc->>"$.pjt_tlStart" as DATE) as tlStart,
+							CAST(a.doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
+							CAST(a.doc->>"$.pjt_tlTargetStart" as DATE) as tlTargetStart,
+							CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE) as tlTargetEnd,
 							a.doc->>"$.pjt_tlState" as tlState,
 							CAST(NULLIF(a.doc->>"$.pjt_tlWork", 'null') AS DECIMAL(20,6)) as tlWork,
 							CAST(NULLIF(a.doc->>"$.pjt_tlLoggedTime", 'null') AS DECIMAL(20,6)) as tlLoggedTime,
 							a.doc->>"$.bcpg_sort" as sortOrder,
-							CAST(NULLIF(a.doc->>"$.cm_modified", 'null') as DATE) as projectDateModified,
+							CAST(a.doc->>"$.cm_modified" as DATE) as projectDateModified,
 							b.doc->>"$.pjt_projectManager[0]" as projectManager,
 							b.doc->>"$.pjt_projectState" as projectState,
 							b.nodeRef as projectNodeRef,
@@ -765,7 +765,7 @@
 							     ended: negative when answered early, positive when late. NULL
 							     while the task is open, so the average only counts answered
 							     tasks instead of reading an open one as "on time". -->
-							DATEDIFF(CAST(NULLIF(a.doc->>"$.pjt_tlEnd", 'null') as DATE), CAST(NULLIF(a.doc->>"$.pjt_tlTargetEnd", 'null') as DATE)) AS DECIMAL(20,6)) as tlResponseDelay
+							DATEDIFF(CAST(a.doc->>"$.pjt_tlEnd" as DATE), CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE)) AS DECIMAL(20,6)) as tlResponseDelay
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef
 					</SQL>
@@ -1084,13 +1084,13 @@
 						doc->>"$.metadata_siteId" as siteId,
 						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
-						CAST(NULLIF(doc->>"$.cm_created", 'null') as DATE) as projectDateCreated,
+						CAST(doc->>"$.cm_created" as DATE) as projectDateCreated,
 						doc->>"$.cm_creator" as projectCreator,
-						CAST(NULLIF(doc->>"$.cm_modified", 'null') as DATE)  as projectDateModified,
+						CAST(doc->>"$.cm_modified" as DATE)  as projectDateModified,
 						doc->>"$.cm_modifier" as  projectModifier,
-						CAST(NULLIF(doc->>"$.pjt_projectStartDate", 'null') as DATE)  as projectStartDate,
-						CAST(NULLIF(doc->>"$.pjt_projectDueDate", 'null') as DATE)  as projectDueDate,
-						CAST(NULLIF(doc->>"$.pjt_projectCompletionDate", 'null') as DATE)  as completionDate,
+						CAST(doc->>"$.pjt_projectStartDate" as DATE)  as projectStartDate,
+						CAST(doc->>"$.pjt_projectDueDate" as DATE)  as projectDueDate,
+						CAST(doc->>"$.pjt_projectCompletionDate" as DATE)  as completionDate,
 						doc->>"$.pjt_projectPriority" as projectPriority,
 						CAST(NULLIF(doc->>"$.pjt_completionPercent", 'null') AS DECIMAL(20,6)) as completionPercent,
 						CAST(NULLIF(doc->>"$.pjt_projectScore", 'null') AS DECIMAL(20,6)) as projectScore,
@@ -1100,7 +1100,7 @@
 						doc->>"$.pjt_projectSponsor" as projectSponsor,
 						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
 						SUBSTRING_INDEX(doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
-						CAST(DATEDIFF(CAST(NULLIF(doc->>"$.pjt_projectCompletionDate", 'null') as DATE),CAST(NULLIF(doc->>"$.pjt_projectStartDate", 'null') as DATE)) AS DECIMAL(20,6)) as duration
+						CAST(DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) AS DECIMAL(20,6)) as duration
 					from
 						pjt_project
 				</SQL>
@@ -1707,10 +1707,10 @@
 						CAST(NULLIF(doc->>"$.bcpg_lcaScore", 'null') AS DECIMAL(20,6)) as lcaScore,
 						CAST(NULLIF(doc->>"$.bcpg_ecoScore", 'null') AS DECIMAL(20,6)) as ecoScore,
 						doc->>"$.bcpg_storageConditionsRef" as storageConditions,
-						CAST(NULLIF(doc->>"$.cm_created", 'null') as DATE) as productDateCreated,
-						CAST(NULLIF(doc->>"$.cm_modified", 'null') as DATE) as productDateModified,
-						CAST(NULLIF(doc->>"$.bcpg_startEffectivity", 'null') as DATE) as startEffectivity,
-						CAST(NULLIF(doc->>"$.bcpg_endEffectivity", 'null') as DATE) as endEffectivity,
+						CAST(doc->>"$.cm_created" as DATE) as productDateCreated,
+						CAST(doc->>"$.cm_modified" as DATE) as productDateModified,
+						CAST(doc->>"$.bcpg_startEffectivity" as DATE) as startEffectivity,
+						CAST(doc->>"$.bcpg_endEffectivity" as DATE) as endEffectivity,
 						doc->>"$.bcpg_productState" as productState,
 						CAST(NULLIF(doc->>"$.bcpg_projectedQty", 'null') AS DECIMAL(20,6)) as projectedQty,
 						CAST(NULLIF(doc->>"$.bcpg_unitTotalCost", 'null') AS DECIMAL(20,6)) as unitTotalCost,
