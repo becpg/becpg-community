@@ -83,6 +83,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	/** Constant <code>ML_TEXT_SIZE_LIMIT=200</code> */
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
+	/**
+	 * Character budget of an activity payload, derived from the byte budget of the audit column at
+	 * the worst case of four UTF-8 bytes per character, so that the payload fits whatever the script
+	 * it is written in.
+	 */
+	private static final int MAX_ACTIVITY_DATA_LENGTH = LargeTextHelper.MAX_LOCALE_SIZE_BYTES / 4;
+
 	/** Constant <code>EXPORT_ACTIVITY="fr.becpg.export"</code> */
 	private static final String EXPORT_ACTIVITY = "fr.becpg.export";
 
@@ -622,8 +629,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		}
 		
-		if(ent instanceof String text) {
+		if (ent instanceof String text) {
 			return LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
+		}
+		if (ent instanceof List<?> list) {
+			return new ArrayList<>(list.stream().map(value -> LargeTextHelper.elipse(value.toString(), ML_TEXT_SIZE_LIMIT)).toList());
 		}
 		return ent;
 	}
@@ -672,9 +682,74 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			auditScope.putAttribute(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 			auditScope.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID, activityListDataItem.getUserId());
 			auditScope.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_TYPE, activityListDataItem.getActivityType().toString());
-			auditScope.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_DATA, activityListDataItem.getActivityData());
+			auditScope.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_DATA, fitToAuditColumn(activityListDataItem.getActivityData()));
 			auditScope.putAttribute(ActivityAuditPlugin.PROP_CM_CREATED, ISO8601DateFormat.format(createdDate));
 		}
+	}
+
+	/**
+	 * <p>Shortens an activity payload that would not fit the audit column. The audit stores every
+	 * attribute in <code>alf_prop_string_value</code>, capped in bytes, and an oversized value makes
+	 * the whole transaction fail instead of only losing the activity.</p>
+	 *
+	 * <p>Only the <code>properties</code> array grows without bound: {@link #mergeWithLastActivity}
+	 * carries the properties of the previous activity over to the new one, so a long editing session
+	 * on the same entity keeps piling them up. It is therefore the array that is pruned, oldest
+	 * entries first, rather than the string being cut: a cut payload is no longer parseable JSON and
+	 * would break every reader.</p>
+	 *
+	 * @param activityData a {@link java.lang.String} object
+	 * @return an activity payload that fits the audit column
+	 */
+	private String fitToAuditColumn(String activityData) {
+		if (LargeTextHelper.fitsInProperty(activityData)) {
+			return activityData;
+		}
+
+		try {
+			JSONObject data = new JSONObject(activityData);
+			JSONArray properties = data.optJSONArray(PROP_PROPERTIES);
+			data.remove(PROP_PROPERTIES);
+
+			if (properties != null) {
+				data.put(PROP_PROPERTIES, keepFittingProperties(properties, data.toString().length()));
+			}
+
+			String prunedData = data.toString();
+
+			if (LargeTextHelper.fitsInProperty(prunedData)) {
+				logger.warn("Activity data too large for the audit column, properties were pruned: " + data.optString(PROP_TITLE));
+				return prunedData;
+			}
+		} catch (JSONException e) {
+			logger.error("Cannot prune an oversized activity data", e);
+		}
+
+		logger.error("Activity data still too large for the audit column once pruned, it had to be cut");
+
+		return LargeTextHelper.elipse(activityData, MAX_ACTIVITY_DATA_LENGTH);
+	}
+
+	/**
+	 * <p>keepFittingProperties.</p>
+	 *
+	 * @param properties a {@link org.json.JSONArray} object
+	 * @param usedLength the length already taken by the rest of the payload
+	 * @return the most recent properties that still fit the audit column
+	 */
+	private JSONArray keepFittingProperties(JSONArray properties, int usedLength) {
+		JSONArray kept = new JSONArray();
+		int remainingLength = MAX_ACTIVITY_DATA_LENGTH - usedLength;
+
+		for (int i = 0; i < properties.length(); i++) {
+			Object property = properties.get(i);
+			remainingLength -= property.toString().length();
+			if (remainingLength < 0) {
+				break;
+			}
+			kept.put(property);
+		}
+		return kept;
 	}
 
 	/**
