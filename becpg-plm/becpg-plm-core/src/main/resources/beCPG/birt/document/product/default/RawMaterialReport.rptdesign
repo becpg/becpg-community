@@ -6835,6 +6835,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="analysis">dimension</property>
                     <text-property name="heading">reportParameters</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">codeReportParameters</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">codeReportParameters</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -6867,6 +6872,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <structure>
                         <property name="position">6</property>
                         <property name="name">reportParameters</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">codeReportParameters</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -6915,8 +6925,15 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">codeReportParameters</property>
+                    <property name="nativeName">codeReportParameters</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{nutrientProfileCategory;STRING;/nutrientProfileCategory},{nutrientProfileVersion;STRING;/nutrientProfileVersion},{aspects;STRING;/aspects},{nutrientProfilingScore;INT;/nutrientProfilingScore},{nutrientProfilingClass;STRING;/nutrientProfilingClass},{reportParameters;STRING;/reportParameters}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{nutrientProfileCategory;STRING;/nutrientProfileCategory},{nutrientProfileVersion;STRING;/nutrientProfileVersion},{aspects;STRING;/aspects},{nutrientProfilingScore;INT;/nutrientProfilingScore},{nutrientProfilingClass;STRING;/nutrientProfilingClass},{reportParameters;STRING;/reportParameters},{codeReportParameters;STRING;/reportParameters/@code}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -12989,7 +13006,7 @@ adress;</expression>
                             <structure>
                                 <property name="format">all</property>
                                 <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {
-	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)
+	(BirtStr.indexOf("showNutritionalScore", row["codeReportParameters"]) == -1)
 } else {
 	true;
 }</expression>
@@ -13006,6 +13023,12 @@ adress;</expression>
                                 <property name="name">reportParameters</property>
                                 <text-property name="displayName">reportParameters</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["reportParameters"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">codeReportParameters</property>
+                                <text-property name="displayName">codeReportParameters</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["codeReportParameters"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
