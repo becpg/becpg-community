@@ -427,6 +427,45 @@
      }
     ]
    }
+  },
+  {
+   "id": "environnement",
+   "title": "Environment",
+   "icon": "leaf",
+   "heading": "Environmental impact",
+   "subheading": "Life-cycle analysis per product type and per site",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Impact per product type",
+      "query": {
+       "kind": "reference",
+       "path": "/lca-impact-per-product-type.saiku"
+      }
+     },
+     {
+      "id": "t2",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Impact per site",
+      "query": {
+       "kind": "reference",
+       "path": "/lca-impact-per-site.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
   }
  ]
 }

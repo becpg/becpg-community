@@ -146,6 +146,20 @@
        "path": "/top-10-allergens.saiku"
       },
       "chartType": "bar"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 6,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Non-conformities per supplier",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-supplier.saiku"
+      },
+      "chartType": "bar"
      }
     ]
    }

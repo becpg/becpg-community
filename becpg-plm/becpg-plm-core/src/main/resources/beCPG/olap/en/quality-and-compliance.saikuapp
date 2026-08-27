@@ -203,6 +203,74 @@
      }
     ]
    }
+  },
+  {
+   "id": "non-conformites",
+   "title": "Non-conformities",
+   "icon": "alert-triangle",
+   "heading": "Non-conformity tracking",
+   "subheading": "Volumes, types, origins and plants involved",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Per type",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-type.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Per state",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-state.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Per plant",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-plant.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t4",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Per year",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-trend-per-year.saiku"
+      },
+      "chartType": "line"
+     }
+    ]
+   }
   }
  ]
 }

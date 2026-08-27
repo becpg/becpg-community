@@ -203,6 +203,74 @@
      }
     ]
    }
+  },
+  {
+   "id": "non-conformites",
+   "title": "Non-conformités",
+   "icon": "alert-triangle",
+   "heading": "Suivi des non-conformités",
+   "subheading": "Volumes, types, origines et usines concernées",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par type",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-type.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par état",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-state.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par usine",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-plant.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t4",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par année",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-trend-per-year.saiku"
+      },
+      "chartType": "line"
+     }
+    ]
+   }
   }
  ]
 }
