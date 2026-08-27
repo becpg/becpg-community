@@ -138,6 +138,15 @@ public class PpwrRecyclabilityTest {
 	}
 
 	@Test
+	public void testTheBreakdownCarriesTheGradeOfTheProduct() {
+		pack(CLEAR_PET, 24d, PackagingLevel.Primary);
+		pack(PVC, 2d, PackagingLevel.Primary);
+
+		// the marking is drawn from the breakdown, which renders empty without the grade
+		assertEquals("B", context().getScoreClass());
+	}
+
+	@Test
 	public void testAMaterialOfAnotherCodeGenerationIsMatchedByItsEcoTaxCategory() {
 		pack("PLASTIC_RIGID_PET", 50d, PackagingLevel.Primary);
 		categories.put("PLASTIC_RIGID_PET", RIGID_PET_CATEGORY);

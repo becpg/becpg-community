@@ -149,6 +149,12 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 
 		context.setValue(worst);
 
+		// the breakdown carries the grade of the product, not only that of its levels: the
+		// marking is drawn from it, and a breakdown without it renders as an empty cell
+		if (worst != null) {
+			context.setScoreClass(gradeOf(worst, definition));
+		}
+
 		return context;
 	}
 
