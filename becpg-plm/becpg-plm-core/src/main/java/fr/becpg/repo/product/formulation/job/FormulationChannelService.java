@@ -87,7 +87,7 @@ import fr.becpg.util.BeCPGTransactionUtil;
 public class FormulationChannelService implements BatchQueuePlugin {
 
 	/** Constant <code>REFORMULATE_BATCH_DESC_ID="becpg.batch.formulation.channel.formula"{trunked}</code> */
-	private static final String REFORMULATE_BATCH_DESC_ID = "becpg.batch.formulation.channel.formulateEntities";
+	public static final String REFORMULATE_BATCH_DESC_ID = "becpg.batch.formulation.channel.formulateEntities";
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationChannelService.class);
@@ -96,7 +96,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	public static final String FORMULATE_ENTITIES_CHANNEL_ID = "formulate-entities";
 	
 	/** Constant <code>REFORMULATE_BATCH_ID="reformulateChangedEntities"</code> */
-	private static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
+	public static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
 
 	private BatchQueueService batchQueueService;
 
