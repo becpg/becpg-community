@@ -153,7 +153,10 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 			return aspect.toPrefixString(services.getNamespaceService());
 		} catch (NamespaceException e) {
 			logger.warn("Unregistered namespace on aspect " + aspect + " of node " + nodeRef
-					+ " - the model it comes from is not deployed on this instance", e);
+					+ " - the model it comes from is not deployed on this instance");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Unregistered namespace on aspect " + aspect, e);
+			}
 			return aspect.toString();
 		}
 	}
