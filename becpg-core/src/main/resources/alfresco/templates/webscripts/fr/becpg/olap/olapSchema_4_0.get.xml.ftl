@@ -1486,6 +1486,93 @@
 		<Measure name="nutListGDAPerc" caption="${msg("jsolap.nutListGDAPerc.title")}" column="nutListGDAPerc" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 	</Cube>
 	
+	<#-- Allergens (#29923). Belazu asked for the nutrient treatment applied to allergens: one
+	     allergen per column, with its Major/Minor type as a level above it.
+
+	     The type is carried by the association itself - bcpg:allergenListAllergen|bcpg:allergenType
+	     puts it straight into the list document - rather than by joining the allergen charact table.
+	     That is deliberate: a join on a table an older connector does not create fails the whole
+	     schema, and Mondrian loads it atomically, so every cube would go down, not just this one.
+	     With the property missing the type level is simply empty.
+
+	     The presence flags are booleans in the document; each becomes a 0/1 column so that summing
+	     them answers "how many products declare this allergen", which is what a per-allergen column
+	     layout needs. -->
+	<Cube name="allergens" caption="${msg("jsolap.allergens.title")}" cache="true" enabled="true" defaultMeasure="allergenProducts">
+
+		<View name="allergenCubeList" alias="allergenCubeList">
+			<SQL dialect="generic">
+				select
+					a.entityNodeRef,
+					a.doc->>"$.bcpg_allergenListAllergen[0]" as allergenName,
+					a.doc->>"$.bcpg_allergenListAllergen_bcpg_nodeRef[0]" as allergenNodeRef,
+					a.doc->>"$.bcpg_allergenListAllergen_bcpg_allergenType[0]" as allergenType,
+					case when a.doc->>"$.bcpg_allergenListVoluntary" = 'true' then 1 else 0 end as voluntaryPresence,
+					case when a.doc->>"$.bcpg_allergenListInVoluntary" = 'true' then 1 else 0 end as involuntaryPresence,
+					case when a.doc->>"$.bcpg_allergenListOnSite" = 'true' then 1 else 0 end as onSitePresence,
+					case when a.doc->>"$.bcpg_allergenListOnLine" = 'true' then 1 else 0 end as onLinePresence,
+					case when a.doc->>"$.bcpg_allergenListIsCleaned" = 'true' then 1 else 0 end as riskManaged,
+					CAST(NULLIF(a.doc->>"$.bcpg_allergenListQtyPerc", 'null') AS DECIMAL(20,6)) as allergenQtyPerc,
+					b.nodeRef as productNodeRef,
+					b.doc->>"$.cm_name" as productName,
+					b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
+					b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
+					b.doc->>"$.bcpg_productState" as productState,
+					b.doc->>"$.metadata_siteId" as siteId,
+					b.doc->>"$.metadata_siteName" as siteName
+				from
+					allergenList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef
+			</SQL>
+		</View>
+
+		<Dimension name="site" caption="${msg("jsolap.site.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
+				<Level name="site" caption="${msg("jsolap.site.title")}" column="siteId" nameColumn="siteName" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension name="designation" caption="${msg("jsolap.designation.title")}">
+			<Hierarchy name="productPerFamily" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState" type="String" />
+				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productNodeRef" nameColumn="productName" type="String" highCardinality="true" />
+			</Hierarchy>
+			<Hierarchy name="productFamily" caption="${msg("jsolap.productFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+				<Level name="productHierarchy1" caption="${msg("jsolap.productFamily.title")}" column="productHierarchy1" type="String" uniqueMembers="true" />
+				<Level name="productHierarchy2" caption="${msg("jsolap.productSubFamily.title")}" column="productHierarchy2" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<Dimension type="StandardDimension" name="allergen" caption="${msg("jsolap.allergen.title")}">
+			<Hierarchy name="allergenPerType" caption="${msg("jsolap.allergenPerType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}">
+				<Level approxRowCount="2" name="allergenType" caption="${msg("jsolap.allergenType.title")}" column="allergenType" type="String">
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+								case 'Major' :
+									return '${msg("jsolap.allergenType.major")}';
+								case 'Minor' :
+									return '${msg("jsolap.allergenType.minor")}';
+								default:
+									return member.getName();
+							}
+						</Script>
+					</MemberFormatter>
+				</Level>
+				<Level name="allergenNodeRef" caption="${msg("jsolap.allergen.title")}" column="allergenNodeRef" nameColumn="allergenName" type="String" />
+			</Hierarchy>
+		</Dimension>
+
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="productNodeRef" />
+
+		<Measure name="allergenProducts" caption="${msg("jsolap.allergenProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
+		<Measure name="allergenVoluntary" caption="${msg("jsolap.allergenVoluntaryPresence.title")}" column="voluntaryPresence" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="allergenInvoluntary" caption="${msg("jsolap.allergenInvoluntaryPresence.title")}" column="involuntaryPresence" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="allergenOnSite" caption="${msg("jsolap.allergenOnSite.title")}" column="onSitePresence" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="allergenOnLine" caption="${msg("jsolap.allergenOnLine.title")}" column="onLinePresence" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="allergenRiskManaged" caption="${msg("jsolap.allergenRiskManaged.title")}" column="riskManaged" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="allergenQtyPerc" caption="${msg("jsolap.allergenQtyPerc.title")}" column="allergenQtyPerc" datatype="Numeric" aggregator="avg" visible="true" />
+	</Cube>
+
 	<#-- Catalogue completeness (#24931). bcpg:entityScore is a d:text holding the JSON the catalog
 	     formulation produces: one entry per catalog, with its score and the fields still missing.
 	     JSON_TABLE unnests it so the completeness becomes a cube like any other.
