@@ -20,8 +20,8 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.nio.file.AccessDeniedException;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -38,6 +38,8 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  * @version $Id: $Id
  */
 public class GetEntityWebScript extends AbstractEntityWebScript {
+
+	private static final String ACCESS_DENIED_MESSAGE = "You have no right to see this node";
 
 	/** {@inheritDoc} */
 	@Override
@@ -78,22 +80,11 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 		} catch (BeCPGException e) {
 			if (isBrokenPipe(e)) {
 				logger.info("Client aborted connection for entity: " + entityNodeRef);
+			} else if (isAccessDenied(e)) {
+				refuseExport(entityNodeRef, resp, streaming);
 			} else {
-				logger.error("Cannot export entity " + entityNodeRef + " for user " + org.alfresco.repo.security.authentication.AuthenticationUtil.getFullyAuthenticatedUser(), e);
-				
-				try {
-					resp.reset();
-					throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
-				} catch (IllegalStateException ex) {
-					logger.warn("Cannot reset response for error, already committed: " + ex.getMessage());
-				}
-			}
-		} catch (AccessDeniedException e) {
-			try {
-				resp.reset();
-				throw new WebScriptException(Status.STATUS_FORBIDDEN, "You have no right to see this node");
-			} catch (IllegalStateException ex) {
-				logger.warn("Cannot reset response for access denied, already committed: " + ex.getMessage());
+				logger.error("Cannot export entity " + entityNodeRef + " for user " + AuthenticationUtil.getFullyAuthenticatedUser(), e);
+				endOnError(resp, streaming, Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
 			}
 		} catch (SocketException e1) {
 			if (logger.isInfoEnabled()) {
@@ -110,13 +101,49 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			}
 			throw e;
 		} catch (RuntimeException e) {
-			if (!streaming) {
+			if (isAccessDenied(e)) {
+				refuseExport(entityNodeRef, resp, streaming);
+			} else if (streaming) {
+				logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
+			} else {
 				throw e;
 			}
-			logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
 		}
 
 	}
 
-	
+	/**
+	 * <p>refuseExport.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @param streaming whether the response output stream has already been taken
+	 */
+	private void refuseExport(NodeRef entityNodeRef, WebScriptResponse resp, boolean streaming) {
+		logger.warn("User " + AuthenticationUtil.getFullyAuthenticatedUser() + " is not allowed to export entity " + entityNodeRef);
+		endOnError(resp, streaming, Status.STATUS_FORBIDDEN, ACCESS_DENIED_MESSAGE);
+	}
+
+	/**
+	 * <p>endOnError.</p>
+	 *
+	 * Reports the error to the caller, unless the response output stream has already been taken:
+	 * the container then renders the error by asking the response for its writer, which fails on
+	 * "getOutputStream() has already been called" and replaces the real cause with a message about
+	 * the response. Past that point the cause has been logged and the caller keeps the truncated
+	 * body it already holds.
+	 *
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @param streaming whether the response output stream has already been taken
+	 * @param status the status to report
+	 * @param message the message to report
+	 */
+	private void endOnError(WebScriptResponse resp, boolean streaming, int status, String message) {
+		if (streaming) {
+			return;
+		}
+		resp.reset();
+		throw new WebScriptException(status, message);
+	}
+
 }

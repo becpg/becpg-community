@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.query.EmptyPagingResults;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -58,6 +59,7 @@ import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
+import net.sf.acegisecurity.AccessDeniedException;
 
 /**
  * Abstract remote entity webscript
@@ -833,7 +835,22 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return false;
 	}
 
-	
-	
+	/**
+	 * <p>isAccessDenied.</p>
+	 *
+	 * <p>Walks the cause chain for a refused permission. Both types are looked for on purpose: the
+	 * {@code NodeService} AOP proxy translates the acegi one into
+	 * {@link org.alfresco.repo.security.permissions.AccessDeniedException} before it leaves, and the
+	 * two classes share no hierarchy. The export then wraps whichever it got into a
+	 * {@link fr.becpg.common.BeCPGException}, so only the chain tells a refusal apart from a
+	 * genuine internal error.</p>
+	 *
+	 * @param t a {@link java.lang.Throwable} object
+	 * @return a boolean
+	 */
+	protected boolean isAccessDenied(Throwable t) {
+		return ExceptionStackUtil.getCause(t, AccessDeniedException.class,
+				org.alfresco.repo.security.permissions.AccessDeniedException.class) != null;
+	}
 
 }
