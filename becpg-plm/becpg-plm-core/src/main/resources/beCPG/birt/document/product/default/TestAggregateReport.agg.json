@@ -33,7 +33,7 @@
 
   "annexes": [
     {
-      "reportKind": "annexe-mp",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
       "title": "ANNEX 1: RAW MATERIALS",
       "scope": "COMPO_CHILDREN",
       "recurse": true,
@@ -44,7 +44,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-emb-primaire",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
       "title": "ANNEX 2: PRIMARY PACKAGING",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
@@ -54,7 +54,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-emb-secondaire",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
       "title": "ANNEX 3: SECONDARY PACKAGING",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Secondary",
@@ -65,7 +65,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-photos",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Photos",
       "title": "ANNEX 4: PHOTOS",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -74,7 +74,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-qualite",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=QualityDocuments",
       "title": "ANNEX 5: QUALITY DOCUMENTS",
       "scope": "ENTITY",
       "componentHeading": false,

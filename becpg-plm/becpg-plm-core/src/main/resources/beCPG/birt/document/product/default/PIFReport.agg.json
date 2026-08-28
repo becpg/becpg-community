@@ -35,7 +35,7 @@
 
   "annexes": [
     {
-      "reportKind": "annexe-compo-quali-quanti",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=CompoQualiQuanti",
       "title": "SLabel.pifAnnexCompoQualiQuanti",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -44,7 +44,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-mp",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
       "title": "SLabel.pifAnnexRawMaterials",
       "scope": "COMPO_CHILDREN",
       "recurse": true,
@@ -56,7 +56,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-emb-primaire",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
       "title": "SLabel.pifAnnexPrimaryPackaging",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
@@ -67,7 +67,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-cpsr",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=CPSR",
       "title": "SLabel.pifAnnexCPSR",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -76,7 +76,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-stability-micro",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=StabilityMicro",
       "title": "SLabel.pifAnnexStabilityMicro",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -85,7 +85,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-claim-efficacy",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=ClaimEfficacy",
       "title": "SLabel.pifAnnexClaimEfficacy",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -94,7 +94,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-gmp-animal-testing",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=GMPAnimalTesting",
       "title": "SLabel.pifAnnexGMPAnimalTesting",
       "scope": "ENTITY",
       "componentHeading": false,

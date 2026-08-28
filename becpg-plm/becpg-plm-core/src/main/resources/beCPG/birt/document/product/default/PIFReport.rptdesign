@@ -417,7 +417,7 @@ c + v;</expression>
                     <label id="212">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-compo-quali-quanti}}</text-property>
+                        <text-property name="text">{{page:CompoQualiQuanti}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -435,7 +435,7 @@ c + v;</expression>
                     <label id="217">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-mp}}</text-property>
+                        <text-property name="text">{{page:SupplierSheet}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -453,7 +453,7 @@ c + v;</expression>
                     <label id="222">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-emb-primaire}}</text-property>
+                        <text-property name="text">{{page:PackagingSheet}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -471,7 +471,7 @@ c + v;</expression>
                     <label id="227">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-cpsr}}</text-property>
+                        <text-property name="text">{{page:CPSR}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -489,7 +489,7 @@ c + v;</expression>
                     <label id="232">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-stability-micro}}</text-property>
+                        <text-property name="text">{{page:StabilityMicro}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -507,7 +507,7 @@ c + v;</expression>
                     <label id="237">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-claim-efficacy}}</text-property>
+                        <text-property name="text">{{page:ClaimEfficacy}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -525,7 +525,7 @@ c + v;</expression>
                     <label id="242">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-gmp-animal-testing}}</text-property>
+                        <text-property name="text">{{page:GMPAnimalTesting}}</text-property>
                     </label>
                 </cell>
             </row>

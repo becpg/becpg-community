@@ -43,6 +43,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -51,9 +52,12 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.report.AggregateReportModelBuilder;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.pdf.ReportPdfAggregator;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.AggregateReportConfig;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexConfig;
 import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexDocument;
 import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexSection;
 import fr.becpg.repo.report.pdf.ReportPdfAggregator.ComponentHeadingStyle;
@@ -80,6 +84,9 @@ public class AggregateReportIT extends PLMBaseTestCase {
 
     @Autowired
     private AssociationService associationService;
+
+    @Autowired
+    private AggregateReportModelBuilder aggregateReportModelBuilder;
 
     @Test
     public void testPdfBoxAggregatorUnit() throws Exception {
@@ -364,16 +371,18 @@ public class AggregateReportIT extends PLMBaseTestCase {
 
             // Create mock PDF to attach
             byte[] docBytes = createMockPdf("Mock Supplier Specifications Page 1", "Mock Supplier Specifications Page 2");
-            NodeRef docNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "supplier_spec.pdf"), ContentModel.TYPE_CONTENT).getChildRef();
+            NodeRef docNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "supplier_spec.pdf"), ReportModel.TYPE_REPORT).getChildRef();
             ContentWriter writer = contentService.getWriter(docNodeRef, ContentModel.PROP_CONTENT, true);
             writer.setMimetype("application/pdf");
             writer.putContent(new ByteArrayInputStream(docBytes));
 
-            // Set rep:reportKinds aspect to direct routing
-            Map<QName, Serializable> aspectProps = new HashMap<>();
-            List<String> reportKinds = Collections.singletonList("annexe-mp");
-            aspectProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) reportKinds);
-            nodeService.addAspect(docNodeRef, ReportModel.ASPECT_REPORT_KIND, aspectProps);
+            // Create SupplierSheet template and attach to docNodeRef via rep:reportTplAssoc
+            Map<QName, Serializable> tplProps = new HashMap<>();
+            tplProps.put(ContentModel.PROP_NAME, "SupplierReportTpl");
+            tplProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("SupplierSheet"));
+            NodeRef supplierTplRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(ReportModel.REPORT_URI, "SupplierReportTpl"), ReportModel.TYPE_REPORT_TPL, tplProps).getChildRef();
+            associationService.update(docNodeRef, ReportModel.ASSOC_REPORT_TPL, supplierTplRef);
 
             return pfRef;
         });
@@ -477,10 +486,14 @@ public class AggregateReportIT extends PLMBaseTestCase {
             writer.setMimetype("application/pdf");
             writer.putContent(new ByteArrayInputStream(cpsrPdfBytes));
 
-            // Set aspect rep:reportKinds = "annexe-cpsr"
-            Map<QName, Serializable> aspectProps = new HashMap<>();
-            aspectProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("annexe-cpsr"));
-            nodeService.addAspect(cpsrDocNodeRef, ReportModel.ASPECT_REPORT_KIND, aspectProps);
+            // Set document type to CPSR
+            Map<QName, Serializable> docTypeProps = new HashMap<>();
+            docTypeProps.put(ContentModel.PROP_NAME, "CPSR");
+            docTypeProps.put(BeCPGModel.PROP_CHARACT_NAME, "CPSR");
+            NodeRef docTypeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(BeCPGModel.BECPG_URI, "CPSR"), BeCPGModel.TYPE_DOCUMENT_TYPE, docTypeProps).getChildRef();
+            nodeService.addAspect(cpsrDocNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT, null);
+            associationService.update(cpsrDocNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF, docTypeNodeRef);
 
             return null;
         });
@@ -622,9 +635,13 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 writer.setMimetype("application/pdf");
                 writer.putContent(new ByteArrayInputStream(cpsrPdfBytes));
 
-                Map<QName, Serializable> aspectProps = new HashMap<>();
-                aspectProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("annexe-cpsr"));
-                nodeService.addAspect(cpsrDocNodeRef, ReportModel.ASPECT_REPORT_KIND, aspectProps);
+                Map<QName, Serializable> docTypeProps = new HashMap<>();
+                docTypeProps.put(ContentModel.PROP_NAME, "CPSR");
+                docTypeProps.put(BeCPGModel.PROP_CHARACT_NAME, "CPSR");
+                NodeRef docTypeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+                        QName.createQName(BeCPGModel.BECPG_URI, "CPSR"), BeCPGModel.TYPE_DOCUMENT_TYPE, docTypeProps).getChildRef();
+                nodeService.addAspect(cpsrDocNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT, null);
+                associationService.update(cpsrDocNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF, docTypeNodeRef);
 
                 return pfRef;
             });
@@ -938,9 +955,114 @@ public class AggregateReportIT extends PLMBaseTestCase {
             String page1Text = stripper.getText(doc);
 
             assertTrue(page1Text.contains("CONFIDENTIAL"));
+            assertTrue(page1Text.contains("PRINTED-31/08/2026"));
             assertTrue(page1Text.contains("First page of body text"));
             assertTrue(page1Text.contains("Page 1 / 4"));
         }
+    }
+
+    @Test
+    public void testAnnexIdResolverDocumentTypeAndReportKindsMatching() throws Exception {
+        final NodeRef pfNodeRef = inWriteTx(() -> {
+            FinishedProductData pfData = new FinishedProductData();
+            pfData.setName("PF Annex Resolver Test");
+            NodeRef pfRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+
+            NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfRef, RepoConsts.PATH_DOCUMENTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
+
+            // Ensure "Certificate" category exists in system list
+            try {
+                NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
+                NodeRef docCategoriesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_DOCUMENT_CATEGORIES);
+                if (docCategoriesFolder != null) {
+                    Map<QName, Serializable> catProps = new HashMap<>();
+                    catProps.put(BeCPGModel.PROP_LV_VALUE, "Certificate");
+                    nodeService.createNode(docCategoriesFolder, ContentModel.ASSOC_CONTAINS,
+                            QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Certificate"),
+                            BeCPGModel.TYPE_LIST_VALUE, catProps);
+                }
+            } catch (Exception e) {
+                // List item may already exist
+            }
+
+            // Create Document Type for Certificate
+            Map<QName, Serializable> docTypeProps = new HashMap<>();
+            docTypeProps.put(ContentModel.PROP_NAME, "Certificat_Bio");
+            docTypeProps.put(BeCPGModel.PROP_DOCUMENT_TYPE_CATEGORY, "Certificate");
+            NodeRef docTypeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(BeCPGModel.BECPG_URI, "Certificat_Bio"), BeCPGModel.TYPE_DOCUMENT_TYPE, docTypeProps).getChildRef();
+
+            // File 1: cert_bio.pdf with bcpg:documentTypeRef -> docTypeNodeRef
+            byte[] certBytes = createMockPdf("Bio Certificate Content Page 1");
+            NodeRef certDocRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "cert_bio.pdf"), ContentModel.TYPE_CONTENT).getChildRef();
+            nodeService.addAspect(certDocRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT, null);
+            ContentWriter certWriter = contentService.getWriter(certDocRef, ContentModel.PROP_CONTENT, true);
+            certWriter.setMimetype("application/pdf");
+            certWriter.putContent(new ByteArrayInputStream(certBytes));
+            associationService.update(certDocRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF, docTypeNodeRef);
+
+            // Create Report Template for SupplierSheet
+            Map<QName, Serializable> tplProps = new HashMap<>();
+            tplProps.put(ContentModel.PROP_NAME, "SupplierSheetTpl");
+            tplProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("SupplierSheet"));
+            NodeRef tplNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(ReportModel.REPORT_URI, "SupplierSheetTpl"), ReportModel.TYPE_REPORT_TPL, tplProps).getChildRef();
+
+            // File 2: ft_supplier.pdf linked to SupplierSheet template via rep:reportTplAssoc
+            byte[] ftBytes = createMockPdf("Supplier Spec Content Page 1");
+            NodeRef ftDocRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "ft_supplier.pdf"), ReportModel.TYPE_REPORT).getChildRef();
+            ContentWriter ftWriter = contentService.getWriter(ftDocRef, ContentModel.PROP_CONTENT, true);
+            ftWriter.setMimetype("application/pdf");
+            ftWriter.putContent(new ByteArrayInputStream(ftBytes));
+            associationService.update(ftDocRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
+
+            return pfRef;
+        });
+
+        inReadTx(() -> {
+            AggregateReportConfig config = new AggregateReportConfig();
+            List<AnnexConfig> annexConfigs = new ArrayList<>();
+
+            AnnexConfig annex1 = new AnnexConfig();
+            annex1.setAnnexIdResolver("bcpg:documentTypeRef|bcpg:docTypeCategory=Certificate");
+            annex1.setTitle("Certificates Annex");
+            annex1.setScope("ENTITY");
+            annexConfigs.add(annex1);
+
+            AnnexConfig annex2 = new AnnexConfig();
+            annex2.setAnnexIdResolver("rep:reportTplAssoc|rep:reportKinds=SupplierSheet");
+            annex2.setTitle("Raw Materials Annex");
+            annex2.setScope("ENTITY");
+            annexConfigs.add(annex2);
+
+            AnnexConfig annex3 = new AnnexConfig();
+            annex3.setAnnexIdResolver("bcpg:documentTypeRef|cm:name=Certificat_Bio");
+            annex3.setTitle("Bio Certificates by cm:name");
+            annex3.setScope("ENTITY");
+            annexConfigs.add(annex3);
+
+            config.setAnnexes(annexConfigs);
+
+            List<AnnexSection> sections = aggregateReportModelBuilder.buildAnnexSections(pfNodeRef, config);
+            assertNotNull(sections);
+            assertEquals(3, sections.size());
+
+            AnnexSection certSection = sections.get(0);
+            assertEquals("Certificate", certSection.getAnnexKey());
+            assertEquals(1, certSection.getDocuments().size());
+
+            AnnexSection rmSection = sections.get(1);
+            assertEquals("SupplierSheet", rmSection.getAnnexKey());
+            assertEquals(1, rmSection.getDocuments().size());
+
+            AnnexSection cmNameCertSection = sections.get(2);
+            assertEquals("Certificat_Bio", cmNameCertSection.getAnnexKey());
+            assertEquals(1, cmNameCertSection.getDocuments().size());
+
+            return null;
+        });
     }
 
     private byte[] createMockPdfWithFragmentedBirtFooters(String... pageTexts) throws Exception {
@@ -957,6 +1079,13 @@ public class AggregateReportIT extends PLMBaseTestCase {
                     canvas.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
                     canvas.newLineAtOffset(50, 40);
                     canvas.showText("CONFIDENTIAL");
+                    canvas.endText();
+
+                    // Center footer with date
+                    canvas.beginText();
+                    canvas.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
+                    canvas.newLineAtOffset(200, 40);
+                    canvas.showText("PRINTED-31/08/2026");
                     canvas.endText();
 
                     // Fragment 1: "Page : 1"

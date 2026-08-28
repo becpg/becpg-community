@@ -114,7 +114,7 @@ public class AggregateReportEngine implements BeCPGReportEngine {
             if (logger.isDebugEnabled()) {
                 logger.debug("Built " + sections.size() + " annex sections");
                 for (AnnexSection sec : sections) {
-                    logger.debug("  Section: '" + sec.getTitle() + "' (kind: " + sec.getReportKind() + "), documents count: "
+                    logger.debug("  Section: '" + sec.getTitle() + "' (resolver: " + sec.getAnnexIdResolver() + ", key: " + sec.getAnnexKey() + "), documents count: "
                             + (sec.getDocuments() != null ? sec.getDocuments().size() : 0)
                             + ", emptyPlaceholder: " + sec.getEmptyPlaceholder());
                 }

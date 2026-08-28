@@ -18,8 +18,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Component;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -116,6 +119,12 @@ public class AggregateReportModelBuilder {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private AssociationService associationService;
+
+    @Autowired
+    private EntityService entityService;
+
     public List<AnnexSection> buildAnnexSections(NodeRef fpNodeRef, AggregateReportConfig config) {
         return buildAnnexSections(fpNodeRef, config, null);
     }
@@ -138,8 +147,9 @@ public class AggregateReportModelBuilder {
             String scope = annex.getScope();
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Processing annex config - reportKind: " + annex.getReportKind() + ", scope: " + scope + ", title: " + annex.getTitle()
-                        + ", required: " + annex.isRequired() + ", recurse: " + annex.isRecurse() + ", pkgLevel: " + annex.getPkgLevel());
+                logger.debug("Processing annex config - resolver: " + annex.getAnnexIdResolver() + ", key: " + annex.getAnnexKey()
+                        + ", scope: " + scope + ", title: " + annex.getTitle() + ", required: " + annex.isRequired()
+                        + ", recurse: " + annex.isRecurse() + ", pkgLevel: " + annex.getPkgLevel());
             }
 
             if ("ENTITY".equalsIgnoreCase(scope)) {
@@ -150,7 +160,7 @@ public class AggregateReportModelBuilder {
                 collectPackagingAnnex(fpNodeRef, annex, documents);
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Unknown annex scope: " + scope + " for reportKind: " + annex.getReportKind());
+                    logger.debug("Unknown annex scope: " + scope + " for annex: " + annex.getAnnexIdResolver());
                 }
             }
 
@@ -160,19 +170,19 @@ public class AggregateReportModelBuilder {
             if (documents.isEmpty()) {
                 if (annex.isRequired()) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Annex section '" + resolvedTitle + "' (kind: " + annex.getReportKind() + ") has no documents but is required. Adding placeholder section.");
+                        logger.debug("Annex section '" + resolvedTitle + "' (resolver: " + annex.getAnnexIdResolver() + ") has no documents but is required. Adding placeholder section.");
                     }
-                    sections.add(new AnnexSection(annex.getReportKind(), resolvedTitle, documents, resolvedPlaceholder));
+                    sections.add(new AnnexSection(annex.getAnnexIdResolver(), resolvedTitle, documents, resolvedPlaceholder));
                 } else {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Annex section '" + resolvedTitle + "' (kind: " + annex.getReportKind() + ") has no documents and is not required. Skipping.");
+                        logger.debug("Annex section '" + resolvedTitle + "' (resolver: " + annex.getAnnexIdResolver() + ") has no documents and is not required. Skipping.");
                     }
                 }
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Adding annex section '" + resolvedTitle + "' (kind: " + annex.getReportKind() + ") with " + documents.size() + " documents");
+                    logger.debug("Adding annex section '" + resolvedTitle + "' (resolver: " + annex.getAnnexIdResolver() + ") with " + documents.size() + " documents");
                 }
-                sections.add(new AnnexSection(annex.getReportKind(), resolvedTitle, documents, resolvedPlaceholder));
+                sections.add(new AnnexSection(annex.getAnnexIdResolver(), resolvedTitle, documents, resolvedPlaceholder));
             }
         }
 
@@ -206,18 +216,18 @@ public class AggregateReportModelBuilder {
 
     private void collectEntityAnnex(NodeRef fpNodeRef, AnnexConfig annex, List<AnnexDocument> documents) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Collecting ENTITY annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
+            logger.debug("Collecting ENTITY annex for node: " + fpNodeRef + ", resolver: " + annex.getAnnexIdResolver());
         }
-        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex.getReportKind(), annex.getMimeTypes(), true);
+        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex, annex.getMimeTypes(), true);
         documents.addAll(docs);
         if (logger.isDebugEnabled()) {
-            logger.debug("Collected " + docs.size() + " ENTITY documents for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
+            logger.debug("Collected " + docs.size() + " ENTITY documents for node: " + fpNodeRef + ", resolver: " + annex.getAnnexIdResolver());
         }
     }
 
     private void collectCompoAnnex(NodeRef fpNodeRef, AnnexConfig annex, List<AnnexDocument> documents) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Collecting COMPO_CHILDREN annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind() + ", recurse: " + annex.isRecurse() + ", allowedTypes: " + annex.getComponentTypes());
+            logger.debug("Collecting COMPO_CHILDREN annex for node: " + fpNodeRef + ", resolver: " + annex.getAnnexIdResolver() + ", recurse: " + annex.isRecurse() + ", allowedTypes: " + annex.getComponentTypes());
         }
         final List<NodeRef> collectedComponents = new ArrayList<>();
         transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -228,16 +238,16 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + compoComponents.size() + " composition components for node: " + fpNodeRef + ": " + compoComponents);
         }
-        List<AnnexDocument> docs = collectDocumentsForNodesParallel(compoComponents, annex.getReportKind(), annex.getMimeTypes());
+        List<AnnexDocument> docs = collectDocumentsForNodesParallel(compoComponents, annex, annex.getMimeTypes());
         documents.addAll(docs);
         if (logger.isDebugEnabled()) {
-            logger.debug("Total COMPO_CHILDREN documents collected: " + documents.size() + " for reportKind: " + annex.getReportKind());
+            logger.debug("Total COMPO_CHILDREN documents collected: " + documents.size() + " for resolver: " + annex.getAnnexIdResolver());
         }
     }
 
     private void collectPackagingAnnex(NodeRef fpNodeRef, AnnexConfig annex, List<AnnexDocument> documents) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Collecting PACKAGING_CHILDREN annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind() + ", pkgLevel: " + annex.getPkgLevel());
+            logger.debug("Collecting PACKAGING_CHILDREN annex for node: " + fpNodeRef + ", resolver: " + annex.getAnnexIdResolver() + ", pkgLevel: " + annex.getPkgLevel());
         }
         final List<NodeRef> collectedComponents = new ArrayList<>();
         transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -248,20 +258,20 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + packagingComponents.size() + " packaging components for node: " + fpNodeRef + ": " + packagingComponents);
         }
-        List<AnnexDocument> docs = collectDocumentsForNodesParallel(packagingComponents, annex.getReportKind(), annex.getMimeTypes());
+        List<AnnexDocument> docs = collectDocumentsForNodesParallel(packagingComponents, annex, annex.getMimeTypes());
         documents.addAll(docs);
         if (logger.isDebugEnabled()) {
-            logger.debug("Total PACKAGING_CHILDREN documents collected: " + documents.size() + " for reportKind: " + annex.getReportKind());
+            logger.debug("Total PACKAGING_CHILDREN documents collected: " + documents.size() + " for resolver: " + annex.getAnnexIdResolver());
         }
     }
 
-    private List<AnnexDocument> collectDocumentsForNodesParallel(List<NodeRef> entityNodeRefs, String reportKind, List<String> mimeTypes) {
+    private List<AnnexDocument> collectDocumentsForNodesParallel(List<NodeRef> entityNodeRefs, AnnexConfig annex, List<String> mimeTypes) {
         if (entityNodeRefs == null || entityNodeRefs.isEmpty()) {
             return Collections.emptyList();
         }
 
         if (entityNodeRefs.size() == 1 || Boolean.TRUE.equals(collectingSubReport.get())) {
-            return collectDocumentsSequentially(entityNodeRefs, reportKind, mimeTypes);
+            return collectDocumentsSequentially(entityNodeRefs, annex, mimeTypes);
         }
 
         String runAsUser = AuthenticationUtil.getRunAsUser();
@@ -281,7 +291,7 @@ public class AggregateReportModelBuilder {
                     return AuthenticationUtil.runAs(() -> {
                         I18NUtil.setLocale(locale);
                         I18NUtil.setContentLocale(contentLocale);
-                        return collectSubReportDocuments(compNode, reportKind, mimeTypes);
+                        return collectSubReportDocuments(compNode, annex, mimeTypes);
                     }, finalRunAsUser);
                 }, tenantDomain);
             }));
@@ -296,7 +306,7 @@ public class AggregateReportModelBuilder {
                     allDocuments.addAll(docs);
                 }
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Collected " + (docs != null ? docs.size() : 0) + " documents for component: " + compNode + " (reportKind: " + reportKind + ")");
+                    logger.debug("Collected " + (docs != null ? docs.size() : 0) + " documents for component: " + compNode + " (resolver: " + annex.getAnnexIdResolver() + ")");
                 }
             } catch (Exception e) {
                 logger.error("Failed to generate/collect sub-report for component " + compNode + ": " + e.getMessage(), e);
@@ -314,21 +324,21 @@ public class AggregateReportModelBuilder {
      * run them. CallerRunsPolicy only rescues a full queue, which ten nested components never
      * fill.
      */
-    private List<AnnexDocument> collectDocumentsSequentially(List<NodeRef> entityNodeRefs, String reportKind, List<String> mimeTypes) {
+    private List<AnnexDocument> collectDocumentsSequentially(List<NodeRef> entityNodeRefs, AnnexConfig annex, List<String> mimeTypes) {
         List<AnnexDocument> documents = new ArrayList<>();
 
         for (NodeRef entityNodeRef : entityNodeRefs) {
-            documents.addAll(collectSubReportDocuments(entityNodeRef, reportKind, mimeTypes));
+            documents.addAll(collectSubReportDocuments(entityNodeRef, annex, mimeTypes));
         }
 
         return documents;
     }
 
-    private List<AnnexDocument> collectSubReportDocuments(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes) {
+    private List<AnnexDocument> collectSubReportDocuments(NodeRef entityNodeRef, AnnexConfig annex, List<String> mimeTypes) {
         Boolean wasCollecting = collectingSubReport.get();
         collectingSubReport.set(Boolean.TRUE);
         try {
-            return collectDocumentsForNode(entityNodeRef, reportKind, mimeTypes, false);
+            return collectDocumentsForNode(entityNodeRef, annex, mimeTypes, false);
         } catch (Exception e) {
             logger.error("Failed to generate/collect sub-report for component " + entityNodeRef + ": " + e.getMessage(), e);
             return Collections.emptyList();
@@ -445,17 +455,20 @@ public class AggregateReportModelBuilder {
         }
     }
 
-    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, boolean isRootEntityDocument) {
+    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, AnnexConfig annex, List<String> mimeTypes, boolean isRootEntityDocument) {
         if (logger.isDebugEnabled()) {
-            logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", reportKind: " + reportKind + ", mimeTypes: " + mimeTypes);
+            logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", resolver: " + annex.getAnnexIdResolver() + ", mimeTypes: " + mimeTypes);
         }
 
         final Locale reportLocale = I18NUtil.getLocale();
+        String reportKind = extractReportKindFromResolver(annex.getAnnexIdResolver());
 
-        refreshReportsOfKind(entityNodeRef, reportKind, reportLocale, isRootEntityDocument);
+        if (reportKind != null) {
+            refreshReportsOfKind(entityNodeRef, reportKind, reportLocale, isRootEntityDocument);
+        }
 
         return transactionService.getRetryingTransactionHelper()
-                .doInTransaction(() -> collectDocuments(entityNodeRef, reportKind, mimeTypes, reportLocale), true);
+                .doInTransaction(() -> collectDocuments(entityNodeRef, annex, mimeTypes, reportLocale), true);
     }
 
     private void refreshReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale reportLocale, boolean isRootEntityDocument) {
@@ -489,18 +502,26 @@ public class AggregateReportModelBuilder {
      * per component gives the reads a consistent view and a defined end, without holding the read
      * view open for the whole assembly - which is what would keep InnoDB from purging its undo.
      */
-    private List<AnnexDocument> collectDocuments(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, Locale reportLocale) {
+    private List<AnnexDocument> collectDocuments(NodeRef entityNodeRef, AnnexConfig annex, List<String> mimeTypes, Locale reportLocale) {
         List<AnnexDocument> results = new ArrayList<>();
         Set<NodeRef> collectedNodeRefs = new HashSet<>();
 
         String compName = readComponentName(entityNodeRef, reportLocale);
+        String reportKind = extractReportKindFromResolver(annex.getAnnexIdResolver());
 
-        collectReportsOfKind(entityNodeRef, reportKind, reportLocale, compName, results, collectedNodeRefs);
-        if (logger.isDebugEnabled()) {
-            logger.debug("After collectReportsOfKind: " + results.size() + " documents for node " + entityNodeRef);
+        if (reportKind != null) {
+            collectReportsOfKind(entityNodeRef, reportKind, reportLocale, compName, results, collectedNodeRefs);
+            if (logger.isDebugEnabled()) {
+                logger.debug("After collectReportsOfKind: " + results.size() + " documents for node " + entityNodeRef);
+            }
         }
 
-        collectFilesRecursively(entityNodeRef, reportKind, mimeTypes, compName, results, 0, collectedNodeRefs);
+        NodeRef docsFolder = entityService.getDocumentsFolder(entityNodeRef, false);
+        if (docsFolder != null) {
+            collectFilesRecursively(docsFolder, annex, mimeTypes, compName, results, 0, collectedNodeRefs);
+        } else {
+            collectFilesRecursively(entityNodeRef, annex, mimeTypes, compName, results, 0, collectedNodeRefs);
+        }
         if (logger.isDebugEnabled()) {
             logger.debug("After collectFilesRecursively: " + results.size() + " total documents for node " + entityNodeRef);
         }
@@ -614,7 +635,7 @@ public class AggregateReportModelBuilder {
         return Collections.emptySet();
     }
 
-    private void collectFilesRecursively(NodeRef folderNodeRef, String reportKind, List<String> mimeTypes, String compName, List<AnnexDocument> results, int depth, Set<NodeRef> collectedNodeRefs) {
+    private void collectFilesRecursively(NodeRef folderNodeRef, AnnexConfig annex, List<String> mimeTypes, String compName, List<AnnexDocument> results, int depth, Set<NodeRef> collectedNodeRefs) {
         if (depth > 2) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Max depth reached (" + depth + "), skipping folder: " + folderNodeRef);
@@ -628,7 +649,7 @@ public class AggregateReportModelBuilder {
         if (fileInfos != null) {
             for (FileInfo file : fileInfos) {
                 if (file.isFolder()) {
-                    collectFilesRecursively(file.getNodeRef(), reportKind, mimeTypes, compName, results, depth + 1, collectedNodeRefs);
+                    collectFilesRecursively(file.getNodeRef(), annex, mimeTypes, compName, results, depth + 1, collectedNodeRefs);
                 } else {
                     NodeRef fileNodeRef = file.getNodeRef();
                     if (collectedNodeRefs.contains(fileNodeRef)) {
@@ -644,35 +665,16 @@ public class AggregateReportModelBuilder {
                         if (logger.isDebugEnabled()) {
                             logger.debug("Inspecting file " + fileNodeRef + " (" + file.getName() + "), mimetype: " + mt + ", mimeAllowed: " + mimeAllowed);
                         }
-                        if (mimeAllowed) {
-                            boolean hasAspect = nodeService.hasAspect(fileNodeRef, ReportModel.ASPECT_REPORT_KIND);
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("File " + fileNodeRef + " has ASPECT_REPORT_KIND: " + hasAspect);
-                            }
-                            if (hasAspect) {
-                                Serializable rKindsProp = nodeService.getProperty(fileNodeRef, ReportModel.PROP_REPORT_KINDS);
-                                List<String> rKinds = null;
-                                if (rKindsProp instanceof List<?> list) {
-                                    rKinds = (List<String>) list;
-                                } else if (rKindsProp instanceof String str && !str.isEmpty()) {
-                                    rKinds = Collections.singletonList(str);
-                                }
-                                boolean kindMatches = rKinds != null && rKinds.contains(reportKind);
+                        if (mimeAllowed && matchesAnnex(fileNodeRef, annex)) {
+                            try (InputStream in = reader.getContentInputStream()) {
+                                byte[] bytes = in.readAllBytes();
+                                results.add(new AnnexDocument(compName, bytes));
+                                collectedNodeRefs.add(fileNodeRef);
                                 if (logger.isDebugEnabled()) {
-                                    logger.debug("File " + fileNodeRef + " reportKinds property: " + rKinds + ", matches '" + reportKind + "': " + kindMatches);
+                                    logger.debug("Collected recursive file " + fileNodeRef + " (" + file.getName() + ", size: " + bytes.length + " bytes)");
                                 }
-                                if (kindMatches) {
-                                    try (InputStream in = reader.getContentInputStream()) {
-                                        byte[] bytes = in.readAllBytes();
-                                        results.add(new AnnexDocument(compName, bytes));
-                                        collectedNodeRefs.add(fileNodeRef);
-                                        if (logger.isDebugEnabled()) {
-                                            logger.debug("Collected recursive file " + fileNodeRef + " (" + file.getName() + ", size: " + bytes.length + " bytes)");
-                                        }
-                                    } catch (Exception e) {
-                                        logger.error("Error reading content stream of file node " + fileNodeRef + ": " + e.getMessage(), e);
-                                    }
-                                }
+                            } catch (Exception e) {
+                                logger.error("Error reading content stream of file node " + fileNodeRef + ": " + e.getMessage(), e);
                             }
                         }
                     } else {
@@ -683,5 +685,130 @@ public class AggregateReportModelBuilder {
                 }
             }
         }
+    }
+
+    private boolean matchesAnnex(NodeRef fileNodeRef, AnnexConfig annex) {
+        String resolver = annex.getAnnexIdResolver();
+        if (resolver != null && !resolver.trim().isEmpty()) {
+            return matchesAnnexIdResolver(fileNodeRef, resolver.trim());
+        }
+        return false;
+    }
+
+    private boolean matchesAnnexIdResolver(NodeRef fileNodeRef, String resolver) {
+        int eqIdx = resolver.indexOf('=');
+        if (eqIdx == -1) {
+            return matchesReportKindProperty(fileNodeRef, resolver);
+        }
+
+        String selector = resolver.substring(0, eqIdx).trim();
+        String expectedValue = resolver.substring(eqIdx + 1).trim();
+
+        if (selector.contains("|")) {
+            String[] parts = selector.split("\\|", 2);
+            String assocName = parts[0].trim();
+            String propName = parts[1].trim();
+
+            QName assocQName = resolveAssocQName(assocName);
+            if (assocQName == null) {
+                return false;
+            }
+
+            NodeRef targetNodeRef = associationService.getTargetAssoc(fileNodeRef, assocQName);
+            if (targetNodeRef == null) {
+                return false;
+            }
+
+            QName propQName = resolvePropQName(propName);
+            if (propQName == null) {
+                return false;
+            }
+
+            Serializable propVal = nodeService.getProperty(targetNodeRef, propQName);
+            return propertyMatches(propVal, expectedValue);
+        } else {
+            QName propQName = resolvePropQName(selector);
+            if (propQName == null) {
+                return false;
+            }
+
+            Serializable propVal = nodeService.getProperty(fileNodeRef, propQName);
+            return propertyMatches(propVal, expectedValue);
+        }
+    }
+
+    private QName resolveAssocQName(String name) {
+        if ("rep:reportTpl".equalsIgnoreCase(name) || "rep:reportTplAssoc".equalsIgnoreCase(name)
+                || "reportTplAssoc".equalsIgnoreCase(name) || "reportTpl".equalsIgnoreCase(name)) {
+            return ReportModel.ASSOC_REPORT_TPL;
+        }
+        if ("bcpg:documentTypeRef".equalsIgnoreCase(name) || "documentTypeRef".equalsIgnoreCase(name)) {
+            return BeCPGModel.ASSOC_DOCUMENT_TYPE_REF;
+        }
+        return resolveQName(name);
+    }
+
+    private QName resolvePropQName(String name) {
+        if ("bcpg:reportKinds".equalsIgnoreCase(name) || "rep:reportKinds".equalsIgnoreCase(name)
+                || "reportKinds".equalsIgnoreCase(name)) {
+            return ReportModel.PROP_REPORT_KINDS;
+        }
+        if ("cm:name".equalsIgnoreCase(name) || "name".equalsIgnoreCase(name)) {
+            return ContentModel.PROP_NAME;
+        }
+        return resolveQName(name);
+    }
+
+    private QName resolveQName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return QName.createQName(name, namespaceService);
+        } catch (Exception e) {
+            logger.warn("Could not resolve QName: " + name, e);
+            return null;
+        }
+    }
+
+    private boolean matchesReportKindProperty(NodeRef fileNodeRef, String expectedValue) {
+        Serializable rKindsProp = nodeService.getProperty(fileNodeRef, ReportModel.PROP_REPORT_KINDS);
+        return propertyMatches(rKindsProp, expectedValue);
+    }
+
+    private boolean propertyMatches(Serializable propVal, String expectedValue) {
+        if (propVal == null) {
+            return false;
+        }
+        if (propVal instanceof MLText mlText) {
+            for (String val : mlText.values()) {
+                if (val != null && val.equalsIgnoreCase(expectedValue)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (propVal instanceof List<?> list) {
+            for (Object item : list) {
+                if (item != null && item.toString().equalsIgnoreCase(expectedValue)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (propVal instanceof String str) {
+            return str.equalsIgnoreCase(expectedValue);
+        }
+        return propVal.toString().equalsIgnoreCase(expectedValue);
+    }
+
+    private String extractReportKindFromResolver(String resolver) {
+        if (resolver == null || resolver.trim().isEmpty()) {
+            return null;
+        }
+        if (resolver.toLowerCase().contains("reportkinds")) {
+            return AnnexConfig.extractKeyFromAnnexIdResolver(resolver);
+        }
+        return null;
     }
 }

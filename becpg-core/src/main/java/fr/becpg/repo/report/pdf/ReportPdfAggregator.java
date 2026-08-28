@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -141,7 +142,7 @@ public class ReportPdfAggregator {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AnnexConfig implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String reportKind;
+        private String annexIdResolver;
         private String title;
         private String scope;
         private boolean recurse;
@@ -154,8 +155,20 @@ public class ReportPdfAggregator {
         private boolean required = false;
         private String pkgLevel;
 
-        public String getReportKind() { return reportKind; }
-        public void setReportKind(String reportKind) { this.reportKind = reportKind; }
+        public static String extractKeyFromAnnexIdResolver(String annexIdResolver) {
+            if (annexIdResolver == null || annexIdResolver.trim().isEmpty()) {
+                return null;
+            }
+            int eqIdx = annexIdResolver.indexOf('=');
+            if (eqIdx != -1 && eqIdx < annexIdResolver.length() - 1) {
+                return annexIdResolver.substring(eqIdx + 1).trim();
+            }
+            return annexIdResolver.trim();
+        }
+
+        public String getAnnexIdResolver() { return annexIdResolver; }
+        public void setAnnexIdResolver(String annexIdResolver) { this.annexIdResolver = annexIdResolver; }
+        public String getAnnexKey() { return extractKeyFromAnnexIdResolver(annexIdResolver); }
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
         public String getScope() { return scope; }
@@ -345,23 +358,24 @@ public class ReportPdfAggregator {
     }
 
     public static class AnnexSection {
-        private final String reportKind;
+        private final String annexIdResolver;
         private final String title;
         private final List<AnnexDocument> documents;
         private final String emptyPlaceholder;
 
-        public AnnexSection(String reportKind, String title, List<AnnexDocument> documents) {
-            this(reportKind, title, documents, null);
+        public AnnexSection(String annexIdResolver, String title, List<AnnexDocument> documents) {
+            this(annexIdResolver, title, documents, null);
         }
 
-        public AnnexSection(String reportKind, String title, List<AnnexDocument> documents, String emptyPlaceholder) {
-            this.reportKind = reportKind;
+        public AnnexSection(String annexIdResolver, String title, List<AnnexDocument> documents, String emptyPlaceholder) {
+            this.annexIdResolver = annexIdResolver;
             this.title = title;
             this.documents = documents;
             this.emptyPlaceholder = emptyPlaceholder;
         }
 
-        public String getReportKind() { return reportKind; }
+        public String getAnnexIdResolver() { return annexIdResolver; }
+        public String getAnnexKey() { return AnnexConfig.extractKeyFromAnnexIdResolver(annexIdResolver); }
         public String getTitle() { return title; }
         public List<AnnexDocument> getDocuments() { return documents; }
         public String getEmptyPlaceholder() { return emptyPlaceholder; }
@@ -451,7 +465,9 @@ public class ReportPdfAggregator {
     public static class PageNumberLocator extends PDFTextStripper {
         public static final float MAX_FOOTER_Y = 80.0f;
         public static final float FOOTER_LINE_TOLERANCE_Y = 5.0f;
+        public static final float FOOTER_GAP_TOLERANCE_X = 15.0f;
         public static final float DEFAULT_MASK_PADDING = 6.0f;
+        private static final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("(?i)(?:^|\\s)\\d{1,4}\\s*(?:/|of)\\s*\\d{1,4}(?!/\\d)(?:\\s|$|[.,;])");
 
         public static class FoundPageNumber {
             public int pageIndex;
@@ -545,13 +561,13 @@ public class ReportPdfAggregator {
             return keyFragments;
         }
 
-        private boolean isPageKeywordOrPattern(String text) {
-            if (text == null) {
+        private static boolean isPageKeywordOrPattern(String text) {
+            if (text == null || text.trim().isEmpty()) {
                 return false;
             }
             String lower = text.toLowerCase();
             return lower.contains("page") || lower.contains("seite") || lower.contains("pág")
-                    || lower.contains("pag.") || lower.matches(".*\\d+\\s*(/|of)\\s*\\d+.*");
+                    || lower.contains("pag.") || PAGE_NUMBER_PATTERN.matcher(text).find();
         }
 
         private FoundPageNumber buildFoundPageNumber(FooterTextFragment pageFrag, Set<FooterTextFragment> processed) {
@@ -562,13 +578,18 @@ public class ReportPdfAggregator {
 
             processed.add(pageFrag);
 
-            for (FooterTextFragment other : currentPageFragments) {
-                if (Math.abs(other.yFromBottom - lineY) <= FOOTER_LINE_TOLERANCE_Y) {
-                    if (other.maxX >= startX - 2.0f) {
-                        startX = Math.min(startX, other.minX);
-                        endX = Math.max(endX, other.maxX);
-                        maxHeight = Math.max(maxHeight, other.height);
-                        processed.add(other);
+            boolean expanded = true;
+            while (expanded) {
+                expanded = false;
+                for (FooterTextFragment other : currentPageFragments) {
+                    if (!processed.contains(other) && Math.abs(other.yFromBottom - lineY) <= FOOTER_LINE_TOLERANCE_Y) {
+                        if (other.minX <= endX + FOOTER_GAP_TOLERANCE_X && other.maxX >= startX - FOOTER_GAP_TOLERANCE_X) {
+                            startX = Math.min(startX, other.minX);
+                            endX = Math.max(endX, other.maxX);
+                            maxHeight = Math.max(maxHeight, other.height);
+                            processed.add(other);
+                            expanded = true;
+                        }
                     }
                 }
             }
@@ -609,7 +630,7 @@ public class ReportPdfAggregator {
             logger.debug("[ReportPdfAggregator] Starting assemble operation. Body PDF length: " + (bodyPdf != null ? bodyPdf.length : 0) + " bytes, sections: " + (sections != null ? sections.size() : 0));
             if (sections != null) {
                 for (AnnexSection sec : sections) {
-                    logger.debug("  - AnnexSection title: '" + sec.getTitle() + "', kind: " + sec.getReportKind() + ", documents count: " + (sec.getDocuments() != null ? sec.getDocuments().size() : 0));
+                    logger.debug("  - AnnexSection title: '" + sec.getTitle() + "', resolver: " + sec.getAnnexIdResolver() + ", documents count: " + (sec.getDocuments() != null ? sec.getDocuments().size() : 0));
                     if (sec.getDocuments() != null) {
                         for (AnnexDocument ad : sec.getDocuments()) {
                             logger.debug("    * AnnexDocument component: '" + ad.getComponentName() + "', size: " + (ad.getPdfBytes() != null ? ad.getPdfBytes().length : 0) + " bytes, isBeCPGDoc: " + ad.isBeCPGDoc());
@@ -665,13 +686,15 @@ public class ReportPdfAggregator {
     private static List<InsertionPoint> resolveInsertionPoints(List<AnnexSection> sections, int numBodyPages, Map<String, Integer> outlineBookmarks, List<TokenLocator.FoundToken> textTokens) throws Exception {
         List<InsertionPoint> insertions = new ArrayList<>();
         for (AnnexSection section : sections) {
-            String rk = section.getReportKind();
+            String key = section.getAnnexKey();
             InsertionPoint ins = new InsertionPoint();
             ins.section = section;
 
             int pageIdx = -1;
-            if (outlineBookmarks.containsKey("becpg.annex." + rk)) {
-                pageIdx = outlineBookmarks.get("becpg.annex." + rk);
+            if (key != null && outlineBookmarks.containsKey("becpg.annex." + key)) {
+                pageIdx = outlineBookmarks.get("becpg.annex." + key);
+            } else if (section.getAnnexIdResolver() != null && outlineBookmarks.containsKey("becpg.annex." + section.getAnnexIdResolver())) {
+                pageIdx = outlineBookmarks.get("becpg.annex." + section.getAnnexIdResolver());
             }
 
             if (pageIdx == -1) {
@@ -681,7 +704,7 @@ public class ReportPdfAggregator {
             ins.bodyPage = pageIdx;
             insertions.add(ins);
             if (logger.isDebugEnabled()) {
-                logger.debug("Resolved insertion point for section '" + section.getTitle() + "' (kind: " + rk + ") -> body page index: " + pageIdx);
+                logger.debug("Resolved insertion point for section '" + section.getTitle() + "' (resolver: " + section.getAnnexIdResolver() + ") -> body page index: " + pageIdx);
             }
         }
         return insertions;
@@ -937,7 +960,9 @@ public class ReportPdfAggregator {
                 Integer targetMergedPage = null;
 
                 for (AnnexSection section : sections) {
-                    if (section.getReportKind() != null && section.getReportKind().trim().equals(rk)) {
+                    String annexKey = section.getAnnexKey();
+                    if ((annexKey != null && annexKey.equalsIgnoreCase(rk))
+                            || (section.getAnnexIdResolver() != null && section.getAnnexIdResolver().equalsIgnoreCase(rk))) {
                         targetMergedPage = sectionToMergedPageMap.get(section);
                         break;
                     }

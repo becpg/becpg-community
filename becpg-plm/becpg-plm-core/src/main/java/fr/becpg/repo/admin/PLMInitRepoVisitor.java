@@ -231,7 +231,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
-		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, "annexe-compo-quali-quanti");
+		reportKindCodes.put(PRODUCT_REPORT_PACKAGING_PATH, "PackagingSheet");
+		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, "CompoQualiQuanti");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -455,6 +456,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				PlmRepoConsts.PATH_PUBCHANNELS);
 		visitChannelList(channelListFolder);
 
+		NodeRef documentTypesFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
+				PlmRepoConsts.PATH_DOCUMENT_TYPE);
+		visitDocumentTypes(documentTypesFolder);
+
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
@@ -592,6 +597,46 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			props.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, "{\"query\": \" (+TYPE:\\\"bcpg:product\\\" OR +TYPE:\\\"sec:aclGroup\\\")\"}");
 			nodeService.createNode(channelListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
 					PublicationModel.TYPE_PUBLICATION_CHANNEL, props).getChildRef();
+		}
+	}
+
+	private void visitDocumentTypes(NodeRef documentTypesFolder) {
+		if (documentTypesFolder == null) {
+			return;
+		}
+
+		List<String> defaultDocumentTypes = Arrays.asList(
+				"Photos",
+				"QualityDocuments",
+				"Subcontractors",
+				"CPSR",
+				"StabilityMicro",
+				"ClaimEfficacy",
+				"GMPAnimalTesting"
+		);
+
+		for (String docTypeName : defaultDocumentTypes) {
+			MLText mltValue = new MLText();
+			for (String locKey : supportedLocale) {
+				String i18nVal = I18NUtil.getMessage("becpg.documenttype." + docTypeName.toLowerCase() + ".value", MLTextHelper.parseLocale(locKey));
+				if (i18nVal != null) {
+					mltValue.put(MLTextHelper.parseLocale(locKey), i18nVal);
+				}
+			}
+			if (mltValue.isEmpty()) {
+				mltValue.put(Locale.ENGLISH, docTypeName);
+			}
+
+			NodeRef existingDocType = nodeService.getChildByName(documentTypesFolder, ContentModel.ASSOC_CONTAINS, docTypeName);
+			if (existingDocType == null) {
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, docTypeName);
+				props.put(BeCPGModel.PROP_CHARACT_NAME, mltValue);
+				props.put(BeCPGModel.PROP_DOCUMENT_TYPE_IS_MANDATORY, Boolean.FALSE);
+
+				mlNodeService.createNode(documentTypesFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						BeCPGModel.TYPE_DOCUMENT_TYPE, props);
+			}
 		}
 	}
 
@@ -1942,11 +1987,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				String reportPath = entry.getKey();
 				String reportKindCode = entry.getValue();
 
-				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportPath) || PRODUCT_REPORT_COST_PATH.equals(reportPath)
-						|| PRODUCT_REPORT_RD_PATH.equals(reportPath)) {
-					continue;
-				}
-
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
 				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
@@ -1962,23 +2002,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportPath, reportKindListProps);
-			}
-
-			List<String> annexReportKinds = Arrays.asList(
-					"annexe-compo-quali-quanti",
-					"annexe-mp",
-					"annexe-emb-primaire",
-					"annexe-emb-secondaire",
-					"annexe-cpsr",
-					"annexe-stability-micro",
-					"annexe-claim-efficacy",
-					"annexe-gmp-animal-testing",
-					"annexe-photos",
-					"annexe-qualite",
-					"annexe-subcontractor"
-			);
-			for (String rk : annexReportKinds) {
-				reportKindDefaultValues.put(rk, reportKindListValue(rk));
 			}
 
 			// The marking of a supplemental ingredient rides on the report kinds of a nutrition

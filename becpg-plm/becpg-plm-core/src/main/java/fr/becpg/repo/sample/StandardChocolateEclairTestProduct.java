@@ -1121,7 +1121,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			return;
 		}
 		NodeRef nutRef = CharactTestHelper.getOrCreateNutrient(nodeService, code, unit);
-		nutList.add(NutListDataItem.build().withNut(nutRef).withUnit(unit).withValue(value).withIsManual(true));
+		nutList.add(NutListDataItem.build().withNut(nutRef).withValue(value).withIsManual(true));
 	}
 
 	/**

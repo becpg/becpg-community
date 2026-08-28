@@ -35,7 +35,7 @@
 
   "annexes": [
     {
-      "reportKind": "annexe-mp",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
       "title": "SLabel.annexRawMaterials",
       "scope": "COMPO_CHILDREN",
       "recurse": true,
@@ -48,7 +48,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-emb-primaire",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
       "title": "SLabel.annexPrimaryPackaging",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
@@ -60,7 +60,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-emb-secondaire",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
       "title": "SLabel.annexSecondaryPackaging",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Secondary",
@@ -72,7 +72,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-photos",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Photos",
       "title": "SLabel.annexPhotos",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -81,7 +81,7 @@
       "mimeTypes": ["application/pdf", "image/png", "image/jpeg"]
     },
     {
-      "reportKind": "annexe-qualite",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=QualityDocuments",
       "title": "SLabel.annexQualityDocuments",
       "scope": "ENTITY",
       "componentHeading": false,
@@ -90,7 +90,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "reportKind": "annexe-subcontractor",
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Subcontractors",
       "title": "SLabel.annexSubcontractors",
       "scope": "ENTITY",
       "componentHeading": false,

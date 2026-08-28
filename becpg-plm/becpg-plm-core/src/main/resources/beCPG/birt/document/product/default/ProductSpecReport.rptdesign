@@ -6959,7 +6959,7 @@ dataSetRow["name"]
                 <cell id="211">
                     <label id="212">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-mp}}</text-property>
+                        <text-property name="text">{{page:SupplierSheet}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -6974,7 +6974,7 @@ dataSetRow["name"]
                 <cell id="216">
                     <label id="217">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-emb-primaire}}</text-property>
+                        <text-property name="text">{{page:PackagingSheet}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -6989,7 +6989,7 @@ dataSetRow["name"]
                 <cell id="221">
                     <label id="222">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-emb-secondaire}}</text-property>
+                        <text-property name="text">{{page:PackagingSheet}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -7004,7 +7004,7 @@ dataSetRow["name"]
                 <cell id="226">
                     <label id="227">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-photos}}</text-property>
+                        <text-property name="text">{{page:Photos}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -7019,7 +7019,7 @@ dataSetRow["name"]
                 <cell id="231">
                     <label id="232">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-qualite}}</text-property>
+                        <text-property name="text">{{page:QualityDocuments}}</text-property>
                     </label>
                 </cell>
             </row>
@@ -7034,7 +7034,7 @@ dataSetRow["name"]
                 <cell id="236">
                     <label id="237">
                         <property name="style">toc-num-level1</property>
-                        <text-property name="text">{{page:annexe-subcontractor}}</text-property>
+                        <text-property name="text">{{page:Subcontractors}}</text-property>
                     </label>
                 </cell>
             </row>
