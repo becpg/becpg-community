@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -38,8 +37,6 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  * @version $Id: $Id
  */
 public class GetEntityWebScript extends AbstractEntityWebScript {
-
-	private static final String ACCESS_DENIED_MESSAGE = "You have no right to see this node";
 
 	/** {@inheritDoc} */
 	@Override
@@ -81,10 +78,10 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			if (isBrokenPipe(e)) {
 				logger.info("Client aborted connection for entity: " + entityNodeRef);
 			} else if (isAccessDenied(e)) {
-				refuseExport(entityNodeRef, resp, streaming);
+				endOnError(resp, streaming, accessDenied(entityNodeRef));
 			} else {
-				logger.error("Cannot export entity " + entityNodeRef + " for user " + AuthenticationUtil.getFullyAuthenticatedUser(), e);
-				endOnError(resp, streaming, Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
+				logger.error("Cannot export entity " + entityNodeRef, e);
+				endOnError(resp, streaming, new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage()));
 			}
 		} catch (SocketException e1) {
 			if (logger.isInfoEnabled()) {
@@ -102,7 +99,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			throw e;
 		} catch (RuntimeException e) {
 			if (isAccessDenied(e)) {
-				refuseExport(entityNodeRef, resp, streaming);
+				endOnError(resp, streaming, accessDenied(entityNodeRef));
 			} else if (streaming) {
 				logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
 			} else {
@@ -110,40 +107,6 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			}
 		}
 
-	}
-
-	/**
-	 * <p>refuseExport.</p>
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
-	 * @param streaming whether the response output stream has already been taken
-	 */
-	private void refuseExport(NodeRef entityNodeRef, WebScriptResponse resp, boolean streaming) {
-		logger.warn("User " + AuthenticationUtil.getFullyAuthenticatedUser() + " is not allowed to export entity " + entityNodeRef);
-		endOnError(resp, streaming, Status.STATUS_FORBIDDEN, ACCESS_DENIED_MESSAGE);
-	}
-
-	/**
-	 * <p>endOnError.</p>
-	 *
-	 * Reports the error to the caller, unless the response output stream has already been taken:
-	 * the container then renders the error by asking the response for its writer, which fails on
-	 * "getOutputStream() has already been called" and replaces the real cause with a message about
-	 * the response. Past that point the cause has been logged and the caller keeps the truncated
-	 * body it already holds.
-	 *
-	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
-	 * @param streaming whether the response output stream has already been taken
-	 * @param status the status to report
-	 * @param message the message to report
-	 */
-	private void endOnError(WebScriptResponse resp, boolean streaming, int status, String message) {
-		if (streaming) {
-			return;
-		}
-		resp.reset();
-		throw new WebScriptException(status, message);
 	}
 
 }

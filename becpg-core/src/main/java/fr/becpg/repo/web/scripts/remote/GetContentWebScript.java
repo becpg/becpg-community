@@ -2,7 +2,6 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -128,10 +127,11 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 			}
 
 		} catch (BeCPGException e) {
-			logger.error("Cannot export content", e);
+			if (isAccessDenied(e)) {
+				throw accessDenied(documentNodeRef);
+			}
+			logger.error("Cannot export content of " + documentNodeRef, e);
 			throw new WebScriptException(e.getMessage());
-		} catch (AccessDeniedException e) {
-			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished

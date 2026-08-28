@@ -29,6 +29,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import org.alfresco.error.ExceptionStackUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.query.EmptyPagingResults;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -833,6 +834,44 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			t = t.getCause();
 		}
 		return false;
+	}
+
+	/** Constant <code>ACCESS_DENIED_MESSAGE="You have no right to see this node"</code> */
+	protected static final String ACCESS_DENIED_MESSAGE = "You have no right to see this node";
+
+	/**
+	 * <p>accessDenied.</p>
+	 *
+	 * Builds the refusal to report to the caller, and records it without its stack: a permission
+	 * the caller does not hold is an answer, not a server fault.
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return the {@link org.springframework.extensions.webscripts.WebScriptException} to throw
+	 */
+	protected WebScriptException accessDenied(NodeRef nodeRef) {
+		logger.warn("User " + AuthenticationUtil.getFullyAuthenticatedUser() + " is not allowed to read " + nodeRef);
+		return new WebScriptException(Status.STATUS_FORBIDDEN, ACCESS_DENIED_MESSAGE);
+	}
+
+	/**
+	 * <p>endOnError.</p>
+	 *
+	 * Reports the error to the caller, unless the response output stream has already been taken:
+	 * the container then renders the error by asking the response for its writer, which fails on
+	 * "getOutputStream() has already been called" and replaces the real cause with a message about
+	 * the response. Past that point the caller keeps the truncated body it already holds, and the
+	 * cause is only what the log says.
+	 *
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @param streaming whether the response output stream has already been taken
+	 * @param error the error to report
+	 */
+	protected void endOnError(WebScriptResponse resp, boolean streaming, WebScriptException error) {
+		if (streaming) {
+			return;
+		}
+		resp.reset();
+		throw error;
 	}
 
 	/**
