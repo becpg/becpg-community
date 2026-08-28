@@ -214,8 +214,8 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
         List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
-        Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountryToUsagePairs(
-                context.getProduct().getRegulatoryList(), parsedRequirements);
+        Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountries(
+                context.getProduct().getRegulatoryList(), parsedIngRegulatoryElements);
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);
 

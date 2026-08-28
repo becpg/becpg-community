@@ -157,38 +157,60 @@ public class ProductDataEntityJsonService {
     }
 
     /**
+     * Creates a list of tolerated reqCtrl elements for each country that was not listed in IngRegulatoryList
+     *
      * @param regulatoryElements    regulatory list contents, as defined in the product
-     * @param parsedReqCtrlElements only ones, directly deserialized from JSON
+     * @param ingRegulatoryElements only ones, directly deserialized from JSON
      * @return a stream of {@link RequirementListDataItem} alerts for uncovered COUNTRY - USAGE pairs
      */
-    public Stream<RequirementListDataItem> createAlertsForNotCoveredCountryToUsagePairs(Collection<RegulatoryListDataItem> regulatoryElements,
-                                                                                        Collection<RequirementListDataItem> parsedReqCtrlElements) {
-        if (regulatoryElements == null || parsedReqCtrlElements == null || regulatoryElements.isEmpty() || parsedReqCtrlElements.isEmpty())
+    public Stream<RequirementListDataItem> createAlertsForNotCoveredCountries(Collection<RegulatoryListDataItem> regulatoryElements,
+                                                                              Collection<IngRegulatoryListDataItem> ingRegulatoryElements) {
+        if (regulatoryElements == null || ingRegulatoryElements == null)
             return Stream.empty();
 
-        // COUNTRY - USAGE that were handled
-        Set<String> coveredPairCodes = parsedReqCtrlElements.stream()
-                .map(RequirementListDataItem::getRegulatoryCode)
+        Set<NodeRef> regulatoryCountries = regulatoryElements.stream().map(RegulatoryListDataItem::getRegulatoryCountriesRef)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
 
-        Map<NodeRef, String> codeByRef = fillNodeRefDictionary(regulatoryElements);
+        Set<NodeRef> parsedIngRegulatoryElements = ingRegulatoryElements.stream()
+                .map(IngRegulatoryListDataItem::getRegulatoryCountries)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
 
-        return regulatoryElements.stream().flatMap(item -> Lists.cartesianProduct(
-                        item.getRegulatoryCountriesRef(), item.getRegulatoryUsagesRef()).stream()
-                ).collect(Collectors.toMap(
-                        pair -> codeByRef.get(pair.get(0)) + " - " + codeByRef.get(pair.get(1)),
-                        ArrayList::new,
-                        (existing, duplicate) -> existing
-                )).entrySet()
-                .stream()
-                .mapMulti((entry, sink) -> {
-                    String code = entry.getKey();
-                    if (!coveredPairCodes.contains(code)) {
-                        MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND);
-                        List<NodeRef> sources = entry.getValue();
-                        sink.accept(createToleratedReqCtrl(sources, i18NMessage, null, code));
-                    }
-                });
+        regulatoryCountries.removeAll(parsedIngRegulatoryElements);
+        if (regulatoryCountries.isEmpty())
+            return Stream.empty();
+        return Stream.of(createToleratedReqCtrl(
+                new ArrayList<>(regulatoryCountries),
+                MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND),
+                null, null));
+    }
+
+    /**
+     * Creates a list of tolerated reqCtrl elements for each country that was not listed in IngRegulatoryList
+     *
+     * @param ingredientElements           {@code ingList} contents, as defined in the product
+     * @param ingredientRegulatoryElements deserialized from JSON
+     * @return a stream of {@link RequirementListDataItem} alerts for each ingredient, for which {@link IngRegulatoryListDataItem} was not provided
+     */
+    public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
+                                                                                Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
+
+        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
+            return Stream.empty();
+
+        Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
+                .map(IngRegulatoryListDataItem::getIng)
+                .collect(Collectors.toSet());
+
+        return ingredientElements.stream().mapMulti((ing, sink) -> {
+            NodeRef ingNodeRef = ing.getIng();
+            if (ingNodeRef != null && !parsedIngRegulatoryElements.contains(ingNodeRef)) {
+                ArrayList<NodeRef> sources = Lists.newArrayList(ingNodeRef);
+                MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+                sink.accept(createToleratedReqCtrl(sources, i18NMessage, ingNodeRef, null));
+            }
+        });
     }
 
     public Map<NodeRef, String> fillNodeRefDictionary(Collection<RegulatoryListDataItem> regulatoryElements) {
@@ -229,31 +251,6 @@ public class ProductDataEntityJsonService {
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_COUNTRIES, item::setRegulatoryCountries);
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_USAGE_REF, item::setRegulatoryUsages);
         return item;
-    }
-
-    /**
-     * @param ingredientElements           {@code ingList} contents, as defined in the product
-     * @param ingredientRegulatoryElements deserialized from JSON
-     * @return a stream of {@link RequirementListDataItem} alerts for each ingredient, for which {@link IngRegulatoryListDataItem} was not provided
-     */
-    public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
-                                                                                Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
-
-        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
-            return Stream.empty();
-
-        Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
-                .map(IngRegulatoryListDataItem::getIng)
-                .collect(Collectors.toSet());
-
-        return ingredientElements.stream().mapMulti((ing, sink) -> {
-            NodeRef ingNodeRef = ing.getIng();
-            if (ingNodeRef != null && !parsedIngRegulatoryElements.contains(ingNodeRef)) {
-                ArrayList<NodeRef> sources = Lists.newArrayList(ingNodeRef);
-                MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-                sink.accept(createToleratedReqCtrl(sources, i18NMessage, ingNodeRef, null));
-            }
-        });
     }
 
     private static RequirementListDataItem createToleratedReqCtrl(List<NodeRef> sources, MLText message, NodeRef charact, String code) {
