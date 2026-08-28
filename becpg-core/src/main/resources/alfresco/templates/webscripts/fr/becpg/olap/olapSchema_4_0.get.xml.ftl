@@ -1546,6 +1546,12 @@
 			</Hierarchy>
 		</Dimension>
 
+		<#-- #21339: the tags requested alongside catalog, product, product type and site.
+		     The foreign key is productNodeRef rather than a second alias of the same column:
+		     with useOldAliasMetadataBehavior=true two aliases of one column resolve to the same
+		     name and the join becomes ambiguous. -->
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="productNodeRef" />
+
 		<Measure name="catalogScore" caption="${msg("jsolap.catalogScore.title")}" column="catalogScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Integer" aggregator="sum" visible="true" />
 		<Measure name="scoredProducts" caption="${msg("jsolap.scoredProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
