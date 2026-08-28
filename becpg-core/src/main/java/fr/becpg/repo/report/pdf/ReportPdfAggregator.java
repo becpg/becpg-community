@@ -450,6 +450,8 @@ public class ReportPdfAggregator {
 
     public static class PageNumberLocator extends PDFTextStripper {
         public static final float MAX_FOOTER_Y = 80.0f;
+        public static final float FOOTER_LINE_TOLERANCE_Y = 5.0f;
+        public static final float DEFAULT_MASK_PADDING = 6.0f;
 
         public static class FoundPageNumber {
             public int pageIndex;
@@ -459,7 +461,16 @@ public class ReportPdfAggregator {
             public float height;
         }
 
+        private static class FooterTextFragment {
+            String text;
+            float minX;
+            float maxX;
+            float yFromBottom;
+            float height;
+        }
+
         private final List<FoundPageNumber> pageNumbers = new ArrayList<>();
+        private final List<FooterTextFragment> currentPageFragments = new ArrayList<>();
         private int currentPageIndex = 0;
         private float currentPageHeight = 842.0f;
         private int currentPageCount = 1;
@@ -471,39 +482,109 @@ public class ReportPdfAggregator {
             this.currentPageCount = document.getNumberOfPages();
             for (int i = 0; i < currentPageCount; i++) {
                 currentPageIndex = i;
+                currentPageFragments.clear();
                 setStartPage(i + 1);
                 setEndPage(i + 1);
                 PDPage page = document.getPage(i);
                 currentPageHeight = page.getMediaBox().getHeight();
                 Writer dummy = new StringWriter();
                 writeText(document, dummy);
+                processPageFooterFragments();
             }
             return pageNumbers;
         }
 
         @Override
         protected void writeString(String string, List<TextPosition> textPositions) throws IOException {
-            if (string != null && string.contains("Page") && textPositions != null && !textPositions.isEmpty()) {
-                int startIdx = string.indexOf("Page");
-                if (startIdx >= 0 && startIdx < textPositions.size()) {
-                    TextPosition firstChar = textPositions.get(startIdx);
-                    float yFromBottom = currentPageHeight - firstChar.getYDirAdj();
-                    if (yFromBottom <= MAX_FOOTER_Y) {
-                        TextPosition lastChar = textPositions.get(textPositions.size() - 1);
-                        float totalWidth = (lastChar.getXDirAdj() + lastChar.getWidth()) - firstChar.getXDirAdj();
-                        if (totalWidth <= 0) {
-                            totalWidth = firstChar.getWidth();
-                        }
-                        FoundPageNumber fpn = new FoundPageNumber();
-                        fpn.pageIndex = currentPageIndex;
-                        fpn.x = firstChar.getXDirAdj();
-                        fpn.y = yFromBottom;
-                        fpn.width = totalWidth;
-                        fpn.height = firstChar.getHeightDir();
-                        pageNumbers.add(fpn);
+            if (string != null && textPositions != null && !textPositions.isEmpty()) {
+                TextPosition firstChar = textPositions.get(0);
+                float yFromBottom = currentPageHeight - firstChar.getYDirAdj();
+                if (yFromBottom <= MAX_FOOTER_Y) {
+                    TextPosition lastChar = textPositions.get(textPositions.size() - 1);
+                    float minX = firstChar.getXDirAdj();
+                    float maxX = lastChar.getXDirAdj() + lastChar.getWidthDirAdj();
+                    if (maxX <= minX) {
+                        maxX = minX + firstChar.getWidthDirAdj();
+                    }
+                    FooterTextFragment fragment = new FooterTextFragment();
+                    fragment.text = string;
+                    fragment.minX = minX;
+                    fragment.maxX = maxX;
+                    fragment.yFromBottom = yFromBottom;
+                    fragment.height = firstChar.getHeightDir();
+                    currentPageFragments.add(fragment);
+                }
+            }
+        }
+
+        private void processPageFooterFragments() {
+            if (currentPageFragments.isEmpty()) {
+                return;
+            }
+            List<FooterTextFragment> pageKeyFragments = findPageKeyFragments();
+            Set<FooterTextFragment> processed = new HashSet<>();
+
+            for (FooterTextFragment pageFrag : pageKeyFragments) {
+                if (processed.contains(pageFrag)) {
+                    continue;
+                }
+                FoundPageNumber fpn = buildFoundPageNumber(pageFrag, processed);
+                if (fpn != null) {
+                    pageNumbers.add(fpn);
+                }
+            }
+        }
+
+        private List<FooterTextFragment> findPageKeyFragments() {
+            List<FooterTextFragment> keyFragments = new ArrayList<>();
+            for (FooterTextFragment frag : currentPageFragments) {
+                if (isPageKeywordOrPattern(frag.text)) {
+                    keyFragments.add(frag);
+                }
+            }
+            return keyFragments;
+        }
+
+        private boolean isPageKeywordOrPattern(String text) {
+            if (text == null) {
+                return false;
+            }
+            String lower = text.toLowerCase();
+            return lower.contains("page") || lower.contains("seite") || lower.contains("pág")
+                    || lower.contains("pag.") || lower.matches(".*\\d+\\s*(/|of)\\s*\\d+.*");
+        }
+
+        private FoundPageNumber buildFoundPageNumber(FooterTextFragment pageFrag, Set<FooterTextFragment> processed) {
+            float startX = pageFrag.minX;
+            float endX = pageFrag.maxX;
+            float maxHeight = pageFrag.height;
+            float lineY = pageFrag.yFromBottom;
+
+            processed.add(pageFrag);
+
+            for (FooterTextFragment other : currentPageFragments) {
+                if (Math.abs(other.yFromBottom - lineY) <= FOOTER_LINE_TOLERANCE_Y) {
+                    if (other.maxX >= startX - 2.0f) {
+                        startX = Math.min(startX, other.minX);
+                        endX = Math.max(endX, other.maxX);
+                        maxHeight = Math.max(maxHeight, other.height);
+                        processed.add(other);
                     }
                 }
             }
+
+            float totalWidth = endX - startX;
+            if (totalWidth <= 0) {
+                totalWidth = 30.0f;
+            }
+
+            FoundPageNumber fpn = new FoundPageNumber();
+            fpn.pageIndex = currentPageIndex;
+            fpn.x = startX;
+            fpn.y = lineY;
+            fpn.width = totalWidth;
+            fpn.height = maxHeight > 0 ? maxHeight : 10.0f;
+            return fpn;
         }
     }
 
@@ -920,8 +1001,10 @@ public class ReportPdfAggregator {
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     canvas.setNonStrokingColor(Color.WHITE);
-                    float rectWidth = Math.max(fpn.width + 10, 50.0f);
-                    canvas.addRect(fpn.x - 5, pdfY - 5, rectWidth, fpn.height + 10);
+                    float padX = PageNumberLocator.DEFAULT_MASK_PADDING;
+                    float padY = PageNumberLocator.DEFAULT_MASK_PADDING;
+                    float rectWidth = Math.max(fpn.width + (padX * 2), 60.0f);
+                    canvas.addRect(fpn.x - padX, pdfY - padY, rectWidth, Math.max(fpn.height, 10.0f) + (padY * 2));
                     canvas.fill();
                 }
             }
@@ -1118,7 +1201,9 @@ public class ReportPdfAggregator {
         float pdfY = y0 + mediaBox.getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.setNonStrokingColor(Color.WHITE);
-            canvas.addRect(x0 + ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
+            float padX = PageNumberLocator.DEFAULT_MASK_PADDING;
+            float padY = 4.0f;
+            canvas.addRect(x0 + ft.x - padX, pdfY - padY, ft.width + (padX * 2), Math.max(ft.height, 10.0f) + (padY * 2));
             canvas.fill();
 
             String pageStr = String.valueOf(resolvedPageNumber);
@@ -1145,7 +1230,7 @@ public class ReportPdfAggregator {
                 rect.setLowerLeftX(x0 + drawX - 2);
                 rect.setLowerLeftY(pdfY - 2);
                 rect.setUpperRightX(x0 + drawX + strWidth + 2);
-                rect.setUpperRightY(pdfY + ft.height + 2);
+                rect.setUpperRightY(pdfY + Math.max(ft.height, 10.0f) + 2);
                 link.setRectangle(rect);
 
                 PDActionGoTo action = new PDActionGoTo();
@@ -1170,7 +1255,9 @@ public class ReportPdfAggregator {
         float pdfY = y0 + mediaBox.getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.setNonStrokingColor(Color.WHITE);
-            canvas.addRect(x0 + ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
+            float padX = PageNumberLocator.DEFAULT_MASK_PADDING;
+            float padY = 4.0f;
+            canvas.addRect(x0 + ft.x - padX, pdfY - padY, ft.width + (padX * 2), Math.max(ft.height, 10.0f) + (padY * 2));
             canvas.fill();
 
             PDType1Font font = resolveFont(placeholderStyle != null ? placeholderStyle.getFont() : DEFAULT_FONT_ARIAL, false);
@@ -1314,7 +1401,7 @@ public class ReportPdfAggregator {
 
                 if (paginationEnabled && isBodyPage) {
                     canvas.setNonStrokingColor(Color.WHITE);
-                    canvas.addRect(x0 + width - 150, y0 + 20, 120, 30);
+                    canvas.addRect(x0 + width - 160, y0 + 15, 140, 35);
                     canvas.fill();
                 }
 

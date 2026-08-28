@@ -910,6 +910,76 @@ public class AggregateReportIT extends PLMBaseTestCase {
         }
     }
 
+    @Test
+    public void testFragmentedBirtFooterMasking() throws Exception {
+        byte[] bodyPdf = createMockPdfWithFragmentedBirtFooters(
+                "First page of body text",
+                "Second page of body text"
+        );
+
+        byte[] annexPdf = createMockPdf("Annex page 1", "Annex page 2");
+        List<AnnexSection> sections = new ArrayList<>();
+        sections.add(new AnnexSection("annexe-mp", "ANNEX 1: RAW MATERIALS", Collections.singletonList(new AnnexDocument("RM", annexPdf))));
+
+        ReportPdfAggregator.PaginationModel paginationConfig = new ReportPdfAggregator.PaginationModel();
+        paginationConfig.setEnabled(true);
+        paginationConfig.setFormat("Page ${page} / ${total}");
+
+        byte[] finalPdf = ReportPdfAggregator.assemble(bodyPdf, sections, null, null, null, Collections.emptyMap(), null, paginationConfig);
+
+        assertNotNull(finalPdf);
+        try (PDDocument doc = Loader.loadPDF(finalPdf)) {
+            // Total: 2 (body) + 2 (annex) = 4 pages
+            assertEquals(4, doc.getNumberOfPages());
+
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setStartPage(1);
+            stripper.setEndPage(1);
+            String page1Text = stripper.getText(doc);
+
+            assertTrue(page1Text.contains("CONFIDENTIAL"));
+            assertTrue(page1Text.contains("First page of body text"));
+            assertTrue(page1Text.contains("Page 1 / 4"));
+        }
+    }
+
+    private byte[] createMockPdfWithFragmentedBirtFooters(String... pageTexts) throws Exception {
+        try (PDDocument doc = new PDDocument()) {
+            int total = pageTexts.length;
+            for (int i = 0; i < total; i++) {
+                PDPage page = new PDPage();
+                doc.addPage(page);
+                try (PDPageContentStream canvas = new PDPageContentStream(doc, page)) {
+                    drawTextWithLines(canvas, pageTexts[i], 50, 700);
+
+                    // Left footer
+                    canvas.beginText();
+                    canvas.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
+                    canvas.newLineAtOffset(50, 40);
+                    canvas.showText("CONFIDENTIAL");
+                    canvas.endText();
+
+                    // Fragment 1: "Page : 1"
+                    canvas.beginText();
+                    canvas.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
+                    canvas.newLineAtOffset(450, 40);
+                    canvas.showText("Page : " + (i + 1));
+                    canvas.endText();
+
+                    // Fragment 2: " / 2" (emitted in separate operator)
+                    canvas.beginText();
+                    canvas.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 8);
+                    canvas.newLineAtOffset(490, 40);
+                    canvas.showText(" / " + total);
+                    canvas.endText();
+                }
+            }
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            doc.save(out);
+            return out.toByteArray();
+        }
+    }
+
     private byte[] createMockPngImage(int width, int height) throws Exception {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
