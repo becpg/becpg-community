@@ -278,3 +278,13 @@
 {
    background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
 }
+
+.datalist-toolbar .qa-batch-scan span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-datalists-16.png) no-repeat 8px 4px;
+}
+
+.datalist-toolbar .qa-batch-execute span.first-child
+{
+   background: url(images/eco-apply-16.png) no-repeat 8px 4px;
+}

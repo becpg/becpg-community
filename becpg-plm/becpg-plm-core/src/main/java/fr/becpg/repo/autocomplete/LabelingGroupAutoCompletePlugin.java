@@ -2,17 +2,22 @@ package fr.becpg.repo.autocomplete;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
+
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -37,7 +42,7 @@ public class LabelingGroupAutoCompletePlugin extends TargetAssocAutoCompletePlug
             if (entityNodeRef != null) {
                 ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
                 if (productData != null && productData.getLabelingListView() != null) {
-                    List<NodeRef> uniqueRuleNodeRefs = new ArrayList<>();
+                    Set<NodeRef> uniqueRuleNodeRefs = new LinkedHashSet<>();
                     if (productData.getLabelingListView().getIngLabelingList() != null) {
                         for (IngLabelingListDataItem illItem : productData.getLabelingListView().getIngLabelingList()) {
                             NodeRef grp = illItem.getGrp();
@@ -50,7 +55,7 @@ public class LabelingGroupAutoCompletePlugin extends TargetAssocAutoCompletePlug
                             && productData.getEntityTpl().getLabelingListView() != null
                             && productData.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
                         for (LabelingRuleListDataItem rule : productData.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
-                            if (rule.getNodeRef() != null && !uniqueRuleNodeRefs.contains(rule.getNodeRef())) {
+                            if (isActiveAndRenderRule(rule)) {
                                 uniqueRuleNodeRefs.add(rule.getNodeRef());
                             }
                         }
@@ -59,7 +64,7 @@ public class LabelingGroupAutoCompletePlugin extends TargetAssocAutoCompletePlug
                         for (ProductSpecificationData spec : productData.getProductSpecifications()) {
                             if (spec.getLabelingRuleList() != null) {
                                 for (LabelingRuleListDataItem rule : spec.getLabelingRuleList()) {
-                                    if (rule.getNodeRef() != null && !uniqueRuleNodeRefs.contains(rule.getNodeRef())) {
+                                    if (isActiveAndRenderRule(rule)) {
                                         uniqueRuleNodeRefs.add(rule.getNodeRef());
                                     }
                                 }
@@ -97,4 +102,9 @@ public class LabelingGroupAutoCompletePlugin extends TargetAssocAutoCompletePlug
         }
         return new AutoCompletePage(new ArrayList<>(), pageNum, pageSize, getTargetAssocValueExtractor());
     }
+
+	private boolean isActiveAndRenderRule(LabelingRuleListDataItem rule) {
+		return rule.getNodeRef() != null && LabelingRuleType.Render.equals(rule.getLabelingRuleType())
+				&& Boolean.TRUE.equals(rule.getIsActive());
+	}
 }

@@ -737,6 +737,11 @@
                           <facetable>true</facetable>
                     </index>
                 </property>
+                <property name="qa:batchScannerInput">
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
             </properties>
             <associations>
                 <association name="qa:product">

@@ -365,6 +365,14 @@
 					<show id="cm:created" for-mode="view" />
           		</field-visibility>
      		</form>
+			<form id="scan">
+				<field-visibility>
+					<show id="qa:batchScannerInput" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchScannerInput" label-id="qa_qamodel.property.qa_batchScannerInput.title" />
+				</appearance>
+			</form>
 		</forms>
 	</config>
 
@@ -473,6 +481,14 @@
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
 
+				</appearance>
+			</form>
+			<form id="scan">
+				<field-visibility>
+					<show id="qa:batchScannerInput" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchScannerInput" label-id="qa_qamodel.property.qa_batchScannerInput.title" />
 				</appearance>
 			</form>
 
