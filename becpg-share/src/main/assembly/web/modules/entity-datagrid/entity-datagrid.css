@@ -199,6 +199,17 @@
     font-style: italic;
 }
 
+.picker-list-message {
+    padding: 1em 0;
+    font-style: italic;
+}
+
+/* The skin only draws its own "wait" animation inside the global message pop-up. */
+.picker-list-message .picker-list-spinner {
+    padding-left: 24px;
+    background: url(../../components/entity-data-lists/images/loading.gif) no-repeat 0 50%;
+}
+
 
 .datagrid .item-select .yuimenuitemlabel span {
     background-position: 2px 50%;

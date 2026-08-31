@@ -341,13 +341,17 @@
 			var templateUrl = YAHOO.lang
 				.substitute(
 					Alfresco.constants.URL_SERVICECONTEXT
-					+ "components/form?formId={formId}&bulkEdit=true&entityNodeRef={entityNodeRef}&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+					+ "components/form?formId={formId}&bulkEdit=true&entityNodeRef={entityNodeRef}&fields={fields}&submissionUrl={submissionUrl}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}",
 					{
 						itemKind: "type",
 						formId: me.options.bulkEditFormId || "create",
 						itemId: itemType,
 						mode: "create",
 						entityNodeRef: me.options.entityNodeRef,
+						// The form is fetched by its own request, so the datalist has to be named here:
+						// a field whose autocomplete needs it, such as the parent of a hierarchy, has no
+						// other way of telling which of the entity's lists it is being edited in.
+						list: encodeURIComponent(me.datalistMeta != null && me.datalistMeta.name != null ? me.datalistMeta.name : (me.options.list || "")),
 						submitType: "json",
 						submissionUrl: encodeURIComponent("/becpg/bulkedit/type/" + itemType.replace(":", "_")
 							+ "/bulksave?nodeRefs=" + nodeRefs.join() + "&allPages=" + me.allPages + "&queryExecutionId=" + me.queryExecutionId),

@@ -92,10 +92,13 @@ public class NutritionFactsLabelResolver {
 	/** Key of the caption opening the block of the supplemental ingredients. */
 	public static final String LABEL_SUPPLEMENTED_WITH = "supplementedWith";
 
+	/** Key of the note closing that block, the declared amounts covering more than what was added. */
+	public static final String LABEL_SUPPLEMENTED_NOTE = "supplementedNote";
+
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
 			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING,
 			LABEL_PER_CONTAINER, LABEL_DAILY_VALUE_SUFFIX, LABEL_LINEAR_LEGEND, LABEL_FOOTNOTE_EMPHASIS, LABEL_SUPPLEMENTED_TITLE,
-			LABEL_SUPPLEMENTED_WITH);
+			LABEL_SUPPLEMENTED_WITH, LABEL_SUPPLEMENTED_NOTE);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 

@@ -582,20 +582,17 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						BatchCommand<?> nextCommand = pollNextPausedCommand();
 						if (nextCommand != null) {
 							if (cancelledBatches.contains(nextCommand.getBatchId())) {
-								cancelledBatches.remove(nextCommand.getBatchId());
+								// The cancellation stays registered: the worker of the batch reads it to skip
+								// the entries it has left, and clears it itself once the batch has ended.
 								nextCommand.getBatchInfo().setCancelled(true);
-								nextCommand.getBatchInfo().setIsCompleted(true);
 								if (logger.isInfoEnabled()) {
 									logger.info("Cancelled paused batch: " + nextCommand.getBatchId());
 								}
-							} else {
-								if (logger.isInfoEnabled()) {
-									logger.info("Resume batch: " + nextCommand.getBatchId());
-								}
-								if (!runningCommands.contains(nextCommand)) {
-									runningCommands.add(nextCommand);
-								}
+							} else if (logger.isInfoEnabled()) {
+								logger.info("Resume batch: " + nextCommand.getBatchId());
 							}
+							runningCommands.remove(nextCommand);
+							runningCommands.add(nextCommand);
 						}
 					}
 				} finally {
@@ -604,8 +601,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			}
 		}
 
+		/**
+		 * Moves a command to the paused queue. A paused command leaves the running list, so that
+		 * the running list only ever names the batch that is actually progressing, and it is never
+		 * queued twice, so that its own completion is enough to clear it from the paused queue.
+		 */
 		private void pauseCommand(BatchCommand<?> command) {
-			pausedCommands.addLast(command);
+			runningCommands.remove(command);
+			if (!pausedCommands.contains(command)) {
+				pausedCommands.addLast(command);
+			}
 		}
 		
 		private void pushAndSetBatchAuthentication(BatchStep<T> batchStep) {

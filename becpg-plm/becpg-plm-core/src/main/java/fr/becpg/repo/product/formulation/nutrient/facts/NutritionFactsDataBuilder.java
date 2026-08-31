@@ -70,6 +70,9 @@ public class NutritionFactsDataBuilder {
 	/** What joins the two languages of a bilingual line: "Fat / Lipides". */
 	private static final String LANGUAGE_SEPARATOR = " / ";
 
+	/** What separates the measure of a referential unit from its basis, "mg/100g". */
+	private static final char UNIT_SEPARATOR = '/';
+
 	/**
 	 * Marker a Canadian panel puts in front of a nutrient folded into the line above, "+ Trans".
 	 * It belongs to the layout and not to the name, so a bilingual line carries it once.
@@ -143,17 +146,17 @@ public class NutritionFactsDataBuilder {
 	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options) {
 
 		List<RegulatedNutrient> nutrients = new ArrayList<>();
-		Map<String, String> charactNames = new HashMap<>();
+		Characteristics characteristics = new Characteristics(new HashMap<>(), new HashMap<>());
 		Set<String> supplementalNutCodes = new HashSet<>();
 
 		if (product.getNutList() != null) {
 			for (NutListDataItem nutListItem : product.getNutList()) {
-				addNutrient(nutListItem, nutrients, charactNames, supplementalNutCodes, locale, options);
+				addNutrient(nutListItem, nutrients, characteristics, supplementalNutCodes, locale, options);
 			}
 		}
 
 		nutrients.sort(Comparator.comparing(nutrient -> nutrient.displayRule().sort(), Comparator.nullsLast(Comparator.naturalOrder())));
-		return new RegulatedNutrients(nutrients, charactNames, shareDailyValues(nutrients, options), supplementalNutCodes);
+		return new RegulatedNutrients(nutrients, characteristics, shareDailyValues(nutrients, options), supplementalNutCodes);
 	}
 
 	/**
@@ -218,7 +221,7 @@ public class NutritionFactsDataBuilder {
 		return contentLocale;
 	}
 
-	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Map<String, String> charactNames,
+	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Characteristics characteristics,
 			Set<String> supplementalNutCodes, Locale locale, NutritionFactsOptions options) {
 
 		if (nutListItem.getNut() == null) {
@@ -232,7 +235,8 @@ public class NutritionFactsDataBuilder {
 
 		if (isDeclared(regulated, options) || (isSupplemental && regulated.displayRule().isDefined())) {
 			nutrients.add(regulated);
-			charactNames.put(regulated.nutCode(), charactName(nut, locale));
+			characteristics.names().put(regulated.nutCode(), charactName(nut, locale));
+			characteristics.units().put(regulated.nutCode(), charactUnit(nut));
 			if (isSupplemental) {
 				supplementalNutCodes.add(regulated.nutCode());
 			}
@@ -263,6 +267,20 @@ public class NutritionFactsDataBuilder {
 	private String charactName(NutDataItem nut, Locale locale) {
 		String charactName = MLTextHelper.getClosestValue(nut.getCharactName(), locale);
 		return ((charactName != null) && !charactName.isBlank()) ? charactName : nut.getName();
+	}
+
+	/**
+	 * Unit of the characteristic, which a panel falls back on when the regulation states none. It is
+	 * held in the referential as the unit of the nutrition list, "mg/100g", and only the measure is
+	 * kept: the amount printed on a panel is that of a serving.
+	 */
+	private String charactUnit(NutDataItem nut) {
+		String nutUnit = nut.getNutUnit();
+		if ((nutUnit == null) || nutUnit.isBlank()) {
+			return null;
+		}
+		int perIndex = nutUnit.indexOf(UNIT_SEPARATOR);
+		return perIndex >= 0 ? nutUnit.substring(0, perIndex) : nutUnit;
 	}
 
 	/**
@@ -329,7 +347,7 @@ public class NutritionFactsDataBuilder {
 	private NutritionFactsLine toLine(RegulatedNutrient regulated, RegulatedNutrients regulatedNutrients, List<Locale> languages,
 			NutritionFactsOptions options) {
 
-		String unit = carriesUnit(regulated) ? regulated.displayRule().unit() : null;
+		String unit = carriesUnit(regulated) ? unitOf(regulated, regulatedNutrients) : null;
 		String value = withUnit(regulated.displayValuePerServing(), unit);
 
 		Locale panelLocale = languages.get(0);
@@ -341,7 +359,8 @@ public class NutritionFactsDataBuilder {
 		return new NutritionFactsLine(regulated.nutCode(), wordings.label(), wordings.abbreviation(), wordings.plainLabel(),
 				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit), toPercent(shared.percentOf(regulated)),
 				toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
-				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel());
+				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel(),
+				shared.isShared(regulated.nutCode()), regulatedNutrients.supplementalNutCodes().contains(regulated.nutCode()));
 	}
 
 	/**
@@ -373,7 +392,7 @@ public class NutritionFactsDataBuilder {
 	private String regulatedWording(RegulatedNutrient regulated, RegulatedNutrients nutrients, Locale language,
 			NutritionFactsOptions options) {
 		return NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
-				nutrients.charactNames().get(regulated.nutCode()), language);
+				nutrients.characteristics().names().get(regulated.nutCode()), language);
 	}
 
 	/**
@@ -406,6 +425,19 @@ public class NutritionFactsDataBuilder {
 	private boolean carriesUnit(RegulatedNutrient regulated) {
 		Integer sort = regulated.displayRule().sort();
 		return (sort == null) || (sort != NutritionFactsOptions.CALORIES_SORT);
+	}
+
+	/**
+	 * Unit the amount of a nutrient is stated in: the one the regulation sets for it, and the unit
+	 * of the characteristic when the regulation merely authorises the nutrient without stating one,
+	 * as it does for caffeine. An amount printed with no unit states nothing.
+	 */
+	private String unitOf(RegulatedNutrient regulated, RegulatedNutrients nutrients) {
+		String regulatedUnit = regulated.displayRule().unit();
+		if ((regulatedUnit != null) && !regulatedUnit.isBlank()) {
+			return regulatedUnit;
+		}
+		return nutrients.characteristics().units().get(regulated.nutCode());
 	}
 
 	/**
@@ -512,6 +544,11 @@ public class NutritionFactsDataBuilder {
 		boolean isFoldedIn(String nutCode) {
 			return foldedIn.contains(nutCode);
 		}
+
+		/** Tells whether the percentage of a nutrient also accounts for the one folded into it. */
+		boolean isShared(String nutCode) {
+			return hostPercents.containsKey(nutCode);
+		}
 	}
 
 	/**
@@ -529,9 +566,16 @@ public class NutritionFactsDataBuilder {
 		}
 	}
 
-	/** Regulated nutrients of a product, with the characteristic names used when a regulation names nothing. */
-	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Map<String, String> charactNames, SharedDailyValues sharedDailyValues,
+	/** Regulated nutrients of a product, with what the referential says of the characteristics themselves. */
+	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Characteristics characteristics, SharedDailyValues sharedDailyValues,
 			Set<String> supplementalNutCodes) {
+	}
+
+	/**
+	 * What the referential holds of a characteristic, by nutrient code: its name and its unit, both
+	 * used only where the regulation states none of its own.
+	 */
+	private record Characteristics(Map<String, String> names, Map<String, String> units) {
 	}
 
 	/** The three blocks a panel draws its nutrients in. */

@@ -20,7 +20,6 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.nio.file.AccessDeniedException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
@@ -78,22 +77,11 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 		} catch (BeCPGException e) {
 			if (isBrokenPipe(e)) {
 				logger.info("Client aborted connection for entity: " + entityNodeRef);
+			} else if (isAccessDenied(e)) {
+				endOnError(resp, streaming, accessDenied(entityNodeRef));
 			} else {
-				logger.error("Cannot export entity " + entityNodeRef + " for user " + org.alfresco.repo.security.authentication.AuthenticationUtil.getFullyAuthenticatedUser(), e);
-				
-				try {
-					resp.reset();
-					throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
-				} catch (IllegalStateException ex) {
-					logger.warn("Cannot reset response for error, already committed: " + ex.getMessage());
-				}
-			}
-		} catch (AccessDeniedException e) {
-			try {
-				resp.reset();
-				throw new WebScriptException(Status.STATUS_FORBIDDEN, "You have no right to see this node");
-			} catch (IllegalStateException ex) {
-				logger.warn("Cannot reset response for access denied, already committed: " + ex.getMessage());
+				logger.error("Cannot export entity " + entityNodeRef, e);
+				endOnError(resp, streaming, new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage()));
 			}
 		} catch (SocketException e1) {
 			if (logger.isInfoEnabled()) {
@@ -110,13 +98,15 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			}
 			throw e;
 		} catch (RuntimeException e) {
-			if (!streaming) {
+			if (isAccessDenied(e)) {
+				endOnError(resp, streaming, accessDenied(entityNodeRef));
+			} else if (streaming) {
+				logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
+			} else {
 				throw e;
 			}
-			logger.error("Cannot export entity " + entityNodeRef + ", the response is already committed", e);
 		}
 
 	}
 
-	
 }

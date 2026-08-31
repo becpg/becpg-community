@@ -66,6 +66,47 @@ span.nutrient-class {
 	border-radius : 0px 5px 5px 0px;
 }
 
+/*
+ * The scale is sized for a form field, which is given the whole width of the panel. Laid out as a
+ * full width table in a grid cell it wraps its five badges onto three or four lines, and the row
+ * grows to whatever height that takes. In a cell it is a single line of badges, scaled down to the
+ * height of a line of text.
+ */
+.nutrient-score-cell .nutrient-class {
+	display: inline-block;
+	width: auto;
+	white-space: nowrap;
+}
+
+.nutrient-score-cell .nutrient-class-a,
+.nutrient-score-cell .nutrient-class-b,
+.nutrient-score-cell .nutrient-class-c,
+.nutrient-score-cell .nutrient-class-d,
+.nutrient-score-cell .nutrient-class-e
+{
+	font-size: 12px;
+	height: 14px;
+	line-height: 14px;
+	padding: 3px 4px;
+	width: 10px;
+	vertical-align: middle;
+}
+
+.nutrient-score-cell .selected.nutrient-class-a,
+.nutrient-score-cell .selected.nutrient-class-b,
+.nutrient-score-cell .selected.nutrient-class-c,
+.nutrient-score-cell .selected.nutrient-class-d,
+.nutrient-score-cell .selected.nutrient-class-e
+{
+	border-width: 2px;
+	border-radius: 13px;
+	font-size: 15px;
+	height: 18px;
+	line-height: 18px;
+	padding: 2px 4px;
+	width: 13px;
+}
+
 .nutrient-class-error
 {
 	background: url("../../images/states/warning-16.png") no-repeat;

@@ -6,8 +6,12 @@
   header, the footnote closing the panel underneath. It is the format a package that is wide and
   short is allowed to use, and the directory of formats only figures it in both languages.
 
-  None of that matches the vertical panels, so this template draws its own body. The columns are
-  drawn first: the calories of the left band are aligned on their bottom, so the bands end level.
+  None of that matches the vertical panels, so this template draws its own body. The wording of
+  the left band runs from the top down, the calories closing it right under the serving, and the
+  columns are closed by a rule of the medium weight, as is the block of the minerals.
+
+  The width the format gives it lets the panel state its header and its footnote on one line, in
+  the shortened form the regulation words, "%DV* / %VQ*".
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#assign WIDTH = 504>
@@ -19,8 +23,12 @@
 <#assign COL2_X = LEFT_W + COL_W>
 <#assign TITLE_LINE = 15>
 
+<#-- The calories are stated in the left band and not on a line of their own, so they run smaller. -->
+<#assign CALORIES_SIZE = 11>
+
 <#-- Nutrients split over two columns, the break falling between two groups and never inside one. -->
 <#assign lines = nf_data.nutrients() + nf_data.micronutrients()>
+<#assign MICRO_START = nf_data.nutrients()?size>
 <#assign half = ((lines?size + 1) / 2)?floor>
 <#assign splitIndex = lines?size>
 <#list lines as line>
@@ -30,11 +38,18 @@
 	</#if>
 </#list>
 
-<#-- One column of nutrients, leaving the ordinate it ended on in columnBottom. -->
-<#macro nutrientColumn columnLines x y>
+<#--
+  One column of nutrients, leaving the ordinate it ended on in columnBottom. The block of the
+  minerals opens on a rule of the medium weight, wherever the split between the two columns put
+  it; the rule closing the columns is drawn by the caller, both columns closing on one level.
+-->
+<#macro nutrientColumn columnLines x y startIndex>
 	<#assign columnBottom = y>
 	<#list columnLines as line>
-	<#if (line.indentLevel() lte 1) || (line?index == 0)>
+	<#if (startIndex + line?index) == MICRO_START>
+	<@nf.bandRule x=x y=columnBottom width=COL_W height=nf.RULE_MEDIUM/>
+	<#assign columnBottom = columnBottom + nf.RULE_MEDIUM>
+	<#elseif (line.indentLevel() lte 1) || (line?index == 0)>
 	<@nf.bandRule x=x y=columnBottom width=COL_W/>
 	<#assign columnBottom = columnBottom + nf.HAIRLINE>
 	</#if>
@@ -46,28 +61,28 @@
 <#assign body>
 	<#assign top = nf.BORDER + 2>
 
-	<#assign headerY = top>
-	<#list nf.dailyValueHeaders(nf_data) as header>
+	<#assign header = nf.joined(nf_data.label("dailyValueShort"), nf_data.isBilingual()?then(nf_data.secondaryLabel("dailyValueShort"), ""))>
 	<#list [COL1_X, COL2_X] as columnX>
-	<text x="${columnX + COL_W - 4}" y="${nf.baseline(headerY, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${header}</text>
+	<text x="${columnX + COL_W - 4}" y="${nf.baseline(top, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${header}</text>
 	</#list>
-	<#assign headerY = headerY + nf.lineHeight(nf.CAPTION_SIZE)>
-	</#list>
+	<#assign headerY = top + nf.lineHeight(nf.CAPTION_SIZE)>
 
-	<@nutrientColumn columnLines=lines[0..*splitIndex] x=COL1_X y=headerY + 1/>
+	<@nutrientColumn columnLines=lines[0..*splitIndex] x=COL1_X y=headerY + 1 startIndex=0/>
 	<#assign firstBottom = columnBottom>
-	<@nutrientColumn columnLines=lines[splitIndex..] x=COL2_X y=headerY + 1/>
+	<@nutrientColumn columnLines=lines[splitIndex..] x=COL2_X y=headerY + 1 startIndex=splitIndex/>
 	<#assign columnsBottom = [firstBottom, columnBottom]?max>
+
+	<#list [COL1_X, COL2_X] as columnX>
+	<@nf.bandRule x=columnX y=columnsBottom width=COL_W height=nf.RULE_MEDIUM/>
+	</#list>
+	<#assign columnsBottom = columnsBottom + nf.RULE_MEDIUM>
 
 	<@nf.canadianHeading data=nf_data y=top titleSize=TITLE_LINE x=nf.PAD width=LEFT_W - 2 * nf.PAD/>
 	<#assign leftBottom = nf.cursorY>
 
 	<#if nf_data.calories()??>
-	<#-- The calories close the left band on the same line as the nutrients close the columns. -->
-	<#assign leftBottom = [leftBottom + 2, columnsBottom - nf.lineHeight(nf.CA_CALORIES_SIZE)]?max>
-	<@nf.bandRule x=0 y=leftBottom - 3 width=LEFT_W height=nf.CA_RULE_HEAVY/>
-	<text x="${nf.PAD}" y="${nf.baseline(leftBottom, nf.CA_CALORIES_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.CA_CALORIES_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
-	<#assign leftBottom = leftBottom + nf.lineHeight(nf.CA_CALORIES_SIZE)>
+	<text x="${nf.PAD}" y="${nf.baseline(leftBottom, CALORIES_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${CALORIES_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
+	<#assign leftBottom = leftBottom + nf.lineHeight(CALORIES_SIZE)>
 	</#if>
 
 	<#assign bandsBottom = [leftBottom, columnsBottom]?max>
@@ -78,7 +93,7 @@
 	<#if nf_data.footNote()?has_content>
 	<@nf.bandRule x=0 y=panelH width=WIDTH/>
 	<#assign panelH = panelH + nf.HAIRLINE + 1>
-	<@nf.emphasisedFootNote data=nf_data y=panelH/>
+	<@nf.emphasisedFootNote data=nf_data y=panelH singleLine=true/>
 	<#assign panelH = nf.cursorY>
 	</#if>
 	<#assign panelH = panelH + nf.BORDER + 2>

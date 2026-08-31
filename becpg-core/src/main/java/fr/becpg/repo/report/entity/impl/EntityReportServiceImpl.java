@@ -1425,7 +1425,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
 						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(entityNodeRef);
+						policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 						
 						reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
 					}

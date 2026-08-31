@@ -732,6 +732,12 @@
 
             var timeStamp = (new Date().getTime());
 
+            // The column definitions are resolved by the repository. The dialog is shown straight
+            // away so that the click answers, so it has to say what it is waiting for: an empty
+            // strip under the title bar reads as a broken dialog, not as one being filled.
+            this._renderPickerMessage(containerEl,
+                '<span class="picker-list-spinner">' + Alfresco.util.encodeHTML(this.msg("label.picker-list.loading")) + '</span>');
+
             Alfresco.util.Ajax.jsonGet({
                 url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true"
                     + (siteId ? "&siteId=" + siteId : "")
@@ -786,6 +792,12 @@
 
                         });
 
+                    },
+                    scope: this
+                },
+                failureCallback: {
+                    fn: function() {
+                        this._renderPickerMessage(containerEl, Alfresco.util.encodeHTML(this.msg("label.picker-list.load-failed")));
                     },
                     scope: this
                 }
@@ -849,6 +861,18 @@
                 + '<label for="' + item.id + '">'
                 + '<span class="picker-list-label" title="' + encodedLabel + '">' + encodedLabel + '</span>'
                 + '</label></li>';
+        },
+
+        /**
+          * Replaces the body of a picker by a single line of text, while its definitions are being
+          * loaded or once loading them has failed.
+          *
+          * @method _renderPickerMessage
+          * @param containerEl {object} the element holding the picker
+          * @param messageHtml {String} the message markup
+          */
+        _renderPickerMessage: function EntityDataGrid__renderPickerMessage(containerEl, messageHtml) {
+            containerEl.innerHTML = '<div class="picker-list-message">' + messageHtml + '</div>';
         },
 
         /**

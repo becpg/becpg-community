@@ -20,7 +20,6 @@ package fr.becpg.repo.web.scripts.remote;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-import java.nio.file.AccessDeniedException;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.Status;
@@ -46,21 +45,28 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 		logger.debug("Get entity data: " + entityNodeRef);
 
-		try (OutputStream out = resp.getOutputStream()) {
+		/* The output stream is taken only once every read is done, so that an error raised before
+		 * the export starts can still be rendered to the caller. */
+		boolean streaming = false;
 
+		try {
 			RemoteParams params = new RemoteParams(getFormat(req));
 			params.setFilteredFields(extractFields(req), namespaceService);
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 
-			remoteEntityService.getEntityData(entityNodeRef, out, params);
-
-			resp.setStatus(Status.STATUS_OK);
+			streaming = true;
+			try (OutputStream out = resp.getOutputStream()) {
+				remoteEntityService.getEntityData(entityNodeRef, out, params);
+				resp.setStatus(Status.STATUS_OK);
+			}
 		} catch (BeCPGException e) {
-			logger.error("Cannot export entity data", e);
-			throw new WebScriptException(e.getMessage());
-		} catch (AccessDeniedException e) {
-			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+			if (isAccessDenied(e)) {
+				endOnError(resp, streaming, accessDenied(entityNodeRef));
+			} else {
+				logger.error("Cannot export entity data of " + entityNodeRef, e);
+				endOnError(resp, streaming, new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage()));
+			}
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished

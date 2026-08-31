@@ -499,15 +499,26 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 				columns = [];
 			}
 			
-           	// get default fields
-			if(mode == "datagrid-prefs"){			
-				postBody.force = [];
-				var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
-				var defaultFieldsModel = jsonDefaultFields.status == 200 ? parseFormResponse(jsonDefaultFields) : null;
-				if (defaultFieldsModel !== null) {
-					defaultColumns = defaultFieldsModel.fields;
+			// The columns shown when nothing is forced, i.e. the ones ticked by default. Resolving
+			// them costs a second form resolution, and it only settles the columns the user has no
+			// preference for. Validating the column chooser writes a preference for every column it
+			// offered, so from the second opening on the answer is built with a single call to the
+			// repository.
+			var defaultColumnsLoaded = false;
+
+			var loadDefaultColumns = function() {
+				if (!defaultColumnsLoaded) {
+					defaultColumnsLoaded = true;
+					postBody.force = [];
+					var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
+					var defaultFieldsModel = jsonDefaultFields.status == 200 ? parseFormResponse(jsonDefaultFields) : null;
+					if (defaultFieldsModel !== null) {
+						defaultColumns = defaultFieldsModel.fields;
+					}
 				}
-			}
+
+				return defaultColumns;
+			};
 
 			
 			if(override){
@@ -628,7 +639,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								if(existInPref(preferences)){
 									columns[j].checked = isChecked(preferences);
 								} else {
-									if(isDefault(fieldId, defaultColumns) || formConfig.isFieldForced(fieldId)) {
+									if(formConfig.isFieldForced(fieldId) || isDefault(fieldId, loadDefaultColumns())) {
 										columns[j].checked = true;
 									} else {
 										columns[j].checked = false;

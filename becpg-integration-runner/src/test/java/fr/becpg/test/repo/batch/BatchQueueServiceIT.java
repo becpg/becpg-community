@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +26,13 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 
 	@Autowired
 	private BatchQueueService batchQueueService;
+
+	@Override
+	@After
+	public void tearDown() throws Exception {
+		waitForBatchQueueToDrain();
+		super.tearDown();
+	}
 	
 	@Test
 	public void testBatchEnd() throws InterruptedException {

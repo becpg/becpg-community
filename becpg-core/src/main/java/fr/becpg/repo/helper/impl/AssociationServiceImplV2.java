@@ -55,6 +55,7 @@ import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
@@ -313,6 +314,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			assocNodeRefs.addAll(toUpdateNodeRefs);
 		}
 		boolean hasChanged = false;
+		boolean cachedTargetsAreStale = false;
 
 		try {
 			TransactionalResourceHelper.incrementCount(UPDATE_ASSOC_COUNT);
@@ -343,14 +345,19 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 						hasChanged = true;
 					} else if (dbAssocNodeRefs != null && !dbAssocNodeRefs.contains(assocNodeRef)) {
 						hasChanged = true;
-						nodeService.createAssociation(nodeRef, assocNodeRef, qName);
+						cachedTargetsAreStale |= !tryCreateAssociation(nodeRef, assocNodeRef, qName);
 					}
 				}
 			}
 
 			if (hasChanged) {
 				assocNodeRefs.removeAll(toRemoveNodeRefs);
-				assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
+
+				if (cachedTargetsAreStale) {
+					removeCachedAssoc(nodeRef, qName);
+				} else {
+					assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
+				}
 
 				QName indexQName = entityDictionaryService.getAssocIndexQName(qName);
 				if (indexQName != null) {
@@ -364,6 +371,30 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			TransactionalResourceHelper.decrementCount(UPDATE_ASSOC_COUNT, false);
 		}
 
+	}
+
+	/**
+	 * <p>tryCreateAssociation.</p>
+	 *
+	 * Creates the association, tolerating the case where the cached targets say it is missing
+	 * while the database already holds it. The removal side has always tolerated the mirror case,
+	 * a target the cache outlived; without the same tolerance here a stale entry aborts the whole
+	 * caller, which for a report association means losing the formulation that asked for it.
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * @return false when the association was already there, so the cached targets cannot be trusted
+	 */
+	private boolean tryCreateAssociation(NodeRef nodeRef, NodeRef assocNodeRef, QName qName) {
+		try {
+			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
+			return true;
+		} catch (AssociationExistsException e) {
+			logger.warn("Association '" + qName + "' from '" + nodeRef + "' to '" + assocNodeRef
+					+ "' already exists, the cached targets were out of date", e);
+			return false;
+		}
 	}
 
 	/** {@inheritDoc} */

@@ -27,6 +27,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -50,8 +51,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	@Before
 	public void init() {
-		batchQueueService.cancelBatch("reformulateChangedEntities");
-		batchQueueService.removeBatchFromQueue("reformulateChangedEntities");
+		batchQueueService.cancelBatch(FormulationChannelService.REFORMULATE_BATCH_ID);
+		batchQueueService.removeBatchFromQueue(FormulationChannelService.REFORMULATE_BATCH_ID);
+		waitForBatchQueueToRelease(reformulateBatchInfo());
 		publicationChannelService = Mockito.spy(publicationChannelService);
 		systemConfigurationService = Mockito.spy(systemConfigurationService);
 		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
@@ -76,6 +78,30 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			Mockito.reset(formulationService);
 		}
 		super.tearDown();
+	}
+
+	/**
+	 * Names the batch the service queues, so that a run left over by a scheduled job or by the
+	 * previous test can be waited for before this one queues its own.
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
+	private BatchInfo reformulateBatchInfo() {
+		BatchInfo batchInfo = new BatchInfo(FormulationChannelService.REFORMULATE_BATCH_ID, FormulationChannelService.REFORMULATE_BATCH_DESC_ID);
+		batchInfo.setPriority(BatchPriority.LOW);
+		return batchInfo;
+	}
+
+	/**
+	 * Asserts that the service did queue a batch, reporting what the queue was busy with when it
+	 * did not: the service stays silent and returns null whenever the identifier is already taken.
+	 *
+	 * @param message the reason the batch was expected to run
+	 * @param batchInfo the batch the service returned
+	 */
+	private void assertBatchQueued(String message, BatchInfo batchInfo) {
+		assertNotNull(message + " - running batch: " + batchQueueService.getRunningBatchInfo() + ", queue: "
+				+ batchQueueService.getBatchesInQueue(), batchInfo);
 	}
 	
 	@Test
@@ -134,7 +160,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(finishedProductNodeRef);
 		assertIsPublished(rawMaterialNodeRef);
@@ -212,7 +238,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -260,7 +286,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -314,7 +340,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(rawMaterialNodeRef);
 		
@@ -381,7 +407,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxActiveUsers");
 		
 		batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run with high thresholds", batchInfo);
+		assertBatchQueued("Batch should run with high thresholds", batchInfo);
 		waitForBatchEnd(batchInfo);
 	}
 
@@ -403,7 +429,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", 0, 1);
@@ -433,7 +459,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.FAILED.toString(), "1", 1, 1);
@@ -484,7 +510,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertIsPublished(rawMaterialNodeRef);

@@ -5,10 +5,20 @@
   format is for: a package too small to carry a table. The percentages are stated bare and a
   legend at the foot of the panel says what they are, the footnote closing on the little/lot rule.
 
+  The regulation breaks the sentence into four lines and fixes what each one holds, which is why
+  the nutrients are grouped here rather than run out in the order of the table: the cholesterol
+  closes the fat line, where the table declares it after the protein.
+
   A sentence needs width rather than height, so the panel is drawn across the package.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#assign W = 504 in nf>
+
+<#-- The four lines of the format, the first one being the heading and the calories. -->
+<#assign LINE_GROUPS = [
+	["FAT", "FASAT", "FATRN", "CHOL-"],
+	["CHO-", "FIBTG", "SUGAR", "PRO-", "NA"],
+	["K", "CA", "FE"]]>
 
 <#-- Heading of the sentence: the title, the serving and the calories, each in both languages. -->
 <#function opening data>
@@ -29,22 +39,48 @@
 	<#return nf.joined(wording, data.secondaryLabel("servingSize") + (secondaryServing?has_content)?then(" " + secondaryServing, ""))>
 </#function>
 
+<#-- The nutrients of the product, gathered into the lines of the format, the empty ones dropped. -->
+<#function declaredGroups data>
+	<#local lines = data.nutrients() + data.micronutrients()>
+	<#local named = []>
+	<#list LINE_GROUPS as codes>
+		<#local named = named + codes>
+	</#list>
+	<#local groups = []>
+	<#list LINE_GROUPS as codes>
+		<#local group = nf.linesByCode(lines, codes)>
+		<#if codes?is_last>
+		<#local group = group + nf.linesOutside(lines, named)>
+		</#if>
+		<#if (group?size gt 0)>
+		<#local groups = groups + [group]>
+		</#if>
+	</#list>
+	<#return groups>
+</#function>
+
 <#assign y = nf.BORDER + 3>
 <#assign body>
 
-	<@nf.paragraph segments=opening(nf_data) + nf.linearSegments(nf_data) y=y/>
-	<#assign y = nf.cursorY + 1>
+	<@nf.paragraph segments=opening(nf_data) y=y/>
+	<#assign y = nf.cursorY>
+
+	<#list declaredGroups(nf_data) as group>
+	<@nf.paragraph segments=nf.linearGroupSegments(nf_data, group, (group?is_last)?then(".", ",")) y=y/>
+	<#assign y = nf.cursorY>
+	</#list>
+	<#assign y = y + 1>
 
 	<@nf.rule y=y/>
 	<#assign y = y + nf.HAIRLINE + 2>
 
-	<@nf.emphasisedFootNote data=nf_data y=y/>
-	<#assign y = nf.cursorY>
-
+	<#-- The legend and the footnote share the closing line, one pinned to each margin. -->
 	<#if nf_data.label("linearLegend")?has_content>
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${nf.joined(nf_data.label("linearLegend"), nf_data.isBilingual()?then(nf_data.secondaryLabel("linearLegend"), ""))}</text>
-	<#assign y = y + nf.lineHeight(nf.FOOTNOTE_SIZE)>
 	</#if>
+
+	<@nf.emphasisedFootNote data=nf_data y=y singleLine=true indent=nf.right() anchor="end"/>
+	<#assign y = nf.cursorY>
 
 	<#assign y = y + nf.BORDER + 2>
 </#assign>

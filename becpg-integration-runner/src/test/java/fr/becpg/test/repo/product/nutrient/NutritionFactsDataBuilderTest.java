@@ -300,6 +300,36 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	@Test
+	public void testSupplementalIngredientFallsBackOnTheUnitOfItsCharacteristic() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(
+				markedAsSupplemental(withCharactUnit(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY), "mg/100g"))));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertEquals("An amount the regulation gives no unit is stated in the unit of the characteristic", "100mg",
+				data.supplementalIngredients().get(0).value());
+	}
+
+	@Test
+	public void testCanadianSaturatedFatFlagsItsPercentageAsCoveringTheTransFatLine() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(nutListItem("FASAT", "Saturated", 1d, 5d, CA_REGULATION_KEY),
+				nutListItem("FATRN", "Trans", 2d, 10d, CA_REGULATION_KEY)));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+
+		Assert.assertTrue("The percentage covers the two lines, and a panel prints it between them",
+				lineOf(data, "Saturated").hasSharedDailyValue());
+		Assert.assertFalse("The trans fat line has no percentage of its own to place", lineOf(data, "+ Trans").hasSharedDailyValue());
+	}
+
+	@Test
 	public void testMandatoryNutrientStaysInItsBlockEvenWhenMarked() {
 
 		ProductData product = new ProductData();
@@ -310,6 +340,8 @@ public class NutritionFactsDataBuilderTest {
 
 		Assert.assertEquals("The regulation requires the sodium line where it puts it", List.of("Sodium"),
 				data.nutrients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertTrue("It is marked there instead, its amount covering the naturally occurring one as well",
+				data.nutrients().get(0).supplemental());
 		Assert.assertFalse(data.hasSupplementalIngredients());
 	}
 
@@ -383,6 +415,12 @@ public class NutritionFactsDataBuilderTest {
 		item.setValuePerServing(value);
 		item.setRoundedValue(roundedValue(value, gdaPerc, US_REGULATION_KEY));
 		return item;
+	}
+
+	/** Gives the characteristic the unit the referential holds for it, "mg/100g". */
+	private NutListDataItem withCharactUnit(NutListDataItem nutListItem, String nutUnit) {
+		((NutDataItem) alfrescoRepository.findOne(nutListItem.getNut())).setNutUnit(nutUnit);
+		return nutListItem;
 	}
 
 	/** Marks the line the way a formulator does, with the report kind of a supplemental ingredient. */
