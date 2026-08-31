@@ -221,7 +221,6 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         });
 
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
-        context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
         List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
         Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountries(
@@ -229,21 +228,28 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);
 
-        // Eelements without requirements are indicating that ingredient was resolved and providing regulatoryCode.
-        // Remove, so they won't fill the datalist view with empty rows
-        context.getIngRegulatoryListDataItems().removeIf(ingRegListDataItem ->
-                (ingRegListDataItem.getCitation() == null || ingRegListDataItem.getCitation().isEmpty()) &&
-                        (ingRegListDataItem.getRestrictionLevels() == null || ingRegListDataItem.getRestrictionLevels().isEmpty()) &&
-                        (ingRegListDataItem.getResultIndicator() == null || ingRegListDataItem.getResultIndicator().isEmpty()) &&
-                        (ingRegListDataItem.getPrecautions() == null || ingRegListDataItem.getPrecautions().isEmpty()) &&
-                        (ingRegListDataItem.getComment() == null || ingRegListDataItem.getComment().isEmpty())
-        );
+        List<IngRegulatoryListDataItem> filteredIngRegulatoryElements = parsedIngRegulatoryElements.stream()
+                .filter(item -> !isEmptyRegulatoryItem(item))
+                .toList();
+        context.getIngRegulatoryListDataItems().addAll(filteredIngRegulatoryElements);
+
         List<RequirementListDataItem> allRequirementAlerts = Streams.concat(
                 parsedRequirements.stream(), alertsForNotCoveredCountryToUsagePairs, alertsForNotCoveredIngredients
         ).toList();
         context.getRequirements().addAll(allRequirementAlerts);
 
         return true;
+    }
+
+    /**
+     * Elements without requirements are indicating that ingredient was resolved and providing regulatoryCode.
+     */
+    private boolean isEmptyRegulatoryItem(IngRegulatoryListDataItem item) {
+        return (item.getCitation() == null || item.getCitation().isEmpty()) &&
+                (item.getRestrictionLevels() == null || item.getRestrictionLevels().isEmpty()) &&
+                (item.getResultIndicator() == null || item.getResultIndicator().isEmpty()) &&
+                (item.getPrecautions() == null || item.getPrecautions().isEmpty()) &&
+                (item.getComment() == null || item.getComment().isEmpty());
     }
 
     private RemoteParams buildRecipeParams() {
