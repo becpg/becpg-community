@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -140,14 +141,24 @@ public class ProductDataEntityJsonService {
             return IntStream.range(0, array.length())
                     .mapToObj(i -> array.getJSONObject(i).optJSONObject("attributes"))
                     .filter(attributes -> attributes != null && attributes.has(ingAssocTypeName))
-                    .collect(Collectors.toMap(
-                            attributes -> attributes.getJSONObject(ingAssocTypeName).getString("id"),
-                            attributes -> attributes.getJSONObject(ingAssocTypeName).optJSONObject("attributes").getString(regCodeTypeName),
+                    .<Pair<String, String>>mapMulti((jsonAttributes, sink) -> {
+                        JSONObject ingAssoc = jsonAttributes.optJSONObject(ingAssocTypeName);
+                        if (ingAssoc != null) {
+                            String id = ingAssoc.optString("id");
+                            JSONObject assocAttrs = ingAssoc.optJSONObject("attributes");
+                            String regCode = assocAttrs != null ? assocAttrs.optString(regCodeTypeName) : "";
+                            if (StringUtils.hasText(id) && StringUtils.hasText(regCode)) {
+                                sink.accept(Pair.of(id, regCode));
+                            }
+                        }
+                    }).collect(Collectors.toMap(
+                            Pair::getKey,
+                            Pair::getValue,
                             (v1, v2) -> {
                                 if (StringUtils.hasText(v1) && StringUtils.hasText(v2)) {
                                     if (v1.equals(v2))
                                         return v1;
-                                    log.warn("becpg-regulatory returned different regulatory codes for the same ingredient: {} and {}", v1, v2);
+                                    log.warn("becpg-regulatory returned different regulatory code sets for the same ingredient: {} and {}", v1, v2);
                                 }
                                 return StringUtils.hasText(v1) ? v1 : StringUtils.hasText(v2) ? v2 : "";
                             }
