@@ -393,7 +393,7 @@ public class ProductDataDecernisJsonService {
         String rawCode = ingItem.getRegulatoryCode();
         if (StringUtils.hasText(rawCode)) {
             List<String> decernisCodes = Arrays.stream(rawCode.split(","))
-                    .filter(codePart -> !codePart.startsWith("BECPG_"))
+                    .filter(codePart -> StringUtils.hasText(codePart) && !codePart.startsWith("BECPG_"))
                     .map(parsedRid -> parsedRid.replace("DECERNIS_", ""))
                     .toList();
             if (decernisCodes.isEmpty())

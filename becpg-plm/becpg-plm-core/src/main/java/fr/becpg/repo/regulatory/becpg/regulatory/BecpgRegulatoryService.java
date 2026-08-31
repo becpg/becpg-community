@@ -198,10 +198,14 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach((id, regCodes) -> {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
 
-            Set<String> regCodesFromRegulatory = Arrays.stream(regCodes.split(",")).collect(Collectors.toSet());
             String regulatoryCodeFromRegService = ingItem.getRegulatoryCode();
+
+            Set<String> regCodesFromRegulatory = Arrays.stream(regCodes.split(","))
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toSet());
+
             Set<String> regCodesPresent = StringUtils.hasText(regulatoryCodeFromRegService) ?
-                    Arrays.stream(regulatoryCodeFromRegService.split(",")).collect(Collectors.toSet()) :
+                    Arrays.stream(regulatoryCodeFromRegService.split(",")).filter(StringUtils::hasText).collect(Collectors.toSet()) :
                     Set.of();
 
             Set<String> combined = new HashSet<>(regCodesPresent);
