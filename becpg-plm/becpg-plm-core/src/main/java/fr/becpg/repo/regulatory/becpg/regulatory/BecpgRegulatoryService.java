@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayOutputStream;
@@ -198,7 +199,11 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
 
             Set<String> regCodesFromRegulatory = Arrays.stream(regCodes.split(",")).collect(Collectors.toSet());
-            Set<String> regCodesPresent = Arrays.stream(ingItem.getRegulatoryCode().split(",")).collect(Collectors.toSet());
+            String regulatoryCodeFromRegService = ingItem.getRegulatoryCode();
+            Set<String> regCodesPresent = StringUtils.hasText(regulatoryCodeFromRegService) ?
+                    Arrays.stream(regulatoryCodeFromRegService.split(",")).collect(Collectors.toSet()) :
+                    Set.of();
+
             Set<String> combined = new HashSet<>(regCodesPresent);
             // clear present old becpg-regulatory codes, preserve decernis codes, add all incoming
             combined.removeIf(regCode -> regCode.startsWith("BECPG_"));
