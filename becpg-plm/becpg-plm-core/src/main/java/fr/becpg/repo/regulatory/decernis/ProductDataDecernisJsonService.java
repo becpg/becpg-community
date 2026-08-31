@@ -392,10 +392,13 @@ public class ProductDataDecernisJsonService {
     public static String extractRid(IngListDataItem ingListDataItem, IngItem ingItem) {
         String rawCode = ingItem.getRegulatoryCode();
         if (StringUtils.hasText(rawCode)) {
-            List<String> decernisCodes = Arrays.stream(rawCode.split(","))
-                    .filter(codePart -> StringUtils.hasText(codePart) && !codePart.startsWith("BECPG_"))
-                    .map(parsedRid -> parsedRid.replace("DECERNIS_", ""))
-                    .toList();
+            List<String> decernisCodes = Arrays.stream(rawCode.split(",")).<String>mapMulti((codePart, sink) -> {
+                if (StringUtils.hasText(codePart)) {
+                    String[] code = codePart.split("DECERNIS_");
+                    if (code.length == 2 && StringUtils.hasText(code[1]))
+                        sink.accept(code[1]);
+                }
+            }).toList();
             if (decernisCodes.isEmpty())
                 return null;
             if (decernisCodes.size() > 1) {
