@@ -10,13 +10,16 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryAuthenticationService;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
 import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
+import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -279,6 +282,10 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             return null;
         });
 
+        NodeRef countryNodeRef = getCountry("Germany", "DE");
+        NodeRef usageNodeRef = getUsage("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap");
+        NodeRef finishedProductNodeRef = createFinishedProduct("PF BecpgRegulatory testRequestsToBecpgRegulatoryDoesNotOverrideDecernisRegulatoryCode");
+
         // substitute placeholders with actual IDs
         inWriteTx(() -> {
             systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", mockServerUrl);
@@ -289,13 +296,10 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             body = body.replaceAll("ing-3-id", ing3.getId());
             body = body.replaceAll("ing-4-id", ing4.getId());
             body = body.replaceAll("ing-5-id", ing5.getId());
+            body = body.replaceAll("regulatory-country-uuid-here", countryNodeRef.getId());
             mockWebServer.enqueue(new MockResponse().setBody(body));
             return null;
         });
-
-        NodeRef countryNodeRef = getCountry("Germany", "DE");
-        NodeRef usageNodeRef = getUsage("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap");
-        NodeRef finishedProductNodeRef = createFinishedProduct("PF BecpgRegulatory testRequestsToBecpgRegulatoryDoesNotOverrideDecernisRegulatoryCode");
 
         try {
             inWriteTx(() -> {
@@ -354,5 +358,176 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                 return null;
             });
         }
+    }
+
+    @Test
+    public void testRequestsToBecpgRegulatoryWithNullAndEmptyRegulatoryCodes() {
+        inWriteTx(() -> {
+            nodeService.removeProperty(ing1, PLMModel.PROP_REGULATORY_CODE);
+            nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, "");
+            nodeService.setProperty(ing3, PLMModel.PROP_REGULATORY_CODE, ",,DECERNIS_42,");
+            return null;
+        });
+
+        NodeRef countryNodeRef = getCountry("Germany", "DE");
+        NodeRef usageNodeRef = getUsage("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap");
+        NodeRef finishedProductNodeRef = createFinishedProduct("PF BecpgRegulatory testRequestsToBecpgRegulatoryWithNullAndEmptyRegulatoryCodes");
+
+        inWriteTx(() -> {
+            systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", mockServerUrl);
+            systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
+            String body = readJsonResource("beCPG/regulatory/becpg/response-codes.json");
+            body = body.replaceAll("ing-1-id", ing1.getId());
+            body = body.replaceAll("ing-2-id", ing2.getId());
+            body = body.replaceAll("ing-3-id", ing3.getId());
+            body = body.replaceAll("ing-4-id", ing4.getId());
+            body = body.replaceAll("ing-5-id", ing5.getId());
+            body = body.replaceAll("regulatory-country-uuid-here", countryNodeRef.getId());
+            mockWebServer.enqueue(new MockResponse().setBody(body));
+            return null;
+        });
+
+        try {
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                List<IngListDataItem> ingList = product.getIngList();
+                for (NodeRef ing : List.of(ing1, ing2, ing3)) {
+                    ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing).withIsManual(null));
+                }
+
+                RegulatoryListDataItem item = new RegulatoryListDataItem();
+                item.setRegulatoryCountriesRef(new ArrayList<>(List.of(countryNodeRef)));
+                item.setRegulatoryUsagesRef(new ArrayList<>(List.of(usageNodeRef)));
+                item.setRegulatoryState(SystemState.Simulation);
+                product.getRegulatoryList().add(item);
+
+                return alfrescoRepository.save(product);
+            });
+
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                ComplianceResult result = new ComplianceResult();
+                regulatoryService.doCheck(false, result, product);
+                return null;
+            });
+
+            inWriteTx(() -> {
+                IngItem updatedIng1 = (IngItem) alfrescoRepository.findOne(ing1);
+                IngItem updatedIng2 = (IngItem) alfrescoRepository.findOne(ing2);
+                IngItem updatedIng3 = (IngItem) alfrescoRepository.findOne(ing3);
+
+                assertNotNull(updatedIng1.getRegulatoryCode());
+                assertEquals("BECPG_123", updatedIng1.getRegulatoryCode());
+
+                assertNotNull(updatedIng2.getRegulatoryCode());
+                assertEquals("BECPG_123", updatedIng2.getRegulatoryCode());
+
+                Set<String> ing3codes = Arrays.stream(updatedIng3.getRegulatoryCode().split(",")).collect(Collectors.toSet());
+                assertEquals(Set.of("BECPG_123", "DECERNIS_42"), ing3codes);
+                assertFalse(ing3codes.contains(""));
+                return null;
+            });
+        } finally {
+            inWriteTx(() -> {
+                systemConfigurationService.resetConfValue("beCPG.regulatory.serverUrl");
+                systemConfigurationService.resetConfValue("beCPG.regulatory.enabled");
+                return null;
+            });
+        }
+    }
+
+    @Test
+    public void testEmptyIngRegulatoryListItemsAreFilteredAndContextPreserved() {
+        inWriteTx(() -> {
+            nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, "BECPG_123");
+            nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, "BECPG_123");
+            nodeService.setProperty(ing3, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+            nodeService.setProperty(ing4, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+            nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+            return null;
+        });
+
+        NodeRef countryNodeRef = getCountry("Germany", "DE");
+        NodeRef usageNodeRef = getUsage("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap");
+        NodeRef finishedProductNodeRef = createFinishedProduct("PF BecpgRegulatory testEmptyIngRegulatoryListItemsAreFilteredAndContextPreserved");
+
+        inWriteTx(() -> {
+            systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", mockServerUrl);
+            systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
+            String body = readJsonResource("beCPG/regulatory/becpg/response-codes.json");
+            body = body.replaceAll("ing-1-id", ing1.getId());
+            body = body.replaceAll("ing-2-id", ing2.getId());
+            body = body.replaceAll("ing-3-id", ing3.getId());
+            body = body.replaceAll("ing-4-id", ing4.getId());
+            body = body.replaceAll("ing-5-id", ing5.getId());
+            body = body.replaceAll("regulatory-country-uuid-here", countryNodeRef.getId());
+            mockWebServer.enqueue(new MockResponse().setBody(body));
+            return null;
+        });
+
+        try {
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                List<IngListDataItem> ingList = product.getIngList();
+                for (NodeRef ing : List.of(ing1, ing2, ing3, ing4, ing5)) {
+                    ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing).withIsManual(null));
+                }
+
+                RegulatoryListDataItem item = new RegulatoryListDataItem();
+                item.setRegulatoryCountriesRef(new ArrayList<>(List.of(countryNodeRef)));
+                item.setRegulatoryUsagesRef(new ArrayList<>(List.of(usageNodeRef)));
+                item.setRegulatoryState(SystemState.Simulation);
+                product.getRegulatoryList().add(item);
+
+                return alfrescoRepository.save(product);
+            });
+
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                ComplianceResult result = new ComplianceResult();
+
+                IngRegulatoryListDataItem existingItem = new IngRegulatoryListDataItem();
+                RegulatoryContext context = createContext(product);
+                result.setContext(context);
+                result.getContext().getIngRegulatoryListDataItems().add(existingItem);
+
+                regulatoryService.doCheck(false, result, product);
+
+                List<NodeRef> ingredientsWithRegulations = result.getContext().getIngRegulatoryListDataItems().stream()
+                        .map(IngRegulatoryListDataItem::getIng)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                // non-empty
+                assertEquals(2, ingredientsWithRegulations.size());
+                assertTrue(ingredientsWithRegulations.contains(ing1));
+                assertTrue(ingredientsWithRegulations.contains(ing2));
+
+                // only bearing code, filtered
+                assertFalse(ingredientsWithRegulations.contains(ing3));
+                assertFalse(ingredientsWithRegulations.contains(ing4));
+                assertFalse(ingredientsWithRegulations.contains(ing5));
+                return null;
+            });
+        } finally {
+            inWriteTx(() -> {
+                systemConfigurationService.resetConfValue("beCPG.regulatory.serverUrl");
+                systemConfigurationService.resetConfValue("beCPG.regulatory.enabled");
+                return null;
+            });
+        }
+    }
+
+    protected RegulatoryContext createContext(ProductData product) {
+        RegulatoryContext context = new RegulatoryContext();
+        if (product.getIngList() != null) {
+            context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
+        }
+        context.setProduct(product);
+        return context;
+    }
+
+    protected boolean isIngItemValid(IngListDataItem ingListDataItem) {
+        return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
     }
 }

@@ -546,6 +546,12 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRequestsToDecernisDoesNotOverrideBecpgRegulatoryCode()  {
 		inWriteTx(() -> {
+			nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "BECPG_123");
+			nodeService.removeProperty(ing6, PLMModel.PROP_REGULATORY_CODE);
+			return null;
+		});
+
+		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
 			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
 			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
@@ -608,9 +614,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 
 				Set<String> ing5codes = Arrays.stream(updatedIng5.getRegulatoryCode().split(",")).collect(Collectors.toSet());
 				Set<String> ing6codes = Arrays.stream(updatedIng6.getRegulatoryCode().split(",")).collect(Collectors.toSet());
-				Set<String> expected = Set.of("BECPG_123", "42");
-				assertEquals(expected, ing5codes);
-				assertEquals(expected, ing6codes);
+				assertEquals(Set.of("BECPG_123", "DECERNIS_42"), ing5codes);
+				assertEquals(Set.of("DECERNIS_42"), ing6codes);
 				return null;
 			});
 		} finally {
@@ -627,8 +632,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRequestsToDecernisOnlyContainRid()  {
 		inWriteTx(() -> {
-			nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,42");
-			nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,BECPG_4567,42");
+			nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+			nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, ",,DECERNIS_42,");
 			nodeService.setProperty(ing3, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
 			nodeService.setProperty(ing4, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,DECERNIS_42");
 			nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,BECPG_4567,DECERNIS_42");
