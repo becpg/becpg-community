@@ -168,33 +168,50 @@ public class ProductDataEntityJsonService {
     }
 
     /**
-     * Creates a list of tolerated reqCtrl elements for each country that was not listed in IngRegulatoryList
+     * Creates a list of tolerated reqCtrl elements for
+     * each country that was not listed in IngRegulatoryList x
+     * each regulatory usage ever specified for this country.
+     * As product regulatory usage is only one of many criteria used to pick relevant regulatory requirements -
+     * raising by-pair alerts makes no sense.
      *
      * @param regulatoryElements    regulatory list contents, as defined in the product
      * @param ingRegulatoryElements only ones, directly deserialized from JSON
-     * @return a stream of {@link RequirementListDataItem} alerts for uncovered COUNTRY - USAGE pairs
+     * @return a stream of {@link RequirementListDataItem} alerts for each not-covered country x usages this country ever linked with
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredCountries(Collection<RegulatoryListDataItem> regulatoryElements,
                                                                               Collection<IngRegulatoryListDataItem> ingRegulatoryElements) {
         if (regulatoryElements == null || ingRegulatoryElements == null)
             return Stream.empty();
 
-        Set<NodeRef> regulatoryCountries = regulatoryElements.stream().map(RegulatoryListDataItem::getRegulatoryCountriesRef)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-
-        Set<NodeRef> parsedIngRegulatoryElements = ingRegulatoryElements.stream()
-                .map(IngRegulatoryListDataItem::getRegulatoryCountries)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-
-        regulatoryCountries.removeAll(parsedIngRegulatoryElements);
-        if (regulatoryCountries.isEmpty())
+        Map<NodeRef, Set<NodeRef>> countryToUsages = new HashMap<>();
+        // squash usages for each country from different regulatoryElements
+        for (RegulatoryListDataItem item : regulatoryElements) {
+            for (NodeRef country : item.getRegulatoryCountriesRef()) {
+                countryToUsages.computeIfAbsent(country, ignored -> new HashSet<>()).addAll(item.getRegulatoryUsagesRef());
+            }
+        }
+        // remove pairs if country was handled in any ingRegulatory element
+        for (IngRegulatoryListDataItem item : ingRegulatoryElements) {
+            for (NodeRef country : item.getRegulatoryCountries()) {
+                countryToUsages.remove(country);
+            }
+        }
+        // everything handled - return
+        if (countryToUsages.isEmpty())
             return Stream.empty();
-        return Stream.of(createToleratedReqCtrl(
-                new ArrayList<>(regulatoryCountries),
-                MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND),
-                null, null));
+
+        Map<NodeRef, String> codeByRef = fillNodeRefDictionary(regulatoryElements);
+        MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND);
+
+        return countryToUsages.entrySet().stream().flatMap(entry -> {
+            NodeRef country = entry.getKey();
+            String countryRegCode = codeByRef.get(country);
+
+            return entry.getValue().stream().map(usage -> {
+                String code = countryRegCode + " - " + codeByRef.get(usage);
+                return createToleratedReqCtrl(List.of(country, usage), i18NMessage, null, code);
+            });
+        });
     }
 
     /**
