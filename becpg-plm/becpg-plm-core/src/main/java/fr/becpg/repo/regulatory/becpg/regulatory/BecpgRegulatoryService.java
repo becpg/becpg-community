@@ -19,6 +19,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
+import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
@@ -210,7 +211,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
 
             Set<String> combined = new HashSet<>(regCodesPresent);
             // clear present old becpg-regulatory codes, preserve decernis codes, add all incoming
-            combined.removeIf(regCode -> regCode.startsWith("BECPG_"));
+            combined.removeIf(regCode -> regCode.startsWith(RegulatoryHelper.BECPG_PREFIX));
             combined.addAll(regCodesFromRegulatory);
             // update entity if there is a change
             if (!combined.equals(regCodesPresent)) {

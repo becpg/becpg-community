@@ -19,6 +19,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -185,7 +186,7 @@ public class ProductDataDecernisJsonService {
 	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
 	/** Constant <code>FOOD_ADDITIVES="FOOD_ADDITIVES"</code> */
 	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
-	
+
     static {
     	moduleToCodeMap.put(FOOD_ADDITIVES, "ADD");
 		moduleToCodeMap.put(STANDARDS_OF_IDENTITY_FOOD, "SOI");
@@ -394,9 +395,12 @@ public class ProductDataDecernisJsonService {
         if (StringUtils.hasText(rawCode)) {
             List<String> decernisCodes = Arrays.stream(rawCode.split(",")).<String>mapMulti((codePart, sink) -> {
                 if (StringUtils.hasText(codePart)) {
-                    String[] code = codePart.split("DECERNIS_");
-                    if (code.length == 2 && StringUtils.hasText(code[1]))
-                        sink.accept(code[1]);
+                    String[] codeSplit = codePart.split(RegulatoryHelper.DECERNIS_PREFIX);
+                    if (codeSplit.length == 2 && NumberUtils.toInt(codeSplit[1], -1) != -1) {
+                        sink.accept(codeSplit[1]);
+                    } else if (codeSplit.length == 1 && NumberUtils.toInt(codeSplit[0], -1) != -1) {
+                        sink.accept(codeSplit[0]);
+                    }
                 }
             }).toList();
             if (decernisCodes.isEmpty())

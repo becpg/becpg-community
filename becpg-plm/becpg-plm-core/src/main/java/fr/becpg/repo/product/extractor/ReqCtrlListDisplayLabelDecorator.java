@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.becpg.repo.regulatory.RegulatoryHelper;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -30,8 +31,6 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	private static final String DISPLAY_LABEL = "displayLabel";
 
 	private static final String CODE_SEPARATOR = " - ";
-
-	private static final String DECERNIS_PREFIX = "DECERNIS_";
 
 	private static final NodeRef NOT_FOUND = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "not-found");
 
@@ -164,8 +163,8 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		if (charactCode == null) {
 			return false;
 		}
-		for (String part : charactCode.split(",(?=" + DECERNIS_PREFIX + ")")) {
-			String candidate = part.startsWith(DECERNIS_PREFIX) ? part.substring(DECERNIS_PREFIX.length()) : part;
+		for (String part : charactCode.split(",(?=" + RegulatoryHelper.DECERNIS_PREFIX + ")")) {
+			String candidate = part.startsWith(RegulatoryHelper.DECERNIS_PREFIX) ? part.substring(RegulatoryHelper.DECERNIS_PREFIX.length()) : part;
 			if (token.equals(candidate.trim())) {
 				return true;
 			}
