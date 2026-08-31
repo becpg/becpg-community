@@ -202,6 +202,8 @@
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
 					<show id="survey:nextQuestion" />
+					<show id="bcpg:code" />
+					<show id="bcpg:sort" />
 					
 					<!--surveyOption -->
 					<show id="survey:questionIsMandatory" />
@@ -250,6 +252,8 @@
 							<control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>
 					</field>
+					<field id="bcpg:code" set="surveyQuestion" read-only="true" />
+					<field id="bcpg:sort" set="surveyQuestion" />
 					
 					<!--surveyOption -->
 					<field id="survey:questionIsMandatory" set="surveyOption" />
