@@ -365,6 +365,14 @@
 					<show id="cm:created" for-mode="view" />
           		</field-visibility>
      		</form>
+			<form id="scan">
+				<field-visibility>
+					<show id="qa:batchScannerInput" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchScannerInput" label-id="qa_qamodel.property.qa_batchScannerInput.title" />
+				</appearance>
+			</form>
 		</forms>
 	</config>
 
@@ -473,6 +481,14 @@
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
 
+				</appearance>
+			</form>
+			<form id="scan">
+				<field-visibility>
+					<show id="qa:batchScannerInput" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:batchScannerInput" label-id="qa_qamodel.property.qa_batchScannerInput.title" />
 				</appearance>
 			</form>
 
@@ -584,6 +600,22 @@
 
 				</appearance>
 
+			</form>
+			<!-- Batch scan pop-up form -->
+			<form id="batchScan">
+				<field-visibility>
+					<show id="qa:product" />
+					<show id="qa:batchAllocationStockRefs" />
+				</field-visibility>
+				<appearance>
+					<field id="qa:product" read-only="true" />
+					<field id="qa:batchAllocationStockRefs">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/stocks</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
