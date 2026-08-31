@@ -44,7 +44,7 @@ public class AttributeExtractorMatchCriteriaIT extends PLMBaseTestCase {
 
 	/**
 	 * A filter on a multiple association sends every selected value in a single criterion (#30631):
-	 * filtering on two plants keeps the products made in both of them, and only those.
+	 * filtering on two plants keeps the products made in either of them.
 	 */
 	@Test
 	public void testMatchMultipleAssociationCriterion() {
@@ -61,19 +61,19 @@ public class AttributeExtractorMatchCriteriaIT extends PLMBaseTestCase {
 
 			Assert.assertTrue("A product made in both selected plants matches",
 					matches(bothPlantsNodeRef, PLANTS_CRITERION, bothPlants));
-			Assert.assertFalse("A product made in only one of the selected plants does not match",
+			Assert.assertTrue("A product made in one of the selected plants matches",
 					matches(firstPlantNodeRef, PLANTS_CRITERION, bothPlants));
-			Assert.assertFalse("A product missing one of the selected plants does not match",
-					matches(bothPlantsNodeRef, PLANTS_CRITERION, plant1NodeRef + "," + plant3NodeRef));
+			Assert.assertFalse("A product made in none of the selected plants does not match",
+					matches(firstPlantNodeRef, PLANTS_CRITERION, plant2NodeRef + "," + plant3NodeRef));
 
 			Assert.assertTrue("A single selected plant still matches the products made in it",
 					matches(bothPlantsNodeRef, PLANTS_CRITERION, plant1NodeRef.toString()));
 			Assert.assertFalse("A single selected plant does not match a product made elsewhere",
 					matches(bothPlantsNodeRef, PLANTS_CRITERION, plant3NodeRef.toString()));
 
-			Assert.assertTrue("Plants selected by name match as well", matches(bothPlantsNodeRef, PLANTS_CRITERION, "plant 1,plant 2"));
-			Assert.assertFalse("A product missing a plant selected by name does not match",
-					matches(firstPlantNodeRef, PLANTS_CRITERION, "plant 1,plant 2"));
+			Assert.assertTrue("Plants selected by name match as well", matches(firstPlantNodeRef, PLANTS_CRITERION, "plant 1,plant 2"));
+			Assert.assertFalse("Names of plants the product is not made in do not match",
+					matches(firstPlantNodeRef, PLANTS_CRITERION, "plant 2,plant 3"));
 
 			return null;
 		});

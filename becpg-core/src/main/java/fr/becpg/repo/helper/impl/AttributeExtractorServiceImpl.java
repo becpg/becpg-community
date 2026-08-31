@@ -1336,8 +1336,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 *
 	 * The data holds one entry per value of the field, and the criterion matches as soon as one of
 	 * them matches. A criterion holding several values - what a filter on a multiple association
-	 * sends - matches only when every single value is found: filtering on two plants keeps the
-	 * entities made in both.
+	 * sends - matches as soon as one of its values is found: filtering on two plants keeps the
+	 * entities made in either of them.
 	 *
 	 * @param dataList a {@link java.util.List} object
 	 * @param compKey a {@link java.lang.String} object
@@ -1350,19 +1350,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return true;
 		}
 
-		List<String> singleValues = splitMultiValue(critValue);
-
-		if (singleValues.isEmpty()) {
-			return false;
-		}
-
-		for (String singleValue : singleValues) {
-			if (!matchAnyData(dataList, compKey, critKey, singleValue)) {
-				return false;
+		for (String singleValue : splitMultiValue(critValue)) {
+			if (matchAnyData(dataList, compKey, critKey, singleValue)) {
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
