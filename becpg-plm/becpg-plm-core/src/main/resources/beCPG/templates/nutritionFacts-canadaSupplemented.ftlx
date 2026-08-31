@@ -6,6 +6,10 @@
   else — the rounding, the order of the nutrients, the daily values — is that of the standard
   table, which is why this template only adds to the Canadian body rather than drawing its own.
 
+  Every declaration whose amount covers a naturally occurring amount as well carries the mark the
+  closing note explains, the block itself and the supplemented nutrients the regulation keeps on
+  their own line.
+
   A nutrient enters the block by being marked as a supplemental ingredient on its line of the
   nutrition list, and the block declares nothing else: a substance the regulation does not name
   has no place in a regulated table.
@@ -16,7 +20,7 @@
 <#assign y = nf.BORDER + 2>
 <#assign body>
 
-	<@nf.canadianHeading data=nf_data y=y titleKey="supplementedTitle" titleSize=13/>
+	<@nf.canadianHeading data=nf_data y=y titleKey="supplementedTitle" titleSize=nf.fittedTitleSize(nf_data, "supplementedTitle", 13)/>
 	<#assign y = nf.cursorY>
 
 	<@nf.canadianBody data=nf_data y=y withSupplemental=true/>

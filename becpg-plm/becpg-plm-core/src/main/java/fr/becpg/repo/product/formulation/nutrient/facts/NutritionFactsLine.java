@@ -27,14 +27,16 @@ package fr.becpg.repo.product.formulation.nutrient.facts;
  * carries its percent sign, both rounded according to the regulation. {@code indentLevel} starts at
  * 1 for a top level nutrient, which is what drives the horizontal offset of the line.
  * {@code sharedDailyValue} tells that the percentage of the line also accounts for the nutrient
- * declared under it, which the regulation asks to be printed between the two lines it covers.</p>
+ * declared under it, which the regulation asks to be printed between the two lines it covers.
+ * {@code supplemental} tells that the food was supplemented with that nutrient, which a supplemented
+ * food facts table marks so that the reader tells the amount apart from a naturally occurring one.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
 public record NutritionFactsLine(String nutCode, String label, String abbreviatedLabel, String plainLabel, String plainAbbreviatedLabel, String value,
 		String valuePerContainer, String dailyValuePercent, String dailyValuePercentPerContainer, int indentLevel, boolean bold,
-		boolean showDailyValue, boolean valueInLabel, boolean sharedDailyValue) {
+		boolean showDailyValue, boolean valueInLabel, boolean sharedDailyValue, boolean supplemental) {
 
 	/**
 	 * <p>Tells whether the amount has to be printed after the wording. It must not be when the

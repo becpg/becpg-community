@@ -59,6 +59,12 @@ public class NutritionFactsTemplateTest {
 
 	private static final double RULE_MEDIUM = 3d;
 
+	/** Weight of the rule closing the opening block of a Canadian panel, lighter than its parts. */
+	private static final double RULE_LIGHT = 1d;
+
+	/** Reference a supplemented food facts table prints on the amounts its closing note covers. */
+	private static final String SUPPLEMENT_MARK = "\u2020";
+
 	private static final double INDENT = 5.5d;
 
 	private static final double PAD = 4d;
@@ -181,7 +187,7 @@ public class NutritionFactsTemplateTest {
 	@Test
 	public void testLinearFormatUsesTheRegulatedAbbreviations() throws Exception {
 		NutritionFactsData data = panelData(new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "Saturated Fat", "Sat. Fat", "1g", null,
-				"5%", null, 2, false, true, false, false));
+				"5%", null, 2, false, true, false, false, false));
 
 		Assert.assertTrue("The linear format names nutrients by their abbreviation",
 				findText(parse(renderToString("nutritionFacts-linear.ftlx", data)), "Sat. Fat").getTextContent().startsWith("Sat. Fat 1g (5% DV)"));
@@ -258,8 +264,8 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianPanelRulesTheGroupsAndNotEveryLine() throws Exception {
 		List<Element> rects = elements(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "rect");
 
-		Assert.assertEquals("A medium rule closes the serving block, the calories, the core nutrients and the minerals", 4,
-				countByHeight(rects, RULE_MEDIUM));
+		Assert.assertEquals("A medium rule closes the calories, the core nutrients and the minerals", 3, countByHeight(rects, RULE_MEDIUM));
+		Assert.assertEquals("The title and the serving are closed by a lighter rule", 1, countByHeight(rects, RULE_LIGHT));
 		Assert.assertEquals("A hairline separates the declarations inside a group, and nothing else", 2, countByHeight(rects, HAIRLINE));
 	}
 
@@ -363,7 +369,8 @@ public class NutritionFactsTemplateTest {
 		Assert.assertNotNull("Its added ingredients are declared under their own caption", findText(panel, "Supplémenté en"));
 		Assert.assertNotNull(findText(panel, "Caféine"));
 		Assert.assertNotNull(findText(panel, "Vitamine B6"));
-		Assert.assertNotNull("And the block closes on the note stating what the amounts cover", findText(panel, "Comprend les quantités"));
+		Assert.assertNotNull("And the block closes on the note stating what the amounts cover",
+				findText(panel, SUPPLEMENT_MARK + "Comprend les quantités"));
 	}
 
 	@Test
@@ -377,11 +384,41 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testSupplementedTitleIsSetOnASingleLinePerLanguage() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
+
+		Assert.assertEquals("A title broken in two reads as two titles", "Info-aliment supplémenté",
+				findText(panel, "Info-aliment").getTextContent());
+	}
+
+	@Test
+	public void testSupplementedCaptionIsSetLikeADeclarationOfTheTable() throws Exception {
+		Element caption = findText(parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel())), "Supplémenté en");
+
+		Assert.assertEquals("The caption carries the weight the regulation gives the Sodium line", "8", caption.getAttribute("font-size"));
+		Assert.assertTrue("and is set in the heavy face", caption.getAttribute("font-family").contains("Black"));
+		Assert.assertTrue("It opens the block the closing note explains", caption.getTextContent().endsWith(SUPPLEMENT_MARK));
+	}
+
+	@Test
+	public void testSupplementedNutrientKeptInTheTableCarriesTheMark() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
+
+		Assert.assertEquals("A supplemented nutrient the regulation keeps on its line states what its amount covers",
+				"Potassium 235 mg" + SUPPLEMENT_MARK, findText(panel, "Potassium").getTextContent());
+		Assert.assertEquals("A nutrient the food was not supplemented with carries nothing", "Calcium 260 mg",
+				findText(panel, "Calcium").getTextContent());
+		Assert.assertNotNull("And the note is tied to the marks by the same reference",
+				findText(panel, SUPPLEMENT_MARK + "Comprend les quantités"));
+	}
+
+	@Test
 	public void testStandardCanadianPanelIgnoresTheSupplementalBlock() throws Exception {
 		String svg = renderToString(CANADA_TEMPLATE, supplementedCanadianPanel());
 
 		Assert.assertFalse("The standard table declares no supplemental ingredient, whatever the product carries",
 				svg.contains("Supplémenté en") || svg.contains("Caféine"));
+		Assert.assertFalse("and marks no amount, having no note to tie the mark to", svg.contains(SUPPLEMENT_MARK));
 	}
 
 	@Test
@@ -410,11 +447,15 @@ public class NutritionFactsTemplateTest {
 				labels, secondary);
 	}
 
-	/** The same panel, of a food supplemented with caffeine and vitamin B6. */
+	/**
+	 * The same panel, of a food supplemented with caffeine, vitamin B6 and potassium. The potassium
+	 * is what the regulation keeps on its own line although the food was supplemented with it.
+	 */
 	private NutritionFactsData supplementedCanadianPanel() {
 		Map<String, String> labels = canadianLabels(false);
 		NutritionFactsData panel = canadianPanel();
-		return new NutritionFactsData("canadaSupplemented", "CA", panel.serving(), panel.calories(), panel.nutrients(), panel.micronutrients(),
+		return new NutritionFactsData("canadaSupplemented", "CA", panel.serving(), panel.calories(), panel.nutrients(),
+				List.of(line("K", "Potassium", "235 mg", "5%", 1, false, false, true), line("CA", "Calcium", "260 mg", "20%", 1, false)),
 				List.of(line("CAFFN", "Caféine", "100 mg", null, 1, false), line("VITB6-", "Vitamine B6", "1,3 mg", "76%", 1, false)),
 				panel.footNote(), "", labels, NutritionFactsTranslation.none());
 	}
@@ -543,8 +584,13 @@ public class NutritionFactsTemplateTest {
 
 	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold,
 			boolean sharedDailyValue) {
+		return line(nutCode, label, value, dailyValue, indentLevel, bold, sharedDailyValue, false);
+	}
+
+	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold,
+			boolean sharedDailyValue, boolean supplemental) {
 		return new NutritionFactsLine(nutCode, label, label, label, label, value, value, dailyValue, dailyValue, indentLevel, bold,
-				dailyValue != null, false, sharedDailyValue);
+				dailyValue != null, false, sharedDailyValue, supplemental);
 	}
 
 }

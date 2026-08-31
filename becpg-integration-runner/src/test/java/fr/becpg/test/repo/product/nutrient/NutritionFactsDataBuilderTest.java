@@ -340,6 +340,8 @@ public class NutritionFactsDataBuilderTest {
 
 		Assert.assertEquals("The regulation requires the sodium line where it puts it", List.of("Sodium"),
 				data.nutrients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertTrue("It is marked there instead, its amount covering the naturally occurring one as well",
+				data.nutrients().get(0).supplemental());
 		Assert.assertFalse(data.hasSupplementalIngredients());
 	}
 

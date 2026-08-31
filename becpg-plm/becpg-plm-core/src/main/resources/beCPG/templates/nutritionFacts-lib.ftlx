@@ -162,12 +162,15 @@
 
   A percentage covering two lines is dropped half a line down so that it reads as belonging to
   both, which is how the Canadian panel states saturated and trans fat together.
+
+  mark is the reference the panel prints after the declaration, the supplemented food facts table
+  marking that way the amounts its closing note covers.
 -->
-<#macro nutrientRow line y boldPercent=true>
+<#macro nutrientRow line y boldPercent=true mark="">
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.printsValue()> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if></text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.printsValue()> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if><#if mark?has_content><tspan font-family="${FONT_BODY}" font-weight="normal">${mark}</tspan></#if></text>
 	<#if line.hasDailyValue()>
 	<text x="${right()}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-family="${FONT_HEAVY}" font-weight="900"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>
@@ -367,8 +370,18 @@
 <#-- Size of the calories of a Canadian panel, which states them on one line with their wording. -->
 <#assign CA_CALORIES_SIZE = 13>
 
-<#-- Rule closing the opening block of a Canadian panel. -->
-<#assign CA_RULE_HEAVY = 3>
+<#--
+  Rule closing the opening block of a Canadian panel. It is lighter than the rules parting the
+  panel itself: the regulation marks out the calories, the core nutrients and the minerals in the
+  medium weight, and closes the title and the serving on a light rule.
+-->
+<#assign CA_RULE_OPENING = 1>
+
+<#--
+  Mark a supplemented food facts table prints on every declaration whose amount covers more than
+  what was added to the food, and which its closing note explains.
+-->
+<#assign SUPPLEMENT_MARK = "†">
 
 <#--
   Body of a Canadian panel, B.01.401. It parts from the FDA one on three counts: the daily value
@@ -385,8 +398,8 @@
 <#macro canadianBody data y withSupplemental=false>
 	<#assign cursorY = y>
 
-	<@rule y=cursorY height=CA_RULE_HEAVY/>
-	<#assign cursorY = cursorY + CA_RULE_HEAVY + 1>
+	<@rule y=cursorY height=CA_RULE_OPENING/>
+	<#assign cursorY = cursorY + CA_RULE_OPENING + 1>
 
 	<@caloriesBand data=data y=cursorY/>
 	<#assign cursorY = cursorY + caloriesBandHeight(data)>
@@ -394,13 +407,13 @@
 	<@rule y=cursorY height=RULE_MEDIUM toX=PAD + contentWidth() / 2/>
 	<#assign cursorY = cursorY + RULE_MEDIUM>
 
-	<@canadianGroup lines=data.nutrients() y=cursorY/>
+	<@canadianGroup lines=data.nutrients() y=cursorY marked=withSupplemental/>
 	<#assign cursorY = groupBottom>
 
 	<#if (data.micronutrients()?size gt 0)>
 	<@rule y=cursorY height=RULE_MEDIUM/>
 	<#assign cursorY = cursorY + RULE_MEDIUM>
-	<@canadianGroup lines=data.micronutrients() y=cursorY/>
+	<@canadianGroup lines=data.micronutrients() y=cursorY marked=withSupplemental/>
 	<#assign cursorY = groupBottom>
 	</#if>
 
@@ -421,16 +434,19 @@
   One group of nutrient lines, hairlines separating the top level declarations inside it. The
   ordinate it ended on is left in groupBottom, the group being drawn between two rules the caller
   places itself.
+
+  A supplemented table marks the nutrients the food was supplemented with and that the regulation
+  keeps on their own line: their amount covers the naturally occurring one as well.
 -->
 <#assign groupBottom = 0>
-<#macro canadianGroup lines y>
+<#macro canadianGroup lines y marked=false>
 	<#assign groupBottom = y>
 	<#list lines as line>
 	<#if (line.indentLevel() lte 1) && (line?index gt 0)>
 	<@rule y=groupBottom/>
 	<#assign groupBottom = groupBottom + HAIRLINE>
 	</#if>
-	<@nutrientRow line=line y=groupBottom boldPercent=false/>
+	<@nutrientRow line=line y=groupBottom boldPercent=false mark=(marked && line.supplemental())?then(SUPPLEMENT_MARK, "")/>
 	<#assign groupBottom = groupBottom + NUTRIENT_ROW_H>
 	</#list>
 </#macro>
@@ -499,12 +515,28 @@
 </#macro>
 
 <#--
+  Size a title is set at so that it holds on a single line in every language the panel states it
+  in, never above the size the format states. A title that wraps reads as two titles, which the
+  wording of a supplemented food is long enough to provoke.
+-->
+<#function fittedTitleSize data key maximum width=-1>
+	<#local available = (width gte 0)?then(width, contentWidth())>
+	<#local size = maximum>
+	<#list panelWordings(data, key) as heading>
+	<#local size = [size, (available / ([heading?length, 1]?max * HEAVY_GLYPH_RATIO))?floor]?min>
+	</#list>
+	<#return size>
+</#function>
+
+<#--
   Ingredients a supplemented food was supplemented with, SOR/2022-143. They are declared in a
   block of their own, under the caption the regulation words, so that the reader tells them from
   what the food contains on its own.
 
-  The block closes on the note the regulation asks for: the amount declared for an ingredient is
-  the amount the food holds, and not only what was added to it.
+  The caption is set like the declaration of a nutrient and not like a caption: the regulation
+  gives it the weight of the Sodium or the Protein line. It carries the mark of the block, which
+  the closing note explains: the amount declared for an ingredient is the amount the food holds,
+  and not only what was added to it.
 -->
 <#macro supplementalBlock data y>
 	<#assign cursorY = y>
@@ -512,31 +544,34 @@
 	<@rule y=cursorY height=RULE_MEDIUM/>
 	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
 
-	<text x="${PAD}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}</text>
-	<#assign cursorY = cursorY + CAPTION_ROW_H>
+	<text x="${PAD}" y="${baseline(cursorY + 2, NUTRIENT_SIZE)}" font-size="${NUTRIENT_SIZE}" font-family="${FONT_HEAVY}" font-weight="900">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}${SUPPLEMENT_MARK}</text>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
 
 	<#list data.supplementalIngredients() as line>
-	<#if (line?index gt 0)>
 	<@rule y=cursorY/>
 	<#assign cursorY = cursorY + HAIRLINE>
-	</#if>
 	<@nutrientRow line=line y=cursorY boldPercent=false/>
 	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
 	</#list>
 
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE + 1>
 	<@supplementalNote data=data y=cursorY/>
 </#macro>
 
-<#-- Note closing the supplemental block, stated once per language the panel is written in. -->
+<#--
+  Note closing the supplemental block, stated once per language the panel is written in and opening
+  on the mark of the declarations it explains, so that the reader ties the two together.
+-->
 <#macro supplementalNote data y>
 	<#assign cursorY = y>
-	<#list panelNotes(data, "supplementedNote") as note>
-	<@footNote text=note y=cursorY/>
+	<#list panelWordings(data, "supplementedNote") as note>
+	<@footNote text=SUPPLEMENT_MARK + note y=cursorY/>
 	</#list>
 </#macro>
 
 <#-- A fixed wording of the panel in every language it is written in, empty ones left out. -->
-<#function panelNotes data key>
+<#function panelWordings data key>
 	<#local notes = []>
 	<#if data.label(key)?has_content>
 	<#local notes = notes + [data.label(key)]>

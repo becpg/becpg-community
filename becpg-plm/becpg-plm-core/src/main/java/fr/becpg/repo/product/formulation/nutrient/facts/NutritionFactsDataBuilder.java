@@ -360,7 +360,7 @@ public class NutritionFactsDataBuilder {
 				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit), toPercent(shared.percentOf(regulated)),
 				toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
 				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel(),
-				shared.isShared(regulated.nutCode()));
+				shared.isShared(regulated.nutCode()), regulatedNutrients.supplementalNutCodes().contains(regulated.nutCode()));
 	}
 
 	/**
