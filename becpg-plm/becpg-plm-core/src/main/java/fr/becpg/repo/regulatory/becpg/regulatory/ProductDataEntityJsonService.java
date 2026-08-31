@@ -308,16 +308,20 @@ public class ProductDataEntityJsonService {
         MLText value = null;
         for (String key : attrs.keySet()) {
             String[] split = key.split(baseKey + "_");
+            Locale locale = null;
+
             if (split.length == 2) {
-                Locale locale = MLTextHelper.parseLocale(split[1]);
+                locale = MLTextHelper.parseLocale(split[1]);
+            } else if (split.length == 1 && baseKey.equals(split[0])) {
+                locale = MLText.getDefaultLocale();
+            }
+
+            if (locale != null) {
                 if (value == null) {
                     value = new MLText(locale, attrs.getString(key));
                 } else {
                     value.addValue(locale, attrs.getString(key));
                 }
-            } else if (split.length == 1 && baseKey.equals(split[0])) {
-                consumer.accept(new MLText(attrs.getString(key)));
-                return;
             }
         }
         if (value != null) {
