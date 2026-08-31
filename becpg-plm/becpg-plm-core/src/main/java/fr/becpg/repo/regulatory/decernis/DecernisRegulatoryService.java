@@ -709,6 +709,11 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 						}
 						newDecernisCode = UNKNOWN;
 					}
+
+					if (!UNKNOWN.equals(newDecernisCode)) {
+						newDecernisCode = RegulatoryHelper.DECERNIS_PREFIX + newDecernisCode;
+					}
+
 					String rawCode = ingItem.getRegulatoryCode();
 					ingItem.setRegulatoryCode(StringUtils.hasText(rawCode) ? rawCode + ',' + newDecernisCode : newDecernisCode);
 					alfrescoRepository.save(ingItem);
