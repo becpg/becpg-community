@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -1583,6 +1584,22 @@ public class ECOServiceImpl implements ECOService {
 	}
 	
 	/**
+	 * <p>Reads the entity the where used line was raised on.</p>
+	 *
+	 * @param wUsed a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @return the entity, or <code>null</code> when the line carries no source item
+	 */
+	private ProductData resolveWUsedEntity(WUsedListDataItem wUsed) {
+		List<NodeRef> sourceItems = wUsed.getSourceItems();
+
+		if ((sourceItems == null) || sourceItems.isEmpty()) {
+			return null;
+		}
+
+		return (ProductData) alfrescoRepository.findOne(sourceItems.get(0));
+	}
+
+	/**
 	 * <p>calculateUnitFactor.</p>
 	 *
 	 * @param unit1 a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
@@ -1590,8 +1607,10 @@ public class ECOServiceImpl implements ECOService {
 	 * @return a {@link java.lang.Double} object
 	 */
 	private Double calculateUnitFactor(ProductUnit unit1, ProductUnit unit2) {
-		if (unit1.equals(unit2)) {
+		if (Objects.equals(unit1, unit2)) {
 			return 1d;
+		} else if ((unit1 == null) || (unit2 == null)) {
+			return null;
 		} else if (ProductUnit.kg.equals(unit1) && ProductUnit.g.equals(unit2)) {
 			return 0.001d;
 		} else if (ProductUnit.g.equals(unit1) && ProductUnit.kg.equals(unit2)) {
@@ -1607,14 +1626,17 @@ public class ECOServiceImpl implements ECOService {
 	 * @param sources a {@link java.util.List} object
 	 * @param wUsed a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
 	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param currentUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
-	private Pair<Double, ProductUnit> getQtySumCompo(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target, ProductUnit currentUnit) {
+	private Pair<Double, ProductUnit> getQtySumCompo(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target) {
 	    double qty = 0;
 	    double densityFactor = 1;
 	    ProductUnit targetUnit = ProductUnit.kg;
-	    ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+	    ProductData wUsedEntity = resolveWUsedEntity(wUsed);
+
+	    if (wUsedEntity == null) {
+	        return null;
+	    }
 	    
         for (NodeRef source : sources) {
             for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
@@ -1651,7 +1673,11 @@ public class ECOServiceImpl implements ECOService {
 	    
 	    ProductUnit targetUnit = ProductUnit.kg;
 	    
-	    ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+	    ProductData wUsedEntity = resolveWUsedEntity(wUsed);
+
+	    if (wUsedEntity == null) {
+	        return null;
+	    }
 
         for (NodeRef source : sources) {
             for (CompositionDataItem compoItem : wUsedEntity.getPackagingList()) {
@@ -1663,6 +1689,9 @@ public class ECOServiceImpl implements ECOService {
                 			qty += (packagingListDataItem.getQty() * unitFactor);
                 			
                 			targetUnit = packagingListUnit;
+                		} else {
+                			logger.warn("Cannot convert a packaging quantity from " + packagingListUnit + " to " + currentUnit
+                					+ ", the line is left out of the replacement quantity: " + packagingListDataItem.getNodeRef());
                 		}
                 	}
                 }
@@ -1704,7 +1733,7 @@ public class ECOServiceImpl implements ECOService {
             QName impactedDataList = wUsedData.getImpactedDataList();
             if (impactedDataList != null) {
             	if (impactedDataList.equals(PLMModel.TYPE_COMPOLIST)) {
-            		itemQty = getQtySumCompo(replacement.getSourceItems(), wUsedData, target, currentUnit);
+            		itemQty = getQtySumCompo(replacement.getSourceItems(), wUsedData, target);
             	} else if (impactedDataList.equals(PLMModel.TYPE_PACKAGINGLIST)) {
             		itemQty = getQtySumPackaging(replacement.getSourceItems(), wUsedData, target, currentUnit);
             	}
