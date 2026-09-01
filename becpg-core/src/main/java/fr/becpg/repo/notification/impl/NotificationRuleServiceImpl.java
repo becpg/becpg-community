@@ -316,8 +316,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		QName nodeType = filter.getNodeType();
 
 		args.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(dictionaryService), nodeType.toPrefixString()));
-		args.put(DATE_FIELD, Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), nodeType),
-				filter.getDateField().toPrefixString()));
+		args.put(DATE_FIELD, dateFieldTitle(filter.getDateField(), nodeType));
 
 		if ((notification.getTarget() != null) && nodeService.exists(notification.getTarget())) {
 			args.put(TARGET_PATH, filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
@@ -426,6 +425,23 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	/**
+	 * <p>Reads the title of the date a notification rule watches.</p>
+	 *
+	 * A rule may carry no date field at all, in which case there is nothing to name in the mail.
+	 *
+	 * @param dateField a {@link org.alfresco.service.namespace.QName} object, may be <code>null</code>
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return the localised title, the prefixed name as a fallback, or an empty string
+	 */
+	private String dateFieldTitle(QName dateField, QName nodeType) {
+		if (dateField == null) {
+			return "";
+		}
+
+		return Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(dateField), nodeType), dateField.toPrefixString());
+	}
+
+	/**
 	 * <p>resolveDateFieldTitle.</p>
 	 *
 	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
@@ -442,9 +458,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					I18NUtil.setLocale(MLTextHelper.parseLocale(localeString));
 				}
 			}
-			return Objects.toString(
-					dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), filter.getNodeType()),
-					filter.getDateField().toPrefixString());
+			return dateFieldTitle(filter.getDateField(), filter.getNodeType());
 		} finally {
 			I18NUtil.setLocale(currentLocale);
 		}
