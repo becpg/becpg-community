@@ -73,16 +73,6 @@ public class ProductDataEntityJsonServiceTest {
     private static final MLText RESTRICTION_LEVELS = new MLText("Leave-on products :: max: 3.0, unit: % ;; Rinse-off products :: max: 4.0, unit: %");
     private static final MLText CITATION = new MLText("Leave-on products :: (EU) 2013/483 - Annex III, Entry 257 ;; Rinse-off products :: (EU) 2013/483 - Annex III, Entry 257");
     private static final MLText RESULT_INDICATOR = new MLText("Leave-on products :: RESTRICTED ;; Rinse-off products :: RESTRICTED");
-    public static final List<Locale> REGULATORY_LOCALES = List.of(
-            Locale.ENGLISH,
-            Locale.FRENCH,
-            Locale.ITALIAN,
-            Locale.GERMAN,
-            Locale.of("es", "ES"),
-            Locale.of("es", "MX"),
-            Locale.of("pt", "PT"),
-            Locale.of("pt", "BR")
-    );
 
     @Mock
     private NodeService nodeService;
@@ -129,7 +119,6 @@ public class ProductDataEntityJsonServiceTest {
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
-                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
                 result = service.newProductDataFromJson(json);
 
                 // ReqCtrl elements
@@ -156,11 +145,11 @@ public class ProductDataEntityJsonServiceTest {
                 assertEquals("L’ingrédient dépasse la limite autorisée (réel: 3.5%, maximum: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.FRENCH));
                 assertEquals("L’ingrediente supera il limite consentito (effettivo: 3.5%, massimo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.ITALIAN));
                 assertEquals("Inhaltsstoff überschreitet den zulässigen Grenzwert (tatsächlich: 3.5%, Maximum: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.GERMAN));
-                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "ES")));
-                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "MX")));
+                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getClosestValue(Locale.of("es", "ES")));
+                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getClosestValue(Locale.of("es", "MX")));
                 assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "AR")));
-                assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("pt", "PT")));
-                assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("pt", "BR")));
+                assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getClosestValue(Locale.of("pt", "PT")));
+                assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getClosestValue(Locale.of("pt", "BR")));
 
                 // ingRegulatory Element
                 assertNotNull(result.getIngRegulatoryList());
@@ -203,7 +192,6 @@ public class ProductDataEntityJsonServiceTest {
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
-                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
                 ProductData result = service.newProductDataFromJson(json);
 
                 assertNotNull(result.getIngRegulatoryList());
@@ -253,7 +241,6 @@ public class ProductDataEntityJsonServiceTest {
                         .thenReturn(INGREDIENT_NOT_LISTED);
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                         .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
-                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
                 ProductData result = service.newProductDataFromJson(json);
 
                 // the explicit reqCtrl entries from the JSON
@@ -287,7 +274,6 @@ public class ProductDataEntityJsonServiceTest {
         try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
             mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                     .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
-            mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
 
             List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountryToUsagePairs(
                     List.of(regElement), List.of()
@@ -396,7 +382,6 @@ public class ProductDataEntityJsonServiceTest {
         try (MockedStatic<MLText> mlTextMock = mockStatic(MLText.class, Mockito.CALLS_REAL_METHODS);
              MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
             mlTextMock.when(MLText::getDefaultLocale).thenReturn(Locale.US);
-            mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
 
             ProductData result = service.newProductDataFromJson(json);
 

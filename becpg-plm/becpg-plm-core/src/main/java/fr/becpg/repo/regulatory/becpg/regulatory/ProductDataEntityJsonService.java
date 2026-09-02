@@ -326,25 +326,7 @@ public class ProductDataEntityJsonService {
             }
         }
         if (value != null) {
-            addRegionalLocales(value);
             consumer.accept(value);
-        }
-    }
-
-    private static void addRegionalLocales(MLText value) {
-        for (Map.Entry<Locale, String> entry : List.copyOf(value.entrySet())) {
-            Locale messageRawLocale = entry.getKey();
-            if (!messageRawLocale.getCountry().isEmpty())
-                continue;
-
-            for (Locale standard : MLTextHelper.getSupportedLocales()) {
-                if (messageRawLocale.getLanguage().equals(standard.getLanguage())
-                        && !standard.getCountry().isEmpty()
-                        && !value.containsKey(standard)) {
-
-                    value.addValue(standard, entry.getValue());
-                }
-            }
         }
     }
 
