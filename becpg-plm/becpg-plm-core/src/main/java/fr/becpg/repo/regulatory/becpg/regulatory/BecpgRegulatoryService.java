@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.logging.log4j.util.Strings;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -215,7 +214,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
             combined.addAll(regCodesFromRegulatory);
             // update entity if there is a change
             if (!combined.equals(regCodesPresent)) {
-                ingItem.setRegulatoryCode(Strings.join(combined, ','));
+                ingItem.setRegulatoryCode(String.join(",",combined));
                 alfrescoRepository.save(ingItem);
             }
         });
@@ -223,7 +222,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
 
         List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
-        Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountries(
+        Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountryToUsagePairs(
                 context.getProduct().getRegulatoryList(), parsedIngRegulatoryElements);
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);

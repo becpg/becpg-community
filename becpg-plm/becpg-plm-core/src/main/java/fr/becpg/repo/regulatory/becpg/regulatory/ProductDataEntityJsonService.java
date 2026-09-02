@@ -19,8 +19,8 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  */
 @Service
 public class ProductDataEntityJsonService {
-    private static final Logger log = LoggerFactory.getLogger(ProductDataEntityJsonService.class);
+    private static final Log log = LogFactory.getLog(ProductDataEntityJsonService.class);
 
     public static final String MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND = "message.regulatory.usage-to-country.missing";
     public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
@@ -158,7 +158,7 @@ public class ProductDataEntityJsonService {
                                 if (StringUtils.hasText(v1) && StringUtils.hasText(v2)) {
                                     if (v1.equals(v2))
                                         return v1;
-                                    log.warn("becpg-regulatory returned different regulatory code sets for the same ingredient: {} and {}", v1, v2);
+                                    log.warn("becpg-regulatory returned different regulatory code sets for the same ingredient: " + v1 + " and " + v2);
                                 }
                                 return StringUtils.hasText(v1) ? v1 : StringUtils.hasText(v2) ? v2 : "";
                             }
@@ -178,8 +178,8 @@ public class ProductDataEntityJsonService {
      * @param ingRegulatoryElements only ones, directly deserialized from JSON
      * @return a stream of {@link RequirementListDataItem} alerts for each not-covered country x usages this country ever linked with
      */
-    public Stream<RequirementListDataItem> createAlertsForNotCoveredCountries(Collection<RegulatoryListDataItem> regulatoryElements,
-                                                                              Collection<IngRegulatoryListDataItem> ingRegulatoryElements) {
+    public Stream<RequirementListDataItem> createAlertsForNotCoveredCountryToUsagePairs(Collection<RegulatoryListDataItem> regulatoryElements,
+                                                                                        Collection<IngRegulatoryListDataItem> ingRegulatoryElements) {
         if (regulatoryElements == null || ingRegulatoryElements == null)
             return Stream.empty();
 
@@ -215,7 +215,7 @@ public class ProductDataEntityJsonService {
     }
 
     /**
-     * Creates a list of tolerated reqCtrl elements for each country that was not listed in IngRegulatoryList
+     * Creates a list of tolerated reqCtrl elements for each ingredient that was not listed in IngRegulatoryList
      *
      * @param ingredientElements           {@code ingList} contents, as defined in the product
      * @param ingredientRegulatoryElements deserialized from JSON

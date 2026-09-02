@@ -78,7 +78,9 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        mockWebServer.shutdown();
+        if (mockWebServer != null) {
+            mockWebServer.shutdown();
+        }
     }
 
     @Override

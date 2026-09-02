@@ -128,9 +128,7 @@ public class ProductDataEntityJsonServiceTest {
             ProductData result;
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
-                        .thenReturn(INGREDIENT_NOT_LISTED);
-                mockLocales(mlTextHelper);
-                result = service.newProductDataFromJson(json);
+                        .thenReturn(INGREDIENT_NOT_LISTED);result = service.newProductDataFromJson(json);
 
                 // ReqCtrl elements
                 assertNotNull(result.getReqCtrlList());
@@ -200,8 +198,6 @@ public class ProductDataEntityJsonServiceTest {
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
-                mockLocales(mlTextHelper);
-
                 ProductData result = service.newProductDataFromJson(json);
 
                 assertNotNull(result.getIngRegulatoryList());
@@ -251,14 +247,12 @@ public class ProductDataEntityJsonServiceTest {
                         .thenReturn(INGREDIENT_NOT_LISTED);
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                         .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
-                mockLocales(mlTextHelper);
-
                 ProductData result = service.newProductDataFromJson(json);
 
                 // the explicit reqCtrl entries from the JSON
                 assertEquals(1, result.getReqCtrlList().size());
 
-                List<RequirementListDataItem> alertsForMissingsCountryUsage = service.createAlertsForNotCoveredCountries(ref.getRegulatoryList(), result.getIngRegulatoryList()).toList();
+                List<RequirementListDataItem> alertsForMissingsCountryUsage = service.createAlertsForNotCoveredCountryToUsagePairs(ref.getRegulatoryList(), result.getIngRegulatoryList()).toList();
                 assertEquals(1, alertsForMissingsCountryUsage.size());
 
                 RequirementListDataItem alert = alertsForMissingsCountryUsage.getFirst();
@@ -287,7 +281,7 @@ public class ProductDataEntityJsonServiceTest {
             mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                     .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
 
-            List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountries(
+            List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountryToUsagePairs(
                     List.of(regElement), List.of()
             ).toList();
 
@@ -306,7 +300,7 @@ public class ProductDataEntityJsonServiceTest {
         IngRegulatoryListDataItem coveredItem = new IngRegulatoryListDataItem();
         coveredItem.setRegulatoryCountries(Lists.newArrayList(COUNTRY_NODE));
 
-        List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountries(
+        List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountryToUsagePairs(
                 List.of(regElement), List.of(coveredItem)
         ).toList();
 
