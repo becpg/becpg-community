@@ -209,7 +209,7 @@ public class ProductDataEntityJsonService {
 
             return entry.getValue().stream().map(usage -> {
                 String code = countryRegCode + " - " + codeByRef.get(usage);
-                return createToleratedReqCtrl(List.of(country, usage), i18NMessage, null, code);
+                return createToleratedReqCtrl(Lists.newArrayList(country, usage), i18NMessage, null, code);
             });
         });
     }
