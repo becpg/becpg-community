@@ -58,6 +58,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.UnicodeHelper;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.WorkflowPackageHandler;
 import fr.becpg.repo.project.data.ProjectData;
@@ -495,10 +496,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 
 		String description = String.format(WORKFLOW_DESCRIPTION_FORMAT, getProjectCode(projectData), projectData.getName(), taskName);
-		return description.codePoints()
-				.filter(Character::isBmpCodePoint)
-				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-				.toString();
+		return UnicodeHelper.sanitizeBmp(description);
 	}
 
 	/**

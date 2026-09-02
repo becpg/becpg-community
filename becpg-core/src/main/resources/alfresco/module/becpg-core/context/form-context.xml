@@ -18,6 +18,14 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
 
+   <bean id="workflowTaskSanitizeFormFilter" parent="baseFormFilter" class="fr.becpg.repo.form.filter.WorkflowSanitizeFormFilter">
+		<property name="filterRegistry" ref="taskFilterRegistry" />
+	</bean>
+
+   <bean id="workflowDefinitionSanitizeFormFilter" parent="baseFormFilter" class="fr.becpg.repo.form.filter.WorkflowSanitizeFormFilter">
+		<property name="filterRegistry" ref="workflowFilterRegistry" />
+	</bean>
+
 
    <bean id="becpgFormService" class="fr.becpg.repo.form.impl.BecpgFormServiceImpl" >
 		<property name="nodeService" ref="nodeService" />
