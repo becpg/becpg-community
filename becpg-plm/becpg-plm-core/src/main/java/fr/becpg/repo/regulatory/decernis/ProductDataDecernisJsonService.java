@@ -9,6 +9,7 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
+import fr.becpg.repo.regulatory.IngredientRegulatoryCodes;
 import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -19,7 +20,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -345,7 +344,7 @@ public class ProductDataDecernisJsonService {
 
         for (IngListDataItem ingListDataItem : context.getIngList()) {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-            String rid = extractRid(ingListDataItem, ingItem);
+            String rid = extractRid(ingItem);
             if (isRIDValid(rid)) {
                 String ingName = RegulatoryHelper.extractIngName(ingItem);
                 JSONObject ingredient = new JSONObject();
@@ -390,28 +389,14 @@ public class ProductDataDecernisJsonService {
         return null;
     }
 
-    public static String extractRid(IngListDataItem ingListDataItem, IngItem ingItem) {
-        String rawCode = ingItem.getRegulatoryCode();
-        if (StringUtils.hasText(rawCode)) {
-            List<String> decernisCodes = Arrays.stream(rawCode.split(",")).<String>mapMulti((codePart, sink) -> {
-                if (StringUtils.hasText(codePart)) {
-                    String[] codeSplit = codePart.split(RegulatoryHelper.DECERNIS_PREFIX);
-                    if (codeSplit.length == 2 && NumberUtils.toInt(codeSplit[1], -1) != -1) {
-                        sink.accept(codeSplit[1]);
-                    } else if (codeSplit.length == 1 && NumberUtils.toInt(codeSplit[0], -1) != -1) {
-                        sink.accept(codeSplit[0]);
-                    }
-                }
-            }).toList();
-            if (decernisCodes.isEmpty())
-                return null;
-            if (decernisCodes.size() > 1) {
-                logger.warn("Multiple decernis entries found in becpg:regulatoryCode of ingredient {} raw: {} filtered: {}. " +
-                        "Taking the first one.", ingListDataItem.getIng().getId(), rawCode, decernisCodes);
-            }
-            return decernisCodes.getFirst();
-        }
-        return null;
+    /**
+     * The Decernis id of an ingredient, read from its {@code bcpg:regulatoryCode}.
+     *
+     * @param ingItem the ingredient charact
+     * @return the id without prefix, null when the ingredient carries none
+     */
+    public static String extractRid(IngItem ingItem) {
+        return IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode()).decernisId().orElse(null);
     }
 
     public List<RequirementListDataItem> recipeAnalysisParseResults(RegulatoryContext context, RegulatoryBatch checkContext,
@@ -618,7 +603,7 @@ public class ProductDataDecernisJsonService {
     }
 
     public Optional<JSONObject> buildIngredientJsonById(IngListDataItem ingListDataItem, IngItem ingItem, String function) {
-        String rid = extractRid(ingListDataItem, ingItem);
+        String rid = extractRid(ingItem);
         if (isRIDValid(rid)) {
             String ingName = RegulatoryHelper.extractIngName(ingItem);
             Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());

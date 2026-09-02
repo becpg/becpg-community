@@ -19,7 +19,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
-import fr.becpg.repo.regulatory.RegulatoryHelper;
+import fr.becpg.repo.regulatory.IngredientRegulatoryCodes;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
@@ -40,13 +40,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -193,31 +191,9 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
             return false;
         JSONObject json = new JSONObject(analysisResult);
 
-        // acts like DecernisRegulatoryService::fetchIngredients
-        // For decernis - the dedicated endpoint is requested, for becpg - we extract from the response
-        productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach((id, regCodes) -> {
-            IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
-
-            String regulatoryCodeFromRegService = ingItem.getRegulatoryCode();
-
-            Set<String> regCodesFromRegulatory = Arrays.stream(regCodes.split(","))
-                    .filter(StringUtils::hasText)
-                    .collect(Collectors.toSet());
-
-            Set<String> regCodesPresent = StringUtils.hasText(regulatoryCodeFromRegService) ?
-                    Arrays.stream(regulatoryCodeFromRegService.split(",")).filter(StringUtils::hasText).collect(Collectors.toSet()) :
-                    Set.of();
-
-            Set<String> combined = new HashSet<>(regCodesPresent);
-            // clear present old becpg-regulatory codes, preserve decernis codes, add all incoming
-            combined.removeIf(regCode -> regCode.startsWith(RegulatoryHelper.BECPG_PREFIX));
-            combined.addAll(regCodesFromRegulatory);
-            // update entity if there is a change
-            if (!combined.equals(regCodesPresent)) {
-                ingItem.setRegulatoryCode(String.join(",",combined));
-                alfrescoRepository.save(ingItem);
-            }
-        });
+        // The beCPG regulatory service resolves the ingredients in the same call as the analysis, where Decernis
+        // has a dedicated endpoint (see DecernisRegulatoryService#fetchIngredients).
+        productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach(this::storeBecpgCodes);
 
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
 
@@ -238,6 +214,23 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         context.getRequirements().addAll(allRequirementAlerts);
 
         return true;
+    }
+
+    /**
+     * Stores the codes returned by the beCPG regulatory service on the ingredient, next to the codes of the
+     * other regulatory services, and saves only when something changed.
+     *
+     * @param ingredientId the ingredient node id
+     * @param becpgCodes the comma separated codes returned for this ingredient
+     */
+    private void storeBecpgCodes(String ingredientId, String becpgCodes) {
+        IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, ingredientId));
+        IngredientRegulatoryCodes present = IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode());
+        IngredientRegulatoryCodes updated = present.withBecpgCodes(IngredientRegulatoryCodes.parse(becpgCodes).tokens());
+        if (!updated.equals(present)) {
+            ingItem.setRegulatoryCode(updated.format());
+            alfrescoRepository.save(ingItem);
+        }
     }
 
     /**
