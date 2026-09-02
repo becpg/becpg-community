@@ -453,8 +453,11 @@
                          if(!this.options.isExternalUser){
                             docDetailsUrl =   beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "View-properties")
                          } else {
-                            docDetailsUrl =   beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "wizard")
-                         }    
+                            // #36377: the wizard is opened outside the site context. An external user reads the
+                            // entity through its supplier group, not through a site membership, and Share refuses
+                            // any page of a private site to a non-member.
+                            docDetailsUrl =   beCPG.util.entityURL(null, record.nodeRef, record.nodeType, null, "wizard")
+                         }
 
                         // Version display
                         if (record.version && record.version !== "") {
