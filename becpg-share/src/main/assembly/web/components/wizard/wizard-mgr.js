@@ -170,26 +170,45 @@
             var step = this.options.wizardStruct[currentIndex];
             if (!step) return true;
 
-            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
-            if (step.type === "form" || step.type === "survey") {
-                if (step.form) {
-                    validationInProgress = true;
-                    var isValid = this.options.readOnly || step.readOnly ||
-                        step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
-                     if(isValid && !(stepReadOnly)){
-                       Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
-                     }
-                    validationInProgress = false;
-                    step.finish = true;
-                    if (!isValid) return false;
-                } else {
-                    step.finish = true;
-                }
+            if (this.isEditableFormStep(step)) {
+                return this.submitFinishStep(step);
             }
 
-            if (!(step && step.finish)) {
-                this._navigateForward(this.options.wizardStruct[0].nodeRef);
-            }
+            this._navigateForward(this.options.wizardStruct[0].nodeRef);
+            return true;
+        },
+
+        /**
+         * A form or survey step that owns a forms runtime and is still editable: it is the only kind of
+         * step that has something to submit on finish. A read-only survey still instantiates a forms
+         * runtime (its FormUI is created with mode POST whatever the view mode), so the runtime alone
+         * does not mean the step is editable.
+         *
+         * @method isEditableFormStep
+         * @param step {object} wizard step
+         * @return {boolean}
+         */
+        isEditableFormStep: function(step) {
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
+            return (step.type === "form" || step.type === "survey") && !!step.form && !stepReadOnly;
+        },
+
+        /**
+         * Validates and submits the last editable step; the navigation happens in onFormSubmit once
+         * the submit has succeeded.
+         *
+         * @method submitFinishStep
+         * @param step {object} wizard step
+         * @return {boolean} false when the form is invalid
+         */
+        submitFinishStep: function(step) {
+            validationInProgress = true;
+            var isValid = step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+            validationInProgress = false;
+            if (!isValid) return false;
+
+            step.finish = true;
+            Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
             return true;
         },
 
