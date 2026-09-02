@@ -31,8 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ProductDataEntityJsonServiceTest {
@@ -74,6 +73,16 @@ public class ProductDataEntityJsonServiceTest {
     private static final MLText RESTRICTION_LEVELS = new MLText("Leave-on products :: max: 3.0, unit: % ;; Rinse-off products :: max: 4.0, unit: %");
     private static final MLText CITATION = new MLText("Leave-on products :: (EU) 2013/483 - Annex III, Entry 257 ;; Rinse-off products :: (EU) 2013/483 - Annex III, Entry 257");
     private static final MLText RESULT_INDICATOR = new MLText("Leave-on products :: RESTRICTED ;; Rinse-off products :: RESTRICTED");
+    public static final List<Locale> REGULATORY_LOCALES = List.of(
+            Locale.ENGLISH,
+            Locale.FRENCH,
+            Locale.ITALIAN,
+            Locale.GERMAN,
+            Locale.of("es", "ES"),
+            Locale.of("es", "MX"),
+            Locale.of("pt", "PT"),
+            Locale.of("pt", "BR")
+    );
 
     @Mock
     private NodeService nodeService;
@@ -102,15 +111,6 @@ public class ProductDataEntityJsonServiceTest {
         return ref;
     }
 
-    private void mockLocales(MockedStatic<MLTextHelper> mlTextHelper) {
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("fr")).thenReturn(Locale.FRENCH);
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("en")).thenReturn(Locale.ENGLISH);
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("it")).thenReturn(Locale.ITALIAN);
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("de")).thenReturn(Locale.GERMAN);
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("es")).thenReturn(Locale.of("es", "ES"));
-        mlTextHelper.when(() -> MLTextHelper.parseLocale("pt")).thenReturn(Locale.of("pt", "PT"));
-    }
-
     /**
      * One ingredient, one usage, one country
      * For this combination found regulations: for rinse-off and leave-on application. One is ok - second in violated.
@@ -126,9 +126,11 @@ public class ProductDataEntityJsonServiceTest {
             JSONObject json = new JSONObject(new JSONTokener(is));
 
             ProductData result;
-            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
+            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
-                        .thenReturn(INGREDIENT_NOT_LISTED);result = service.newProductDataFromJson(json);
+                        .thenReturn(INGREDIENT_NOT_LISTED);
+                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
+                result = service.newProductDataFromJson(json);
 
                 // ReqCtrl elements
                 assertNotNull(result.getReqCtrlList());
@@ -155,7 +157,10 @@ public class ProductDataEntityJsonServiceTest {
                 assertEquals("L’ingrediente supera il limite consentito (effettivo: 3.5%, massimo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.ITALIAN));
                 assertEquals("Inhaltsstoff überschreitet den zulässigen Grenzwert (tatsächlich: 3.5%, Maximum: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.GERMAN));
                 assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "ES")));
+                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "MX")));
+                assertEquals("El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("es", "AR")));
                 assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("pt", "PT")));
+                assertEquals("O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).", reqCtrl.getReqMlMessage().getValue(Locale.of("pt", "BR")));
 
                 // ingRegulatory Element
                 assertNotNull(result.getIngRegulatoryList());
@@ -195,9 +200,10 @@ public class ProductDataEntityJsonServiceTest {
             assertNotNull(is);
             JSONObject json = new JSONObject(new JSONTokener(is));
 
-            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
+            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
+                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
                 ProductData result = service.newProductDataFromJson(json);
 
                 assertNotNull(result.getIngRegulatoryList());
@@ -242,11 +248,12 @@ public class ProductDataEntityJsonServiceTest {
             assertNotNull(is);
             JSONObject json = new JSONObject(new JSONTokener(is));
 
-            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
+            try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                         .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
+                mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
                 ProductData result = service.newProductDataFromJson(json);
 
                 // the explicit reqCtrl entries from the JSON
@@ -277,9 +284,10 @@ public class ProductDataEntityJsonServiceTest {
         when(nodeService.getProperty(USAGE_NODE, PLMModel.PROP_REGULATORY_CODE)).thenReturn(USAGE_CODE);
         when(nodeService.getProperty(USAGE_NODE_2, PLMModel.PROP_REGULATORY_CODE)).thenReturn(USAGE_CODE_2);
 
-        try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
+        try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
             mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                     .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
+            mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
 
             List<RequirementListDataItem> alerts = service.createAlertsForNotCoveredCountryToUsagePairs(
                     List.of(regElement), List.of()
@@ -385,11 +393,10 @@ public class ProductDataEntityJsonServiceTest {
                 }
                 """);
 
-        try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class);
-             MockedStatic<MLText> mlTextMock = mockStatic(MLText.class, Mockito.CALLS_REAL_METHODS)) {
-
+        try (MockedStatic<MLText> mlTextMock = mockStatic(MLText.class, Mockito.CALLS_REAL_METHODS);
+             MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class, CALLS_REAL_METHODS)) {
             mlTextMock.when(MLText::getDefaultLocale).thenReturn(Locale.US);
-            mockLocales(mlTextHelper);
+            mlTextHelper.when(MLTextHelper::getSupportedLocales).thenReturn(REGULATORY_LOCALES);
 
             ProductData result = service.newProductDataFromJson(json);
 
@@ -425,10 +432,8 @@ public class ProductDataEntityJsonServiceTest {
                   }
                 }
                 """);
-        try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class);
-             MockedStatic<MLText> mlTextMock = mockStatic(MLText.class, Mockito.CALLS_REAL_METHODS)) {
+        try (MockedStatic<MLText> mlTextMock = mockStatic(MLText.class, Mockito.CALLS_REAL_METHODS)) {
             mlTextMock.when(MLText::getDefaultLocale).thenReturn(Locale.US);
-            mockLocales(mlTextHelper);
 
             ProductData result = service.newProductDataFromJson(json);
 

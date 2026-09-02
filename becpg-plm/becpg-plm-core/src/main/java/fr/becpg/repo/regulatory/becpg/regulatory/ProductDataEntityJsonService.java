@@ -305,17 +305,18 @@ public class ProductDataEntityJsonService {
 
     private static void readMlString(JSONObject attrs, QName qname, Consumer<MLText> consumer) {
         String baseKey = qnameToString(qname);
+        String localePrefix = baseKey + "_";
         MLText value = null;
         for (String key : attrs.keySet()) {
-            String[] split = key.split(baseKey + "_");
-            Locale locale = null;
-
-            if (split.length == 2) {
-                locale = MLTextHelper.parseLocale(split[1]);
-            } else if (split.length == 1 && baseKey.equals(split[0])) {
+            Locale locale;
+            if (key.equals(baseKey)) {
                 locale = MLText.getDefaultLocale();
+            } else if (key.startsWith(localePrefix)) {
+                String localeString = key.substring(localePrefix.length());
+                locale = MLTextHelper.parseLocale(localeString);
+            } else {
+                continue;
             }
-
             if (locale != null) {
                 if (value == null) {
                     value = new MLText(locale, attrs.getString(key));
@@ -325,7 +326,25 @@ public class ProductDataEntityJsonService {
             }
         }
         if (value != null) {
+            addRegionalLocales(value);
             consumer.accept(value);
+        }
+    }
+
+    private static void addRegionalLocales(MLText value) {
+        for (Map.Entry<Locale, String> entry : List.copyOf(value.entrySet())) {
+            Locale messageRawLocale = entry.getKey();
+            if (!messageRawLocale.getCountry().isEmpty())
+                continue;
+
+            for (Locale standard : MLTextHelper.getSupportedLocales()) {
+                if (messageRawLocale.getLanguage().equals(standard.getLanguage())
+                        && !standard.getCountry().isEmpty()
+                        && !value.containsKey(standard)) {
+
+                    value.addValue(standard, entry.getValue());
+                }
+            }
         }
     }
 

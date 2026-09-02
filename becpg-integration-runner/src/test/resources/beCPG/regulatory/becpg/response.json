@@ -8,6 +8,7 @@
           "bcpg:regulatoryCode": "DE - COSMETIC_LEAVE_ON_PRODUCTS",
           "bcpg:rclReqMessage_it": "L\u2019ingrediente supera il limite consentito (effettivo: 3.5%, massimo: 3%).",
           "bcpg:rclReqMessage_es": "El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).",
+          "bcpg:rclReqMessage_es_AR": "El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).",
           "bcpg:rclSourcesV2": [
             {
               "cm:name": "a3dbc91e-c066-435f-9bc9-1ec066535f04",
