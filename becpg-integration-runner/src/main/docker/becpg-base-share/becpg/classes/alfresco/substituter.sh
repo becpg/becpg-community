@@ -17,6 +17,14 @@ if [[ $AI_PORT == "" ]]; then
    AI_PORT=8087
 fi
 
+# URL complete du service d'IA. Par defaut elle se deduit de AI_HOST et AI_PORT,
+# ce qui laisse les deploiements existants inchanges. Une cellule qui sert
+# becpg-ai sous un prefixe -- --server.servlet.context-path=/ai -- pose AI_URL
+# et rien d'autre : ni AI_HOST ni AI_PORT ne peuvent porter un chemin.
+if [[ $AI_URL == "" ]]; then
+   AI_URL=http://$AI_HOST:$AI_PORT
+fi
+
 if [[ $BECPG_INSTANCE == "" ]]; then
    BECPG_INSTANCE=default
 fi
@@ -60,7 +68,8 @@ fi
 echo "Replace 'REPO_HOST' with '$REPO_HOST' and 'REPO_PORT' with '$REPO_PORT'"
 
 sed -i -e 's/REPO_HOST:REPO_PORT/'"$REPO_HOST:$REPO_PORT"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
-sed -i -e 's/AI_HOST:AI_PORT/'"$AI_HOST:$AI_PORT"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+# Separateur '|' : AI_URL contient des '/'.
+sed -i -e "s|AI_ENDPOINT_URL|$AI_URL|g" /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_INSTANCE/'"$BECPG_INSTANCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_CONNECTOR_ID/'"$BECPG_CONNECTOR_ID"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_EXTERNAL_AUTH/'"$BECPG_EXTERNAL_AUTH"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
