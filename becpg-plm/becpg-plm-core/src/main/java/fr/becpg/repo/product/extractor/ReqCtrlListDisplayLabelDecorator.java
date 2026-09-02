@@ -15,6 +15,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.DataListItemDecorator;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -30,8 +31,6 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	private static final String DISPLAY_LABEL = "displayLabel";
 
 	private static final String CODE_SEPARATOR = " - ";
-
-	private static final String DECERNIS_PREFIX = "DECERNIS_";
 
 	private static final NodeRef NOT_FOUND = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "not-found");
 
@@ -164,8 +163,8 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		if (charactCode == null) {
 			return false;
 		}
-		for (String part : charactCode.split(",(?=" + DECERNIS_PREFIX + ")")) {
-			String candidate = part.startsWith(DECERNIS_PREFIX) ? part.substring(DECERNIS_PREFIX.length()) : part;
+		for (String part : charactCode.split(",(?=" + RegulatoryHelper.DECERNIS_PREFIX + ")")) {
+			String candidate = part.startsWith(RegulatoryHelper.DECERNIS_PREFIX) ? part.substring(RegulatoryHelper.DECERNIS_PREFIX.length()) : part;
 			if (token.equals(candidate.trim())) {
 				return true;
 			}

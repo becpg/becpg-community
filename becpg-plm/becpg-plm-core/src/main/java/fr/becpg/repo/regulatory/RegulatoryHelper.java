@@ -18,6 +18,8 @@ import java.util.List;
 public class RegulatoryHelper {
 	/** Constant <code>DECERNIS_PREFIX="DECERNIS_"</code> */
 	public static final String DECERNIS_PREFIX = "DECERNIS_";
+	/** Constant <code>BECPG_PREFIX = "BECPG_"</code> */
+	public static final String BECPG_PREFIX = "BECPG_";
 
 	/**
 	 * <p>Constructor for RegulatoryHelper.</p>

@@ -1,0 +1,93 @@
+{
+  "attributes": {},
+  "datalists": {
+    "bcpg:ingRegulatoryList": [
+      {
+        "attributes": {
+          "bcpg:irlRestrictionLevels": "COSMETIC :: PROHIBITED",
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "regulatory-country-uuid-here"
+            }
+          ],
+          "bcpg:irlResultIndicator": "COSMETIC :: PROHIBITED",
+          "bcpg:irlCitation": "COSMETIC :: (EU) 2019/831 - Annex II, Entry 1413",
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_123"
+            },
+            "id": "ing-1-id"
+          },
+          "bcpg:irlUsages": "COSMETIC"
+        }
+      },
+      {
+        "attributes": {
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "regulatory-country-uuid-here"
+            }
+          ],
+          "bcpg:irlResultIndicator": "COSMETIC :: LISTED",
+          "bcpg:irlCitation": "COSMETIC :: (EC) 2013/344 - Annex V, Entry 34",
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_123"
+            },
+            "id": "ing-2-id"
+          },
+          "bcpg:irlUsages": "COSMETIC"
+        }
+      },
+      {
+        "attributes": {
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "regulatory-country-uuid-here"
+            }
+          ],
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_123"
+            },
+            "id": "ing-3-id"
+          }
+        }
+      },
+      {
+        "attributes": {
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "regulatory-country-uuid-here"
+            }
+          ],
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_123"
+            },
+            "id": "ing-4-id"
+          }
+        }
+      },
+      {
+        "attributes": {
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "regulatory-country-uuid-here"
+            }
+          ],
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_123,BECPG_456"
+            },
+            "id": "ing-5-id"
+          }
+        }
+      }
+    ],
+    "bcpg:reqCtrlList": [],
+    "bcpg:forbiddenIngList": []
+  },
+  "id": "productId",
+  "type": "bcpg:productSpecification"
+}

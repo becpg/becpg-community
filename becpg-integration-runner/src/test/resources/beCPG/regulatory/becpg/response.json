@@ -1,73 +1,74 @@
 {
-  "id": "1da9a199-f6c9-49a0-a9a1-99f6c929a013",
-  "attributes": {},
   "datalists": {
+    "bcpg:reqCtrlList": [
+      {
+        "cm:name": "2373441d-ed21-496b-8609-d23ba237c31a",
+        "attributes": {
+          "bcpg:rclReqMessage_fr": "L\u2019ingrédient dépasse la limite autorisée (réel: 3.5%, maximum: 3%).",
+          "bcpg:regulatoryCode": "DE - COSMETIC_LEAVE_ON_PRODUCTS",
+          "bcpg:rclReqMessage_it": "L\u2019ingrediente supera il limite consentito (effettivo: 3.5%, massimo: 3%).",
+          "bcpg:rclReqMessage_es": "El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).",
+          "bcpg:rclReqMessage_es_AR": "El ingrediente supera el límite permitido (real: 3.5%, máximo: 3%).",
+          "bcpg:rclSourcesV2": [
+            {
+              "cm:name": "a3dbc91e-c066-435f-9bc9-1ec066535f04",
+              "id": "7ac4f839-a7d2-42cf-84f8-39a7d252cf38",
+              "type": "bcpg:ingList"
+            }
+          ],
+          "bcpg:rclReqMessage_pt": "O ingrediente excede o limite permitido (real: 3.5%, máximo: 3%).",
+          "bcpg:rclFormulationChainId": "regulatory",
+          "bcpg:rclReqMessage_en": "Ingredient exceeds allowed limit (actual: 3.5%, maximum: 3%).",
+          "bcpg:rclReqMaxQty": 3,
+          "bcpg:rclCharact": {
+            "cm:name": "a3dbc91e-c066-435f-9bc9-1ec066535f04",
+            "id": "7ac4f839-a7d2-42cf-84f8-39a7d252cf38",
+            "type": "bcpg:ingList"
+          },
+          "bcpg:rclReqMessage_de": "Inhaltsstoff überschreitet den zulässigen Grenzwert (tatsächlich: 3.5%, Maximum: 3%).",
+          "bcpg:rclDataType": "Specification",
+          "bcpg:rclReqType": "Forbidden"
+        },
+        "type": "bcpg:reqCtrlList"
+      }
+    ],
     "bcpg:ingRegulatoryList": [
       {
         "attributes": {
-          "bcpg:regulatoryCode": "BECPG_2981",
-          "bcpg:irlRestrictionLevels": "COSMETIC :: (a) Leave-on products (b) Rinse-off products Maximum concentration: (a) 3,0 % (b) 4,0 %",
+          "bcpg:irlPrecautions_it": "Leave-on products :: Concentrazione massima del 3,0% nei prodotti da non sciacquare. Non deve essere utilizzato come propellente negli aerosol. ;; Rinse-off products :: Concentrazione massima del 4,0% nei prodotti da sciacquare. Non deve essere utilizzato come propellente negli aerosol.",
+          "bcpg:irlPrecautions_fr": "Leave-on products :: Concentration maximale de 3,0 % dans les produits sans rincage. Ne doit pas être utilisé comme propulseur dans les aérosols. ;; Rinse-off products :: Concentration maximale de 4,0 % dans les produits a rincer. Ne doit pas être utilisé comme propulseur dans les aérosols.",
+          "bcpg:irlRestrictionLevels": "Leave-on products :: max: 3.0, unit: % ;; Rinse-off products :: max: 4.0, unit: %",
+          "bcpg:irlPrecautions_es": "Leave-on products :: Concentración máxima del 3,0 % en productos sin aclarado. No se utilizará como propelente en aerosoles. ;; Rinse-off products :: Concentración máxima del 4,0 % en productos con aclarado. No se utilizará como propelente en aerosoles.",
+          "bcpg:irlResultIndicator": "Leave-on products :: RESTRICTED ;; Rinse-off products :: RESTRICTED",
+          "bcpg:irlCitation": "Leave-on products :: (EU) 2013/483 - Annex III, Entry 257 ;; Rinse-off products :: (EU) 2013/483 - Annex III, Entry 257",
+          "bcpg:irlIng": {
+            "attributes": {
+              "bcpg:regulatoryCode": "BECPG_5417"
+            },
+            "id": "1103b3df-f293-404a-83b3-dff293204aed"
+          },
+          "bcpg:irlUsages": "Leave-on products ;; Rinse-off products",
+          "bcpg:regulatoryUsageRef": [
+            {
+              "id": "dbbd336a-44a9-4132-bd33-6a44a91132d6"
+            },
+            {
+              "id": "ebb638d0-b35a-4b54-b638-d0b35a6b54e5"
+            }
+          ],
           "bcpg:regulatoryCountries": [
             {
-              "id": "40f8e29a-54d4-42cb-b8e2-9a54d462cb11"
+              "id": "1e920086-ea25-424e-9200-86ea25524e5d"
             }
           ],
-          "bcpg:irlCitation": "CE Regulation 1223/2009 - Annex III, Entry 257",
-          "bcpg:irlResultIndicator": "COSMETIC: RESTRICTED: Simple business rule: RESTRICTED for leave-on products ;; Simple business rule: RESTRICTED for rinse-off products",
-          "bcpg:irlIng": {
-            "id": "51fa6f16-3448-43ae-ba6f-16344833ae9f"
-          }
-        }
-      }
-    ],
-    "bcpg:reqCtrlList": [
-      {
-        "cm:name": "f2a46917-4d86-410a-9cd4-a38d5e9f2d52",
-        "type": "bcpg:reqCtrlList",
-        "attributes": {
-          "bcpg:regulatoryCode": "European Union - IFRA_BAR_SOAP",
-          "bcpg:rclSourcesV2": [
-            {
-              "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
-              "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
-              "type": "bcpg:ingList"
-            }
-          ],
-          "bcpg:rclCharact": {
-            "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
-            "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
-            "type": "bcpg:ingList"
-          },
-          "bcpg:rclReqMessage": "Forbidden ingredients (<=3.0%)",
-          "bcpg:rclDataType": "Specification",
-          "bcpg:rclFormulationChainId": "regulatory",
-          "bcpg:rclReqType": "Forbidden",
-          "bcpg:rclReqMaxQty": 3.0
-        }
-      },
-      {
-        "cm:name": "e5b2f5fd-230c-4e3b-849e-77815fc08cc5",
-        "type": "bcpg:reqCtrlList",
-        "attributes": {
-          "bcpg:regulatoryCode": "European Union - IFRA_BAR_SOAP",
-          "bcpg:rclSourcesV2": [
-            {
-              "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
-              "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
-              "type": "bcpg:ingList"
-            }
-          ],
-          "bcpg:rclCharact": {
-            "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
-            "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
-            "type": "bcpg:ingList"
-          },
-          "bcpg:rclDataType": "Specification",
-          "bcpg:rclFormulationChainId": "regulatory",
-          "bcpg:rclReqType": "Tolerated",
-          "bcpg:rclReqMaxQty": 4.0
+          "bcpg:irlPrecautions_de": "Leave-on products :: Maximalkonzentration von 3,0 % in Mitteln, die auf der Haut oder dem Haar verbleiben. Darf nicht als Treibmittel in Aerosolen verwendet werden. ;; Rinse-off products :: Maximalkonzentration von 4,0 % in abzuspülenden Mitteln. Darf nicht als Treibmittel in Aerosolen verwendet werden.",
+          "bcpg:irlPrecautions_pt": "Leave-on products :: Concentração máxima de 3,0% em produtos sem enxágue. Não deve ser utilizado como propelente em aerossóis. ;; Rinse-off products :: Concentração máxima de 4,0% em produtos com enxágue. Não deve ser utilizado como propelente em aerossóis.",
+          "bcpg:irlPrecautions_en": "Leave-on products :: Maximum concentration of 3.0% in leave-on products. Shall not be used as a propellant in aerosols. ;; Rinse-off products :: Maximum concentration of 4.0% in rinse-off products. Shall not be used as a propellant in aerosols."
         }
       }
     ]
-  }
+  },
+  "attributes": {},
+  "id": "fa73ba4e-d26a-400e-b3ba-4ed26a400e8f",
+  "type": "bcpg:productSpecification"
 }
