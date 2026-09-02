@@ -6,10 +6,12 @@ package fr.becpg.test.repo.product;
 import java.io.ByteArrayOutputStream;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.Pair;
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -139,6 +142,81 @@ public class EntityFormatServiceIT extends PLMBaseTestCase {
 				JSONObject attributes = entity.getJSONObject("attributes");
 				assertFalse("Unrequested attribute bcpg:erpCode should be filtered out", attributes.has("bcpg:erpCode"));
 			}
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testGetArchivedEntityRemoteJsonWithMlText() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef nodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived mltext");
+			MLText legalName = new MLText();
+			legalName.put(Locale.FRENCH, "Nom legal FR");
+			legalName.put(Locale.of("sv", "SE"), "Legalt namn SE");
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME, legalName);
+			return nodeRef;
+		});
+
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+			Set<String> fields = new HashSet<>();
+			fields.add("bcpg:legalName");
+			params.setFilteredFields(fields, serviceRegistry.getNamespaceService());
+
+			remoteEntityService.getEntity(rawMaterialNodeRef, out, params);
+
+			JSONObject root = new JSONObject(out.toString());
+			JSONObject entity = root.getJSONObject("entity");
+			assertTrue(entity.has("attributes"));
+			JSONObject attributes = entity.getJSONObject("attributes");
+
+			assertTrue("bcpg:legalName_fr should be present", attributes.has("bcpg:legalName_fr"));
+			assertEquals("Nom legal FR", attributes.getString("bcpg:legalName_fr"));
+			assertTrue("bcpg:legalName_sv_SE should be present", attributes.has("bcpg:legalName_sv_SE"));
+			assertEquals("Legalt namn SE", attributes.getString("bcpg:legalName_sv_SE"));
+			assertFalse("Unrequested property should be filtered out", attributes.has("bcpg:erpCode"));
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testGetArchivedEntityRemoteJsonWithMlTextDisabled() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef nodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived mltext disabled");
+			MLText legalName = new MLText();
+			legalName.put(Locale.FRENCH, "Nom legal FR");
+			legalName.put(Locale.of("sv", "SE"), "Legalt namn SE");
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_LEGAL_NAME, legalName);
+			return nodeRef;
+		});
+
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+			JSONObject jsonParams = new JSONObject();
+			jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.FALSE);
+			params.setJsonParams(jsonParams);
+			Set<String> fields = new HashSet<>();
+			fields.add("bcpg:legalName");
+			params.setFilteredFields(fields, serviceRegistry.getNamespaceService());
+
+			remoteEntityService.getEntity(rawMaterialNodeRef, out, params);
+
+			JSONObject root = new JSONObject(out.toString());
+			JSONObject entity = root.getJSONObject("entity");
+			assertTrue(entity.has("attributes"));
+			JSONObject attributes = entity.getJSONObject("attributes");
+
+			assertTrue("bcpg:legalName should be present", attributes.has("bcpg:legalName"));
+			assertFalse("bcpg:legalName_fr should be excluded when appendMlText is false", attributes.has("bcpg:legalName_fr"));
+			assertFalse("bcpg:legalName_sv_SE should be excluded when appendMlText is false", attributes.has("bcpg:legalName_sv_SE"));
 
 			return null;
 		});

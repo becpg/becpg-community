@@ -1232,7 +1232,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						String listName = extractArchivedListName(key);
 						if (params.shouldExtractList(listName)) {
 							Object listVal = archivedLists.get(key);
-							QName listTypeQName = getQNameQuietly(key);
+							QName listTypeQName = extractArchivedListTypeQName(key);
 							Object filteredListVal = filterSubJsonValue(listVal, listTypeQName);
 							if (filteredListVal != null) {
 								filteredLists.put(key, filteredListVal);
@@ -1260,9 +1260,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				}
 				continue;
 			}
-			if (isArchivedAttributeMatching(key, assocName)) {
+			ParsedAttributeKey parsedKey = parseArchivedAttributeKey(key, assocName);
+			if (isArchivedAttributeMatching(parsedKey, assocName)) {
 				Object value = attributes.get(key);
-				QName childAssocName = getQNameQuietly(key);
+				QName childAssocName = parsedKey.qname();
 				Object filteredValue = filterSubJsonValue(value, childAssocName != null ? childAssocName : assocName);
 				if (filteredValue != null) {
 					filtered.put(key, filteredValue);
@@ -1315,8 +1316,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				continue;
 			}
 
-			if (isArchivedAttributeMatching(key, assocName)) {
-				QName childAssoc = getQNameQuietly(key);
+			ParsedAttributeKey parsedKey = parseArchivedAttributeKey(key, assocName);
+			if (isArchivedAttributeMatching(parsedKey, assocName)) {
+				QName childAssoc = parsedKey.qname();
 				Object filteredVal = filterSubJsonValue(val, childAssoc != null ? childAssoc : assocName);
 				if (filteredVal != null) {
 					filteredObj.put(key, filteredVal);
@@ -1326,44 +1328,100 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		return filteredObj;
 	}
 
-	private QName getQNameQuietly(String key) {
+	/**
+	 * Holds the parsed QName and localization state of an attribute key from an archived entity.
+	 *
+	 * @param qname the resolved base property or association QName
+	 * @param isLocalized whether the key represents a localized variant (e.g. {@code _fr_FR}, {@code _sv_SE})
+	 */
+	private record ParsedAttributeKey(QName qname, boolean isLocalized) {}
+
+	private QName extractArchivedListTypeQName(String key) {
+		if (key == null) {
+			return null;
+		}
+		String typeKey = key;
+		int separatorIdx = key.indexOf(DATALIST_NAME_SEPARATOR);
+		if (separatorIdx >= 0) {
+			typeKey = key.substring(0, separatorIdx);
+		}
+		return getDirectQName(typeKey);
+	}
+
+	private QName getDirectQName(String key) {
+		if (key == null || !key.contains(QNAME_PREFIX_SEPARATOR)) {
+			return null;
+		}
 		try {
-			String baseKey = key;
-			if (key.contains("_") && key.lastIndexOf('_') > key.indexOf(':')) {
-				baseKey = key.substring(0, key.lastIndexOf('_'));
-			}
-			return QName.createQName(baseKey, namespaceService);
-		} catch (NamespaceException e) {
+			return QName.createQName(key, namespaceService);
+		} catch (NamespaceException | IllegalArgumentException e) {
 			return null;
 		}
 	}
 
-	private boolean isArchivedAttributeMatching(String key, QName assocName) {
-		QName qname = getQNameQuietly(key);
-		if (qname == null) {
-			return false;
+	private ParsedAttributeKey parseArchivedAttributeKey(String key, QName assocName) {
+		if (key == null) {
+			return null;
 		}
 
-		if (key.contains("_") && key.lastIndexOf('_') > key.indexOf(':')) {
-			try {
-				if (entityDictionaryService.getProperty(qname) != null || isQNameInFilteredParams(qname, assocName)) {
-					if (!Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
-						return false;
-					}
+		QName directQName = getDirectQName(key);
+		if (directQName != null && isKnownOrFilteredQName(directQName, assocName)) {
+			return new ParsedAttributeKey(directQName, false);
+		}
+
+		int colonIdx = key.indexOf(QNAME_PREFIX_SEPARATOR);
+		int lastUnderscore = key.lastIndexOf('_');
+
+		if (colonIdx >= 0 && lastUnderscore > colonIdx) {
+			int secondLastUnderscore = key.lastIndexOf('_', lastUnderscore - 1);
+			if (secondLastUnderscore > colonIdx) {
+				String baseKey2 = key.substring(0, secondLastUnderscore);
+				QName candidate2 = getDirectQName(baseKey2);
+				if (candidate2 != null && isKnownOrFilteredQName(candidate2, assocName)) {
+					return new ParsedAttributeKey(candidate2, true);
 				}
-			} catch (NamespaceException e) {
-				// Ignore
+			}
+
+			String baseKey1 = key.substring(0, lastUnderscore);
+			QName candidate1 = getDirectQName(baseKey1);
+			if (candidate1 != null && isKnownOrFilteredQName(candidate1, assocName)) {
+				return new ParsedAttributeKey(candidate1, true);
 			}
 		}
 
-		if (!params.shouldExtractField(qname)) {
+		if (directQName != null) {
+			return new ParsedAttributeKey(directQName, false);
+		}
+		return null;
+	}
+
+	private boolean isKnownOrFilteredQName(QName qname, QName assocName) {
+		return entityDictionaryService.getProperty(qname) != null
+				|| entityDictionaryService.getAssociation(qname) != null
+				|| isQNameInFilteredParams(qname, assocName)
+				|| (params != null && params.getIgnoredFields() != null && params.getIgnoredFields().contains(qname));
+	}
+
+	private boolean isArchivedAttributeMatching(ParsedAttributeKey parsedKey, QName assocName) {
+		if (parsedKey == null || parsedKey.qname() == null) {
 			return false;
 		}
 
-		return matchProp(assocName, qname, false);
+		if (parsedKey.isLocalized() && !Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+			return false;
+		}
+
+		if (!params.shouldExtractField(parsedKey.qname())) {
+			return false;
+		}
+
+		return matchProp(assocName, parsedKey.qname(), false);
 	}
 
 	private boolean isQNameInFilteredParams(QName qname, QName assocName) {
+		if (params == null) {
+			return false;
+		}
 		if (assocName == null) {
 			if (params.getFilteredProperties() != null && params.getFilteredProperties().contains(qname)) {
 				return true;
