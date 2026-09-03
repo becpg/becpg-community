@@ -37,7 +37,7 @@
 	beCPG.component.AdminConsole = function(htmlId) {
 
 		beCPG.component.AdminConsole.superclass.constructor.call(this, "beCPG.component.AdminConsole", htmlId, [
-			"button", "menu", "container", "json"]);
+			"button", "menu", "container", "json", "paginator"]);
 
 		return this;
 	};
@@ -662,10 +662,8 @@
 				    var offset = pageIndex * pageSize;
 				    var tableWrapper = panelDiv.querySelector('.batch-errors-table-wrapper');
 				    var countElement = panelDiv.querySelector('.batch-errors-count');
-				    var paginationContainer = panelDiv.querySelector('.batch-errors-pagination');
-				    var pageInfoElement = panelDiv.querySelector('.batch-errors-page-info');
-				    var prevBtn = panelDiv.querySelector('.batch-errors-prev-btn');
-				    var nextBtn = panelDiv.querySelector('.batch-errors-next-btn');
+				    var paginatorContainer = panelDiv.querySelector('.paginator');
+				    var paginatorId = paginatorContainer ? paginatorContainer.id : (self.id + "-batch-errors-paginator");
 
 				    Alfresco.util.Ajax.request({
 				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/errors/" + encodeURIComponent(batchId) + "?offset=" + offset + "&limit=" + pageSize,
@@ -678,18 +676,17 @@
 				                    var entities = data.entities || [];
 				                    var totalCount = data.total !== undefined ? data.total : entities.length;
 
-				                    if (countElement) {
-				                        countElement.innerText = self.msg("label.task.batchErrors.total", totalCount);
-				                    }
-
 				                    if (totalCount === 0 || entities.length === 0) {
 				                        if (pageIndex > 0 && totalCount > 0) {
 				                            self.loadBatchErrorsPage(batchId, pageIndex - 1, pageSize, panelDiv);
 				                            return;
 				                        }
 				                        tableWrapper.innerHTML = '<div class="batch-empty">' + self.msg("label.task.batchErrors.no-errors") + '</div>';
-				                        if (paginationContainer) {
-				                            paginationContainer.style.display = 'none';
+				                        if (countElement) {
+				                            Dom.setStyle(countElement, "display", "none");
+				                        }
+				                        if (paginatorContainer) {
+				                            Dom.setStyle(paginatorContainer, "display", "none");
 				                        }
 				                        return;
 				                    }
@@ -709,29 +706,43 @@
 
 				                    var totalPages = Math.ceil(totalCount / pageSize);
 				                    if (totalPages <= 1) {
-				                        if (paginationContainer) {
-				                            paginationContainer.style.display = 'none';
+				                        if (paginatorContainer) {
+				                            Dom.setStyle(paginatorContainer, "display", "none");
+				                        }
+				                        if (countElement) {
+				                            Dom.setStyle(countElement, "display", "block");
+				                            countElement.innerText = self.msg("label.task.batchErrors.total", totalCount);
 				                        }
 				                    } else {
-				                        if (paginationContainer) {
-				                            paginationContainer.style.display = 'inline-flex';
+				                        if (countElement) {
+				                            Dom.setStyle(countElement, "display", "none");
 				                        }
-				                        if (pageInfoElement) {
-				                            pageInfoElement.innerText = self.msg("label.task.batchErrors.page", (pageIndex + 1), totalPages);
+				                        if (paginatorContainer) {
+				                            Dom.setStyle(paginatorContainer, "display", "block");
 				                        }
-				                        if (prevBtn) {
-				                            prevBtn.disabled = pageIndex <= 0;
-				                            prevBtn.onclick = function(e) {
-				                                YAHOO.util.Event.preventDefault(e);
-				                                self.loadBatchErrorsPage(batchId, pageIndex - 1, pageSize, panelDiv);
-				                            };
+				                        if (!self.widgets.errorsPaginator && typeof YAHOO.widget.Paginator !== "undefined") {
+				                            self.widgets.errorsPaginator = new YAHOO.widget.Paginator({
+				                                containers: [paginatorId],
+				                                rowsPerPage: pageSize,
+				                                pageLinks: 5,
+				                                template: "{CurrentPageReport} {PreviousPageLink} {PageLinks} {NextPageLink}",
+				                                pageReportTemplate: self.msg("pagination.template.page-report"),
+				                                previousPageLinkLabel: self.msg("pagination.previousPageLinkLabel"),
+				                                nextPageLinkLabel: self.msg("pagination.nextPageLinkLabel"),
+				                                previousPageTitle: self.msg("pagination.previousPageTitle"),
+				                                nextPageTitle: self.msg("pagination.nextPageTitle"),
+				                                firstPageTitle: self.msg("pagination.firstPageTitle"),
+				                                lastPageTitle: self.msg("pagination.lastPageTitle"),
+				                                pageLinkTitle: self.msg("pagination.pageLinkTitle")
+				                            });
+				                            self.widgets.errorsPaginator.subscribe("changeRequest", function(state) {
+				                                self.loadBatchErrorsPage(batchId, state.page - 1, pageSize, panelDiv);
+				                            });
 				                        }
-				                        if (nextBtn) {
-				                            nextBtn.disabled = pageIndex >= totalPages - 1;
-				                            nextBtn.onclick = function(e) {
-				                                YAHOO.util.Event.preventDefault(e);
-				                                self.loadBatchErrorsPage(batchId, pageIndex + 1, pageSize, panelDiv);
-				                            };
+				                        if (self.widgets.errorsPaginator) {
+				                            self.widgets.errorsPaginator.set('totalRecords', totalCount);
+				                            self.widgets.errorsPaginator.setPage(pageIndex + 1, true);
+				                            self.widgets.errorsPaginator.render();
 				                        }
 				                    }
 
@@ -771,6 +782,7 @@
 				    var titleDesc = batchDesc || batchId;
 				    var panelTitle = self.msg("label.task.batchErrors.title", titleDesc);
 
+				    var paginatorId = self.id + "-batch-errors-paginator";
 				    var containerDiv = document.createElement("div");
 				    var ret = '<div id="' + self.id + '-batch-errors-panel" class="batch-errors-panel">' +
 				              '<div class="bd">' +
@@ -780,11 +792,7 @@
 				              '</div>' +
 				              '<div class="batch-errors-footer">' +
 				                '<div class="batch-errors-count"></div>' +
-				                '<div class="batch-errors-pagination" style="display: none;">' +
-				                  '<button type="button" class="batch-errors-page-btn batch-errors-prev-btn">' + self.msg("label.task.batchErrors.prev") + '</button>' +
-				                  '<span class="batch-errors-page-info"></span>' +
-				                  '<button type="button" class="batch-errors-page-btn batch-errors-next-btn">' + self.msg("label.task.batchErrors.next") + '</button>' +
-				                '</div>' +
+				                '<div id="' + paginatorId + '" class="paginator yui-pg-container" style="display: none;"></div>' +
 				                '<div class="batch-errors-actions">' +
 				                  '<button type="button" class="batch-errors-retry-all-btn">' + self.msg("label.task.batchErrors.retryAll") + '</button>' +
 				                '</div>' +
@@ -793,6 +801,11 @@
 
 				    containerDiv.innerHTML = ret;
 				    var panelDiv = Dom.getFirstChild(containerDiv);
+
+				    if (self.widgets.errorsPaginator) {
+				        self.widgets.errorsPaginator.destroy();
+				        self.widgets.errorsPaginator = null;
+				    }
 
 				    if (self.widgets.errorsPanel) {
 				        self.widgets.errorsPanel.destroy();

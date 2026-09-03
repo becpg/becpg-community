@@ -604,39 +604,83 @@ table.batch-errors-table td.col-action {
     min-width: 120px;
 }
 
-.batch-errors-pagination {
+/* Alfresco Datalist-style Paginator matching interface */
+.batch-errors-panel .paginator {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    color: #555555;
-}
-
-.batch-errors-page-btn {
-    padding: 4px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #ffffff;
-    border: 1px solid #dcdcdc;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 13px;
     color: #333333;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-family: inherit;
 }
 
-.batch-errors-page-btn:hover:not(:disabled) {
-    background-color: #e3f2fd;
-    border-color: #1976d2;
+.batch-errors-panel .paginator .yui-pg-current {
+    color: #333333;
+    margin-right: 8px;
+    font-weight: normal;
+    font-size: 13px;
 }
 
-.batch-errors-page-btn:disabled {
-    opacity: 0.4;
+.batch-errors-panel .paginator a.yui-pg-previous,
+.batch-errors-panel .paginator a.yui-pg-next {
+    color: #333333;
+    text-decoration: none;
+    padding: 0 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: normal;
+}
+
+.batch-errors-panel .paginator a.yui-pg-previous:hover,
+.batch-errors-panel .paginator a.yui-pg-next:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+.batch-errors-panel .paginator span.yui-pg-previous,
+.batch-errors-panel .paginator span.yui-pg-next {
+    color: #aaaaaa;
+    padding: 0 4px;
     cursor: default;
+    font-size: 13px;
 }
 
-.batch-errors-page-info {
-    font-size: 12px;
-    color: #555555;
+.batch-errors-panel .paginator .yui-pg-pages {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 4px;
+}
+
+.batch-errors-panel .paginator a.yui-pg-page {
+    display: inline-block;
+    border: 1px solid #cccccc;
+    background-color: #ffffff;
+    color: #333333;
+    text-decoration: none;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 13px;
+    line-height: 18px;
+    min-width: 14px;
+    text-align: center;
+}
+
+.batch-errors-panel .paginator a.yui-pg-page:hover {
+    border-color: #999999;
+    color: #000000;
+    text-decoration: none;
+    background-color: #f8f8f8;
+}
+
+.batch-errors-panel .paginator span.yui-pg-current-page,
+.batch-errors-panel .paginator span.yui-pg-page {
+    display: inline-block;
+    color: #333333;
+    padding: 2px 7px;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: normal;
 }
 
 .batch-errors-actions {
@@ -644,21 +688,28 @@ table.batch-errors-table td.col-action {
     gap: 8px;
 }
 
-.batch-errors-actions button {
-    padding: 6px 14px;
+/* Orange action button matching interface theme (outline orange) */
+.batch-errors-retry-all-btn {
+    background-color: #ffffff;
+    color: #ff7a45 !important;
+    border: 1px solid #ff7a45;
     border-radius: 4px;
+    padding: 4px 12px;
     cursor: pointer;
     font-size: 12px;
-    font-weight: 600;
-}
-
-.batch-errors-retry-all-btn {
-    background-color: #1976d2;
-    color: #ffffff;
-    border: 1px solid #1565c0;
-    transition: background-color 0.2s ease;
+    font-weight: normal;
+    line-height: 18px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .batch-errors-retry-all-btn:hover {
-    background-color: #1565c0;
+    background-color: #fff7f2;
+    border-color: #ff5722;
+    color: #ff5722 !important;
+}
+
+.batch-errors-retry-all-btn:active {
+    background-color: #ffebe0;
+    border-color: #f4511e;
+    color: #f4511e !important;
 }
