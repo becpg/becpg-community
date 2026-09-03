@@ -185,19 +185,24 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		StringBuilder whereClauseBuilder = new StringBuilder();
 		List<String> statements = new ArrayList<>();
 		if (auditFilter.getFilter() != null) {
-			String[] splitted = auditFilter.getFilter().split("=");
+			String[] splitted = auditFilter.getFilter().split("=", 2);
 			if (splitted.length < 2) {
 				throw new BeCPGAuditException("statistics filter '" + auditFilter.getFilter() + "' has wrong syntax");
 			}
-			String valuesKey = splitted[0];
-			String valuesValue = splitted[1];
-			statements.add("valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + "/value' and valuesValue='" + valuesValue + "'");
+			String valuesKey = splitted[0].trim();
+			String valuesValue = splitted[1].trim();
+			if (!plugin.getKeyMap().containsKey(valuesKey)) {
+				throw new BeCPGAuditException("Unknown audit filter key: " + valuesKey);
+			}
+			String sanitizedValue = valuesValue
+					.replace("\\", "\\\\")
+					.replace("'", "\\'")
+					.replace("\r", "")
+					.replace("\n", " ");
+			statements.add("valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + "/value' and valuesValue='" + sanitizedValue + "'");
 		}
 		if (auditFilter.getFromTime() != null && auditFilter.getToTime() != null) {
 			statements.add("createdAt BETWEEN ('" + ISO8601DateFormat.format(auditFilter.getFromTime()) + "' , '" + ISO8601DateFormat.format(auditFilter.getToTime()) + "')");
-			if (!whereClauseBuilder.toString().isBlank()) {
-				whereClauseBuilder.append(" and ");
-			}
 		}
 		if (!statements.isEmpty()) {
 			whereClauseBuilder.append("(");
