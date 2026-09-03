@@ -170,120 +170,135 @@
         },
        
       
-      getOverdueClass : function PL_getOverdueClass(project, size) {
-         var percent = 0, overdue = project.itemData["prop_pjt_projectOverdue"], dates = this.extractDates(project), suffix = size != null ? "-" + size
-               : "";
+       getOverdueClass : function PL_getOverdueClass(project, size) {
+          var percent = 0, overdue = (project && project.itemData) ? project.itemData["prop_pjt_projectOverdue"] : null, dates = this.extractDates(project), suffix = size != null ? "-" + size
+                : "";
 
-         if (overdue.value != null && dates.start != null && dates.due != null) {
-            percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
-         }
+          if (overdue && overdue.value != null && dates.start != null && dates.due != null) {
+             percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
+          }
 
-         if (percent > 45) {
-            return "overdue-45plus" + suffix;
-         }
-         if (percent > 30) {
-            return "overdue-30to45" + suffix;
-         }
-         if (percent > 15) {
-            return "overdue-15to29" + suffix;
-         }
-         if (percent > 0) {
-            return "overdue-0to14" + suffix;
-         }
+          if (percent > 45) {
+             return "overdue-45plus" + suffix;
+          }
+          if (percent > 30) {
+             return "overdue-30to45" + suffix;
+          }
+          if (percent > 15) {
+             return "overdue-15to29" + suffix;
+          }
+          if (percent > 0) {
+             return "overdue-0to14" + suffix;
+          }
 
-         return "overdue-negative" + suffix;
-      },
-      extractDates : function(record, start, isTask) {
+          return "overdue-negative" + suffix;
+       },
+       extractDates : function(record, start, isTask) {
 
-         var startDate = null, endDate = null, dueDate = null,targetStartDate = null, targetEndDate= null;
+          var startDate = null, endDate = null, dueDate = null,targetStartDate = null, targetEndDate= null;
 
-         if (isTask) {
-            startDate = record["itemData"]["prop_pjt_tlStart"].value;
-            endDate = record["itemData"]["prop_pjt_tlEnd"]!=null ?record["itemData"]["prop_pjt_tlEnd"].value:null;
- 			dueDate = record["itemData"]["prop_pjt_tlDue"]!=null ?record["itemData"]["prop_pjt_tlDue"].value: null;
-			targetStartDate = record["itemData"]["prop_pjt_tlTargetStart"]!=null ?  record["itemData"]["prop_pjt_tlTargetStart"].value : null;
-			targetEndDate = record["itemData"]["prop_pjt_tlTargetEnd"]!=null ? record["itemData"]["prop_pjt_tlTargetEnd"].value : null;
+          if (!record || !record.itemData) {
+             return {
+                start : new Date(),
+                end : null,
+                due : null,
+                targetStart : null,
+                targetEnd : null
+             };
+          }
 
- 			targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
-			targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
-            endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
-			dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : null;
-            startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
-                  .resetDate(start);
+          if (isTask) {
+             startDate = record.itemData["prop_pjt_tlStart"] != null ? record.itemData["prop_pjt_tlStart"].value : null;
+             endDate = record.itemData["prop_pjt_tlEnd"] != null ? record.itemData["prop_pjt_tlEnd"].value : null;
+  			 dueDate = record.itemData["prop_pjt_tlDue"] != null ? record.itemData["prop_pjt_tlDue"].value : null;
+			 targetStartDate = record.itemData["prop_pjt_tlTargetStart"] != null ? record.itemData["prop_pjt_tlTargetStart"].value : null;
+			 targetEndDate = record.itemData["prop_pjt_tlTargetEnd"] != null ? record.itemData["prop_pjt_tlTargetEnd"].value : null;
 
-            if (endDate == null) {
-               var duration = record["itemData"]["prop_pjt_tlDuration"].value;
-               if (duration == null) {
-                  if (record["itemData"]["prop_pjt_tlIsMilestone"] != null && record["itemData"]["prop_pjt_tlIsMilestone"].value) {
-                     duration = 1;
-                  } else {
-                     duration = 0;
-                  }
-               }
+  			 targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+			 targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
+             endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+			 dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : null;
+             startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
+                   .resetDate(start);
 
-               endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
+             if (endDate == null) {
+                var duration = record.itemData["prop_pjt_tlDuration"] != null ? record.itemData["prop_pjt_tlDuration"].value : null;
+                if (duration == null) {
+                   if (record.itemData["prop_pjt_tlIsMilestone"] != null && record.itemData["prop_pjt_tlIsMilestone"].value) {
+                      duration = 1;
+                   } else {
+                      duration = 0;
+                   }
+                }
 
-            }
+                endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
 
-            return {
-               start : startDate,
-               end : endDate,
-			   due: dueDate,
-			   targetStart : targetStartDate,
-   			   targetEnd : targetEndDate
-            };
+             }
 
-         }
+             return {
+                start : startDate,
+                end : endDate,
+			    due: dueDate,
+			    targetStart : targetStartDate,
+    			targetEnd : targetEndDate
+             };
 
-         startDate = record.itemData["prop_pjt_projectStartDate"].value;
-         endDate = record.itemData["prop_pjt_projectCompletionDate"].value;
-         dueDate = record.itemData["prop_pjt_projectDueDate"].value;
-		 targetStartDate =  record.itemData["prop_pjt_tlTargetStart"]!=null ?  record.itemData["prop_pjt_tlTargetStart"].value : null;
-		 targetEndDate = record.itemData["prop_pjt_tlTargetEnd"]!=null ? record.itemData["prop_pjt_tlTargetEnd"].value : null;
+          }
 
-         startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
-         endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
-         dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this.computeDueDate(
-               startDate, record);
-		targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
-		targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
-         return {
-            start : startDate,
-            end : endDate,
-            due : dueDate,
-			targetStart : targetStartDate,
-   			targetEnd : targetEndDate
-         };
+          startDate = record.itemData["prop_pjt_projectStartDate"] != null ? record.itemData["prop_pjt_projectStartDate"].value : null;
+          endDate = record.itemData["prop_pjt_projectCompletionDate"] != null ? record.itemData["prop_pjt_projectCompletionDate"].value : null;
+          dueDate = record.itemData["prop_pjt_projectDueDate"] != null ? record.itemData["prop_pjt_projectDueDate"].value : null;
+		  targetStartDate = record.itemData["prop_pjt_tlTargetStart"] != null ? record.itemData["prop_pjt_tlTargetStart"].value : null;
+		  targetEndDate = record.itemData["prop_pjt_tlTargetEnd"] != null ? record.itemData["prop_pjt_tlTargetEnd"].value : null;
 
-      },
-      computeDueDate : function(start, record) {
-         var taskList = record.itemData["dt_pjt_taskList"];
-         var ret = start, vstart = start;
-         for (var j in taskList) {
-            var task = taskList[j];
-            var taskId = task.nodeRef;
+          startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
+          endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
+          dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this.computeDueDate(
+                startDate, record);
+		  targetStartDate = targetStartDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetStartDate)) : null;
+		  targetEndDate = targetEndDate != null ? this.resetDate(Alfresco.util.fromISO8601(targetEndDate)) : null;
+          return {
+             start : startDate,
+             end : endDate,
+             due : dueDate,
+			 targetStart : targetStartDate,
+    		 targetEnd : targetEndDate
+          };
 
-            var tdates = this.cache[taskId];
-            if (!tdates) {
-               for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"]) {
-                  var precTaskId = task["itemData"]["assoc_pjt_tlPrevTasks"][z].value;
+       },
+       computeDueDate : function(start, record) {
+          var taskList = (record && record.itemData) ? record.itemData["dt_pjt_taskList"] : null;
+          var ret = start, vstart = start;
+          if (taskList) {
+             for (var j in taskList) {
+                var task = taskList[j];
+                if (!task || !task.nodeRef || !task.itemData) continue;
+                var taskId = task.nodeRef;
 
-                  if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
-                        .getTime() > vstart.getTime()) {
-                     vstart = this.cache[precTaskId].end;
-                  }
+                var tdates = this.cache[taskId];
+                if (!tdates) {
+                   if (task.itemData["assoc_pjt_tlPrevTasks"]) {
+                      for ( var z in task.itemData["assoc_pjt_tlPrevTasks"]) {
+                         var precTaskId = task.itemData["assoc_pjt_tlPrevTasks"][z].value;
 
-               }
+                         if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
+                               .getTime() > vstart.getTime()) {
+                            vstart = this.cache[precTaskId].end;
+                         }
 
-               tdates = this.extractDates(task, vstart, true);
-               this.cache[taskId] = tdates;
-            }
+                      }
+                   }
 
-            ret = tdates.end;
+                   tdates = this.extractDates(task, vstart, true);
+                   this.cache[taskId] = tdates;
+                }
 
-         }
-         return ret;
-      },
+                ret = tdates.end;
+
+             }
+          }
+          return ret;
+       },
 
       resetDate : function PL_resetDate(date) {
          if (date == null) {
