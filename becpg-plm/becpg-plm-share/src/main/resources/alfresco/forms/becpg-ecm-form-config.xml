@@ -464,6 +464,7 @@
 					<show id="bcpg:compoListLossPerc" force="true"/>
 					<show id="mpm:plQty" force="true"/>
 					<show id="bcpg:packagingListQty" force="true"/>
+					<show id="bcpg:packagingListPkgLevel" force="true"/>
 				</field-visibility>
 			</form>
 		</forms>
