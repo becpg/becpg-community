@@ -2510,6 +2510,11 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+                    <field id="bcpg:ecobalyseCode" set="formulation">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+                        </control>
+                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
@@ -2671,6 +2676,11 @@
 
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+                    <field id="bcpg:ecobalyseCode" set="formulation">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+                        </control>
+                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
@@ -2808,6 +2818,11 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
+                    <field id="bcpg:ecobalyseCode" set="formulation">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+                        </control>
+                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
