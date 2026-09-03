@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.formulation.job;
 
-import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -344,7 +343,6 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		retryProductsStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.retryProducts");
 		retryProductsStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(new ArrayList<>(toFormulateProducts)));
 		retryProductsStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -352,12 +350,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				String action = (String) nodeService.getProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_ACTION);
 				if (PublicationChannelAction.RETRY.toString().equals(action)) {
 					String batchFullId = REFORMULATE_BATCH_ID + "|" + REFORMULATE_BATCH_DESC_ID;
-					List<String> batchErrorIds = (List<String>) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS);
-					if (batchErrorIds != null && batchErrorIds.contains(batchFullId)) {
-						batchErrorIds.remove(batchFullId);
-						nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) batchErrorIds);
-						logger.info("Retrying formulation for product: " + entityNodeRef);
-					}
+					batchQueueService.clearBatchError(entityNodeRef, batchFullId);
+					logger.info("Retrying formulation for product: " + entityNodeRef);
 				}
 				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}

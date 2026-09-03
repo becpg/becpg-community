@@ -1,6 +1,5 @@
 package fr.becpg.test.repo.batch;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -298,9 +297,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 			if (!nodeService.hasAspect(preFailedNode, BeCPGModel.ASPECT_BATCH_ERROR)) {
 				nodeService.addAspect(preFailedNode, BeCPGModel.ASPECT_BATCH_ERROR, null);
 			}
-			List<String> errorIds = new ArrayList<>();
-			errorIds.add(batchFullId);
-			nodeService.setProperty(preFailedNode, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) errorIds);
+			nodeService.setProperty(preFailedNode, BeCPGModel.PROP_BATCH_ERROR_LOGS, "{\"" + batchFullId + "\":\"Pre-failed error\"}");
 			return null;
 		});
 		
@@ -323,9 +320,9 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		assertEquals(2, processedCount.get());
 		
 		// Verify the pre-failed node still has the error marker
-		@SuppressWarnings("unchecked")
-		List<String> errorIds = (List<String>) nodeService.getProperty(preFailedNode, BeCPGModel.PROP_BATCH_ERROR_IDS);
-		assertTrue(errorIds.contains(batchFullId));
+		String errorLogs = (String) nodeService.getProperty(preFailedNode, BeCPGModel.PROP_BATCH_ERROR_LOGS);
+		assertNotNull(errorLogs);
+		assertTrue(errorLogs.contains(batchFullId));
 	}
 	
 	@Test
@@ -382,15 +379,22 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		batchQueueService.queueBatch(batchInfo2, List.of(step2));
 		waitForBatchEnd(batchInfo2);
 		
-		// Check that node 0 has both error IDs
+		// Check that node 0 has both error IDs in batchErrorLogs and batchErrorIds
 		NodeRef failedNode = testNodes.get(0);
-		@SuppressWarnings("unchecked")
-		List<String> errorIds = (List<String>) nodeService.getProperty(failedNode, BeCPGModel.PROP_BATCH_ERROR_IDS);
+		String errorLogs = (String) nodeService.getProperty(failedNode, BeCPGModel.PROP_BATCH_ERROR_LOGS);
 		
-		assertNotNull(errorIds);
-		assertEquals(2, errorIds.size());
-		assertTrue(errorIds.contains(batchFullId1));
-		assertTrue(errorIds.contains(batchFullId2));
+		assertNotNull(errorLogs);
+		assertTrue(errorLogs.contains(batchFullId1));
+		assertTrue(errorLogs.contains(batchFullId2));
+		assertTrue(errorLogs.contains("Error in batch 1"));
+		assertTrue(errorLogs.contains("Error in batch 2"));
+
+		@SuppressWarnings("unchecked")
+		List<String> nodeErrorIds = (List<String>) nodeService.getProperty(failedNode, BeCPGModel.PROP_BATCH_ERROR_IDS);
+		assertNotNull(nodeErrorIds);
+		assertEquals(2, nodeErrorIds.size());
+		assertTrue(nodeErrorIds.contains(batchFullId1));
+		assertTrue(nodeErrorIds.contains(batchFullId2));
 	}
 	
 	@Test
@@ -418,22 +422,53 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		batchQueueService.queueBatch(batchInfo, List.of(step1));
 		waitForBatchEnd(batchInfo);
 		
-		// Verify all nodes have error markers
+		// Verify all nodes have error markers, batchErrorIds and error logs
 		for (NodeRef node : testNodes) {
 			assertTrue(inReadTx(() -> nodeService.hasAspect(node, BeCPGModel.ASPECT_BATCH_ERROR)));
+			String errorLogs = inReadTx(() -> (String) nodeService.getProperty(node, BeCPGModel.PROP_BATCH_ERROR_LOGS));
+			assertNotNull(errorLogs);
+			assertTrue(errorLogs.contains("Simulated error"));
+			@SuppressWarnings("unchecked")
+			List<String> errorIds = inReadTx(() -> (List<String>) nodeService.getProperty(node, BeCPGModel.PROP_BATCH_ERROR_IDS));
+			assertNotNull(errorIds);
+			assertTrue(errorIds.contains(batchFullId));
 		}
+
+		// Verify viewErrors JSON structure
+		String viewErrorsJson = inReadTx(() -> batchQueueService.viewErrors(batchFullId));
+		assertNotNull(viewErrorsJson);
+		assertTrue(viewErrorsJson.contains("test.retry.batch"));
+		assertTrue(viewErrorsJson.contains("Simulated error"));
+		assertTrue(viewErrorsJson.contains("entities"));
 		
-		// Retry the batch
+		// Retry single entity first
+		NodeRef singleNode = testNodes.get(0);
+		BatchInfo singleRetryBatch = batchQueueService.retryBatchEntryInError(batchFullId, singleNode);
+		waitForBatchEnd(singleRetryBatch);
+		
+		// Verify single entity has error removed from both properties
+		String singleErrorLogs = inReadTx(() -> (String) nodeService.getProperty(singleNode, BeCPGModel.PROP_BATCH_ERROR_LOGS));
+		assertTrue(singleErrorLogs == null || !singleErrorLogs.contains(batchFullId));
+		@SuppressWarnings("unchecked")
+		List<String> singleErrorIds = inReadTx(() -> (List<String>) nodeService.getProperty(singleNode, BeCPGModel.PROP_BATCH_ERROR_IDS));
+		assertTrue(singleErrorIds == null || !singleErrorIds.contains(batchFullId));
+		
+		// Retry the rest of the batch
 		batchInfo = batchQueueService.retryBatchInError(batchFullId);
 		waitForBatchEnd(batchInfo);
 		
-		// Verify error markers are removed
+		// Verify error markers, batchErrorIds and error logs are removed for all
 		for (NodeRef node : testNodes) {
-			@SuppressWarnings("unchecked")
-			List<String> errorIds = inReadTx(() -> (List<String>) nodeService.getProperty(node, BeCPGModel.PROP_BATCH_ERROR_IDS));
-			if (errorIds != null) {
-				assertFalse(errorIds.contains(batchFullId));
+			String nodeErrorLogs = inReadTx(() -> (String) nodeService.getProperty(node, BeCPGModel.PROP_BATCH_ERROR_LOGS));
+			if (nodeErrorLogs != null) {
+				assertFalse(nodeErrorLogs.contains(batchFullId));
 			}
+			@SuppressWarnings("unchecked")
+			List<String> nodeErrorIds = inReadTx(() -> (List<String>) nodeService.getProperty(node, BeCPGModel.PROP_BATCH_ERROR_IDS));
+			if (nodeErrorIds != null) {
+				assertFalse(nodeErrorIds.contains(batchFullId));
+			}
+			assertFalse(inReadTx(() -> nodeService.hasAspect(node, BeCPGModel.ASPECT_BATCH_ERROR)));
 		}
 	}
 	

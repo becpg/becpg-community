@@ -7656,6 +7656,10 @@
                         <facetable>false</facetable>
                     </index>
                 </property>
+                <property name="bcpg:batchErrorLogs">
+                    <type>d:text</type>
+                    <index enabled="false" />
+                </property>
             </properties>
          </aspect>
 

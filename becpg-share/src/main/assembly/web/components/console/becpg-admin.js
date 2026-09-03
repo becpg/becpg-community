@@ -302,12 +302,14 @@
 				    // Initialize YUI Panel
 				    this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
 				        draggable: false,
-				        width: "50em"
+				        fixedcenter: true,
+				        width: "55em"
 				    });
 
 				    Dom.addClass(this.widgets.panel.element, "becpg-panel");
 
 				    this.widgets.panel.show();
+				    this.widgets.panel.center();
 
 				    // Get references to list containers
 				    var ulCurrent = panelDiv.querySelector(".batches-current");
@@ -320,11 +322,11 @@
 
 				    // Start polling for updates
 				    var intervalId = setInterval(function() {
-				        self.updateBatchPanel(ulCurrent, ulQueue, ulErrors, intervalId);
+				        self.updateBatchPanel(ulCurrent, ulQueue, ulErrors, false);
 				    }, 500);
 
 				    // Initial update
-				    this.updateBatchPanel(ulCurrent, ulQueue, ulErrors, null);
+				    this.updateBatchPanel(ulCurrent, ulQueue, ulErrors, true);
 
 				    // Clean up interval on panel close
 				    this.widgets.panel.subscribe("hide", function() {
@@ -333,26 +335,41 @@
 				},
 
 				createBatchPanelHTML: function() {
-				    var div = document.createElement("div");
-				    div.id = this.id + "show-batches-panel";
-				    div.innerHTML = '<div class="bd batch-panel">' +
-				                      '<div class="batch-section">' +
-				                        '<div class="batch-header">' + this.msg("label.task.current") + '</div>' +
-				                        '<ul class="batches batches-current"></ul>' +
-				                      '</div>' +
-				                      '<div class="batch-section">' +
-				                        '<div class="batch-header">' + this.msg("label.task.pending") + '</div>' +
-				                        '<ul class="batches batches-queue"></ul>' +
-				                      '</div>' +
-				                      '<div class="batch-section">' +
-				                        '<div class="batch-header">' + this.msg("label.task.errors") + '</div>' +
-				                        '<ul class="batches batches-errors"></ul>' +
-				                      '</div>' +
-				                    '</div>';
-				    return div;
+				    var containerDiv = document.createElement("div");
+				    var panelTitle = this.msg("label.batchCounts").replace(/:$/, "");
+				    var ret = '<div id="' + this.id + '-show-batches-panel" class="batch-management-panel">' +
+				              '<div class="bd">' +
+				              '<div class="batch-panel-title">' + Alfresco.util.encodeHTML(panelTitle) + '</div>' +
+				              '<div class="batch-section">' +
+				                '<div class="batch-header">' +
+				                  '<span class="batch-header-title">' + this.msg("label.task.current") + '</span>' +
+				                '</div>' +
+				                '<div class="batch-list-wrapper">' +
+				                  '<ul class="batches batches-current"></ul>' +
+				                '</div>' +
+				              '</div>' +
+				              '<div class="batch-section">' +
+				                '<div class="batch-header">' +
+				                  '<span class="batch-header-title">' + this.msg("label.task.pending") + '</span>' +
+				                '</div>' +
+				                '<div class="batch-list-wrapper">' +
+				                  '<ul class="batches batches-queue"></ul>' +
+				                '</div>' +
+				              '</div>' +
+				              '<div class="batch-section">' +
+				                '<div class="batch-header">' +
+				                  '<span class="batch-header-title">' + this.msg("label.task.errors") + '</span>' +
+				                '</div>' +
+				                '<div class="batch-list-wrapper">' +
+				                  '<ul class="batches batches-errors"></ul>' +
+				                '</div>' +
+				              '</div>' +
+				              '</div></div>';
+				    containerDiv.innerHTML = ret;
+				    return Dom.getFirstChild(containerDiv);
 				},
 
-				updateBatchPanel: function(ulCurrent, ulQueue, ulErrors, intervalId) {
+				updateBatchPanel: function(ulCurrent, ulQueue, ulErrors, isInitial) {
 				    var self = this;
 				    
 				    Alfresco.util.Ajax.request({
@@ -365,6 +382,9 @@
 				                    self.updateCurrentBatch(ulCurrent, response.json.last);
 				                    self.updateQueueBatches(ulQueue, response.json.queue);
 				                    self.updateErrorBatches(ulErrors, response.json.errors);
+				                    if (isInitial && self.widgets.panel) {
+				                        self.widgets.panel.center();
+				                    }
 				                }
 				            }
 				        },
@@ -456,15 +476,19 @@
 				createBatchItem: function(batch, description, percent, isCurrent) {
 				    var self = this;
 				    var li = document.createElement("li");
-				    li.className = "batch-item";
+				    li.className = "batch-item" + (isCurrent ? " batch-item-current" : "");
 				    li.id = "batch-" + batch.batchId;
 
 				    var html = '<div class="batch-item-header">' +
-				                 '<span class="batch-title">' + description + '</span>' +
-				                 '<a href="#" class="batch-cancel-link" title="' + this.msg("label.task.cancel") + '"><span class="removeIcon"></span></a>' +
+				                 '<div class="batch-item-info">' +
+				                   '<span class="batch-title">' + Alfresco.util.encodeHTML(description) + '</span>' +
+				                 '</div>' +
+				                 '<div class="batch-item-actions">' +
+				                   '<a href="#" class="batch-cancel-link" title="' + this.msg("label.task.cancel") + '"><span class="removeIcon"></span></a>' +
+				                 '</div>' +
 				               '</div>';
 
-				    if (percent !== undefined && percent !== null) {
+				    if (percent !== undefined && percent !== null && isCurrent) {
 				        html += '<div class="batch-progress-container">' +
 				                    '<div class="batch-progress-bar">' +
 				                        '<div class="batch-progress-fill" style="width: ' + percent + '%;"></div>' +
@@ -494,26 +518,20 @@
 				    li.className = "batch-item batch-error-item";
 				    li.id = "error-batch-" + errorBatch.batchId;
 
+				    var title = errorBatch.batchDesc || errorBatch.batchId;
+
 				    var html = '<div class="batch-item-header">' +
-				                 '<span class="batch-title">' +
-				                  errorBatch.batchDesc + ' (' + errorBatch.numberOfNodes + ')' + '<br/>' +
-				                 '</span>' +
-				                 '<a href="#" class="batch-retry-link" title="' + this.msg("label.task.retry") + '"><span class="retryIcon"></span></a>' +
-				                 '<a href="#" class="batch-errors-link" title="' + this.msg("label.task.viewErrors") + '"><span class="viewIcon"></span></a>' +
+				                 '<div class="batch-item-info">' +
+				                   '<span class="batch-title">' + Alfresco.util.encodeHTML(title) + '</span>' +
+				                   '<span class="batch-error-count-badge" title="' + this.msg("label.task.batchErrors.total", errorBatch.numberOfNodes) + '">' + errorBatch.numberOfNodes + '</span>' +
+				                 '</div>' +
 				               '</div>';
 
 				    li.innerHTML = html;
 
-				    var retryLink = li.querySelector('.batch-retry-link');
-				    retryLink.onclick = function(e) {
+				    li.onclick = function(e) {
 				        YAHOO.util.Event.preventDefault(e);
-				        self.handleRetryBatch(errorBatch.batchId, retryLink);
-				    };
-					
-				    var errorsLink = li.querySelector('.batch-errors-link');
-				    errorsLink.onclick = function(e) {
-				        YAHOO.util.Event.preventDefault(e);
-				        self.handleViewErrorsBatch(errorBatch.batchId, errorsLink);
+				        self.handleViewErrorsBatch(errorBatch.batchId, title, li);
 				    };
 
 				    return li;
@@ -574,10 +592,232 @@
 				    });
 				},
 				
-				handleViewErrorsBatch: function(batchId, button) {
+				handleRetryBatchEntry: function(batchId, nodeRef, buttonElement, onComplete) {
 				    var self = this;
-					var url = Alfresco.constants.PROXY_URI + "/becpg/batch/errors/" + encodeURIComponent(batchId);
-					window.open(url, "_blank");
+
+				    Alfresco.util.Ajax.request({
+				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/retry/" + encodeURIComponent(batchId) + "?nodeRef=" + encodeURIComponent(nodeRef),
+				        method: Alfresco.util.Ajax.POST,
+				        responseContentType: Alfresco.util.Ajax.JSON,
+				        successCallback: {
+				            fn: function() {
+				                if (typeof onComplete === "function") {
+				                    onComplete();
+				                }
+				            }
+				        },
+				        failureCallback: {
+				            fn: function() {
+				                if (buttonElement) {
+				                    buttonElement.disabled = false;
+				                }
+				                Alfresco.util.PopupManager.displayMessage({
+				                    text: self.msg("message.retry.failure")
+				                });
+				            }
+				        }
+				    });
+				},
+
+				renderBatchErrorRows: function(entities) {
+				    var ret = '';
+				    for (var i = 0; i < entities.length; i++) {
+				        var item = entities[i];
+				        var entityUrl = (window.beCPG && beCPG.util && beCPG.util.entityURL) ?
+				            beCPG.util.entityURL(item.siteId, item.nodeRef, item.type) :
+				            Alfresco.constants.URL_PAGECONTEXT + "entity-data-lists?nodeRef=" + encodeURIComponent(item.nodeRef);
+
+				        var iconName = Alfresco.util.getFileIcon(item.name || "", item.type, 16);
+				        var iconSrc = Alfresco.constants.URL_RESCONTEXT + "components/images/filetypes/" + iconName;
+
+				        ret += '<tr data-noderef="' + Alfresco.util.encodeHTML(item.nodeRef) + '">';
+				        ret += '<td class="col-entity">';
+				        ret += '<div class="entity-cell-info">';
+				        ret += '<img class="entity-icon" src="' + iconSrc + '" width="16" height="16" alt="" />';
+				        ret += '<span class="entity-name"><a class="theme-color-1" href="' + Alfresco.util.encodeHTML(entityUrl) + '" target="_blank">' + Alfresco.util.encodeHTML(item.name || item.nodeRef) + '</a></span>';
+				        if (item.code) {
+				            ret += '<span class="entity-code">(' + Alfresco.util.encodeHTML(item.code) + ')</span>';
+				        }
+				        ret += '</div>';
+				        ret += '</td>';
+
+				        ret += '<td class="col-error">';
+				        if (item.error) {
+				            ret += '<div class="batch-error-message" title="' + Alfresco.util.encodeHTML(item.error) + '">' + Alfresco.util.encodeHTML(item.error) + '</div>';
+				        } else {
+				            ret += '<span class="batch-error-none">-</span>';
+				        }
+				        ret += '</td>';
+
+				        ret += '<td class="col-action">';
+				        ret += '<button type="button" class="batch-entity-retry-btn" title="' + this.msg("label.task.batchErrors.retrySingle") + '"><span class="retryIcon"></span></button>';
+				        ret += '</td>';
+				        ret += '</tr>';
+				    }
+				    return ret;
+				},
+
+				loadBatchErrorsPage: function(batchId, pageIndex, pageSize, panelDiv) {
+				    var self = this;
+				    var offset = pageIndex * pageSize;
+				    var tableWrapper = panelDiv.querySelector('.batch-errors-table-wrapper');
+				    var countElement = panelDiv.querySelector('.batch-errors-count');
+				    var paginationContainer = panelDiv.querySelector('.batch-errors-pagination');
+				    var pageInfoElement = panelDiv.querySelector('.batch-errors-page-info');
+				    var prevBtn = panelDiv.querySelector('.batch-errors-prev-btn');
+				    var nextBtn = panelDiv.querySelector('.batch-errors-next-btn');
+
+				    Alfresco.util.Ajax.request({
+				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/errors/" + encodeURIComponent(batchId) + "?offset=" + offset + "&limit=" + pageSize,
+				        method: Alfresco.util.Ajax.GET,
+				        responseContentType: Alfresco.util.Ajax.JSON,
+				        successCallback: {
+				            fn: function(response) {
+				                if (response.json) {
+				                    var data = response.json;
+				                    var entities = data.entities || [];
+				                    var totalCount = data.total !== undefined ? data.total : entities.length;
+
+				                    if (countElement) {
+				                        countElement.innerText = self.msg("label.task.batchErrors.total", totalCount);
+				                    }
+
+				                    if (totalCount === 0 || entities.length === 0) {
+				                        if (pageIndex > 0 && totalCount > 0) {
+				                            self.loadBatchErrorsPage(batchId, pageIndex - 1, pageSize, panelDiv);
+				                            return;
+				                        }
+				                        tableWrapper.innerHTML = '<div class="batch-empty">' + self.msg("label.task.batchErrors.no-errors") + '</div>';
+				                        if (paginationContainer) {
+				                            paginationContainer.style.display = 'none';
+				                        }
+				                        return;
+				                    }
+
+				                    var tableHtml = '<table class="batch-errors-table">' +
+				                                   '<thead>' +
+				                                   '<tr>' +
+				                                   '<th class="col-entity">' + self.msg("label.task.batchErrors.entity") + '</th>' +
+				                                   '<th class="col-error">' + self.msg("label.task.batchErrors.error") + '</th>' +
+				                                   '<th class="col-action">' + self.msg("label.task.batchErrors.action") + '</th>' +
+				                                   '</tr>' +
+				                                   '</thead>' +
+				                                   '<tbody>' +
+				                                   self.renderBatchErrorRows(entities) +
+				                                   '</tbody></table>';
+				                    tableWrapper.innerHTML = tableHtml;
+
+				                    var totalPages = Math.ceil(totalCount / pageSize);
+				                    if (totalPages <= 1) {
+				                        if (paginationContainer) {
+				                            paginationContainer.style.display = 'none';
+				                        }
+				                    } else {
+				                        if (paginationContainer) {
+				                            paginationContainer.style.display = 'inline-flex';
+				                        }
+				                        if (pageInfoElement) {
+				                            pageInfoElement.innerText = self.msg("label.task.batchErrors.page", (pageIndex + 1), totalPages);
+				                        }
+				                        if (prevBtn) {
+				                            prevBtn.disabled = pageIndex <= 0;
+				                            prevBtn.onclick = function(e) {
+				                                YAHOO.util.Event.preventDefault(e);
+				                                self.loadBatchErrorsPage(batchId, pageIndex - 1, pageSize, panelDiv);
+				                            };
+				                        }
+				                        if (nextBtn) {
+				                            nextBtn.disabled = pageIndex >= totalPages - 1;
+				                            nextBtn.onclick = function(e) {
+				                                YAHOO.util.Event.preventDefault(e);
+				                                self.loadBatchErrorsPage(batchId, pageIndex + 1, pageSize, panelDiv);
+				                            };
+				                        }
+				                    }
+
+				                    if (pageIndex === 0 && self.widgets.errorsPanel) {
+				                        self.widgets.errorsPanel.center();
+				                    }
+
+				                    var retryRowBtns = tableWrapper.querySelectorAll('.batch-entity-retry-btn');
+				                    for (var r = 0; r < retryRowBtns.length; r++) {
+				                        (function(btn) {
+				                            btn.onclick = function(e) {
+				                                YAHOO.util.Event.preventDefault(e);
+				                                var tr = Dom.getAncestorByTagName(btn, "tr");
+				                                var nodeRef = tr.getAttribute('data-noderef');
+				                                btn.disabled = true;
+				                                self.handleRetryBatchEntry(batchId, nodeRef, btn, function() {
+				                                    self.loadBatchErrorsPage(batchId, pageIndex, pageSize, panelDiv);
+				                                });
+				                            };
+				                        })(retryRowBtns[r]);
+				                    }
+				                }
+				            }
+				        },
+				        failureCallback: {
+				            fn: function() {
+				                tableWrapper.innerHTML = '<div class="batch-empty">' + self.msg("label.task.batchErrors.no-errors") + '</div>';
+				            }
+				        },
+				        scope: this
+				    });
+				},
+
+				handleViewErrorsBatch: function(batchId, batchDesc, button) {
+				    var self = this;
+				    var pageSize = 20;
+				    var titleDesc = batchDesc || batchId;
+				    var panelTitle = self.msg("label.task.batchErrors.title", titleDesc);
+
+				    var containerDiv = document.createElement("div");
+				    var ret = '<div id="' + self.id + '-batch-errors-panel" class="batch-errors-panel">' +
+				              '<div class="bd">' +
+				              '<div class="batch-errors-title">' + Alfresco.util.encodeHTML(panelTitle) + '</div>' +
+				              '<div class="batch-errors-table-wrapper">' +
+				                '<div class="batch-empty">' + self.msg("label.task.loading") + '</div>' +
+				              '</div>' +
+				              '<div class="batch-errors-footer">' +
+				                '<div class="batch-errors-count"></div>' +
+				                '<div class="batch-errors-pagination" style="display: none;">' +
+				                  '<button type="button" class="batch-errors-page-btn batch-errors-prev-btn">' + self.msg("label.task.batchErrors.prev") + '</button>' +
+				                  '<span class="batch-errors-page-info"></span>' +
+				                  '<button type="button" class="batch-errors-page-btn batch-errors-next-btn">' + self.msg("label.task.batchErrors.next") + '</button>' +
+				                '</div>' +
+				                '<div class="batch-errors-actions">' +
+				                  '<button type="button" class="batch-errors-retry-all-btn">' + self.msg("label.task.batchErrors.retryAll") + '</button>' +
+				                '</div>' +
+				              '</div>' +
+				              '</div></div>';
+
+				    containerDiv.innerHTML = ret;
+				    var panelDiv = Dom.getFirstChild(containerDiv);
+
+				    if (self.widgets.errorsPanel) {
+				        self.widgets.errorsPanel.destroy();
+				    }
+
+				    self.widgets.errorsPanel = Alfresco.util.createYUIPanel(panelDiv, {
+				        draggable: false,
+				        fixedcenter: true,
+				        width: "60em"
+				    });
+
+				    Dom.addClass(self.widgets.errorsPanel.element, "becpg-panel");
+				    self.widgets.errorsPanel.show();
+				    self.widgets.errorsPanel.center();
+
+				    var retryAllBtn = panelDiv.querySelector('.batch-errors-retry-all-btn');
+				    if (retryAllBtn) {
+				        retryAllBtn.onclick = function(e) {
+				            YAHOO.util.Event.preventDefault(e);
+				            self.handleRetryBatch(batchId, retryAllBtn);
+				            self.widgets.errorsPanel.hide();
+				        };
+				    }
+
+				    self.loadBatchErrorsPage(batchId, 0, pageSize, panelDiv);
 				}
 			});
 })();

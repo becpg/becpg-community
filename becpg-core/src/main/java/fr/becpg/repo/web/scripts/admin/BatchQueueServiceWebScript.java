@@ -6,6 +6,7 @@ package fr.becpg.repo.web.scripts.admin;
 import java.io.IOException;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -95,18 +96,53 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 				}
 			} else if (RETRY_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
-				batchQueueService.retryBatchInError(batchId);
+				String nodeRefStr = req.getParameter("nodeRef");
+				if (nodeRefStr != null && !nodeRefStr.isBlank()) {
+					if (NodeRef.isNodeRef(nodeRefStr)) {
+						batchQueueService.retryBatchEntryInError(batchId, new NodeRef(nodeRefStr));
+					} else {
+						resp.setStatus(400);
+						ret.put("error", "Invalid nodeRef: " + nodeRefStr);
+					}
+				} else {
+					batchQueueService.retryBatchInError(batchId);
+				}
 			} else if (ERRORS_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
-				ret.put(batchId, new JSONArray(batchQueueService.viewErrors(batchId)));
+				String offsetParam = req.getParameter("offset");
+				String limitParam = req.getParameter("limit");
+				int offset = parseInt(offsetParam, 0);
+				int limit = parseInt(limitParam, -1);
+				ret = new JSONObject(batchQueueService.viewErrors(batchId, offset, limit));
 			}
 
 			resp.setContentType("application/json");
 			resp.setContentEncoding("UTF-8");
 			ret.write(resp.getWriter());
-		} catch (JSONException e) {
-			logger.error(e, e);
+		} catch (Exception e) {
+			logger.error("Error executing batch queue webscript: " + e.getMessage(), e);
+			resp.setStatus(500);
+			resp.setContentType("application/json");
+			resp.setContentEncoding("UTF-8");
+			try {
+				JSONObject err = new JSONObject();
+				err.put("error", e.getMessage());
+				err.write(resp.getWriter());
+			} catch (JSONException je) {
+				logger.error(je, je);
+			}
 		}
+	}
+
+	private int parseInt(String param, int defaultValue) {
+		if (param != null && !param.isBlank()) {
+			try {
+				return Integer.parseInt(param);
+			} catch (NumberFormatException e) {
+				return defaultValue;
+			}
+		}
+		return defaultValue;
 	}
 
 }
