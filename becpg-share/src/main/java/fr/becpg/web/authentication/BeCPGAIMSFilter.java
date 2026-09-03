@@ -1061,6 +1061,11 @@ public class BeCPGAIMSFilter implements Filter
         // If we don't have redirect URL, redirect to the home page
         if (encodedOriginalUrl == null || encodedOriginalUrl.isEmpty())
         {
+            // The target only survives the identity provider round trip through the saved request, which lives
+            // in a session this flow may have invalidated. Losing it silently sends the caller to the dashboard
+            // instead of the page it asked for, so say it out loud.
+            LOGGER.warn("No redirectUrl on " + request.getRequestURI() + ", falling back to the home page. Saved request: "
+                            + (this.requestCache.getRequest(request, response) != null));
             this.redirectStrategy.sendRedirect(request, response, "/");
             return;
         }
