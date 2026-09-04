@@ -133,6 +133,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		// set workflow Initiator as Project Manager
 
 		String fullyAuthenticatedUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		String currentRunAsUser = AuthenticationUtil.getRunAsUser();
 		String authenticatedUser = fullyAuthenticatedUser;
 
 		if (projectData.getProjectManager() != null) {
@@ -197,6 +198,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			}
 		} finally {
 			AuthenticationUtil.setFullyAuthenticatedUser(fullyAuthenticatedUser);
+			AuthenticationUtil.setRunAsUser(currentRunAsUser);
 		}
 	}
 
