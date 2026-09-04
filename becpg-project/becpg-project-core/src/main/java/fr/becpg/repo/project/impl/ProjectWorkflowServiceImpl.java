@@ -234,6 +234,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 		final String authenticatedUser = determineWorkflowInitiator(projectData);
 		final String fullyAuthenticatedUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		final String currentRunAsUser = AuthenticationUtil.getRunAsUser();
 
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
@@ -249,6 +250,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			throw new WorkflowException("Failed to start workflow", e);
 		} finally {
 			AuthenticationUtil.setFullyAuthenticatedUser(fullyAuthenticatedUser);
+			AuthenticationUtil.setRunAsUser(currentRunAsUser);
 		}
 	}
 
