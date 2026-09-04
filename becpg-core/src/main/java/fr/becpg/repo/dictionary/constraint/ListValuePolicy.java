@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -64,14 +65,13 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		this.namespaceService = namespaceService;
 	}
 
-	/**
-	 * <p>doInit.</p>
-	 */
+	/** {@inheritDoc} */
+	@Override
 	public void doInit() {
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
-				new JavaBehaviour(this, "onUpdateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateNode"));
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
@@ -86,18 +86,25 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		queueNode(childAssocRef.getChildRef());
+		if (childAssocRef != null && childAssocRef.getChildRef() != null) {
+			queueNode(childAssocRef.getChildRef());
+		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
-		
-		if (DynListConstraint.getPathRegistry().contains(nodeService.getPath(childAssocRef.getParentRef()).toPrefixString(namespaceService))) {
-			throw new IllegalStateException(I18NUtil.getMessage("message.constraint.list-value.delete.forbidden"));
+		if (childAssocRef != null && childAssocRef.getParentRef() != null && policyBehaviourFilter.isEnabled(ContentModel.ASPECT_UNDELETABLE)
+				&& nodeService.exists(childAssocRef.getParentRef())) {
+			Path parentPath = nodeService.getPath(childAssocRef.getParentRef());
+			if (parentPath != null && DynListConstraint.getPathRegistry().contains(parentPath.toPrefixString(namespaceService))) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.constraint.list-value.delete.forbidden"));
+			}
 		}
-		
-		queueNode(childAssocRef.getChildRef());
+
+		if (childAssocRef != null && childAssocRef.getChildRef() != null) {
+			queueNode(childAssocRef.getChildRef());
+		}
 	}
 
 	/** {@inheritDoc} */
