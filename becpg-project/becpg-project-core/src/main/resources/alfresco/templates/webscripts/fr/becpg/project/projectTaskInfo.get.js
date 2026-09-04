@@ -22,6 +22,7 @@ function main()
    var task = search.findNode(nodeRef);
    
    model.task = task;
+   model.isRefusedEnabled = task != null ? bProject.isRefusedEnabled(task) : false;
    model.deliverables = [];
    model.urlMap = {};
    model.contentMap = {};

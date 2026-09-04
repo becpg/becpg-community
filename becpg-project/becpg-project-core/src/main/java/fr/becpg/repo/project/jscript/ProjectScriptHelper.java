@@ -372,6 +372,22 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	public void updateTaskState(TaskListDataItem task, String taskState) {
 		task.setTaskState(TaskState.valueOf(taskState));
 	}
+
+	/**
+	 * <p>isRefusedEnabled.</p>
+	 *
+	 * @param task a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a boolean indicating whether the refused task association is defined
+	 */
+	public boolean isRefusedEnabled(ScriptNode task) {
+		if (task == null) {
+			return false;
+		}
+		return AuthenticationUtil.runAsSystem(() -> {
+			List<AssociationRef> assocs = nodeService.getTargetAssocs(task.getNodeRef(), ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+			return assocs != null && !assocs.isEmpty();
+		});
+	}
 	
 	/**
 	 * <p>extractResources.</p>
