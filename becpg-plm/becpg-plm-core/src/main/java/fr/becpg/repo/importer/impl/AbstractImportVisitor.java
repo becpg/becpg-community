@@ -385,6 +385,37 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	/**
+	 * Keeps the translations already read for a multilingual property when another of its columns comes after: every
+	 * column flagged with the MLText annotation is read on its own, and the last one used to overwrite the others
+	 * (#36417).
+	 *
+	 * @param currentValue the value read from the previous columns of the property
+	 * @param value the value read from the current column
+	 * @return the value to keep for the property
+	 */
+	protected static Serializable mergeImportedValue(Serializable currentValue, Serializable value) {
+		if ((currentValue instanceof MLText currentMLText) && (value instanceof MLText mlText)) {
+			return ImportHelper.mergeMLText(mlText, currentMLText);
+		}
+		return value;
+	}
+
+	/**
+	 * Tells whether a mapped column carries a multilingual text, so that the columns following it may hold its
+	 * translations (bcpg:charactName_en_US after a bcpg:charactName key).
+	 *
+	 * @param attrMapping the mapping of the column
+	 * @return true when the column is flagged as a translation or targets a multilingual property
+	 */
+	private boolean isMLTextColumn(AbstractAttributeMapping attrMapping) {
+		if ((attrMapping instanceof AttributeMapping attributeMapping) && attributeMapping.isMLText()) {
+			return true;
+		}
+		return (attrMapping.getAttribute() instanceof PropertyDefinition propertyDefinition)
+				&& DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName());
+	}
+
+	/**
 	 * Calculate the properties of the node import
 	 *
 	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
@@ -450,7 +481,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 
 					if (value != null) {
-						properties.put(column.getName(), value);
+						properties.merge(column.getName(), value, AbstractImportVisitor::mergeImportedValue);
 					}
 				}
 			}
@@ -957,9 +988,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						logger.debug("Find matching attribute mapping columnId : " + columnId);
 						columnsAttributeMapping.add(attrMapping);
 						isAttributeMapped = true;
-						if ((attrMapping instanceof AttributeMapping) && ((AttributeMapping) attrMapping).isMLText()) {
-							isMLPropertyDef = true;
-						}
+						isMLPropertyDef = isMLTextColumn(attrMapping);
 						break;
 					}
 				}
