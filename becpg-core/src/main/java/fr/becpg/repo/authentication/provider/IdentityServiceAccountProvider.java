@@ -93,8 +93,11 @@ public class IdentityServiceAccountProvider {
 	/**
 	 * <p>registerAccount.</p>
 	 *
+	 * Creates the account in the identity service, together with its initial credential when the given
+	 * account carries a password.
+	 *
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
-	 * @return a boolean
+	 * @return true when the account was created, false when it already exists in the identity service
 	 */
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
@@ -141,7 +144,45 @@ public class IdentityServiceAccountProvider {
 			logger.error(e, e);
             throw new IdentityServiceException("Could not register user in IDS", e);
 		}
+		registerInitialPassword(userAccount);
 		return true;
+	}
+
+	/**
+	 * <p>registerInitialPassword.</p>
+	 *
+	 * Stores the initial credential of a freshly created account. The account is rolled back when the
+	 * credential cannot be stored, otherwise a later creation attempt would reuse an account without
+	 * any password and the user would never be able to sign in.
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 */
+	private void registerInitialPassword(BeCPGUserAccount userAccount) {
+		if ((userAccount.getPassword() == null) || userAccount.getPassword().isBlank()) {
+			return;
+		}
+		try {
+			updatePassword(userAccount.getUserName(), userAccount.getPassword());
+		} catch (RuntimeException e) {
+			logger.error("Could not store initial password in IDS for user: " + userAccount.getUserName() + ", rolling back account", e);
+			rollbackAccount(userAccount.getUserName());
+			throw e;
+		}
+	}
+
+	/**
+	 * <p>rollbackAccount.</p>
+	 *
+	 * Deletes an account created by a failed registration, without hiding the registration failure.
+	 *
+	 * @param username a {@link java.lang.String} object
+	 */
+	private void rollbackAccount(String username) {
+		try {
+			deleteAccount(username);
+		} catch (RuntimeException e) {
+			logger.error("Could not roll back account in IDS for user: " + username, e);
+		}
 	}
 	
 	/**
