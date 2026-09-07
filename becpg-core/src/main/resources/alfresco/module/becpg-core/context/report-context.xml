@@ -30,9 +30,23 @@
 	</bean>
 	
 	
+	<!-- Injected as a lazy proxy: resolving entityReportService eagerly closes a circular reference
+	     exporterComponent -> reportContentServiceWrapper -> entityReportService -> entityVersionService
+	     -> exporterComponent, which leaves exporterComponent injected in its raw, unpopulated version. -->
+	<bean id="entityReportServiceLazyProxy" class="org.springframework.aop.framework.ProxyFactoryBean" autowire-candidate="false">
+		<property name="proxyInterfaces">
+			<value>fr.becpg.repo.report.entity.EntityReportService</value>
+		</property>
+		<property name="targetSource">
+			<bean class="org.springframework.aop.target.LazyInitTargetSource">
+				<property name="targetBeanName" value="entityReportService"/>
+			</bean>
+		</property>
+	</bean>
+
 	<bean id="reportContentServiceWrapper" class="fr.becpg.repo.report.engine.ReportContentServiceWrapper">
 		<property name="contentService" ref="ContentService"/>
-		<property name="entityReportService" ref="entityReportService" />
+		<property name="entityReportService" ref="entityReportServiceLazyProxy" />
 		 <property name="nodeService" ref="NodeService"/>
 		 <property name="transactionService" ref="transactionService"/>
 	</bean>
