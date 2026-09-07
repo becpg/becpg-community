@@ -93,6 +93,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	private static final String FIELD_PATH_SEPARATOR = "|";
+	private static final String MULTI_VALUE_SEPARATOR = ",";
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -1190,12 +1191,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 								dataList.add((Map<String, Object>) tmp);
 							}
 
-							for (Map<String, Object> data : dataList) {
-								if (matchData(data, compKey, Collections.singletonMap(critKey, critValue))) {
-									found = true;
-									break;
-								}
-							}
+							found = matchCriterion(dataList, compKey, critKey, critValue);
 						}
 						break;
 					}
@@ -1225,6 +1221,77 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 */
 	private boolean isCriterionOn(String critKey, String compKey) {
 		return critKey.equals(compKey) || critKey.startsWith(compKey + FIELD_PATH_SEPARATOR);
+	}
+
+	/**
+	 * <p>Matches the data extracted for a field against a criterion.</p>
+	 *
+	 * The data holds one entry per value of the field, and the criterion matches as soon as one of
+	 * them matches. A criterion holding several values - what a filter on a multiple association or a
+	 * multiple choice list sends - matches as soon as one of its values is found: filtering on two
+	 * states keeps the entities in either of them.
+	 *
+	 * @param dataList a {@link java.util.List} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean matchCriterion(List<Map<String, Object>> dataList, String compKey, String critKey, String critValue) {
+		if (matchAnyData(dataList, compKey, critKey, critValue)) {
+			return true;
+		}
+
+		for (String singleValue : splitMultiValue(critValue)) {
+			if (matchAnyData(dataList, compKey, critKey, singleValue)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * <p>Tells whether one of the extracted values matches the criterion.</p>
+	 *
+	 * @param dataList a {@link java.util.List} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean matchAnyData(List<Map<String, Object>> dataList, String compKey, String critKey, String critValue) {
+		Map<String, String> criteriaMap = Collections.singletonMap(critKey, critValue);
+
+		for (Map<String, Object> data : dataList) {
+			if (matchData(data, compKey, criteriaMap)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * <p>Splits a criterion holding several values, empty when it holds a single one.</p>
+	 *
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
+	private List<String> splitMultiValue(String critValue) {
+		if ((critValue == null) || !critValue.contains(MULTI_VALUE_SEPARATOR)) {
+			return Collections.emptyList();
+		}
+
+		List<String> singleValues = new ArrayList<>();
+
+		for (String singleValue : critValue.split(MULTI_VALUE_SEPARATOR)) {
+			if (!singleValue.trim().isEmpty()) {
+				singleValues.add(singleValue.trim());
+			}
+		}
+
+		return singleValues;
 	}
 
 	/**
@@ -1325,7 +1392,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (!dateMatches(value, compValue)) {
 				return false;
 			}
-		} else if ((compValue != null) && !value.equals(compValue) && !compValue.contains(value) && !displayValue.equals(compValue)) {
+		} else if ((compValue != null) && !value.equals(compValue) && !value.contains(compValue) && !displayValue.equals(compValue)) {
 			return false;
 
 		}
