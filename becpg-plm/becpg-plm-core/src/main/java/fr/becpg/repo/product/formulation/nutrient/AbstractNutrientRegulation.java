@@ -168,15 +168,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			return 0.0;
 		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			String regulUnit = nutUnit;
-			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
-			if (def != null) {
-				regulUnit = def.getUnit();
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
-			}
-			return roundByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+			return roundByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode);
 		}
 		return roundValue(value, 1d);
 	}
@@ -196,26 +188,50 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			return null;
 		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			String regulUnit = nutUnit;
-			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
-			if (def != null) {
-				regulUnit = def.getUnit();
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
-			}
-			return tolerancesByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+			return tolerancesByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode);
 		}
 		return ret;
 	}
 
 
 
+	/**
+	 * <p>Converts a value expressed in the unit of the nutrient list to the unit of the regulation.</p>
+	 *
+	 * <p>The rounded values stored on the nutrient list are expressed in the unit of the regulation
+	 * (eg. g for the EU sodium) whereas the raw values are expressed in the unit of the nutrient
+	 * itself (eg. mg/100g): every rule reading a raw value has to go through this method first.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
+	protected Double toRegulUnit(Double value, String nutrientTypeCode, String nutUnit) {
+		String regulUnit = nutUnit;
+		NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
+		if (def != null) {
+			regulUnit = def.getUnit();
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("toRegulUnit : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit "
+					+ regulUnit);
+		}
+		return convertValue(value, nutUnit, regulUnit);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
+		return displayValue(value, roundedValue, nutrientTypeCode, measurementPrecision, locale, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale,
+			String nutUnit) {
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			return displayValueByCode(value, roundedValue, nutrientTypeCode, measurementPrecision , locale);
+			return displayValueByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), roundedValue, nutrientTypeCode, measurementPrecision, locale);
 		}
 		return formatDouble(roundedValue, locale);
 	}

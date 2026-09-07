@@ -192,7 +192,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		if (value != null && value < 10 && value >= 1 && roundedValue != null && nutrientTypeCode != null
 				&& !(nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ))) {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale);
-			DecimalFormat df = new DecimalFormat("#,###.0#####", symbols);
+			DecimalFormat df = new DecimalFormat("#,##0.0#####", symbols);
 			return df.format(roundedValue);
 
 		}
