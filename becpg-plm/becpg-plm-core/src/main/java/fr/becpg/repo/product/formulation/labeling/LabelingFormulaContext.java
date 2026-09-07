@@ -2941,13 +2941,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
 
-		BigDecimal total = getTotal(lblCompositeContext, false);
-		BigDecimal totalWithYield = getTotal(lblCompositeContext, true);
-
-		if (!ingsLabelingWithYield && (yield != null) && (yield != 0)) {
-			totalWithYield = BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
-		}
-
 		StringBuilder tableContent = new StringBuilder();
 		StringBuilder ret = new StringBuilder();
 
@@ -2958,6 +2951,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, DEFAULT_RATIO, 0);
+			BigDecimal total = getFlatTotal(flatList, false);
+			BigDecimal totalWithYield = getFlatTotalWithYield(flatList);
+
 			if (!flatList.isEmpty()) {
 
 				if ((htmlFlatTableHeaderFormat != null) && !htmlFlatTableHeaderFormat.isBlank()) {
@@ -3025,6 +3021,47 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			shouldBreakIngType = false;
 		}
 
+	}
+
+	/**
+	 * <p>The total of the flat table, summed on its rows as they are displayed.</p>
+	 *
+	 * The tree table rounds each ingredient type as a whole, but the flat table shows one row per ingredient of the
+	 * type: summing the types would round the emulsifiers once whereas two rows are rounded on their own, and the
+	 * total would no longer be the sum of the rows (#36438). Only the rows of the first level are summed, the sub
+	 * ingredients being a breakdown of their parent.
+	 *
+	 * @param flatList a {@link java.util.List} object, the rows of the table
+	 * @param withYield a boolean, true to sum the "with yield" column
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal getFlatTotal(List<HtmlTableStruct> flatList, boolean withYield) {
+		BigDecimal total = BigDecimal.valueOf(0d);
+
+		for (HtmlTableStruct row : flatList) {
+			Double qtyPerc = withYield ? row.qtyPercWithYield : row.qtyPerc;
+
+			if ((row.level == 0) && (qtyPerc != null) && (qtyPerc > 0)) {
+				total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, row.component)));
+			}
+		}
+
+		return total;
+	}
+
+	/**
+	 * <p>The "with yield" total of the flat table, which is the yield itself when the labeling is not computed after
+	 * yield.</p>
+	 *
+	 * @param flatList a {@link java.util.List} object, the rows of the table
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal getFlatTotalWithYield(List<HtmlTableStruct> flatList) {
+		if (!ingsLabelingWithYield && (yield != null) && (yield != 0)) {
+			return BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
+		}
+
+		return getFlatTotal(flatList, true);
 	}
 
 	/**

@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -198,6 +201,101 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				+ "</tbody></table>";
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
+
+	/**
+	 * The total of the flat table is the sum of its rows as they are displayed: two thickeners rounded on their own
+	 * rows (0,3% + 0,3%) must not be summed as one rounded type (0,5%) in the total (#36438).
+	 */
+	@Test
+	public void testRenderFlatHtmlTableTotalSumsRows() {
+
+		NodeRef flatTableRawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef thickenerANodeRef = createThickener("Thickener A");
+			NodeRef thickenerBNodeRef = createThickener("Thickener B");
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table total raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Flat table total raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Flat table total raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Flat table total raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99.47d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.27d).withIngredient(thickenerANodeRef).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.26d).withIngredient(thickenerBNodeRef).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product flat total " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct.setLegalName("legal Finished product flat total");
+			finishedProduct.setQty(1d);
+			finishedProduct.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(flatTableRawMaterialNodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', true, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+
+		String expectedHtml = "<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\">"
+				+ "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >Ingrédient</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine géographique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine biologique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Quantité (%)</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Qté ap. rdmt (%)</th></tr></thead>"
+				+ "<tbody>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >ing1 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">99,5%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">99,5%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >epaississants french : thickener A french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >epaississants french : thickener B french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td></tr>"
+				+ "<tfoot><tr><th style=\"border: solid 1px; padding: 5px;\" ><b>Total</b></th>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px; padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\"><b>100,1%</b></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td></tr></tfoot>"
+				+ "</tbody></table>";
+
+		checkILL(finishedProductNodeRef, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
+
+	private NodeRef createThickener(String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_ING_TYPE_V2, ingType1);
+		MLText legalName = new MLText();
+		legalName.addValue(I18NUtil.getContentLocaleLang(), name + " default");
+		legalName.addValue(Locale.ENGLISH, name + " english");
+		legalName.addValue(Locale.FRENCH, name + " french");
+		properties.put(BeCPGModel.PROP_LEGAL_NAME, legalName);
+
+		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_ING, properties).getChildRef();
 	}
 
 	@Test
