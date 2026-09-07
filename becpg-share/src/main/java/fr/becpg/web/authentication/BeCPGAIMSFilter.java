@@ -26,6 +26,7 @@ import static org.alfresco.web.site.servlet.config.SecurityUtils.isAuthorization
 import static org.alfresco.web.site.servlet.config.SecurityUtils.toMultiMap;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -189,6 +190,31 @@ public class BeCPGAIMSFilter implements Filter
     /** Constant <code>SHARE_AIMS_DOLOGIN="/page/aims-dologin"</code> */
     public static final String SHARE_AIMS_DOLOGIN = "/page/aims-dologin";
 
+    /** Session attribute carrying the step of a re-authentication asked with prompt=true. */
+    private static final String REAUTH_STEP_ATTRIBUTE = "becpg.aims.reauthStep";
+    /** A re-authentication older than this is forgotten, so a stale marker cannot force the identity provider later. */
+    private static final long REAUTH_MAX_AGE_MILLIS = 5L * 60L * 1000L;
+
+    /** The steps of a re-authentication asked with prompt=true, kept in the session while the identity provider round trip runs. */
+    private enum ReauthStep
+    {
+        REQUESTED, REDIRECTED
+    }
+
+    /**
+     * The re-authentication marker stored in the session: the step reached and when the re-authentication started.
+     *
+     * @param step the step reached
+     * @param startedAt when the re-authentication was asked, in milliseconds
+     */
+    private record ReauthMarker(ReauthStep step, long startedAt) implements Serializable
+    {
+        boolean isExpired()
+        {
+            return System.currentTimeMillis() - startedAt > REAUTH_MAX_AGE_MILLIS;
+        }
+    }
+
     private ClientRegistrationRepository clientRegistrationRepository;
     private OAuth2AuthorizedClientService oauth2ClientService;
     private final RedirectStrategy authorizationRedirectStrategy;
@@ -350,23 +376,10 @@ public class BeCPGAIMSFilter implements Filter
             }
         }
         
-        if (this.enabled && request.getRequestURI().contains(SHARE_AIMS_LOGIN_PAGE) &&
-            "true".equalsIgnoreCase(request.getParameter("prompt"))) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Explicit re-authentication requested for URI: " + request.getRequestURI() + " due to prompt=true.");
-            }
-
-            if (isAuthenticated) {
-                LOGGER.info("User is currently authenticated, but prompt=true found. Invalidating session to force IdP re-authentication.");
-                if (session != null) {
-                    session.invalidate();
-                    session = null; // Nullify after invalidation for subsequent logic
-                }
-                SecurityContextHolder.clearContext();
-                isAuthenticated = false; // Update local state for the rest of this filter invocation
-            } else {
-                LOGGER.debug("prompt=true found, user is already unauthenticated. Proceeding to login normally.");
-            }
+        if (this.enabled && isAuthenticated && forcesIdentityProviderRoundTrip(request, session))
+        {
+            // This request goes through the identity provider while the session stays alive for the other windows
+            isAuthenticated = false;
         }
 
         if (!isAuthenticated && this.enabled && (request.getRequestURI().contains(this.shareContext + SHARE_PAGE) || request.getRequestURI().contains(this.shareContext + SHARE_AIMS_LOGOUT)))
@@ -735,6 +748,95 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
+     * <p>Tells whether this request must go through the identity provider although the session is authenticated.</p>
+     *
+     * A re-authentication (#28065) is asked with prompt=true on the aims-login page, which forwards it to aims-dologin,
+     * whose answer comes back with the authorization code. The session used to be invalidated to force that round
+     * trip, but the main window shares it and re-authenticates on its own as soon as it dies, overwriting the saved
+     * request and the authorization request of the popup, which then lands on the home page instead of its callback
+     * (#36351). The session is now kept, and a marker carries the step of the round trip so that exactly these three
+     * requests bypass the authenticated state.
+     *
+     * @param request the current request
+     * @param session the current session
+     * @return true when the request must be treated as unauthenticated
+     */
+    private boolean forcesIdentityProviderRoundTrip(HttpServletRequest request, HttpSession session)
+    {
+        String uri = request.getRequestURI();
+        boolean prompt = "true".equalsIgnoreCase(request.getParameter("prompt"));
+
+        if (uri.contains(SHARE_AIMS_LOGIN_PAGE) && prompt)
+        {
+            LOGGER.info("Re-authentication requested with prompt=true, keeping the session and forcing the identity provider round trip.");
+            session.setAttribute(REAUTH_STEP_ATTRIBUTE, new ReauthMarker(ReauthStep.REQUESTED, System.currentTimeMillis()));
+            return true;
+        }
+
+        ReauthMarker marker = currentReauthMarker(session);
+        if (!uri.contains(SHARE_AIMS_DOLOGIN) || marker == null)
+        {
+            return false;
+        }
+        if (marker.step() == ReauthStep.REQUESTED && prompt)
+        {
+            session.setAttribute(REAUTH_STEP_ATTRIBUTE, new ReauthMarker(ReauthStep.REDIRECTED, marker.startedAt()));
+            return true;
+        }
+        if (marker.step() == ReauthStep.REDIRECTED && isAuthorizationResponse(toMultiMap(request.getParameterMap())))
+        {
+            LOGGER.info("Re-authentication answered by the identity provider, completing it in the existing session.");
+            session.removeAttribute(REAUTH_STEP_ATTRIBUTE);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * <p>The re-authentication marker of the session, dropped when it is too old.</p>
+     *
+     * @param session the current session
+     * @return the marker, or null when there is none
+     */
+    private ReauthMarker currentReauthMarker(HttpSession session)
+    {
+        Object attribute = session.getAttribute(REAUTH_STEP_ATTRIBUTE);
+        if (!(attribute instanceof ReauthMarker marker))
+        {
+            return null;
+        }
+        if (marker.isExpired())
+        {
+            session.removeAttribute(REAUTH_STEP_ATTRIBUTE);
+            return null;
+        }
+        return marker;
+    }
+
+    /**
+     * <p>Tells whether the identity provider answered for the user the session belongs to.</p>
+     *
+     * A re-authentication completes in the session it was asked from, so the answer must name the same user: another
+     * one would leave a session bound to one user and a security context bound to another.
+     *
+     * @param session the current session
+     * @param authenticationResult the answer of the identity provider
+     * @return true when the session has no user yet or the same user
+     */
+    private boolean belongsToSessionUser(HttpSession session, OAuth2LoginAuthenticationToken authenticationResult)
+    {
+        Object sessionUser = session.getAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID);
+        String username = authenticationResult.getPrincipal().getAttribute(this.principalAttribute);
+        if (sessionUser == null || sessionUser.equals(username))
+        {
+            return true;
+        }
+        LOGGER.warn("The identity provider identified " + username + " while the session belongs to " + sessionUser
+                        + ", closing the session.");
+        return false;
+    }
+
+    /**
      * <p>matchesAuthorizationResponse.</p>
      *
      * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
@@ -800,6 +902,13 @@ public class BeCPGAIMSFilter implements Filter
                 uriBuilder.queryParam("error_uri", new Object[]{error.getUri()});
             }
             this.redirectStrategy.sendRedirect(request, response, uriBuilder.build().encode().toString());
+            return;
+        }
+
+        if (!belongsToSessionUser(session, authenticationResult))
+        {
+            session.invalidate();
+            this.redirectStrategy.sendRedirect(request, response, "/");
             return;
         }
 
