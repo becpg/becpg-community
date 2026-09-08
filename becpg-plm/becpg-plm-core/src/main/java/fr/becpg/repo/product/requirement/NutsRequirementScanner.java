@@ -2,6 +2,7 @@ package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -122,9 +123,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldMerge(NutListDataItem item, NutListDataItem sl) {
-		return item.getCharactNodeRef().equals(sl.getCharactNodeRef())
-				&& (((item.getRequirementType() != null) && item.getRequirementType().equals(sl.getRequirementType()))
-						|| ((item.getRequirementType() == null) && (sl.getRequirementType() == null)));
+		return super.shouldMerge(item, sl) && Objects.equals(item.getRequirementType(), sl.getRequirementType());
 	}
 
 }

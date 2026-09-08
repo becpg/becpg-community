@@ -134,7 +134,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 			if (item.getLabelClaim() != null) {
 				boolean isFound = false;
 				for (LabelClaimListDataItem sl : ret) {
-					if (item.getLabelClaim().equals(sl.getLabelClaim())) {
+					if (item.getLabelClaim().equals(sl.getLabelClaim()) && hasSameRegulatoryScope(item, sl)) {
 						isFound = true;
 						if (Boolean.FALSE.equals(sl.getIsClaimed()) && Boolean.TRUE.equals(item.getIsClaimed())) {
 							sl.setIsClaimed(true);
@@ -143,7 +143,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 					}
 				}
 				if (!isFound) {
-					ret.add(item);
+					ret.add(item.copy());
 				}
 			}
 		});

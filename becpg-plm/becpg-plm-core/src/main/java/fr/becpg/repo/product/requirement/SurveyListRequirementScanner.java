@@ -252,7 +252,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
             if (item.getQuestion() != null) {
                 boolean isFound = false;
                 for (SurveyListDataItem sl : ret) {
-                    if (item.getQuestion().equals(sl.getQuestion())) {
+                    if (item.getQuestion().equals(sl.getQuestion()) && hasSameRegulatoryScope(item, sl)) {
                         isFound = true;
                         
                         // Merge choices - keep the most restrictive set
@@ -267,7 +267,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
                     }
                 }
                 if (!isFound) {
-                    ret.add(item);
+                    ret.add(item.copy());
                 }
             }
         });
