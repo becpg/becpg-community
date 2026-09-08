@@ -616,4 +616,15 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Where used rows belong to entities reached through an association and not to a composition owned by the entity
+	 * on screen: their rights are checked node by node, as stated when the filter write access is forced.
+	 */
+	@Override
+	protected boolean computeRowWriteAccess(DataListFilter dataListFilter, NodeRef itemNodeRef) {
+		return dataListFilter.hasWriteAccess();
+	}
+
 }
