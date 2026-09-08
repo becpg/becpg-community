@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -46,6 +48,21 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeIT.class);
+
+	/** Constant <code>MESSAGE_NOT_COMPLIANT_FRANCE="Not compliant France"</code> */
+	private static final String MESSAGE_NOT_COMPLIANT_FRANCE = "Not compliant France";
+
+	/** Constant <code>MESSAGE_NOT_COMPLIANT_LUXEMBOURG="Not compliant Luxembourg"</code> */
+	private static final String MESSAGE_NOT_COMPLIANT_LUXEMBOURG = "Not compliant Luxembourg";
+
+	/** Constant <code>FRANCE_MAXI=1d</code> */
+	private static final Double FRANCE_MAXI = 1d;
+
+	/** Constant <code>LUXEMBOURG_MAXI=0.24d</code> */
+	private static final Double LUXEMBOURG_MAXI = 0.24d;
+
+	/** Constant <code>NUT_VALUE=0.5d</code>, above the Luxembourg threshold but below the France one */
+	private static final Double NUT_VALUE = 0.5d;
 
 	@Override
 	public void setUp() throws Exception {
@@ -917,5 +934,204 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			return null;
 		}, false, true);
+	}
+
+	/**
+	 * One nutrient, two thresholds: a specification line per regulatory country. Both lines must
+	 * stay independent whatever their order in the specification data list.
+	 *
+	 * @param name discriminates the nodes created by the scenario
+	 * @param franceFirst true to declare the France line before the Luxembourg one
+	 * @param soldInLuxembourg true when the product is also sold in Luxembourg
+	 */
+	private record NutRequirementScenario(String name, boolean franceFirst, boolean soldInLuxembourg) {
+	}
+
+	@Test
+	public void testNutRequirementIsScopedToItsRegulatoryCountry() {
+
+		logger.info("/*************************************************/");
+		logger.info("/*--   Test Nutrients Country Scoped Merge     --*/");
+		logger.info("/*************************************************/");
+
+		for (boolean franceFirst : new boolean[] { true, false }) {
+			List<String> raisedMessages = nutRequirementsRaisedBy(new NutRequirementScenario("scope " + franceFirst, franceFirst, false));
+
+			logger.info("Product sold in France only raised: " + raisedMessages);
+			assertEquals("A product sold in France only must not be checked against the Luxembourg threshold", new ArrayList<String>(),
+					raisedMessages);
+		}
+	}
+
+	@Test
+	public void testNutRequirementsDoNotDependOnSpecificationLineOrder() {
+
+		logger.info("/*************************************************/");
+		logger.info("/*--   Test Nutrients Country Merge Ordering   --*/");
+		logger.info("/*************************************************/");
+
+		for (boolean franceFirst : new boolean[] { true, false }) {
+			List<String> raisedMessages = nutRequirementsRaisedBy(new NutRequirementScenario("order " + franceFirst, franceFirst, true));
+
+			logger.info("Product sold in France and Luxembourg raised: " + raisedMessages);
+			assertEquals("Only the exceeded Luxembourg threshold must be raised", List.of(MESSAGE_NOT_COMPLIANT_LUXEMBOURG), raisedMessages);
+		}
+	}
+
+	@Test
+	public void testSpecificationThresholdsAreNotAlteredByFormulation() {
+
+		logger.info("/*************************************************/");
+		logger.info("/*--   Test Specification Left Untouched       --*/");
+		logger.info("/*************************************************/");
+
+		inWriteTx(() -> {
+
+			String suffix = String.valueOf(Calendar.getInstance().getTimeInMillis());
+
+			NodeRef parentSpecificationNodeRef = createNutSpecification("Parent spec " + suffix,
+					new ArrayList<>(List.of(NutListDataItem.build().withMaxi(FRANCE_MAXI).withNut(nut1))));
+			NodeRef specificationNodeRef = createNutSpecification("Child spec " + suffix,
+					new ArrayList<>(List.of(NutListDataItem.build().withMaxi(LUXEMBOURG_MAXI).withNut(nut1))));
+			nodeService.createAssociation(specificationNodeRef, parentSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			NodeRef productNodeRef = createProductSoldIn("Product untouched spec " + suffix, new ArrayList<>());
+			nodeService.createAssociation(productNodeRef, specificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			productService.formulate(productNodeRef);
+
+			ProductSpecificationData parentSpecification = (ProductSpecificationData) alfrescoRepository.findOne(parentSpecificationNodeRef);
+
+			assertEquals("Formulating a product must not narrow the threshold of the parent specification", FRANCE_MAXI,
+					parentSpecification.getNutList().get(0).getMaxi());
+
+			return null;
+		});
+	}
+
+	/**
+	 * <p>nutRequirementsRaisedBy.</p>
+	 *
+	 * @param scenario a {@link fr.becpg.test.repo.product.formulation.FormulationSpecMergeIT.NutRequirementScenario} object
+	 * @return the messages of the specification requirements raised on the tested nutrient
+	 */
+	private List<String> nutRequirementsRaisedBy(NutRequirementScenario scenario) {
+		return inWriteTx(() -> {
+
+			NodeRef franceNodeRef = createRegulatoryCountry("France " + scenario.name());
+			NodeRef luxembourgNodeRef = createRegulatoryCountry("Luxembourg " + scenario.name());
+
+			NutListDataItem franceRequirement = createNutRequirement(FRANCE_MAXI, franceNodeRef, MESSAGE_NOT_COMPLIANT_FRANCE);
+			NutListDataItem luxembourgRequirement = createNutRequirement(LUXEMBOURG_MAXI, luxembourgNodeRef, MESSAGE_NOT_COMPLIANT_LUXEMBOURG);
+
+			List<NutListDataItem> requirements = new ArrayList<>();
+			requirements.add(scenario.franceFirst() ? franceRequirement : luxembourgRequirement);
+			requirements.add(scenario.franceFirst() ? luxembourgRequirement : franceRequirement);
+
+			List<NodeRef> countries = new ArrayList<>();
+			countries.add(franceNodeRef);
+			if (scenario.soldInLuxembourg()) {
+				countries.add(luxembourgNodeRef);
+			}
+
+			NodeRef productNodeRef = createProductSoldIn("Product " + scenario.name(), countries);
+			nodeService.createAssociation(productNodeRef, createNutSpecification("Spec " + scenario.name(), requirements),
+					PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			productService.formulate(productNodeRef);
+
+			return extractNutRequirementMessages((ProductData) alfrescoRepository.findOne(productNodeRef));
+		});
+	}
+
+	/**
+	 * <p>extractNutRequirementMessages.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return the messages of the specification requirements raised on the tested nutrient
+	 */
+	private List<String> extractNutRequirementMessages(ProductData formulatedProduct) {
+		List<String> messages = new ArrayList<>();
+		for (RequirementListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
+			if (RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType()) && nut1.equals(reqCtrlListDataItem.getCharact())) {
+				messages.add(reqCtrlListDataItem.getReqMessage());
+			}
+		}
+		return messages;
+	}
+
+	/**
+	 * <p>createNutRequirement.</p>
+	 *
+	 * @param maxi the highest value allowed in the regulatory country
+	 * @param countryNodeRef the regulatory country the threshold applies to
+	 * @param message the message raised when the threshold is exceeded
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
+	private NutListDataItem createNutRequirement(Double maxi, NodeRef countryNodeRef, String message) {
+		NutListDataItem requirement = NutListDataItem.build().withMaxi(maxi).withNut(nut1);
+		requirement.setRegulatoryType(RequirementType.Forbidden);
+		requirement.setRegulatoryMessage(new MLText(Locale.getDefault(), message));
+		requirement.setRegulatoryCountriesRef(new ArrayList<>(List.of(countryNodeRef)));
+		return requirement;
+	}
+
+	/**
+	 * <p>createNutSpecification.</p>
+	 *
+	 * @param name the specification name
+	 * @param requirements the nutrient requirements of the specification
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private NodeRef createNutSpecification(String name, List<NutListDataItem> requirements) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, name);
+		NodeRef specificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), PLMModel.TYPE_PRODUCT_SPECIFICATION,
+				properties).getChildRef();
+
+		ProductSpecificationData specification = (ProductSpecificationData) alfrescoRepository.findOne(specificationNodeRef);
+		specification.setNutList(requirements);
+		alfrescoRepository.save(specification);
+
+		return specificationNodeRef;
+	}
+
+	/**
+	 * <p>createProductSoldIn.</p>
+	 *
+	 * @param name the product name
+	 * @param regulatoryCountries the regulatory countries the product is sold in
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private NodeRef createProductSoldIn(String name, List<NodeRef> regulatoryCountries) {
+		FinishedProductData finishedProduct = new FinishedProductData();
+		finishedProduct.setName(name);
+		finishedProduct.setLegalName("legal " + name);
+		finishedProduct.setQty(1d);
+		finishedProduct.setUnit(ProductUnit.kg);
+		finishedProduct.setDensity(1d);
+		finishedProduct.setNutList(new ArrayList<>(List.of(NutListDataItem.build().withNut(nut1).withValue(NUT_VALUE).withIsManual(true))));
+
+		ProductData product = (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
+		product.setRegulatoryCountriesRef(new ArrayList<>(regulatoryCountries));
+		alfrescoRepository.save(product);
+
+		return product.getNodeRef();
+	}
+
+	/**
+	 * A regulatory country is a geo origin carrying a regulatory code.
+	 *
+	 * @param name the country name
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private NodeRef createRegulatoryCountry(String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_REGULATORY_CODE, name);
+		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), PLMModel.TYPE_GEO_ORIGIN, properties)
+				.getChildRef();
 	}
 }

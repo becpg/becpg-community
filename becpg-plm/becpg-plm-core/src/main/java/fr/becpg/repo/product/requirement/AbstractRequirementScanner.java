@@ -2,8 +2,10 @@ package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -121,6 +123,30 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 		return specification.getName();
 	}
 	
+
+	/**
+	 * Check if two requirements share the same regulatory scope, ie they target the same
+	 * regulatory countries and the same regulatory usages. Requirements of different scopes must
+	 * be kept apart: each one carries its own thresholds, its own message and its own country
+	 * filter.
+	 *
+	 * @param requirementItem the requirement item
+	 * @param otherRequirementItem the requirement item to compare with
+	 * @return true if both requirements apply to the same regulatory perimeter
+	 */
+	protected boolean hasSameRegulatoryScope(T requirementItem, T otherRequirementItem) {
+		if (!(requirementItem instanceof RegulatoryEntityItem regulatoryItem)
+				|| !(otherRequirementItem instanceof RegulatoryEntityItem otherRegulatoryItem)) {
+			return true; // If not a regulatory entity, no scope applies
+		}
+
+		return extractScope(regulatoryItem.getRegulatoryCountriesRef()).equals(extractScope(otherRegulatoryItem.getRegulatoryCountriesRef()))
+				&& extractScope(regulatoryItem.getRegulatoryUsagesRef()).equals(extractScope(otherRegulatoryItem.getRegulatoryUsagesRef()));
+	}
+
+	private Set<NodeRef> extractScope(List<NodeRef> regulatoryRefs) {
+		return regulatoryRefs != null ? new HashSet<>(regulatoryRefs) : new HashSet<>();
+	}
 
 	/**
 	 * Check if the requirement matches the product's regulatory usage and regulatory country

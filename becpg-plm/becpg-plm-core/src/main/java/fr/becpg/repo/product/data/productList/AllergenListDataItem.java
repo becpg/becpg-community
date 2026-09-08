@@ -716,6 +716,9 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		super(allergenListDataItem);
 
 		this.qtyPerc = allergenListDataItem.qtyPerc;
+		this.particleWeight = allergenListDataItem.particleWeight;
+		this.particleProteinPerc = allergenListDataItem.particleProteinPerc;
+		this.qtyByVariant = allergenListDataItem.qtyByVariant != null ? new HashMap<>(allergenListDataItem.qtyByVariant) : null;
 		this.voluntary = allergenListDataItem.voluntary;
 		this.inVoluntary = allergenListDataItem.inVoluntary;
 		this.onSite = allergenListDataItem.onSite;

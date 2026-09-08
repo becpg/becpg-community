@@ -1046,6 +1046,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.manualValue = n.manualValue;
 		this.formulatedValue = n.formulatedValue;
 		this.unit = n.unit;
+		this.requirementType = n.requirementType;
 		this.manualMini = n.manualMini;
 		this.formulatedMini = n.formulatedMini;
 		this.manualMaxi = n.manualMaxi;
@@ -1066,7 +1067,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedReductionValue = n.formulatedReductionValue;
 		this.manualReductionValue = n.manualReductionValue;
 		this.referenceValue = n.referenceValue;
-		this.sources = n.sources;
+		this.sources = new ArrayList<>(n.sources);
 		this.regulatoryCountriesRef = new ArrayList<>(n.regulatoryCountriesRef);
 		this.regulatoryUsagesRef = new ArrayList<>(n.regulatoryUsagesRef);
 		this.regulatoryMessage = n.regulatoryMessage;
