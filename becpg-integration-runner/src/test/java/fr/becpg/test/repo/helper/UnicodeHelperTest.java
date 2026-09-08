@@ -31,4 +31,20 @@ public class UnicodeHelperTest {
 		Assert.assertTrue(UnicodeHelper.containsNonBmp(input));
 		Assert.assertEquals(expected, UnicodeHelper.sanitizeBmp(input));
 	}
+
+	@Test
+	public void testSanitizeBmpWithUnpairedHighSurrogate() {
+		String input = "Poudre de licorne \uD83Dsans paire";
+
+		Assert.assertTrue(UnicodeHelper.containsNonBmp(input));
+		Assert.assertEquals("Poudre de licorne sans paire", UnicodeHelper.sanitizeBmp(input));
+	}
+
+	@Test
+	public void testSanitizeBmpWithUnpairedLowSurrogate() {
+		String input = "Vaadata \uDE00 sans paire";
+
+		Assert.assertTrue(UnicodeHelper.containsNonBmp(input));
+		Assert.assertEquals("Vaadata  sans paire", UnicodeHelper.sanitizeBmp(input));
+	}
 }
