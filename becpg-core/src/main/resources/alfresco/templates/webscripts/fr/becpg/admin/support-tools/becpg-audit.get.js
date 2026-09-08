@@ -9,7 +9,7 @@ function main() {
             id: "formulation",
             label: msg.get("audit.tab.formulation"),
             columns: [
-                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date", isDb: true },
+                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date" },
                 { key: "completedAt", label: msg.get("audit.col.completedAt"), format: "date" },
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
                 { key: "entityName", label: msg.get("audit.col.entityName") },
@@ -21,7 +21,7 @@ function main() {
             id: "batch",
             label: msg.get("audit.tab.batch"),
             columns: [
-                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date", isDb: true },
+                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date" },
                 { key: "completedAt", label: msg.get("audit.col.completedAt"), format: "date" },
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
                 { key: "batchId", label: msg.get("audit.col.batchId") },
@@ -35,7 +35,7 @@ function main() {
             id: "report",
             label: msg.get("audit.tab.report"),
             columns: [
-                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date", isDb: true },
+                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date" },
                 { key: "completedAt", label: msg.get("audit.col.completedAt"), format: "date" },
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
                 { key: "name", label: msg.get("audit.col.reportName") },
@@ -49,7 +49,7 @@ function main() {
             id: "export_search",
             label: msg.get("audit.tab.export_search"),
             columns: [
-                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date", isDb: true },
+                { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date" },
                 { key: "completedAt", label: msg.get("audit.col.completedAt"), format: "date" },
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
                 { key: "filename", label: msg.get("audit.col.filename") },
@@ -64,7 +64,7 @@ function main() {
             id: "activity",
             label: msg.get("audit.tab.activity"),
             columns: [
-                { key: "prop_cm_created", label: msg.get("audit.col.date"), format: "date", isDb: true },
+                { key: "prop_cm_created", label: msg.get("audit.col.date"), format: "date" },
                 { key: "prop_bcpg_alUserId", label: msg.get("audit.col.username") },
                 { key: "prop_bcpg_alType", label: msg.get("audit.col.type"), format: "badge" },
                 { key: "entityNodeRef", label: msg.get("audit.col.nodeRef"), format: "noderef" },

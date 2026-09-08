@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditPage;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
@@ -64,6 +65,18 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 			AuditPlugin plugin = getPlugin(type);
 			if (plugin.isDatabaseEnable()) {
 				return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
+			}
+			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		});
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public AuditPage listAuditPage(AuditType type, AuditQuery auditQuery) {
+		return AuthenticationUtil.runAsSystem(() -> {
+			AuditPlugin plugin = getPlugin(type);
+			if (plugin.isDatabaseEnable()) {
+				return databaseAuditService.listAuditPage((DatabaseAuditPlugin) plugin, auditQuery);
 			}
 			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
 		});

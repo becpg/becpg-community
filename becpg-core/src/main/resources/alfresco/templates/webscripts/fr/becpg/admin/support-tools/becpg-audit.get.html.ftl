@@ -21,12 +21,12 @@
           <select id="audit-filter-column-select" onchange="AuditViewer.onFilterColumnChange();">
             <option value="">--</option>
           </select>
-          <input type="text" id="audit-filter-value-input" disabled="disabled" placeholder="${msg("audit.toolbar.filter.placeholder")}" onkeypress="if(event.keyCode===13){AuditViewer.reload();}" />
+          <input type="text" id="audit-filter-value-input" disabled="disabled" placeholder="${msg("audit.toolbar.filter.placeholder")}" onkeypress="if(event.keyCode===13){AuditViewer.search();}" />
           <button type="button" class="audit-btn audit-btn-secondary" onclick="AuditViewer.resetFilter();" title="${msg("audit.filter.reset")}">&times;</button>
         </div>
         <div class="toolbar-group">
           <label for="audit-limit-select">${msg("audit.toolbar.limit")}:</label>
-          <select id="audit-limit-select" onchange="AuditViewer.reload();">
+          <select id="audit-limit-select" onchange="AuditViewer.search();">
             <option value="25">25</option>
             <option value="50" selected="selected">50</option>
             <option value="100">100</option>
@@ -34,6 +34,10 @@
             <option value="500">500</option>
             <option value="1000">1000</option>
           </select>
+        </div>
+        <div class="toolbar-group">
+          <label>${msg("audit.toolbar.order")}:</label>
+          <button type="button" id="audit-db-order-btn" class="audit-btn audit-btn-secondary" onclick="AuditViewer.toggleDbOrder();" title="${msg("audit.toolbar.order.tooltip")}"></button>
         </div>
         <div id="audit-status-bar" class="audit-status-bar"></div>
       </div>
@@ -47,6 +51,10 @@
             <tr><td colspan="8" class="audit-loading">${msg("audit.loading")}</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="audit-continue-bar">
+        <button type="button" id="audit-continue-btn" class="audit-btn" style="display:none;" onclick="AuditViewer.continueSearch();">${msg("audit.btn.continue")}</button>
       </div>
     </div>
 
@@ -79,8 +87,7 @@
               {
                 key: "${col.key}",
                 label: "${col.label?js_string}"<#if col.format??>,
-                format: "${col.format}"</#if><#if col.isDb?? && col.isDb>,
-                isDb: true</#if><#if col.width??>,
+                format: "${col.format}"</#if><#if col.width??>,
                 width: "${col.width}"</#if>
               }<#if col_has_next>,</#if>
               </#list>
@@ -93,10 +100,10 @@
           noRecords: "${msg("audit.no-records")?js_string}",
           errorLoading: "${msg("audit.error.loading")?js_string}",
           recordsFound: "${msg("audit.records-found")?js_string}",
-          dbTooltip: "${msg("audit.col.db-tooltip")?js_string}",
-          noticeSort: "${msg("audit.notice.sort")?js_string}",
-          noticeFilter: "${msg("audit.notice.filter")?js_string}",
-          noticeBoth: "${msg("audit.notice.both")?js_string}",
+          newestFirst: "${msg("audit.order.newest-first")?js_string}",
+          oldestFirst: "${msg("audit.order.oldest-first")?js_string}",
+          continueSearch: "${msg("audit.btn.continue")?js_string}",
+          noticeInterrupted: "${msg("audit.notice.interrupted")?js_string}",
           inspect: "${msg("audit.btn.inspect")?js_string}",
           copied: "${msg("audit.copied")?js_string}",
           yes: "${msg("data.boolean.true")?js_string}",

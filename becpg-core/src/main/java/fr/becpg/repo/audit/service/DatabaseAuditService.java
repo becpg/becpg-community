@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import fr.becpg.repo.audit.model.AuditPage;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 
@@ -25,6 +26,18 @@ public interface DatabaseAuditService {
 	 * @return a {@link java.util.List} object
 	 */
 	List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter);
+
+	/**
+	 * <p>listAuditPage.</p>
+	 *
+	 * Read one page of audit entries by keyset paging, so that the database only ever walks
+	 * through a bounded window of entry identifiers.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditFilter a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @return a {@link fr.becpg.repo.audit.model.AuditPage} object
+	 */
+	AuditPage listAuditPage(DatabaseAuditPlugin plugin, AuditQuery auditFilter);
 
 	/**
 	 * <p>recordAuditEntry.</p>

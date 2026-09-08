@@ -19,13 +19,20 @@
 
 /**
  * beCPG Audit Viewer Component for Repository Admin Console.
+ *
+ * The audit table is read by keyset paging: a request scans a bounded number of entry identifier
+ * windows and hands back the identifier the next one starts after. The database order is chosen
+ * with the order button, whereas ordering on a column is applied on the retrieved records only.
  */
 var AuditViewer = {
     currentTab: "formulation",
     dbAsc: false,
     sortBy: null,
     sortAsc: false,
+    fetchedRecords: [],
     lastRecords: [],
+    nextStartAfterId: null,
+    scanInterrupted: false,
     serviceContext: "",
     msg: {},
     columns: {},
@@ -81,38 +88,18 @@ var AuditViewer = {
         return colKey || "";
     },
 
-    updateNoticeBar: function(filterParam, filterCol, limit, resultCount) {
-        var noticeBar = document.getElementById("audit-notice-bar");
-        if (!noticeBar) {
-            return;
+    getColumnFormat: function(colKey) {
+        var cols = this.columns[this.currentTab] || [];
+        for (var i = 0; i < cols.length; i++) {
+            if (cols[i].key === colKey) {
+                return cols[i].format || "";
+            }
         }
+        return "";
+    },
 
-        var limitNum = parseInt(limit, 10) || 50;
-        var hasReachedLimit = (typeof resultCount === "number" && resultCount >= limitNum);
-
-        var isBusinessSort = !!(this.sortBy && this.sortBy !== "startedAt" && this.sortBy !== "prop_cm_created");
-        var isFilterActive = !!(filterParam && filterParam.length > 0);
-
-        if ((!isBusinessSort && !isFilterActive) || !hasReachedLimit) {
-            noticeBar.style.display = "none";
-            noticeBar.innerHTML = "";
-            return;
-        }
-
-        var sortColLabel = isBusinessSort ? this.getColumnLabel(this.sortBy) : "";
-        var filterColLabel = isFilterActive ? (filterCol ? this.getColumnLabel(filterCol) : "") : "";
-
-        var msgText = "";
-        if (isBusinessSort && isFilterActive) {
-            msgText = this.substitute(this.msg.noticeBoth || "Filtering and sorting on business columns are restricted to the {0} retrieved records.", [limit]);
-        } else if (isBusinessSort) {
-            msgText = this.substitute(this.msg.noticeSort || "Sorting on business column \"{0}\" is restricted to the {1} retrieved records.", [sortColLabel, limit]);
-        } else if (isFilterActive) {
-            msgText = this.substitute(this.msg.noticeFilter || "Filtering on business column \"{0}\" is restricted to the limit of {1} retrieved records.", [filterColLabel, limit]);
-        }
-
-        noticeBar.innerHTML = '<span style="font-weight:bold;margin-right:6px;">\u2139\uFE0F</span>' + this.escapeHtml(msgText);
-        noticeBar.style.display = "block";
+    isSortableColumn: function(colKey) {
+        return !!colKey && this.getColumnFormat(colKey) !== "inspect";
     },
 
     selectTab: function(tabName) {
@@ -131,8 +118,9 @@ var AuditViewer = {
         }
 
         this.updateFilterColumnsSelect();
+        this.renderDbOrderButton();
         this.renderHeader();
-        this.reload();
+        this.search();
     },
 
     updateFilterColumnsSelect: function() {
@@ -172,14 +160,14 @@ var AuditViewer = {
                 input.value = "";
                 input.disabled = true;
             }
-            this.reload();
+            this.search();
         } else {
             if (input) {
                 input.disabled = false;
                 input.focus();
             }
             if (input && input.value.trim().length > 0) {
-                this.reload();
+                this.search();
             }
         }
     },
@@ -194,146 +182,294 @@ var AuditViewer = {
             valInput.value = "";
             valInput.disabled = true;
         }
-        this.reload();
+        this.search();
     },
 
+    /**
+     * Order the audit table on the database side, which can only be the order of the entry
+     * identifiers, hence the order the entries were written in.
+     */
+    toggleDbOrder: function() {
+        this.dbAsc = !this.dbAsc;
+        this.renderDbOrderButton();
+        this.search();
+    },
+
+    renderDbOrderButton: function() {
+        var button = document.getElementById("audit-db-order-btn");
+        if (!button) {
+            return;
+        }
+        button.innerHTML = this.dbAsc
+            ? "▲ " + this.escapeHtml(this.msg.oldestFirst || "Oldest")
+            : "▼ " + this.escapeHtml(this.msg.newestFirst || "Newest");
+    },
+
+    /**
+     * Order the retrieved records on a column. The values a business column holds are not
+     * something the audit query can order on, so this stays a client side ordering.
+     */
     sortByColumn: function(colKey) {
-        if (!colKey || colKey === "prop_bcpg_alData") {
+        if (!this.isSortableColumn(colKey)) {
             return;
         }
 
-        var isDbCol = (colKey === "startedAt" || colKey === "prop_cm_created");
-
-        if (isDbCol) {
-            this.sortBy = null;
-            this.dbAsc = !this.dbAsc;
-        } else {
-            if (this.sortBy === colKey) {
-                if (!this.sortAsc) {
-                    this.sortAsc = true;
-                } else {
-                    this.sortBy = null;
-                    this.sortAsc = false;
-                }
+        if (this.sortBy === colKey) {
+            if (!this.sortAsc) {
+                this.sortAsc = true;
             } else {
-                this.sortBy = colKey;
+                this.sortBy = null;
                 this.sortAsc = false;
             }
+        } else {
+            this.sortBy = colKey;
+            this.sortAsc = false;
         }
 
         this.renderHeader();
-        this.reload();
+        this.lastRecords = this.sortRecords(this.fetchedRecords);
+        this.renderBody(this.lastRecords);
+    },
+
+    sortRecords: function(records) {
+        if (!records || !this.sortBy) {
+            return records || [];
+        }
+
+        var self = this;
+        var sortBy = this.sortBy;
+        var format = this.getColumnFormat(sortBy);
+        var factor = this.sortAsc ? 1 : -1;
+        var sorted = records.slice(0);
+
+        sorted.sort(function(left, right) {
+            return factor * self.compareValues(left[sortBy], right[sortBy], format);
+        });
+        return sorted;
+    },
+
+    compareValues: function(left, right, format) {
+        var isLeftEmpty = (left === null || left === undefined || left === "");
+        var isRightEmpty = (right === null || right === undefined || right === "");
+
+        if (isLeftEmpty || isRightEmpty) {
+            if (isLeftEmpty && isRightEmpty) {
+                return 0;
+            }
+            return isLeftEmpty ? -1 : 1;
+        }
+        if (format === "date") {
+            return this.compareNumbers(new Date(left).getTime(), new Date(right).getTime());
+        }
+        if (format === "duration" || format === "size" || format === "errors") {
+            return this.compareNumbers(parseFloat(left), parseFloat(right));
+        }
+        return this.compareStrings(String(left), String(right));
+    },
+
+    compareNumbers: function(left, right) {
+        if (isNaN(left) || isNaN(right)) {
+            return 0;
+        }
+        return left < right ? -1 : (left > right ? 1 : 0);
+    },
+
+    compareStrings: function(left, right) {
+        var lower = left.toLowerCase();
+        var other = right.toLowerCase();
+        return lower < other ? -1 : (lower > other ? 1 : 0);
     },
 
     renderHeader: function() {
-        var cols = this.columns[this.currentTab] || [];
         var thead = document.getElementById("audit-table-head");
         if (!thead) {
             return;
         }
 
+        var cols = this.columns[this.currentTab] || [];
         var html = "<tr>";
         for (var i = 0; i < cols.length; i++) {
-            var col = cols[i];
-            var style = col.width ? ' style="width:' + col.width + '"' : "";
-            var isSortable = col.key && col.format !== "inspect";
-            var isCurrentSort = this.sortBy === col.key;
-            var isDbCol = !!col.isDb;
-
-            var thClass = (isSortable ? "sortable" : "") + (isDbCol ? " col-db" : "");
-            var sortIcon = "";
-
-            if (isDbCol && !this.sortBy) {
-                thClass += this.dbAsc ? " sorted-asc" : " sorted-desc";
-                sortIcon = '<span class="sort-icon">' + (this.dbAsc ? "▲" : "▼") + '</span><span class="db-badge">DB</span>';
-            } else if (isCurrentSort) {
-                thClass += this.sortAsc ? " sorted-asc" : " sorted-desc";
-                sortIcon = '<span class="sort-icon">' + (this.sortAsc ? "▲" : "▼") + '</span>';
-            } else if (isSortable) {
-                sortIcon = '<span class="sort-icon" style="opacity:0.25;">▲▼</span>' + (isDbCol ? '<span class="db-badge">DB</span>' : '');
-            }
-
-            var titleAttr = isDbCol ? ' title="' + (this.msg.dbTooltip || "Direct database query sort") + '"' : '';
-            var onclickAttr = isSortable ? ' onclick="AuditViewer.sortByColumn(\'' + col.key + '\')"' : "";
-            html += "<th class=\"" + thClass + "\"" + style + titleAttr + onclickAttr + ">" + this.escapeHtml(col.label) + sortIcon + "</th>";
+            html += this.renderHeaderCell(cols[i]);
         }
-        html += "</tr>";
-        thead.innerHTML = html;
+        thead.innerHTML = html + "</tr>";
     },
 
-    reload: function() {
-        var self = this;
-        var tbody = document.getElementById("audit-table-body");
-        var cols = this.columns[this.currentTab] || [];
-        if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="' + cols.length + '" class="audit-loading">' + (this.msg.loading || "Loading...") + '</td></tr>';
+    renderHeaderCell: function(col) {
+        var style = col.width ? ' style="width:' + col.width + '"' : "";
+        var isSortable = this.isSortableColumn(col.key);
+        var thClass = isSortable ? "sortable" : "";
+        var sortIcon = "";
+
+        if (this.sortBy === col.key) {
+            thClass += this.sortAsc ? " sorted-asc" : " sorted-desc";
+            sortIcon = '<span class="sort-icon">' + (this.sortAsc ? "▲" : "▼") + '</span>';
+        } else if (isSortable) {
+            sortIcon = '<span class="sort-icon" style="opacity:0.25;">▲▼</span>';
         }
 
+        var onclickAttr = isSortable ? ' onclick="AuditViewer.sortByColumn(\'' + col.key + '\')"' : "";
+        return '<th class="' + thClass + '"' + style + onclickAttr + '>' + this.escapeHtml(col.label) + sortIcon + '</th>';
+    },
+
+    /**
+     * Start a new scan, from the first entry of the audit application in the current database
+     * order.
+     */
+    search: function() {
+        this.fetchedRecords = [];
+        this.lastRecords = [];
+        this.nextStartAfterId = null;
+        this.scanInterrupted = false;
+        this.load(false);
+    },
+
+    /**
+     * Carry the scan on, from the identifier the previous page stopped after.
+     */
+    continueSearch: function() {
+        if (this.nextStartAfterId === null) {
+            return;
+        }
+        this.load(true);
+    },
+
+    getLimit: function() {
+        var limitSelect = document.getElementById("audit-limit-select");
+        return limitSelect ? limitSelect.value : "50";
+    },
+
+    getFilterParam: function() {
         var filterColSelect = document.getElementById("audit-filter-column-select");
         var filterValInput = document.getElementById("audit-filter-value-input");
-        var limitSelect = document.getElementById("audit-limit-select");
-
         var filterCol = filterColSelect ? filterColSelect.value : "";
         var filterVal = filterValInput ? filterValInput.value.trim() : "";
-        var limit = limitSelect ? limitSelect.value : "50";
 
+        if (!filterVal) {
+            return "";
+        }
+        if (filterCol) {
+            return filterCol + "=" + filterVal;
+        }
+        if (filterVal.indexOf("=") !== -1) {
+            return filterVal;
+        }
+        return "";
+    },
+
+    buildUrl: function(append) {
         var url = this.serviceContext + "/becpg/stats/" + encodeURIComponent(this.currentTab) +
-                  "?maxResults=" + encodeURIComponent(limit) +
+                  "?maxResults=" + encodeURIComponent(this.getLimit()) +
                   "&dbAsc=" + (this.dbAsc ? "true" : "false");
 
-        // In-memory column sorting
-        if (this.sortBy) {
-            url += "&sortBy=" + encodeURIComponent(this.sortBy) +
-                   "&asc=" + (this.sortAsc ? "true" : "false");
-        }
-
-        // Filtering
-        var filterParam = "";
-        if (filterVal) {
-            if (filterCol) {
-                filterParam = filterCol + "=" + filterVal;
-            } else if (filterVal.indexOf("=") !== -1) {
-                filterParam = filterVal;
-            }
-        }
-
+        var filterParam = this.getFilterParam();
         if (filterParam) {
             url += "&filter=" + encodeURIComponent(filterParam);
+        }
+        if (append && this.nextStartAfterId !== null) {
+            url += "&startAfterId=" + encodeURIComponent(this.nextStartAfterId);
+        }
+        return url;
+    },
+
+    load: function(append) {
+        var self = this;
+        var cols = this.columns[this.currentTab] || [];
+        var tbody = document.getElementById("audit-table-body");
+
+        if (tbody && !append) {
+            tbody.innerHTML = '<tr><td colspan="' + cols.length + '" class="audit-loading">' + (this.msg.loading || "Loading...") + '</td></tr>';
         }
 
         var startTime = new Date().getTime();
 
         Admin.request({
-            url: url,
+            url: this.buildUrl(append),
             method: "GET",
             fnSuccess: function(res) {
-                var duration = new Date().getTime() - startTime;
-                var data = [];
-                try {
-                    var json = res.responseJSON || (res.responseText ? JSON.parse(res.responseText) : {});
-                    data = json.statistics || [];
-                } catch (e) {
-                    data = [];
-                }
-                self.lastRecords = data;
-                self.renderBody(data);
-                self.updateNoticeBar(filterParam, filterCol, limit, data.length);
-                var statusBar = document.getElementById("audit-status-bar");
-                if (statusBar) {
-                    statusBar.textContent = data.length + " " + (self.msg.recordsFound || "records found") + " (" + duration + " ms)";
-                }
+                self.onPageLoaded(res, append, new Date().getTime() - startTime);
             },
-            fnFailure: function(res) {
-                self.updateNoticeBar("", "", limit, 0);
-                if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="' + cols.length + '" class="audit-empty-msg" style="color:#d9534f;">' + (self.msg.errorLoading || "Error loading audit entries") + '</td></tr>';
-                }
-                var statusBar = document.getElementById("audit-status-bar");
-                if (statusBar) {
-                    statusBar.textContent = "";
-                }
+            fnFailure: function() {
+                self.onPageFailed();
             }
         });
+    },
+
+    onPageLoaded: function(res, append, duration) {
+        var json = {};
+        try {
+            json = res.responseJSON || (res.responseText ? JSON.parse(res.responseText) : {});
+        } catch (e) {
+            json = {};
+        }
+
+        var page = json.statistics || [];
+        this.nextStartAfterId = (typeof json.nextStartAfterId === "undefined") ? null : json.nextStartAfterId;
+        this.scanInterrupted = (json.scanInterrupted === true);
+        this.fetchedRecords = append ? this.fetchedRecords.concat(page) : page;
+        this.lastRecords = this.sortRecords(this.fetchedRecords);
+
+        this.renderBody(this.lastRecords);
+        this.updateNoticeBar();
+        this.updateStatusBar(duration);
+        this.updateContinueButton();
+    },
+
+    onPageFailed: function() {
+        var cols = this.columns[this.currentTab] || [];
+        var tbody = document.getElementById("audit-table-body");
+
+        this.nextStartAfterId = null;
+        this.scanInterrupted = false;
+
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="' + cols.length + '" class="audit-empty-msg" style="color:#d9534f;">' + (this.msg.errorLoading || "Error loading audit entries") + '</td></tr>';
+        }
+        this.updateNoticeBar();
+        this.updateContinueButton();
+
+        var statusBar = document.getElementById("audit-status-bar");
+        if (statusBar) {
+            statusBar.textContent = "";
+        }
+    },
+
+    updateStatusBar: function(duration) {
+        var statusBar = document.getElementById("audit-status-bar");
+        if (statusBar) {
+            statusBar.textContent = this.lastRecords.length + " " + (this.msg.recordsFound || "records found") + " (" + duration + " ms)";
+        }
+    },
+
+    /**
+     * Carrying a search on is offered only when the server stopped short of reading the whole
+     * audit table. A page the server filled needs no such button: it holds what was asked for.
+     */
+    updateContinueButton: function() {
+        var button = document.getElementById("audit-continue-btn");
+        if (button) {
+            button.style.display = (this.scanInterrupted && (this.nextStartAfterId !== null)) ? "" : "none";
+        }
+    },
+
+    /**
+     * The only notice worth showing: the scan stopped on its window budget, so the audit table has
+     * not been read to its end and the search has to be carried on.
+     */
+    updateNoticeBar: function() {
+        var noticeBar = document.getElementById("audit-notice-bar");
+        if (!noticeBar) {
+            return;
+        }
+
+        if (!this.scanInterrupted) {
+            noticeBar.style.display = "none";
+            noticeBar.innerHTML = "";
+            return;
+        }
+
+        var text = this.substitute(this.msg.noticeInterrupted || "", [this.msg.continueSearch || ""]);
+        noticeBar.innerHTML = '<span style="font-weight:bold;margin-right:6px;">⚠️</span>' + this.escapeHtml(text);
+        noticeBar.style.display = "block";
     },
 
     renderBody: function(records) {
@@ -355,8 +491,7 @@ var AuditViewer = {
             for (var j = 0; j < cols.length; j++) {
                 var col = cols[j];
                 var rawVal = typeof row[col.key] !== "undefined" ? row[col.key] : "";
-                var tdClass = col.isDb ? ' class="col-db"' : "";
-                html += "<td" + tdClass + ">" + this.formatValue(rawVal, col.format, row, i, col.key) + "</td>";
+                html += "<td>" + this.formatValue(rawVal, col.format, row, i, col.key) + "</td>";
             }
             html += "</tr>";
         }

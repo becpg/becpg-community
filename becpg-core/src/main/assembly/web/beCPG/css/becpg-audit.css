@@ -129,6 +129,11 @@
   line-height: 1.4;
 }
 
+.audit-continue-bar {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 /* Data Table */
 .audit-table-wrapper {
   overflow-x: auto;
@@ -162,36 +167,7 @@
   color: #0073aa;
 }
 
-/* Distinct styling for DB creation date column */
-.audit-table th.col-db {
-  background: #e3effa;
-  color: #0c5460;
-  border-bottom: 2px solid #90c5f0;
-}
-.audit-table th.col-db:hover {
-  background: #d0e5f7;
-  color: #0056b3;
-}
-.audit-table td.col-db {
-  background: #f8fbfe;
-  font-weight: 500;
-  color: #0056b3;
-}
-.audit-table tbody tr:hover td.col-db {
-  background: #e6f1fa;
-}
-
 /* Badges & Icons */
-.db-badge {
-  display: inline-block;
-  font-size: 9px;
-  background: #0073aa;
-  color: #fff;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-left: 4px;
-  vertical-align: middle;
-}
 .sort-icon {
   display: inline-block;
   margin-left: 6px;

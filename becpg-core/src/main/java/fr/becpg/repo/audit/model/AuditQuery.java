@@ -27,14 +27,39 @@ public class AuditQuery {
     private Long toId;
     
     private Date fromTime;
-    
+
     private Date toTime;
-    
+
+    private Long startAfterId;
+
     /**
      * <p>Constructor for AuditQuery.</p>
      */
     private AuditQuery() {
-    	
+
+    }
+
+    /**
+     * <p>copy.</p>
+     *
+     * A copy of this query, so that a caller can derive a query of its own without touching the
+     * one it was given.
+     *
+     * @return a {@link fr.becpg.repo.audit.model.AuditQuery} object
+     */
+    public AuditQuery copy() {
+    	AuditQuery copy = new AuditQuery();
+    	copy.sortBy = sortBy;
+    	copy.filter = filter;
+    	copy.asc = asc;
+    	copy.dbAsc = dbAsc;
+    	copy.maxResults = maxResults;
+    	copy.fromId = fromId;
+    	copy.toId = toId;
+    	copy.fromTime = fromTime;
+    	copy.toTime = toTime;
+    	copy.startAfterId = startAfterId;
+    	return copy;
     }
     
     /**
@@ -72,6 +97,20 @@ public class AuditQuery {
     	return this;
     }
     
+    /**
+     * <p>startAfterId.</p>
+     *
+     * Resume a keyset paged scan right after the given entry identifier, in the database order the
+     * query asks for.
+     *
+     * @param startAfterId a {@link java.lang.Long} object
+     * @return a {@link fr.becpg.repo.audit.model.AuditQuery} object
+     */
+    public AuditQuery startAfterId(Long startAfterId) {
+    	this.startAfterId = startAfterId;
+    	return this;
+    }
+
     /**
      * <p>sortBy.</p>
      *
@@ -164,6 +203,15 @@ public class AuditQuery {
 	 */
 	public Long getToId() {
 		return toId;
+	}
+
+	/**
+	 * <p>Getter for the field <code>startAfterId</code>.</p>
+	 *
+	 * @return a {@link java.lang.Long} object
+	 */
+	public Long getStartAfterId() {
+		return startAfterId;
 	}
 
 	/**
