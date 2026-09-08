@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.audit.AuditComponent;
 import org.alfresco.rest.api.Audit;
@@ -55,6 +56,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	/** Constant <code>BECPG_AUDIT_PATH="/becpg/audit"</code> */
 	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
+
+	/** Constant <code>UNSUPPORTED_FILTER_VALUE_CHARS</code> */
+	private static final Pattern UNSUPPORTED_FILTER_VALUE_CHARS = Pattern.compile("['\\\\\\p{Cntrl}]");
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DatabaseAuditServiceImpl.class);
@@ -185,21 +189,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		StringBuilder whereClauseBuilder = new StringBuilder();
 		List<String> statements = new ArrayList<>();
 		if (auditFilter.getFilter() != null) {
-			String[] splitted = auditFilter.getFilter().split("=", 2);
-			if (splitted.length < 2) {
-				throw new BeCPGAuditException("statistics filter '" + auditFilter.getFilter() + "' has wrong syntax");
-			}
-			String valuesKey = splitted[0].trim();
-			String valuesValue = splitted[1].trim();
-			if (!plugin.getKeyMap().containsKey(valuesKey)) {
-				throw new BeCPGAuditException("Unknown audit filter key: " + valuesKey);
-			}
-			String sanitizedValue = valuesValue
-					.replace("\\", "\\\\")
-					.replace("'", "\\'")
-					.replace("\r", "")
-					.replace("\n", " ");
-			statements.add("valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + "/value' and valuesValue='" + sanitizedValue + "'");
+			statements.add(buildFilterStatement(plugin, auditFilter.getFilter()));
 		}
 		if (auditFilter.getFromTime() != null && auditFilter.getToTime() != null) {
 			statements.add("createdAt BETWEEN ('" + ISO8601DateFormat.format(auditFilter.getFromTime()) + "' , '" + ISO8601DateFormat.format(auditFilter.getToTime()) + "')");
@@ -217,6 +207,37 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			whereClauseBuilder.append(")");
 		}
 		return whereClauseBuilder.toString();
+	}
+
+	/**
+	 * <p>buildFilterStatement.</p>
+	 *
+	 * Builds the 'valuesKey'/'valuesValue' predicate of the audit 'where' clause. A value carrying a
+	 * character that the clause cannot represent is rejected rather than escaped: the 'where' grammar
+	 * does accept escape sequences, but the query is read back with QueryHelper.stripQuotes, which only
+	 * removes the surrounding quotes. An escaped value would therefore be searched with its backslashes
+	 * and silently match nothing.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param filter a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if the filter syntax, key or value is not supported
+	 */
+	private String buildFilterStatement(DatabaseAuditPlugin plugin, String filter) {
+		String[] splitted = filter.split("=", 2);
+		if (splitted.length < 2) {
+			throw new BeCPGAuditException("statistics filter '" + filter + "' has wrong syntax");
+		}
+		String valuesKey = splitted[0].trim();
+		String valuesValue = splitted[1].trim();
+		if (!plugin.getKeyMap().containsKey(valuesKey)) {
+			throw new BeCPGAuditException("Unknown audit filter key: " + valuesKey);
+		}
+		if (UNSUPPORTED_FILTER_VALUE_CHARS.matcher(valuesValue).find()) {
+			throw new BeCPGAuditException("Audit filter value of key '" + valuesKey + "' contains unsupported characters");
+		}
+		return "valuesKey='/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey
+				+ "/value' and valuesValue='" + valuesValue + "'";
 	}
 
 	/**
