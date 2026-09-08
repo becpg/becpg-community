@@ -131,6 +131,28 @@ public class AuditScope implements AutoCloseable {
 	}
 	
 	/**
+	 * Record the entry of an operation that may never complete, before running it.
+	 *
+	 * @see fr.becpg.repo.audit.service.DatabaseAuditScope#recordStart()
+	 */
+	public void recordStart() {
+		if (databaseScope != null) {
+			databaseScope.recordStart();
+		}
+	}
+
+	/**
+	 * Hand the completion of the entry over to the thread that actually runs the operation.
+	 *
+	 * @see fr.becpg.repo.audit.service.DatabaseAuditScope#deferCompletion()
+	 */
+	public void deferCompletion() {
+		if (databaseScope != null) {
+			databaseScope.deferCompletion();
+		}
+	}
+
+	/**
 	 * <p>disable.</p>
 	 */
 	public void disable() {

@@ -71,6 +71,18 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 
 	/** {@inheritDoc} */
 	@Override
+	public void completeAuditEntry(AuditType auditType, String filterKey, String filterValue) {
+		AuthenticationUtil.runAsSystem(() -> {
+			AuditPlugin plugin = getPlugin(auditType);
+			if (plugin.isDatabaseEnable()) {
+				databaseAuditService.completeAuditEntry((DatabaseAuditPlugin) plugin, filterKey, filterValue);
+			}
+			return null;
+		});
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public void deleteAuditEntries(AuditType type, Long fromId, Long toId) {
 		AuditPlugin plugin = getPlugin(type);
 		

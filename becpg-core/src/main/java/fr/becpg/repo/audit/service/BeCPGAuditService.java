@@ -44,6 +44,16 @@ public interface BeCPGAuditService {
 	AuditScope startAudit(AuditType auditType, Class<?> auditClass, String scopeName);
 	
 	/**
+	 * Complete the entry left open by an operation recorded on start, the one matching the given
+	 * filter.
+	 *
+	 * @param auditType a {@link fr.becpg.repo.audit.model.AuditType} object
+	 * @param filterKey the audit key correlating the entry to the completed operation
+	 * @param filterValue the value of that key
+	 */
+	void completeAuditEntry(AuditType auditType, String filterKey, String filterValue);
+
+	/**
 	 * <p>deleteAuditEntries.</p>
 	 *
 	 * @param type a {@link fr.becpg.repo.audit.model.AuditType} object

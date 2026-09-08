@@ -46,6 +46,7 @@
        <PathMap source="/becpg/audit/report/format" target="/beCPGReportAudit/report/format"/>
        <PathMap source="/becpg/audit/report/name" target="/beCPGReportAudit/report/name"/>
        <PathMap source="/becpg/audit/report/datasourceSize" target="/beCPGReportAudit/report/datasourceSize"/>
+       <PathMap source="/becpg/audit/exportSearch/id" target="/beCPGExportSearchAudit/exportSearch/id"/>
        <PathMap source="/becpg/audit/exportSearch/startedAt" target="/beCPGExportSearchAudit/exportSearch/startedAt"/>
        <PathMap source="/becpg/audit/exportSearch/completedAt" target="/beCPGExportSearchAudit/exportSearch/completedAt"/>
        <PathMap source="/becpg/audit/exportSearch/filename" target="/beCPGExportSearchAudit/exportSearch/filename"/>
@@ -54,6 +55,8 @@
        <PathMap source="/becpg/audit/exportSearch/template" target="/beCPGExportSearchAudit/exportSearch/template"/>
        <PathMap source="/becpg/audit/exportSearch/resultsSize" target="/beCPGExportSearchAudit/exportSearch/resultsSize"/>
        <PathMap source="/becpg/audit/exportSearch/async" target="/beCPGExportSearchAudit/exportSearch/async"/>
+       <PathMap source="/becpg/audit/exportSearch/downloadNodeRef" target="/beCPGExportSearchAudit/exportSearch/downloadNodeRef"/>
+       <PathMap source="/becpg/audit/exportSearch/isCompleted" target="/beCPGExportSearchAudit/exportSearch/isCompleted"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -170,6 +173,9 @@
     </Application>
     <Application name="beCPGExportSearchAudit" key="beCPGExportSearchAudit">
         <AuditPath key="exportSearch">
+        	<AuditPath key="id">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/id"/>
+            </AuditPath>
         	<AuditPath key="startedAt">
                 <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGExportSearchAudit/exportSearch/startedAt"/>
             </AuditPath>
@@ -193,6 +199,12 @@
             </AuditPath>
         	<AuditPath key="async">
                 <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/async"/>
+            </AuditPath>
+        	<AuditPath key="downloadNodeRef">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/downloadNodeRef"/>
+            </AuditPath>
+        	<AuditPath key="isCompleted">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/isCompleted"/>
             </AuditPath>
         </AuditPath>
     </Application>

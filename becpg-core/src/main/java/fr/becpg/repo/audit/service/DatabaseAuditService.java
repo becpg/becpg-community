@@ -37,6 +37,16 @@ public interface DatabaseAuditService {
 	int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry);
 
 	/**
+	 * Complete the entry left open by an operation recorded on start, the one matching the given
+	 * filter.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param filterKey the audit key correlating the entry to the completed operation
+	 * @param filterValue the value of that key
+	 */
+	void completeAuditEntry(DatabaseAuditPlugin plugin, String filterKey, String filterValue);
+
+	/**
 	 * <p>deleteAuditEntries.</p>
 	 *
 	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object

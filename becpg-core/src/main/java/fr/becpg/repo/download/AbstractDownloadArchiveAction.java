@@ -45,6 +45,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ExportSearchAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 
 /**
@@ -71,6 +74,19 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 	protected DownloadStatusUpdateService updateService;
 	protected MimetypeService mimetypeService;
 	protected ContentService contentService;
+	protected BeCPGAuditService beCPGAuditService;
+
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * Only wired for the actions running an export search: they complete the audit entry recorded
+	 * when the export was requested.
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
+	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
+		this.beCPGAuditService = beCPGAuditService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>contentService</code>.</p>
@@ -178,6 +194,7 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 
 		logger.warn("No node to export for download: " + downloadNodeRef);
 		publishStatus(downloadNodeRef, new DownloadStatus(Status.DONE, 0, 0, 0, 0), 1);
+		completeExportSearchAudit(downloadNodeRef);
 
 		return true;
 	}
@@ -225,6 +242,7 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 		} finally {
 			reporter.releaseResources();
 			deleteTempFile(tempFile);
+			completeExportSearchAudit(downloadNodeRef);
 		}
 	}
 
@@ -288,6 +306,23 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 		}
 
 		publishStatus(downloadNodeRef, new DownloadStatus(Status.MAX_CONTENT_SIZE_EXCEEDED, maximumContentSize, size, 0, fileCount), 1);
+		completeExportSearchAudit(downloadNodeRef);
+	}
+
+	/**
+	 * Close the audit entry recorded when the export was requested, whatever its outcome.
+	 *
+	 * The entry of an export that never reaches this point stays flagged as not completed: that is
+	 * how an export having brought the server down is told from a finished one.
+	 *
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	protected void completeExportSearchAudit(NodeRef downloadNodeRef) {
+		if (beCPGAuditService == null) {
+			return;
+		}
+
+		beCPGAuditService.completeAuditEntry(AuditType.EXPORT_SEARCH, ExportSearchAuditPlugin.DOWNLOAD_NODE_REF, downloadNodeRef.toString());
 	}
 
 	/**

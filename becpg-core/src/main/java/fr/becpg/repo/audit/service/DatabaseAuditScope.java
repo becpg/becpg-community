@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.alfresco.util.ISO8601DateFormat;
 
@@ -27,6 +28,10 @@ public class DatabaseAuditScope implements AutoCloseable {
 	
 	private boolean shouldRecordAudit = true;
 	
+	private boolean startRecorded = false;
+	
+	private boolean completedElsewhere = false;
+	
 	/**
 	 * <p>Constructor for DatabaseAuditScope.</p>
 	 *
@@ -45,23 +50,49 @@ public class DatabaseAuditScope implements AutoCloseable {
 		this.shouldRecordAudit = false;
 	}
 	
+	/**
+	 * Record the entry of an operation that may never complete, before running it.
+	 *
+	 * The entry is flagged as not completed and is replaced by the completed one when the scope is
+	 * closed. Only the plugins declaring {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin#isRecordOnStart()}
+	 * take part in this two phase recording.
+	 */
+	public void recordStart() {
+		if (!shouldRecordAudit || startRecorded || !auditPlugin.isRecordOnStart()) {
+			return;
+		}
+
+		auditValues.put(AuditPlugin.IS_COMPLETED, false);
+		databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
+		startRecorded = true;
+	}
+
+	/**
+	 * Hand the completion of the entry over to the thread that actually runs the operation.
+	 *
+	 * Closing the scope then only records the entry of the started operation: the duration of an
+	 * asynchronous export measured by the thread that requested it would be the duration of the
+	 * request, not the one of the export.
+	 */
+	public void deferCompletion() {
+		this.completedElsewhere = true;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void close() {
-		Date end = new Date();
-		
-		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.COMPLETED_AT)) {
-			auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
+		if (!shouldRecordAudit) {
+			return;
 		}
-		
-		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.STARTED_AT) && auditPlugin.getKeyMap().containsKey(AuditPlugin.DURATION)) {
-			Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
-			auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
+
+		if (completedElsewhere) {
+			recordStart();
+			return;
 		}
-		
-		if (shouldRecordAudit) {
-			databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
-		}
+
+		completeAuditValues();
+
+		databaseAuditService.recordAuditEntry(auditPlugin, auditValues, startRecorded);
 	}
 
 	/**
@@ -78,13 +109,34 @@ public class DatabaseAuditScope implements AutoCloseable {
 
 	/**
 	 * <p>start.</p>
+	 *
+	 * The identifier a completed entry replaces its started one on is drawn at random: derived from
+	 * the start date alone, two operations starting in the same millisecond would share it and
+	 * completing one would delete the entry of the other.
 	 */
 	public void start() {
 		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.STARTED_AT)) {
 			auditValues.put(AuditPlugin.STARTED_AT, ISO8601DateFormat.format(new Date()));
 		}
-		int id = Objects.hash(auditValues);
+		int id = Objects.hash(auditValues, UUID.randomUUID());
 		auditValues.put(AuditPlugin.ID, id);
+	}
+
+	private void completeAuditValues() {
+		Date end = new Date();
+
+		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.COMPLETED_AT)) {
+			auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
+		}
+
+		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.STARTED_AT) && auditPlugin.getKeyMap().containsKey(AuditPlugin.DURATION)) {
+			Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
+			auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
+		}
+
+		if (auditPlugin.isRecordOnStart()) {
+			auditValues.put(AuditPlugin.IS_COMPLETED, true);
+		}
 	}
 
 }

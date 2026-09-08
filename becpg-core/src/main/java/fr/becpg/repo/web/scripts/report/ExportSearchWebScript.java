@@ -162,6 +162,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 				if (async) {
 					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, parameters);
 					
+					auditScope.putAttribute(ExportSearchAuditPlugin.DOWNLOAD_NODE_REF, downloadNodeRef.toString());
+					auditScope.deferCompletion();
+					
 					JSONObject ret = new JSONObject();
 					
 					ret.put("nodeRef", downloadNodeRef);
@@ -172,6 +175,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 					
 				} else {
 					
+					auditScope.recordStart();
 					
 					logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
 					

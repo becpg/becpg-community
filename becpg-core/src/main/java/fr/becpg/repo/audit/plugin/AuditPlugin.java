@@ -18,6 +18,8 @@ public interface AuditPlugin {
 	public static final String COMPLETED_AT = "completedAt";
 	/** Constant <code>DURATION="duration"</code> */
 	public static final String DURATION = "duration";
+	/** Constant <code>IS_COMPLETED="isCompleted"</code> */
+	public static final String IS_COMPLETED = "isCompleted";
 
 	/**
 	 * <p>applyTo.</p>

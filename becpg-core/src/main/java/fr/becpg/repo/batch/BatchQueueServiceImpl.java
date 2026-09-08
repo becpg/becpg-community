@@ -60,6 +60,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -478,7 +479,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				auditScope.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
 				auditScope.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
-				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
+				auditScope.putAttribute(AuditPlugin.IS_COMPLETED, false);
 
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
 
@@ -551,7 +552,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
 				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
-				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
+				auditScope.putAttribute(AuditPlugin.IS_COMPLETED, true);
 
 				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 

@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.alfresco.repo.audit.AuditComponent;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.rest.api.Audit;
 import org.alfresco.rest.api.model.AuditEntry;
 import org.alfresco.rest.framework.resource.parameters.Paging;
@@ -25,6 +27,7 @@ import org.alfresco.rest.framework.resource.parameters.SortColumn;
 import org.alfresco.rest.framework.resource.parameters.where.Query;
 import org.alfresco.rest.framework.resource.parameters.where.QueryImpl;
 import org.alfresco.rest.framework.resource.parameters.where.WhereCompiler;
+import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
@@ -57,6 +60,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	/** Constant <code>BECPG_AUDIT_PATH="/becpg/audit"</code> */
 	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
 
+	/** Constant <code>VALUE_SUFFIX="/value"</code> */
+	private static final String VALUE_SUFFIX = "/value";
+
 	/** Constant <code>UNSUPPORTED_FILTER_VALUE_CHARS</code> */
 	private static final Pattern UNSUPPORTED_FILTER_VALUE_CHARS = Pattern.compile("['\\\\\\p{Cntrl}]");
 
@@ -70,15 +76,33 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	@Autowired
 	private AuditComponent auditComponent;
+
+	@Autowired
+	private TransactionService transactionService;
 	
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * An entry recorded on start is written in its own transaction: the trace of an operation that
+	 * may never complete cannot depend on the outcome of that very operation, and replacing it
+	 * requires a writable transaction that the read only callers do not provide.
+	 */
 	@Override
 	public int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
+		if (auditPlugin.isRecordOnStart()) {
+			RetryingTransactionHelper transactionHelper = transactionService.getRetryingTransactionHelper();
+			return transactionHelper.doInTransaction(() -> internalRecordAuditEntry(auditPlugin, auditValues, deleteOldEntry), false, true);
+		}
+
+		return internalRecordAuditEntry(auditPlugin, auditValues, deleteOldEntry);
+	}
+
+	private int internalRecordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
 		return StopWatchSupport.build().logger(logger).run(() -> {
 			auditPlugin.beforeRecordAuditEntry(auditValues);
 			try {
 				AuditEntry entryToDelete = null;
-				int id = (int) auditValues.get(AuditPlugin.ID);
+				int id = Integer.parseInt(auditValues.get(AuditPlugin.ID).toString());
 				if (deleteOldEntry) {
 					AuditQuery auditFilter = AuditQuery.createQuery().filter(AuditPlugin.ID, String.valueOf(id)).maxResults(1);
 					Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
@@ -114,7 +138,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			JSONObject statItem = new JSONObject();
 			statItem.put(AuditPlugin.ID, auditEntry.getId());
 			for (String auditKey : plugin.getKeyMap().keySet()) {
-				String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + "/value";
+				String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + VALUE_SUFFIX;
 				if (auditEntry.getValues().containsKey(key)) {
 					statItem.put(auditKey, auditEntry.getValues().get(key));
 				}
@@ -156,18 +180,84 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 
 	/** {@inheritDoc} */
 	@Override
+	public void completeAuditEntry(DatabaseAuditPlugin plugin, String filterKey, String filterValue) {
+		AuditQuery auditQuery = AuditQuery.createQuery().filter(filterKey, filterValue).dbAsc(false).maxResults(1);
+
+		List<AuditEntry> entries = internalListAuditEntries(plugin, auditQuery);
+
+		if (entries.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("No audit entry to complete for '" + filterKey + "=" + filterValue + "'");
+			}
+			return;
+		}
+
+		Map<String, Serializable> auditValues = extractAuditValues(plugin, entries.get(0));
+
+		if ((auditValues.get(AuditPlugin.ID) == null) || (auditValues.get(AuditPlugin.STARTED_AT) == null)) {
+			logger.warn("Cannot complete the audit entry of '" + filterKey + "=" + filterValue + "': it carries no id or no start date");
+			return;
+		}
+
+		Date end = new Date();
+		Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
+
+		auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
+		auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
+		auditValues.put(AuditPlugin.IS_COMPLETED, true);
+
+		recordAuditEntry(plugin, auditValues, true);
+	}
+
+	/**
+	 * Read back the values of an audit entry, keyed by audit key.
+	 *
+	 * The identifier is read as an integer: it is the key the entry is replaced on, and it is
+	 * recorded as an integer by {@link fr.becpg.repo.audit.service.DatabaseAuditScope}.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditEntry a {@link org.alfresco.rest.api.model.AuditEntry} object
+	 * @return a {@link java.util.Map} object
+	 */
+	private Map<String, Serializable> extractAuditValues(DatabaseAuditPlugin plugin, AuditEntry auditEntry) {
+		String prefix = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/";
+		Map<String, Serializable> auditValues = new HashMap<>();
+
+		for (Entry<String, Serializable> value : auditEntry.getValues().entrySet()) {
+			if (value.getKey().startsWith(prefix) && value.getKey().endsWith(VALUE_SUFFIX)) {
+				auditValues.put(value.getKey().substring(prefix.length(), value.getKey().length() - VALUE_SUFFIX.length()), value.getValue());
+			}
+		}
+
+		Serializable id = auditValues.get(AuditPlugin.ID);
+		if (id != null) {
+			auditValues.put(AuditPlugin.ID, Integer.valueOf(id.toString()));
+		}
+
+		return auditValues;
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId) {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
 	}
 
 	/**
-	 * <p>internalListAuditEntries.</p>
+	 * List the audit entries matching the given filter.
+	 *
+	 * Read as system: the Alfresco audit service is reserved to the administrators, whereas the
+	 * entries are read back on behalf of the user having requested the audited operation.
 	 *
 	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
 	 * @param auditFilter a {@link fr.becpg.repo.audit.model.AuditQuery} object
 	 * @return a {@link java.util.List} object
 	 */
 	private List<AuditEntry> internalListAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
+		return AuthenticationUtil.runAsSystem(() -> queryAuditEntries(plugin, auditFilter));
+	}
+
+	private List<AuditEntry> queryAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		String whereClause = buildWhereClause(plugin, auditFilter);
 		Query query = buildQuery(whereClause);
 		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, auditFilter.getMaxResults());
@@ -230,14 +320,14 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		}
 		String valuesKey = splitted[0].trim();
 		String valuesValue = splitted[1].trim();
-		if (!plugin.getKeyMap().containsKey(valuesKey)) {
+		if (!AuditPlugin.ID.equals(valuesKey) && !plugin.getKeyMap().containsKey(valuesKey)) {
 			throw new BeCPGAuditException("Unknown audit filter key: " + valuesKey);
 		}
 		if (UNSUPPORTED_FILTER_VALUE_CHARS.matcher(valuesValue).find()) {
 			throw new BeCPGAuditException("Audit filter value of key '" + valuesKey + "' contains unsupported characters");
 		}
-		return "valuesKey='/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey
-				+ "/value' and valuesValue='" + valuesValue + "'";
+		return "valuesKey='/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + VALUE_SUFFIX
+				+ "' and valuesValue='" + valuesValue + "'";
 	}
 
 	/**
@@ -272,7 +362,8 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		Map<String, Serializable> auditMap = new HashMap<>();
 		for (Entry<String, Serializable> entry : auditValues.entrySet()) {
 			if (forDatabase) {
-				auditMap.put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + "/value", entry.getValue());
+				auditMap.put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + VALUE_SUFFIX,
+						entry.getValue());
 			} else {
 				auditMap.put(plugin.getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
 			}

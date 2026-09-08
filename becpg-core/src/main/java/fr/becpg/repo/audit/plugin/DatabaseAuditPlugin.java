@@ -48,4 +48,19 @@ public interface DatabaseAuditPlugin extends AuditPlugin {
 	 */
 	Map<String, AuditDataType> getKeyMap();
 
+	/**
+	 * Whether the entry has to be recorded when the audited operation starts and completed when it
+	 * ends, instead of being recorded once at the end.
+	 *
+	 * An operation heavy enough to bring the server down leaves no trace at all when its entry is
+	 * only written on completion. Recording it upfront keeps the author, the volume and the start
+	 * time available even when the operation never returns: such an entry simply stays flagged as
+	 * not completed.
+	 *
+	 * @return a boolean
+	 */
+	default boolean isRecordOnStart() {
+		return false;
+	}
+
 }

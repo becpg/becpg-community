@@ -56,7 +56,8 @@ function main() {
                 { key: "username", label: msg.get("audit.col.username") },
                 { key: "template", label: msg.get("audit.col.template") },
                 { key: "resultsSize", label: msg.get("audit.col.resultsSize") },
-                { key: "async", label: msg.get("audit.col.async"), format: "async" }
+                { key: "async", label: msg.get("audit.col.async"), format: "async" },
+                { key: "isCompleted", label: msg.get("audit.col.status"), format: "completed" }
             ]
         },
         {
