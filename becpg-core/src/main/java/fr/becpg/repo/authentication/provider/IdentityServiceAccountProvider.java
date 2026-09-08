@@ -98,6 +98,7 @@ public class IdentityServiceAccountProvider {
 	 *
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
 	 * @return true when the account was created, false when it already exists in the identity service
+	 * @throws org.alfresco.repo.security.authentication.identityservice.IdentityServiceException if the account cannot be registered
 	 */
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
@@ -156,6 +157,7 @@ public class IdentityServiceAccountProvider {
 	 * any password and the user would never be able to sign in.
 	 *
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @throws org.alfresco.repo.security.authentication.identityservice.IdentityServiceException if the credential cannot be stored
 	 */
 	private void registerInitialPassword(BeCPGUserAccount userAccount) {
 		if ((userAccount.getPassword() == null) || userAccount.getPassword().isBlank()) {
@@ -166,8 +168,25 @@ public class IdentityServiceAccountProvider {
 		} catch (RuntimeException e) {
 			logger.error("Could not store initial password in IDS for user: " + userAccount.getUserName() + ", rolling back account", e);
 			rollbackAccount(userAccount.getUserName());
-			throw e;
+			throw asIdentityServiceException(userAccount.getUserName(), e);
 		}
+	}
+
+	/**
+	 * <p>asIdentityServiceException.</p>
+	 *
+	 * Normalizes a registration failure so that callers cleaning up after a failed registration only
+	 * have to handle {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceException}.
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param cause a {@link java.lang.RuntimeException} object
+	 * @return a {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceException} object
+	 */
+	private IdentityServiceException asIdentityServiceException(String username, RuntimeException cause) {
+		if (cause instanceof IdentityServiceException identityServiceException) {
+			return identityServiceException;
+		}
+		return new IdentityServiceException("Could not store initial password in IDS for user: " + username, cause);
 	}
 
 	/**

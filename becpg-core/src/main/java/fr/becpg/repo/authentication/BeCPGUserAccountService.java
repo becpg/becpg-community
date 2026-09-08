@@ -14,7 +14,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
-import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -539,7 +538,7 @@ public class BeCPGUserAccountService {
 				if (!identityServiceAccountProvider.registerAccount(userAccount)) {
 					logger.error("User already exists in IDS with same username or email. username: " + userAccount.getUserName() + ", email: " + userAccount.getEmail());
 				}
-			} catch (IdentityServiceException e) {
+			} catch (RuntimeException e) {
 				personService.deletePerson(personNodeRef);
 				throw e;
 			}
