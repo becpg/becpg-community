@@ -106,6 +106,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	public NodeRef prepareEntitySignatureFolder(ProjectData project, NodeRef entityNodeRef) {
 
 		NodeRef supplierDocumentsFolder = supplierPortalService.getOrCreateSupplierDocumentsFolder(entityNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("prepareEntitySignatureFolder - project: " + project.getNodeRef() + ", entity: " + entityNodeRef
+					+ ", supplier documents folder: " + supplierDocumentsFolder);
+		}
 
 		Map<NodeRef, List<DeliverableListDataItem>> deliverableByDocuments = signatureProjectHelper.getDeliverableByDocuments(project);
 
@@ -119,6 +123,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 				if ((nodeService.hasAspect(existingDocument, ReportModel.ASPECT_REPORT_TEMPLATES)
 						&& deliverableByDocuments.containsKey(existingDocument))) {
 					
+					if (logger.isDebugEnabled()) {
+						logger.debug("prepareEntitySignatureFolder - deleting outdated report document and its deliverables: " + existingDocument);
+					}
 					signatureService.cancelDocument(existingDocument);
 					
 					for (DeliverableListDataItem deliverable : deliverableByDocuments.get(existingDocument)) {
@@ -129,6 +136,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 					nodeService.deleteNode(existingDocument);
 					deliverableByDocuments.remove(existingDocument);
 				}  else if (SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("prepareEntitySignatureFolder - resetting prepared document to Initialized: " + existingDocument);
+					}
 					List<NodeRef> recipients = associationService.getTargetAssocs(existingDocument, SignatureModel.ASSOC_RECIPIENTS);
 					existingDocument = signatureService.cancelDocument(existingDocument);
 					nodeService.setProperty(existingDocument, SignatureModel.PROP_STATUS, SignatureStatus.Initialized);
@@ -148,12 +158,18 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		}
 
 		List<NodeRef> suppliers = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		if (logger.isDebugEnabled()) {
+			logger.debug("prepareEntitySignatureFolder - reports of kind " + SUPPLIER_REPORT_KIND + ": " + reports + ", supplier accounts: " + suppliers);
+		}
 
 		for (NodeRef reportNodeRef : reports) {
 			if (reportNodeRef != null) {
 				NodeRef reportCopy = signatureProjectHelper.copyReport(supplierDocumentsFolder, reportNodeRef);
 				associationService.update(reportCopy, SignatureModel.ASSOC_RECIPIENTS, suppliers);
 				nodeService.addAspect(reportCopy, ReportModel.ASPECT_REPORT_TEMPLATES, new HashMap<>());
+				if (logger.isDebugEnabled()) {
+					logger.debug("prepareEntitySignatureFolder - copied report " + reportNodeRef + " to " + reportCopy + " with recipients: " + suppliers);
+				}
 			}
 		}
 		return supplierDocumentsFolder;
@@ -166,10 +182,17 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		NodeRef signatureFolder = null;
 
 		NodeRef supplierNodeRef = findSupplierAccount(documents, recipients);
+		if (logger.isDebugEnabled()) {
+			logger.debug("getExternalSignatureFolder - project: " + projectNodeRef + ", documents: " + documents + ", recipients: " + recipients
+					+ ", supplier account: " + supplierNodeRef);
+		}
 
 		if (supplierNodeRef != null) {
 			signatureFolder = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef, recipients);
 			nodeService.moveNode(projectNodeRef, signatureFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+			if (logger.isDebugEnabled()) {
+				logger.debug("getExternalSignatureFolder - moved project " + projectNodeRef + " to supplier signature folder: " + signatureFolder);
+			}
 		}
 
 		return signatureFolder;
@@ -182,6 +205,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		// do not create closing task if there are other tasks after
 		for (NodeRef lastTask : lastTasks) {
 			if (ProjectHelper.isPreviousTask(project, lastTask)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("createOrUpdateClosingTask - task " + lastTask + " is followed by another task, no closing task created");
+				}
 				return;
 			}
 		}
@@ -193,6 +219,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 		closingTask.setTaskName(taskName);
 		closingTask.setRefusedTask(firstTask);
+		if (logger.isDebugEnabled()) {
+			logger.debug("createOrUpdateClosingTask - closing task: " + closingTask.getNodeRef() + ", previous tasks: " + lastTasks
+					+ ", refused task: " + (firstTask != null ? firstTask.getNodeRef() : null));
+		}
 
 		if (project.getCreator() != null && !project.getCreator().isBlank() && personService.personExists(project.getCreator())) {
 			NodeRef creator = personService.getPerson(project.getCreator());
@@ -218,7 +248,11 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractRecipients(NodeRef document) {
-		return supplierPortalService.extractSupplierAccountRefs(document);
+		List<NodeRef> supplierAccounts = supplierPortalService.extractSupplierAccountRefs(document);
+		if (logger.isDebugEnabled()) {
+			logger.debug("extractRecipients - document: " + document + ", supplier accounts: " + supplierAccounts);
+		}
+		return supplierAccounts;
 	}
 
 	/**
@@ -232,9 +266,15 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		for (NodeRef document : documents) {
 
 			NodeRef entity = entityService.getEntityNodeRef(document, nodeService.getType(document));
+			if (logger.isDebugEnabled()) {
+				logger.debug("findSupplierAccount - document: " + document + ", entity: " + entity);
+			}
 
 			if (entity != null) {
 				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entity);
+				if (logger.isDebugEnabled()) {
+					logger.debug("findSupplierAccount - entity " + entity + " is attached to supplier: " + supplierNodeRef);
+				}
 
 				if (supplierNodeRef != null) {
 					return supplierNodeRef;
@@ -245,6 +285,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		for (NodeRef recipient : recipients) {
 
 			List<NodeRef> sourceSupplierAccountAssocs = associationService.getSourcesAssocs(recipient, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			if (logger.isDebugEnabled()) {
+				logger.debug("findSupplierAccount - recipient: " + recipient + ", supplier accounts sources: " + sourceSupplierAccountAssocs);
+			}
 
 			if ((sourceSupplierAccountAssocs != null) && !sourceSupplierAccountAssocs.isEmpty()) {
 				for (NodeRef sourceSupplierAccountAssoc : sourceSupplierAccountAssocs) {
@@ -256,6 +299,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 			}
 		}
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("findSupplierAccount - no supplier entity found from documents " + documents + " nor from recipients " + recipients
+					+ ": the project will not be moved to a supplier signature folder");
+		}
 		return null;
 	}
 

@@ -8,6 +8,8 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.repo.project.data.ProjectData;
@@ -23,6 +25,9 @@ import fr.becpg.repo.signature.SignatureProjectService;
  */
 @BeCPGPublicApi
 public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension {
+
+	/** Constant <code>logger</code> */
+	private static final Log logger = LogFactory.getLog(SignatureProjectScriptHelper.class);
 
 	private SignatureProjectService signatureProjectService;
 	
@@ -54,6 +59,9 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode prepareSignatureProject(ScriptNode project, ScriptNode[] documents) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("prepareSignatureProject - project: " + project.getNodeRef() + ", documents: " + (documents != null ? documents.length : 0));
+		}
 		
 		if (documents != null && documents.length > 0) {
 			
@@ -77,6 +85,10 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode createEntitySignatureTasks(ScriptNode project, ScriptNode task, String projectType) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("createEntitySignatureTasks - project: " + project.getNodeRef() + ", task: " + task.getNodeRef() + ", projectType: "
+					+ projectType);
+		}
 		return new ActivitiScriptNode(signatureProjectService.createEntitySignatureTasks(project.getNodeRef(), task.getNodeRef(), projectType), serviceRegistry);
 	}
 	
@@ -91,6 +103,9 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 			for (ScriptNode item : items) {
 
 				List<NodeRef> recipients = signatureProjectService.extractRecipients(item.getNodeRef());
+				if (logger.isDebugEnabled()) {
+					logger.debug("extractRecipients - item: " + item.getNodeRef() + ", recipients: " + recipients);
+				}
 
 				if (!recipients.isEmpty()) {
 					return recipients.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry)).toArray(ScriptNode[]::new);
@@ -124,6 +139,9 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 	}
 	
 	public ScriptNode cancelProjectSignature(ScriptNode document, NodeRef projectNodeRef) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("cancelProjectSignature - document: " + document.getNodeRef() + ", project: " + projectNodeRef);
+		}
 		return new ActivitiScriptNode(signatureProjectService.cancelProjectSignature(document.getNodeRef(), projectNodeRef), serviceRegistry);
 	}
 }

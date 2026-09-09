@@ -111,6 +111,9 @@ public class SignatureProjectHelper {
 		String reportName = extractReportName(reportNodeRef);
 		
 		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);
+		if (logger.isDebugEnabled()) {
+			logger.debug("copyReport - report: " + reportNodeRef + ", parent folder: " + parentFolder + ", copy name: " + reportName);
+		}
 		
 		Map<QName, Serializable> props = new HashMap<>();
 
@@ -145,6 +148,9 @@ public class SignatureProjectHelper {
 			if (ReportModel.TYPE_REPORT.equals(nodeService.getType(originalDocument))) {
 				NodeRef entity = entityService.getEntityNodeRef(originalDocument, ReportModel.TYPE_REPORT);
 				String signedReportsName = TranslateHelper.getTranslatedPath("SignedReports");
+				if (logger.isDebugEnabled()) {
+					logger.debug("copyReports - report " + originalDocument + " belongs to entity: " + entity);
+				}
 				NodeRef signedReportsFolder = nodeService.getChildByName(entity, ContentModel.ASSOC_CONTAINS, signedReportsName);
 				if (signedReportsFolder == null) {
 					Map<QName, Serializable> properties = new HashMap<>();
@@ -169,7 +175,11 @@ public class SignatureProjectHelper {
 	 * @return a {@link java.util.List} object
 	 */
 	public List<NodeRef> findDocumentsToSign(NodeRef folder, boolean signed) {
-		return findDocumentsToSign(folder, signed, 0);
+		List<NodeRef> docs = findDocumentsToSign(folder, signed, 0);
+		if (logger.isDebugEnabled()) {
+			logger.debug("findDocumentsToSign - folder: " + folder + ", signed: " + signed + ", found: " + docs);
+		}
+		return docs;
 	}
 
 	/**
@@ -394,6 +404,9 @@ public class SignatureProjectHelper {
 				return deliverable;
 			}
 		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("findUrlDeliverable - no url deliverable named " + urlDeliverableName + " found in project: " + project.getName());
+		}
 		return null;
 	}
 	
@@ -409,6 +422,10 @@ public class SignatureProjectHelper {
 			if (deliverable.getContent() != null && deliverable.getName().startsWith(taskDeliverable.getName()) && deliverable.getName().endsWith(DELIVERABLE_SUFFIX_DOC)) {
 				return deliverable;
 			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("findDocDeliverable - no doc deliverable found for task deliverable " + taskDeliverable.getName() + " in project: "
+					+ project.getName());
 		}
 		return null;
 	}
