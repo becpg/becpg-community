@@ -281,6 +281,48 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void checkEntityVariantActivity() {
+
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef finishedProductNodeRef = createFinishedProduct();
+
+		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
+
+		final NodeRef variantNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Variant 1");
+			properties.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
+			return nodeService
+					.createNode(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, properties)
+					.getChildRef();
+		}, false, true);
+
+		assertEquals("Check variant create Activity", 2, getActivities(finishedProductNodeRef, null).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(variantNodeRef, ContentModel.PROP_NAME, "Variant 1 renamed");
+			nodeService.setProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
+			return null;
+		}, false, true);
+
+		assertEquals("Check variant update Activity", 3, getActivities(finishedProductNodeRef, null).size());
+
+		ActivityListDataItem lastActivity = getActivityListDataItems(finishedProductNodeRef).get(0);
+		Assert.assertEquals(ActivityType.Datalist, lastActivity.getActivityType());
+		Assert.assertTrue(lastActivity.getActivityData().contains("\"className\":\"variant\""));
+		Assert.assertTrue(lastActivity.getActivityData().contains("Variant 1 renamed"));
+		Assert.assertTrue(lastActivity.getActivityData().contains(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName()));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.deleteNode(variantNodeRef);
+			return null;
+		}, false, true);
+
+		assertEquals("Check variant delete Activity", 4, getActivities(finishedProductNodeRef, null).size());
+	}
+
+	@Test
 	public void checkEntityMoveActivity() {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

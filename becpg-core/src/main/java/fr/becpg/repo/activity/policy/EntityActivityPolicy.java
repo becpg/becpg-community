@@ -141,6 +141,11 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onDeleteAssociation"));
 
+		// A variant is a cm:content child of the entity, so its creation and deletion are already caught by
+		// the cm:content bindings below: only the property update needs a binding of its own.
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_VARIANT,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ForumModel.TYPE_POST,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ForumModel.TYPE_POST,
@@ -647,6 +652,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	private boolean accept(QName type) {
 		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
+				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_VARIANT)
 				|| ((entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) 
 						&& !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type)
 						&& !BeCPGModel.TYPE_NOTIFICATIONRULELIST.equals(type)
@@ -679,7 +685,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					} else {
 						Map<QName, Pair<Serializable, Serializable>> updatedFields = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString());
 						if (!BehaviourRegistry.shouldIgnoreActivity(actionedUponNodeRef, type, updatedFields)) {
-							if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+							if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+									|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_VARIANT)) {
 								if(logger.isDebugEnabled()) {
 									logger.debug("Action upon datalist, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " ("+nodeService.getType(actionedUponNodeRef)+")");
 								}
