@@ -709,4 +709,28 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return new AutoCompletePage(queryBuilder.list(), pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQName, nodeService));
 	}
 
+
+	/**
+	 * <p>extractEntityNodeRef.</p>
+	 *
+	 * @param props a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	protected NodeRef extractEntityNodeRef(Map<String, Serializable> props) {
+		NodeRef entityNodeRef = null;
+		if (props != null) {
+
+			String strNodeRef = (String) props.get(AutoCompleteService.PROP_NODEREF); //itemId
+			if ((strNodeRef == null) || strNodeRef.isBlank()) {
+				strNodeRef = (String) props.get(AutoCompleteService.PROP_ENTITYNODEREF);
+			}
+
+			if ((strNodeRef != null) && NodeRef.isNodeRef(strNodeRef)) {
+				entityNodeRef = new NodeRef(strNodeRef);
+			}
+
+		}
+		return entityNodeRef;
+	}
+
 }
