@@ -66,7 +66,7 @@ function main() {
             columns: [
                 { key: "prop_cm_created", label: msg.get("audit.col.date"), format: "date" },
                 { key: "prop_bcpg_alUserId", label: msg.get("audit.col.username") },
-                { key: "prop_bcpg_alType", label: msg.get("audit.col.type"), format: "badge" },
+                { key: "prop_bcpg_alType", label: msg.get("audit.col.type") },
                 { key: "entityNodeRef", label: msg.get("audit.col.nodeRef"), format: "noderef" },
                 { key: "prop_bcpg_alData", label: msg.get("audit.col.data"), format: "inspect" }
             ]
