@@ -92,10 +92,10 @@
 		<#assign currValue=field.value*1000>
 	   <#elseif field.value?abs &lt; 10  >
 		<#assign currUnit="mm" >
-		<#assign currValue=field.value*1000 >
+		<#assign currValue=field.value >
       <#elseif field.value?abs &lt; 100  >
 		<#assign currUnit="cm" >
-		<#assign currValue=field.value*100 >
+		<#assign currValue=field.value*0.1 >
   	  <#else>
 		<#assign currUnit="m">
 	 </#if>
@@ -105,7 +105,7 @@
 	   <#assign currUnit="cm">
 	  <#elseif field.value?abs &lt; 0.001  >
 	   <#assign currUnit="micro_m">
-	   <#assign currValue=field.value*10000>
+	   <#assign currValue=field.value*1000>
 	  <#elseif field.value?abs &lt; 0.01  >
 	   <#assign currUnit="mm">
 	   <#assign currValue=field.value>
