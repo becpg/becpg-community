@@ -207,6 +207,9 @@
     		case "mm":
     			val=    val / 1000;	
     			break;
+    		case "micro_m":
+    			val=   val / 1000000;
+    			break;
     		case "cL":	
     		case "cm":
     			val=   val / 100; 
@@ -248,10 +251,8 @@
     		default:
     			break;
     		}
-    		if(toUnit =="mm" || toUnit =="g" || toUnit =="mL"){
+    		if(toUnit =="mm" || toUnit =="cm" || toUnit =="m" || toUnit =="micro_m" || toUnit =="g" || toUnit =="mL"){
     			val = val *1000;
-    		} else if(toUnit =="cm"){
-    			val = val *100;
     		}
     	}
     	return val;
