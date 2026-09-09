@@ -250,6 +250,8 @@
     		}
     		if(toUnit =="mm" || toUnit =="g" || toUnit =="mL"){
     			val = val *1000;
+    		} else if(toUnit =="cm"){
+    			val = val *100;
     		}
     	}
     	return val;

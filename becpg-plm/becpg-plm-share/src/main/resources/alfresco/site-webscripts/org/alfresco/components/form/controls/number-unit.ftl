@@ -36,7 +36,7 @@
      <#assign currUnits="g,oz">
    <#elseif unit=="L" >
 	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
-   <#elseif unit=="m" || unit=="mm" >	
+   <#elseif unit=="m" || unit=="mm" || unit=="cm" >
 	<#assign currUnits="mil,in,ft,mm,cm,m">
    <#elseif unit=="d" ||  unit=="mo" || unit=="y">
 	<#assign currUnits="d,mo,y">
