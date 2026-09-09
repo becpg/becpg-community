@@ -10,6 +10,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.transaction.TransactionService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -54,10 +55,11 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		EntityVersionService entityVersionService = (EntityVersionService) jobData.get("entityVersionService");
 		EntityReportService entityReportService = (EntityReportService) jobData.get("entityReportService");
 		BatchQueueService batchQueueService = (BatchQueueService) jobData.get("batchQueueService");
-		generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService);
+		TransactionService transactionService = (TransactionService) jobData.get("transactionService");
+		generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, transactionService);
 	}
 	
-	private void generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService, BatchQueueService batchQueueService) {
+	private void generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService, BatchQueueService batchQueueService, TransactionService transactionService) {
 		AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
 		List<NodeRef> pendingNodes = new ArrayList<>(BeCPGQueryBuilder.createQuery()
 				.withAspect(BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT)
@@ -83,10 +85,15 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 				NodeRef extractedNode = entityNodeRef;
 				if (VersionHelper.isVersion(entityNodeRef)
 						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-					extractedNode = entityVersionService.extractVersion(entityNodeRef);
+					extractedNode = transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> entityVersionService.extractVersion(entityNodeRef), false, true);
 				}
-				entityReportService.generateReports(extractedNode, entityNodeRef);
-				nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+				final NodeRef finalExtractedNode = extractedNode;
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					entityReportService.generateReports(finalExtractedNode, entityNodeRef);
+					nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+					return null;
+				}, false, true);
 			}
 		};
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
