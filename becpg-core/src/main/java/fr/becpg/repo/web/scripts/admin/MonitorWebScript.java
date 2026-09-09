@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +52,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class MonitorWebScript extends DeclarativeWebScript {
 
 	private static final String SOLR_STATUS = "solr_status";
+
+	private static final String COMPANY_HOME_PATH = "/app:company_home/";
 
 	private static final String VOLUMETRY_QUERY = "SELECT "
             + "ns.uri, "
@@ -125,13 +126,18 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
 				try {
-					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inPath("/app:company_home/cm:System/").ftsLanguage().maxResults(1).list();
-					if (!result.isEmpty()) {
+					// Anchored on company home, which cannot be moved nor renamed, so that an empty
+					// result really means the index is unusable. The PATH condition cannot be
+					// answered by the database, the query is therefore always run against SOLR.
+					NodeRef result = BeCPGQueryBuilder.createQuery().inPath(COMPANY_HOME_PATH).ftsLanguage().singleValue();
+					if (result != null) {
 						ret.put(SOLR_STATUS, "UP");
 					} else {
+						logger.warn("SOLR reported DOWN, no result returned under " + COMPANY_HOME_PATH);
 						ret.put(SOLR_STATUS, "DOWN");
 					}
 				} catch (Exception e) {
+					logger.warn("SOLR reported DOWN", e);
 					ret.put(SOLR_STATUS, "DOWN");
 				}
 				
