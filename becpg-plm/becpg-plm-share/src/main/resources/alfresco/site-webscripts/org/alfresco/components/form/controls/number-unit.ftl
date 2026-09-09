@@ -42,6 +42,8 @@
 	<#assign currUnits="d,mo,y">
    <#elseif unit=="-">
 	<#assign currUnits="-,mega,milli,micro">
+   <#else>
+	<#assign currUnits="">
  </#if>
 
 <#if field.value?is_number>
@@ -158,7 +160,7 @@
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
-				 <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>	             
+				 <#if currUnits?has_content && (!field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>	             
 	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit"
 	         <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> >
 	               <#list currUnits?split(",") as nameValue>
@@ -175,6 +177,10 @@
 	         			var updateVal = function (){
 
 							var sel = YAHOO.util.Dom.get("${fieldHtmlId}-unit");
+							if (sel == null) {
+								YAHOO.util.Dom.get("${fieldHtmlId}-val").value = YAHOO.util.Dom.get("${fieldHtmlId}").value;
+								return true;
+							}
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = 
 				         		beCPG.util.convertUnit(YAHOO.util.Dom.get("${fieldHtmlId}").value, sel.value,"${unit}");
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =	
