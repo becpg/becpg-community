@@ -75,4 +75,11 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return result.toString();
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	@Nonnull
+	public String extractMetadataKey(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		return BeCPGModel.TYPE_VARIANT.getLocalName();
+	}
+
 }

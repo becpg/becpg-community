@@ -135,6 +135,18 @@
 	clear: both;
 }
 
+/* The activity title wraps the item name in a span carrying its type as a CSS class. For a variant
+   that class is the colored dot of the datagrid, which would swallow the name: keep it inline here. */
+.datagrid  .entity-activity-details .details .activity-title span.variant,
+.datagrid  .entity-activity-details .details .activity-title span.variant-default {
+	display: inline;
+	height: auto;
+	width: auto;
+	border: none;
+	border-radius: 0;
+	background-color: transparent;
+}
+
 .datagrid  .entity-activity-details .details .activity-content {
 	clear: both;
 	list-style-type: disc;

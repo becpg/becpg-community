@@ -1197,18 +1197,37 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 
-		String metadata;
+		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
+		if (plugin != null) {
+			return plugin.extractMetadata(type, nodeRef);
+		}
+
+		return defaultMetadata(type);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String extractMetadataKey(QName type, NodeRef nodeRef) {
 
 		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
 		if (plugin != null) {
-			metadata = plugin.extractMetadata(type, nodeRef);
-		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
-			metadata = "container";
-		} else {
-			metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
+			return plugin.extractMetadataKey(type, nodeRef);
 		}
 
-		return metadata;
+		return defaultMetadata(type);
+	}
+
+	/**
+	 * <p>defaultMetadata.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String defaultMetadata(QName type) {
+		if (type.equals(ContentModel.TYPE_FOLDER)) {
+			return "container";
+		}
+		return entityDictionaryService.toPrefixString(type).split(":")[1];
 	}
 
 	/** {@inheritDoc} */
