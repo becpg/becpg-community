@@ -1439,11 +1439,16 @@ public class ECOServiceImpl implements ECOService {
             for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
                 if (compoItem.getComponent().equals(source)) {
                     if (compoItem instanceof CompoListDataItem compoListDataItem) {
-                        qty += compoListDataItem.getQty();
+                        Double itemQty = compoListDataItem.getQty();
+                        Double itemQtySubFormula = compoListDataItem.getQtySubFormula();
+
+                        if (itemQty != null) {
+                            qty += itemQty;
+                        }
 
                         if (compoItem.getComponent().equals(target)) {
-                        	if (compoListDataItem.getQty() != 0d) {
-                        		densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+                        	if ((itemQty != null) && (itemQty != 0d) && (itemQtySubFormula != null)) {
+                        		densityFactor = itemQtySubFormula / itemQty;
                         	}
                         	
                         	targetUnit = compoListDataItem.getCompoListUnit();
@@ -1473,10 +1478,13 @@ public class ECOServiceImpl implements ECOService {
                 	if (compoItem instanceof PackagingListDataItem packagingListDataItem) {
                 		ProductUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
                 		Double unitFactor = calculateUnitFactor(currentUnit, packagingListUnit);
-                		if (unitFactor != null) {
+                		if ((unitFactor != null) && (packagingListDataItem.getQty() != null)) {
                 			qty += (packagingListDataItem.getQty() * unitFactor);
                 			
                 			targetUnit = packagingListUnit;
+                		} else if (unitFactor != null) {
+                			logger.warn("Packaging line without quantity, left out of the replacement quantity: "
+                					+ packagingListDataItem.getNodeRef());
                 		} else {
                 			logger.warn("Cannot convert a packaging quantity from " + packagingListUnit + " to " + currentUnit
                 					+ ", the line is left out of the replacement quantity: " + packagingListDataItem.getNodeRef());
