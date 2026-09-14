@@ -234,7 +234,8 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 			
 			throw new IllegalStateException(I18NUtil.getMessage("integrity-checker.association-multiplicity-error", sb.toString()));
 		}
-		
+
+		invalidateTplCache(Set.of(nodeService.getType(nodeRef)));
 	}
 	
 	/**
