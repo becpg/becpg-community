@@ -68,6 +68,9 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 		
 		for (NodeRef entityNodeRef : searchResults) {
+			if (!nodeService.exists(entityNodeRef)) {
+				continue;
+			}
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
 
