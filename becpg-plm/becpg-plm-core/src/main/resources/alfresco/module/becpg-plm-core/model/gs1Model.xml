@@ -935,6 +935,18 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="gs1:nutrientBasisQuantityUnit" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>g</value>
+					<value>mL</value>
+					<value>oz</value>
+					<value>cp</value>
+					<value>fl_oz</value>
+				</list>
+			</parameter>
+		</constraint>
 
 	</constraints>
 	<types>
@@ -2927,6 +2939,33 @@
 						<facetable>true</facetable>
 					</index>
                 </property>
+				
+				<property name="gs1:nutrientBasisQuantity">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:nutrientBasisQuantityUnit">
+					<type>d:text</type>
+					<default>g</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:nutrientBasisQuantityUnit" />
+					</constraints>
+				</property>
+				<property name="gs1:nutrientBasisQuantityDescription">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				
 			</properties>
 			<associations>
