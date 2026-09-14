@@ -1528,7 +1528,7 @@ public class ECOServiceImpl implements ECOService {
 			newItem.setNodeRef(null);
 		}
 
-		updateComponent(newItem, target, newQuantity, newLoss);
+		updateComponent(newItem, target, newQuantity, newLoss, newUnit);
 
 		return newItem;
 	}
@@ -1538,10 +1538,14 @@ public class ECOServiceImpl implements ECOService {
 		return (effectiveDate != null) && (effectiveDate.getTime() > now.getTime());
 	}
 
-	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss) {
+	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss, ProductUnit newUnit) {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem compoListDataItem) {
 			compoListDataItem.setQtySubFormula(newQuantity);
+
+			if (newUnit != null) {
+				compoListDataItem.setCompoListUnit(newUnit);
+			}
 		} else {
 			component.setQty(newQuantity);
 		}
