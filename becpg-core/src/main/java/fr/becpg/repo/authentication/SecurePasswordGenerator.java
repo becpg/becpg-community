@@ -82,7 +82,7 @@ public class SecurePasswordGenerator {
 	 */
 	private static String shuffleString(String input) {
 		List<Character> characters = input.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
-		Collections.shuffle(characters);
+		Collections.shuffle(characters, RANDOM);
 		return characters.stream().map(String::valueOf).collect(Collectors.joining());
 	}
 
