@@ -32,6 +32,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>MultiLevelExcelReportSearchPlugin class.</p>
@@ -69,7 +70,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
 		boolean wUsed = false;
@@ -89,13 +90,16 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			depthLevel = "All";
 		}
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 		
 		final int depthLevelNum = "All".equals(depthLevel) ? -1 : Integer.parseInt(depthLevel);
 		
 		final Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache = wUsed ? new HashMap<>() : null;
 
 		for (NodeRef entityNodeRef : searchResults) {
+			if (!nodeService.exists(entityNodeRef)) {
+				continue;
+			}
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
 				Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
@@ -138,7 +142,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param sheet an {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
-	 * @param cache a {@link java.util.Map} object.
+	 * @param cache a {@link fr.becpg.repo.report.search.impl.ExcelExportCache} object.
 	 * @param rownum an int.
 	 * @param key a {@link java.io.Serializable} object.
 	 * @param parentQty a {@link java.lang.Double} object.
@@ -151,12 +155,12 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param wUsedAssocCache a {@link java.util.Map} object
 	 */
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
-			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
+			List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, int rownum,
 			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,
 			Map<String, List<String>> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
-			if (itemType.equals(nodeService.getType(itemNodeRef))) {
+			if (nodeService.exists(itemNodeRef) && itemType.equals(nodeService.getType(itemNodeRef))) {
 				if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 
 					Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);

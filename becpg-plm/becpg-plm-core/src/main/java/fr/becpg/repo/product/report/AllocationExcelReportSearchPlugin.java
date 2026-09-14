@@ -31,6 +31,7 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.AllocationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>AllocationExcelReportSearchPlugin class.</p>
@@ -62,9 +63,9 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 		
 		for (NodeRef entityNodeRef : searchResults) {
 			QName entityType = nodeService.getType(entityNodeRef);
@@ -91,7 +92,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
+			ExcelExportCache cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		if (permissionService.hasPermission(productNodeRef, "Read") == AccessStatus.ALLOWED) {
 

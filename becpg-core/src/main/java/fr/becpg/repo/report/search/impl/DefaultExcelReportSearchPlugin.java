@@ -78,12 +78,12 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
-		
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
+
 		for (NodeRef entityNodeRef : searchResults) {
-			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
+			if (nodeService.exists(entityNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
 					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 					if (key == null) {
@@ -103,7 +103,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, actualType);
 						for (NodeRef itemNodeRef : results) {
-							if (actualType.equals(nodeService.getType(itemNodeRef))) {
+							if (nodeService.exists(itemNodeRef) && actualType.equals(nodeService.getType(itemNodeRef))) {
 								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
 								}
@@ -126,11 +126,11 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
-	 * @param cache a {@link java.util.Map} object.
+	 * @param cache a {@link fr.becpg.repo.report.search.impl.ExcelExportCache} object.
 	 * @return a {@link java.util.Map} object.
 	 */
 	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache) {
+			ExcelExportCache cache) {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
@@ -145,7 +145,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
-	 * @param cache a {@link java.util.Map} object.
+	 * @param cache a {@link fr.becpg.repo.report.search.impl.ExcelExportCache} object.
 	 * @param rownum a int.
 	 * @param key a {@link java.io.Serializable} object.
 	 * @param entityItems a {@link java.util.Map} object.
@@ -154,7 +154,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
 	protected int fillRow(XSSFSheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
-			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
+			List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, int rownum, Serializable key,
 			Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
@@ -205,13 +205,19 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @param properties a {@link java.util.Map} object.
-	 * @param cache a {@link java.util.Map} object.
+	 * @param cache a {@link fr.becpg.repo.report.search.impl.ExcelExportCache} object.
 	 * @return a {@link java.util.Map} object.
 	 */
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
+			Map<QName, Serializable> properties, final ExcelExportCache cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
+		Map<String, Object> cached = cache != null ? cache.get(nodeRef, metadataFields) : null;
+
+		if (cached != null) {
+			return cached;
+		}
+
+		Map<String, Object> result = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
@@ -273,19 +279,25 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					}
 
 					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, List<Map<String, Object>> ret) {
-						if (cache.containsKey(itemNodeRef)) {
-							ret.add(cache.get(itemNodeRef));
-						} else {
-							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								QName itemType = nodeService.getType(itemNodeRef);
-								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-								ret.add(doExtract(itemNodeRef, itemType, field.getChildrens(), properties, cache));
-							}
+
+						Map<String, Object> cached = cache != null ? cache.get(itemNodeRef, field.getChildrens()) : null;
+
+						if (cached != null) {
+							ret.add(cached);
+						} else if (nodeService.exists(itemNodeRef) && permissionService.hasPermission(itemNodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
+							QName itemType = nodeService.getType(itemNodeRef);
+							Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+							ret.add(doExtract(itemNodeRef, itemType, field.getChildrens(), properties, cache));
 						}
 					}
 
 				});
 
+		if (cache != null) {
+			cache.put(nodeRef, metadataFields, result);
+		}
+
+		return result;
 	}
 
 	public class SimpleRepositoryEntity extends BeCPGDataObject {

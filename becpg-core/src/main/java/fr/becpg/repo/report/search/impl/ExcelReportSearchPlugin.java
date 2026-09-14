@@ -1,7 +1,6 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -28,11 +27,11 @@ public interface ExcelReportSearchPlugin {
 	 * @param parameter an array of {@link java.lang.String} objects.
 	 * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object.
 	 * @param metadataFields a {@link java.util.List} object.
-	 * @param cache a {@link java.util.Map} object.
+	 * @param cache a {@link fr.becpg.repo.report.search.impl.ExcelExportCache} object.
 	 * @return a int.
 	 */
 	int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameter,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache);
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache);
 
 	/**
 	 * <p>isDefault.</p>
