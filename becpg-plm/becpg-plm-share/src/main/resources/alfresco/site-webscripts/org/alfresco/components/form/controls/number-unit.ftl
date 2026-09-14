@@ -138,12 +138,12 @@
 		<#assign currUnit="micro_m">
 	 </#if>
       <#elseif currUnit=="ft">
-	 <#assign currValue=field.value* 3.28084 >
+	 <#assign currValue=field.value*0.00328084 >
 	 <#if currValue == 0  >
         <#assign currUnit="ft">
      <#elseif currValue?abs &lt; 1  >
 		<#assign currUnit="in" >
-		<#assign currValue=field.value*39.37008 >
+		<#assign currValue=field.value*0.03937008 >
 	 </#if> 
 	 <#elseif currUnit=="in">
 	 <#assign currValue=field.value/25.4 >
@@ -228,7 +228,8 @@
 
 							var sel = YAHOO.util.Dom.get("${fieldHtmlId}-unit");
 							if (sel == null) {
-								YAHOO.util.Dom.get("${fieldHtmlId}-val").value = YAHOO.util.Dom.get("${fieldHtmlId}").value;
+								YAHOO.util.Dom.get("${fieldHtmlId}-val").value =
+									beCPG.util.convertUnit(YAHOO.util.Dom.get("${fieldHtmlId}").value, "${unit}", "${unit}");
 								return true;
 							}
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = 
