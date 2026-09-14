@@ -9377,15 +9377,14 @@
 
     <config evaluator="model-type" condition="bcpg:regulatoryScoreList">
         <forms>
-            <!-- Create item form -->
+            <!-- Create item form: the formulation computes a score, so only a manual one is worth
+                 a value and a class, and what it writes back has nothing to do on a new row. -->
             <form>
                 <field-visibility>
                     <show id="bcpg:rslScoreDef" />
+                    <show id="bcpg:rslIsManual" />
                     <show id="bcpg:rslValue" />
                     <show id="bcpg:rslClass" />
-                    <show id="bcpg:rslVersion" />
-                    <show id="bcpg:rslComputedDate" />
-                    <show id="bcpg:rslIsManual" />
                 </field-visibility>
 
                 <appearance>
@@ -9393,14 +9392,20 @@
                     <field id="bcpg:rslScoreDef" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
+                    <field id="bcpg:rslIsManual" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl" />
+                        <constraint-handlers>
+                            <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
+                                event="change@[{'prop':'prop_bcpg_rslValue', 'condition' : '|false'},
+                                {'prop':'prop_bcpg_rslClass', 'condition' : '|false'}]" />
+                        </constraint-handlers>
+                    </field>
                     <field id="bcpg:rslValue" set="2-col" />
                     <field id="bcpg:rslClass" set="2-col" />
-                    <field id="bcpg:rslVersion" set="2-col" read-only="true" />
-                    <field id="bcpg:rslComputedDate" set="2-col" read-only="true" />
-                    <field id="bcpg:rslIsManual" set="2-col" />
                 </appearance>
             </form>
-            <!-- Data Grid view -->
+            <!-- Data Grid view: everything the formulation writes is locked, a value typed in the
+                 grid would be overwritten by the next formulation. -->
             <form id="datagrid">
                 <field-visibility>
                     <show id="bcpg:rslScoreDef" />
@@ -9409,15 +9414,55 @@
                     <show id="bcpg:rslClass" />
                     <show id="bcpg:rslVersion" />
                     <show id="bcpg:rslCategory" />
+                    <show id="bcpg:rslIsManual" />
                     <show id="bcpg:regulatoryCountries" />
                     <show id="bcpg:regulatoryUsageRef" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:regulatoryCountries">
+                    <field id="bcpg:rslScoreDef" read-only="true">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsageRef">
+                    <field id="bcpg:rslDetails" read-only="true" />
+                    <field id="bcpg:rslVersion" read-only="true" />
+                    <field id="bcpg:rslCategory" read-only="true" />
+                    <field id="bcpg:regulatoryCountries" read-only="true">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef" read-only="true">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                </appearance>
+            </form>
+            <!-- Data Grid filter -->
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:rslScoreDef" />
+                    <show id="bcpg:rslClass" />
+                    <show id="bcpg:rslCategory" />
+                    <show id="bcpg:rslValue" />
+                    <show id="bcpg:rslComputedDate" />
+                    <show id="bcpg:rslIsManual" />
+                </field-visibility>
+                <appearance>
+                    <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <field id="bcpg:rslScoreDef" set="2-col" read-only="false">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:rslClass" set="2-col" read-only="false" />
+                    <field id="bcpg:rslCategory" set="2-col" read-only="false" />
+                    <field id="bcpg:rslValue" set="2-col" read-only="false">
+                        <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+                            <control-param name="forceEditable">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:rslComputedDate" set="2-col" read-only="false">
+                        <control template="/org/alfresco/components/form/controls/daterange.ftl" />
+                    </field>
+                    <field id="bcpg:rslIsManual" set="2-col" read-only="false">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                            <control-param name="forceEditable">true</control-param>
+                        </control>
                     </field>
                 </appearance>
             </form>
@@ -9429,34 +9474,53 @@
             <!-- Data List pop-up edit form -->
             <form>
                 <field-visibility>
+                    <show id="bcpg:rslDetails" />
                     <show id="bcpg:rslScoreDef" />
                     <show id="bcpg:rslValue" />
                     <show id="bcpg:rslClass" />
-                    <show id="bcpg:rslDetails" />
-                    <show id="bcpg:rslVersion" />
-                    <show id="bcpg:rslComputedDate" />
+                    <show id="bcpg:rslIsManual" />
                     <show id="bcpg:rslPreviousValue" />
                     <show id="bcpg:rslPreviousClass" />
-                    <show id="bcpg:rslIsManual" />
+                    <show id="bcpg:regulatoryCountries" />
+                    <show id="bcpg:regulatoryUsageRef" />
+                    <show id="bcpg:rslVersion" />
+                    <show id="bcpg:rslComputedDate" />
                     <show id="bcpg:rslErrorLog" />
                 </field-visibility>
 
                 <appearance>
-                    <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
-                    <field id="bcpg:rslScoreDef" set="2-col" read-only="true">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-                    </field>
-                    <field id="bcpg:rslValue" set="2-col" />
-                    <field id="bcpg:rslClass" set="2-col" />
-                    <field id="bcpg:rslVersion" set="2-col" read-only="true" />
-                    <field id="bcpg:rslComputedDate" set="2-col" read-only="true" />
-                    <field id="bcpg:rslPreviousValue" set="2-col" read-only="true" />
-                    <field id="bcpg:rslPreviousClass" set="2-col" read-only="true" />
-                    <field id="bcpg:rslIsManual" set="2-col" />
-                    <field id="bcpg:rslErrorLog" set="2-col" read-only="true" />
+                    <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.score.label"
+                        template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set appearance="bordered-panel" id="previous" label-id="becpg.forms.set.score-previous.label"
+                        template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label"
+                        template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set appearance="bordered-panel" id="advanced" label-id="becpg.forms.set.advanced.label"
+                        template="/org/alfresco/components/form/2-column-set.ftl" />
+
                     <field id="bcpg:rslDetails" read-only="true">
                         <control template="/org/alfresco/components/form/controls/score-badge.ftl" />
                     </field>
+                    <field id="bcpg:rslScoreDef" set="mainInfo" read-only="true">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:rslIsManual" set="mainInfo" />
+                    <field id="bcpg:rslValue" set="mainInfo" />
+                    <field id="bcpg:rslClass" set="mainInfo" />
+
+                    <field id="bcpg:rslPreviousValue" set="previous" read-only="true" />
+                    <field id="bcpg:rslPreviousClass" set="previous" read-only="true" />
+
+                    <field id="bcpg:regulatoryCountries" set="regulatory" read-only="true">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef" set="regulatory" read-only="true">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+
+                    <field id="bcpg:rslVersion" set="advanced" read-only="true" />
+                    <field id="bcpg:rslComputedDate" set="advanced" read-only="true" />
+                    <field id="bcpg:rslErrorLog" set="advanced" read-only="true" />
                 </appearance>
             </form>
         </forms>

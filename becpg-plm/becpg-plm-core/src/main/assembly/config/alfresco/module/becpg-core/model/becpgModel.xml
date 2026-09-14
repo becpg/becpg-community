@@ -3115,7 +3115,10 @@
 				</property>
 				<property name="bcpg:rslComputedDate">
 					<type>d:datetime</type>
-					<index enabled="false" />
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:rslPreviousValue">
 					<type>d:double</type>
@@ -3128,7 +3131,10 @@
 				<property name="bcpg:rslIsManual">
 					<type>d:boolean</type>
 					<default>false</default>
-					<index enabled="false" />
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:rslCategory">
 					<type>d:text</type>
