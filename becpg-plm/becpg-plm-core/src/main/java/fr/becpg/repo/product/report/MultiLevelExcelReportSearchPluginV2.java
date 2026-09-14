@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
@@ -176,12 +175,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final String TOKEN_MAX = "Max";
     private static final String TOKEN_ONLY = "Only";
     private static final String TOKEN_ALL = "All";
-    private static final String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
     private static final String ONLY_LEVEL_PREFIX = "OnlyLevel";
     private static final int MAX_RECURSION_DEPTH = 20;
     private static final int DEPTH_UNLIMITED = -1;
     private static final String PERMISSION_READ = "Read";
-    private static final String HEADER_VALUES = "VALUES";
     private static final String KEY_PACKAGING_QTY_FOR_PRODUCT = "prop_bcpg_packagingListQtyForProduct";
     private static final String KEY_COMPO_QTY_FOR_PRODUCT = "prop_bcpg_compoListQtyForProduct";
     private static final String KEY_PROCESS_QTY_FOR_PRODUCT = "prop_bcpg_processListQtyForProduct";
@@ -231,9 +228,20 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         QName pivotAssoc = null;
         String depthLevel;
 
+        if (parameters != null) {
+            for (String p : parameters) {
+                if (p != null) {
+                    if (p.contains(PARAM_PREFIX_WUSED)) {
+                        wUsed = true;
+                    }
+                    if (p.contains(TOKEN_INCLUDE_EMPTY)) {
+                        includeEmpty = true;
+                    }
+                }
+            }
+        }
+
         if (parameter != null) {
-            wUsed = parameter.contains(PARAM_PREFIX_WUSED);
-            includeEmpty = parameter.contains(TOKEN_INCLUDE_EMPTY);
             if (wUsed) {
                 parameter = parameter.replace(PARAM_PREFIX_WUSED, "");
                 pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
