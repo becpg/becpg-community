@@ -26,6 +26,8 @@ public class RegulationFormulationHelperTest {
 
 	private static final String US_REGULATION_KEY = "US";
 
+	private static final String CHLORIDE_NUT_CODE = "CLD";
+
 	private static final String CHOLESTEROL_NUT_CODE = "CHOL-";
 
 	private static final String ADDED_SUGARS_NUT_CODE = "SUGAD";
@@ -74,6 +76,17 @@ public class RegulationFormulationHelperTest {
 	}
 
 	@Test
+	public void testChlorideIsVoluntaryUnderTheEuropeanRegulation() {
+		Element nutListElt = buildNutListElement(CHLORIDE_NUT_CODE, 53d, 26.5d);
+
+		RegulationFormulationHelper.extractXMLAttribute(nutListElt, buildEuropeanRoundedValue(53d, 26.5d), Locale.FRANCE, true, null);
+
+		Assert.assertEquals(NutrientDisplayRule.DISPLAY_MODE_OPTIONAL, nutListElt.attributeValue("regulDisplayMode"));
+		Assert.assertEquals("800.0", nutListElt.attributeValue("regulGDA"));
+		Assert.assertEquals("mg", nutListElt.attributeValue("regulUnit"));
+	}
+
+	@Test
 	public void testUnknownNutrientYieldsAnUndefinedRule() {
 		RegulatedNutrient regulated = extractRegulated("NOT_A_NUT_CODE", 1d, 1d, 1d);
 
@@ -114,6 +127,10 @@ public class RegulationFormulationHelperTest {
 		String roundedValue = buildRoundedValue(value, valuePerServing, valuePerContainer, 300d);
 		return RegulationFormulationHelper.extractRegulatedNutrient(buildNutListItem(value, valuePerServing, roundedValue), nutCode,
 				Locale.US, US_REGULATION_KEY);
+	}
+
+	private String buildEuropeanRoundedValue(Double value, Double valuePerServing) {
+		return "{\"v\":{\"EU\":" + value + "},\"vps\":{\"EU\":" + valuePerServing + "},\"unit\":{\"EU\":\"mg\"}}";
 	}
 
 	private String buildRoundedValue(Double value, Double valuePerServing, Double valuePerContainer, Double gda) {
