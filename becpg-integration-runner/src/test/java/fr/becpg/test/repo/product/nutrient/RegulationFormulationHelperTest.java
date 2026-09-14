@@ -28,6 +28,10 @@ public class RegulationFormulationHelperTest {
 
 	private static final String CHLORIDE_NUT_CODE = "CLD";
 
+	private static final String FLUORIDE_NUT_CODE = "FD";
+
+	private static final String MOLYBDENUM_NUT_CODE = "MO";
+
 	private static final String CHOLESTEROL_NUT_CODE = "CHOL-";
 
 	private static final String ADDED_SUGARS_NUT_CODE = "SUGAD";
@@ -77,13 +81,17 @@ public class RegulationFormulationHelperTest {
 
 	@Test
 	public void testChlorideIsVoluntaryUnderTheEuropeanRegulation() {
-		Element nutListElt = buildNutListElement(CHLORIDE_NUT_CODE, 53d, 26.5d);
+		assertVoluntaryUnderTheEuropeanRegulation(CHLORIDE_NUT_CODE, "800.0", "mg");
+	}
 
-		RegulationFormulationHelper.extractXMLAttribute(nutListElt, buildEuropeanRoundedValue(53d, 26.5d), Locale.FRANCE, true, null);
+	@Test
+	public void testFluorideIsVoluntaryUnderTheEuropeanRegulation() {
+		assertVoluntaryUnderTheEuropeanRegulation(FLUORIDE_NUT_CODE, "3.5", "mg");
+	}
 
-		Assert.assertEquals(NutrientDisplayRule.DISPLAY_MODE_OPTIONAL, nutListElt.attributeValue("regulDisplayMode"));
-		Assert.assertEquals("800.0", nutListElt.attributeValue("regulGDA"));
-		Assert.assertEquals("mg", nutListElt.attributeValue("regulUnit"));
+	@Test
+	public void testMolybdenumIsVoluntaryUnderTheEuropeanRegulation() {
+		assertVoluntaryUnderTheEuropeanRegulation(MOLYBDENUM_NUT_CODE, "50.0", "\u00b5g");
 	}
 
 	@Test
@@ -129,8 +137,19 @@ public class RegulationFormulationHelperTest {
 				Locale.US, US_REGULATION_KEY);
 	}
 
-	private String buildEuropeanRoundedValue(Double value, Double valuePerServing) {
-		return "{\"v\":{\"EU\":" + value + "},\"vps\":{\"EU\":" + valuePerServing + "},\"unit\":{\"EU\":\"mg\"}}";
+	private void assertVoluntaryUnderTheEuropeanRegulation(String nutCode, String expectedGDA, String expectedUnit) {
+		Element nutListElt = buildNutListElement(nutCode, 53d, 26.5d);
+
+		RegulationFormulationHelper.extractXMLAttribute(nutListElt, buildEuropeanRoundedValue(53d, 26.5d, expectedUnit), Locale.FRANCE, true,
+				null);
+
+		Assert.assertEquals(NutrientDisplayRule.DISPLAY_MODE_OPTIONAL, nutListElt.attributeValue("regulDisplayMode"));
+		Assert.assertEquals(expectedGDA, nutListElt.attributeValue("regulGDA"));
+		Assert.assertEquals(expectedUnit, nutListElt.attributeValue("regulUnit"));
+	}
+
+	private String buildEuropeanRoundedValue(Double value, Double valuePerServing, String unit) {
+		return "{\"v\":{\"EU\":" + value + "},\"vps\":{\"EU\":" + valuePerServing + "},\"unit\":{\"EU\":\"" + unit + "\"}}";
 	}
 
 	private String buildRoundedValue(Double value, Double valuePerServing, Double valuePerContainer, Double gda) {
