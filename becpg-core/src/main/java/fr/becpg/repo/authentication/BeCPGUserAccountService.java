@@ -230,7 +230,7 @@ public class BeCPGUserAccountService {
 	private NodeRef createUser(BeCPGUserAccount userAccount) {
 		NodeRef personNodeRef;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Create external user: " + userAccount.getUserName() + " pwd: " + userAccount.getPassword());
+			logger.debug("Create external user: " + userAccount.getUserName());
 		}
 		Map<QName, Serializable> propMap = userAccount.getExtraProps();
 		propMap.put(ContentModel.PROP_USERNAME, userAccount.getUserName());
