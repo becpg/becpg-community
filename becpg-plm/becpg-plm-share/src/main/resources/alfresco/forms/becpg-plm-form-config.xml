@@ -9433,15 +9433,16 @@
                     </field>
                 </appearance>
             </form>
-            <!-- Data Grid filter -->
+            <!-- Data Grid filter: the list is not indexed, so the filter has to stay on what the
+                 database query engine executes. It runs no range (DBFTSRange is unsupported) and
+                 resolves d:boolean, d:float and d:double only when the metadata index patch is
+                 applied, so value, computation date and the manual flag are left out rather than
+                 offered as criteria that would silently return nothing. -->
             <form id="filter">
                 <field-visibility>
                     <show id="bcpg:rslScoreDef" />
                     <show id="bcpg:rslClass" />
                     <show id="bcpg:rslCategory" />
-                    <show id="bcpg:rslValue" />
-                    <show id="bcpg:rslComputedDate" />
-                    <show id="bcpg:rslIsManual" />
                 </field-visibility>
                 <appearance>
                     <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -9450,20 +9451,6 @@
                     </field>
                     <field id="bcpg:rslClass" set="2-col" read-only="false" />
                     <field id="bcpg:rslCategory" set="2-col" read-only="false" />
-                    <field id="bcpg:rslValue" set="2-col" read-only="false">
-                        <control template="/org/alfresco/components/form/controls/numberrange.ftl">
-                            <control-param name="forceEditable">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:rslComputedDate" set="2-col" read-only="false">
-                        <control template="/org/alfresco/components/form/controls/daterange.ftl" />
-                    </field>
-                    <field id="bcpg:rslIsManual" set="2-col" read-only="false">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                            <control-param name="forceEditable">true</control-param>
-                        </control>
-                    </field>
                 </appearance>
             </form>
         </forms>
