@@ -62,9 +62,13 @@
 			<id>alfresco-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
+		<!-- Read over plain https: the registry is publicly readable and the
+		     artifactregistry:// scheme is only understood by the wagon, which breaks
+		     any tool resolving the dependency graph on its own (CodeQL build-mode none).
+		     Deployment still goes through artifactregistry:// in becpg-enterprise. -->
 		<repository>
 			<id>becpg-registry</id>
-			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
+			<url>https://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
