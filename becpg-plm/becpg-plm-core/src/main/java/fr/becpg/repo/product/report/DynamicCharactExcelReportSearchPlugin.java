@@ -46,7 +46,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 		}
 
 		for (NodeRef entityNodeRef : searchResults) {
-			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
+			if (nodeService.exists(entityNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
 					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 					if (key == null) {
