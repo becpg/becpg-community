@@ -223,12 +223,12 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 							ContentModel.TYPE_CONTENT, properties).getChildRef();
 					ContentReader reader = contentService.getReader(document, ContentModel.PROP_CONTENT);
 					ContentWriter writer = contentService.getWriter(documentCopy, ContentModel.PROP_CONTENT, true);
-					nodeService.addAspect(documentCopy, ContentModel.ASPECT_VERSIONABLE, null);
 					writer.setEncoding(reader.getEncoding());
 					writer.setMimetype(reader.getMimetype());
 					nodeService.createAssociation(documentCopy, document, ContentModel.ASSOC_ORIGINAL);
 					associationService.update(documentCopy, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
 					writer.putContent(reader);
+					nodeService.addAspect(documentCopy, ContentModel.ASPECT_VERSIONABLE, null);
 					preparedDocuments.add(documentCopy);
 				} else {
 					preparedDocuments.add(document);
