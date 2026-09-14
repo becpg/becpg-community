@@ -93,28 +93,26 @@ public class BeCPGUserAccountService {
 			propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
 			propMap.putAll(userAccount.getExtraProps());
 
-			boolean userAlreadyExists = personService.personExists(userAccount.getUserName());
-			
-			if (userAlreadyExists) {
+			if (personService.personExists(userAccount.getUserName())) {
 				if (createOnly) {
 					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
 				personNodeRef = updateUser(userAccount, propMap);
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					generatePassword(userAccount.getUserName(), true);
+				} else if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
+					updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
+				}
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					userAccount.setPassword(SecurePasswordGenerator.generatePassword());
+				}
 				personNodeRef = createUser(userAccount, propMap);
-			}
-			
-			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-				updatePassword(userAccount.getUserName(), userAccount.getPassword(), userAlreadyExists && Boolean.TRUE.equals(userAccount.getNotify()));
 			}
 			
 			updateGroups(userAccount);
 
-			if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
-				boolean shouldNotify = !Boolean.FALSE.equals(userAccount.getNotify());
-				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME), shouldNotify);
-			}
 			if (Boolean.TRUE.equals(userAccount.getDisable())) {
 				AuthorityHelper.disableAccount(userAccount.getUserName());
 			} else if (Boolean.FALSE.equals(userAccount.getDisable())) {
@@ -217,7 +215,7 @@ public class BeCPGUserAccountService {
 		setIdsUser(userAccount, userAccount.getUserName(), personNodeRef, false);
 
 		// notify supplier
-		if (Boolean.TRUE.equals(userAccount.getNotify())) {
+		if (Boolean.TRUE.equals(userAccount.getNotify()) || Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
 			beCPGMailService.sendMailNewUser(personNodeRef, userAccount.getUserName(), userAccount.getPassword());
 		}
 		return personNodeRef;
