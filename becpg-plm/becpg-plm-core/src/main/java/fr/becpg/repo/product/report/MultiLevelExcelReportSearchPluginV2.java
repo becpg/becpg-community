@@ -357,17 +357,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
-    private Serializable extractKey(NodeRef entityNodeRef, AttributeExtractorStructure keyColumn) {
-        Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
-        }
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-        }
-        return key;
-    }
-
     private int fillPackagingSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
             ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
