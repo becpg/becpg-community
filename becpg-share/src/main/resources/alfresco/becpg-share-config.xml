@@ -571,5 +571,55 @@
 			
 		</actionGroups>
 	</config>
-	
+
+	<!--
+		Supplier portal: the Share-session endpoint (POST /share/noauth/becpg/portal/session).
+
+		OFF. Nothing below is read while <enabled> is false, and with it false the endpoint
+		answers 404 without building a token decoder, opening a connector or creating a session.
+		A deployment that leaves this block alone behaves exactly as it did before the endpoint
+		existed.
+
+		To switch it on, every value marked REQUIRED must be set: a half-configured feature
+		would mean an empty audience list that checks nothing and an empty address list that
+		allows everyone, so a missing value keeps the endpoint at 404 and logs which keys are
+		missing.
+
+		Every key can also be given as a system property, which then WINS over the value here:
+		  -Dbecpg.portal.session.enabled=true -Dbecpg.portal.session.sharedSecret=...
+		Use that for the secret, so it never has to be shipped inside the war.
+	-->
+	<config evaluator="string-compare" condition="BeCPGPortalSession">
+		<!-- The master switch. Anything other than "true" means off. -->
+		<enabled>false</enabled>
+		<!-- REQUIRED. The token's issuer, and the ONLY trust anchor: the signing keys are read
+		     from this issuer's discovery document, never from the token. Must match the iss
+		     claim exactly, character for character. -->
+		<issuer></issuer>
+		<!-- REQUIRED. Comma separated. At least one must appear in the token's aud claim. On
+		     Keycloak this is the RESOURCE (e.g. inst1-openid), NOT the portal's client id —
+		     the client id is in azp, never in aud. -->
+		<audiences></audiences>
+		<!-- REQUIRED. Comma separated allow list of azp values. This is the real authorization
+		     decision: it is what stops another client of the same realm minting sessions. -->
+		<authorizedParties></authorizedParties>
+		<!-- REQUIRED. The X-beCPG-Portal-Key the portal must present, 32 characters or more.
+		     Prefer -Dbecpg.portal.session.sharedSecret to putting it here. -->
+		<sharedSecret></sharedSecret>
+		<!-- REQUIRED. Comma separated allow list of DIRECT peer addresses. X-Forwarded-For is
+		     deliberately ignored, so list the reverse proxy when there is one. An entry ending
+		     with '.' or ':' is a prefix, e.g. 172.20. for a docker subnet. Empty denies all. -->
+		<allowedAddresses></allowedAddresses>
+		<!-- The claim carrying the username. Same meaning as the AIMS config element. -->
+		<principalAttribute>preferred_username</principalAttribute>
+		<!-- Expected value of the typ CLAIM. Keycloak writes Bearer on access tokens and ID on
+		     id tokens, so this is what stops an id token being traded for a session. -->
+		<tokenType>Bearer</tokenType>
+		<!-- Tolerance on exp and nbf, in seconds. -->
+		<clockSkewSeconds>60</clockSkewSeconds>
+		<!-- Mint budgets, so a leaked secret cannot be used to flood Share or enumerate users. -->
+		<maxMintsPerMinute>60</maxMintsPerMinute>
+		<maxMintsPerMinutePerUser>10</maxMintsPerMinutePerUser>
+	</config>
+
 </alfresco-config>

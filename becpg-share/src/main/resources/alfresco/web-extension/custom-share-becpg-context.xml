@@ -152,8 +152,21 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 		parent="webscript">
 		<property name="configService" ref="web.config" />
 	</bean>
-   
-   
+
+	<!--
+		Supplier portal: trades a verified OIDC access token for a Share session.
+
+		Declaring this bean costs nothing at startup and changes nothing at runtime: the web
+		script reads its configuration on its FIRST request and answers 404 unless
+		becpg.portal.session.enabled is explicitly true. No decoder is built, no connector is
+		used and no session is created while the feature is off.
+	-->
+	<bean id="webscript.org.alfresco.becpg.portal.session.post" class="fr.becpg.web.authentication.PortalSessionPost" parent="webscript">
+		<property name="configService" ref="web.config" />
+		<property name="connectorService" ref="connector.service" />
+	</bean>
+
+
    <!-- Interceptors -->
 
 	<bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
