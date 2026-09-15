@@ -65,6 +65,9 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
           <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
@@ -551,6 +554,12 @@
           </field>   
           <field  help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2282,6 +2291,9 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
@@ -2430,6 +2442,11 @@
           </field>
            <field  id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
            <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2626,6 +2643,9 @@
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="true" id="bcpg:nutrientPreparationQty" />
           <show force="true" id="bcpg:nutrientPreparationReconstituantRef" />
 		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
@@ -3006,6 +3026,11 @@
           </field>
           <field help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
           
          <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
@@ -3572,6 +3597,9 @@
           <show force="false" id="bcpg:numberOfServings"/>
           <show force="false" id="bcpg:nutrientPreparationState"/>
           <show force="false" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:nutrientPreparationQty" />
           <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
