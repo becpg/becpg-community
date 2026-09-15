@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
@@ -74,12 +75,13 @@ public class ExcelExportCache {
 	 * extracted yet.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
 	 * @param fields a {@link java.util.List} object
 	 * @return a {@link java.util.Map} object
 	 */
-	public Map<String, Object> get(NodeRef nodeRef, List<AttributeExtractorStructure> fields) {
+	public Map<String, Object> get(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields) {
 
-		Map<String, Object> extracted = entries.get(key(nodeRef, fields));
+		Map<String, Object> extracted = entries.get(key(nodeRef, itemType, fields));
 
 		return extracted != null ? new HashMap<>(extracted) : null;
 	}
@@ -88,11 +90,12 @@ public class ExcelExportCache {
 	 * <p>Keep the data extracted for the given node with the given fields.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
 	 * @param fields a {@link java.util.List} object
 	 * @param extracted a {@link java.util.Map} object
 	 */
-	public void put(NodeRef nodeRef, List<AttributeExtractorStructure> fields, Map<String, Object> extracted) {
-		entries.put(key(nodeRef, fields), new HashMap<>(extracted));
+	public void put(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields, Map<String, Object> extracted) {
+		entries.put(key(nodeRef, itemType, fields), new HashMap<>(extracted));
 	}
 
 	/**
@@ -118,9 +121,11 @@ public class ExcelExportCache {
 		return cellStyles;
 	}
 
-	private static String key(NodeRef nodeRef, List<AttributeExtractorStructure> fields) {
+	private static String key(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields) {
 
 		StringBuilder key = new StringBuilder(nodeRef.getId());
+
+		key.append('|').append(itemType != null ? itemType.toString() : "");
 
 		for (AttributeExtractorStructure field : fields) {
 			key.append('|').append(field.getStructureKey());

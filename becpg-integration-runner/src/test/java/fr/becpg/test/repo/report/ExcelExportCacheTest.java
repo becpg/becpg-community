@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,6 +41,10 @@ public class ExcelExportCacheTest {
 
 	private static final NodeRef NODE_REF = new NodeRef("workspace://SpacesStore/2b1a5a41-3f21-4a1e-9a5a-413f218a1e00");
 
+	private static final QName RAW_MATERIAL = QName.createQName("http://www.bcpg.fr/model/becpg/1.0", "rawMaterial");
+
+	private static final QName COMPO_LIST = QName.createQName("http://www.bcpg.fr/model/becpg/1.0", "compoList");
+
 	private final AttributeExtractorServiceImpl attributeExtractorService = new AttributeExtractorServiceImpl();
 
 	@Test
@@ -48,9 +53,9 @@ public class ExcelExportCacheTest {
 		ExcelExportCache cache = new ExcelExportCache();
 		List<AttributeExtractorStructure> fields = fields("bcpg:code");
 
-		cache.put(NODE_REF, fields, values("prop_bcpg_code", "MP001"));
+		cache.put(NODE_REF, RAW_MATERIAL, fields, values("prop_bcpg_code", "MP001"));
 
-		Assert.assertEquals("MP001", cache.get(NODE_REF, fields("bcpg:code")).get("prop_bcpg_code"));
+		Assert.assertEquals("MP001", cache.get(NODE_REF, RAW_MATERIAL, fields("bcpg:code")).get("prop_bcpg_code"));
 	}
 
 	@Test
@@ -58,9 +63,9 @@ public class ExcelExportCacheTest {
 
 		ExcelExportCache cache = new ExcelExportCache();
 
-		cache.put(NODE_REF, fields("bcpg:code"), values("prop_bcpg_code", "MP001"));
+		cache.put(NODE_REF, RAW_MATERIAL, fields("bcpg:code"), values("prop_bcpg_code", "MP001"));
 
-		Assert.assertNull("The fields of another column should not be answered with this entry", cache.get(NODE_REF, fields("bcpg:erpCode")));
+		Assert.assertNull("The fields of another column should not be answered with this entry", cache.get(NODE_REF, RAW_MATERIAL, fields("bcpg:erpCode")));
 	}
 
 	@Test
@@ -69,10 +74,21 @@ public class ExcelExportCacheTest {
 		ExcelExportCache cache = new ExcelExportCache();
 		List<AttributeExtractorStructure> fields = fields("bcpg:code");
 
-		cache.put(NODE_REF, fields, values("prop_bcpg_code", "MP001"));
-		cache.get(NODE_REF, fields).put("prop_bcpg_code", "changed by the row");
+		cache.put(NODE_REF, RAW_MATERIAL, fields, values("prop_bcpg_code", "MP001"));
+		cache.get(NODE_REF, RAW_MATERIAL, fields).put("prop_bcpg_code", "changed by the row");
 
-		Assert.assertEquals("MP001", cache.get(NODE_REF, fields).get("prop_bcpg_code"));
+		Assert.assertEquals("MP001", cache.get(NODE_REF, RAW_MATERIAL, fields).get("prop_bcpg_code"));
+	}
+
+	@Test
+	public void testEntryIsNotServedToAnotherType() {
+
+		ExcelExportCache cache = new ExcelExportCache();
+
+		cache.put(NODE_REF, RAW_MATERIAL, fields("bcpg:code"), values("prop_bcpg_code", "MP001"));
+
+		Assert.assertNull("The same node extracted as another type should not be answered with this entry",
+				cache.get(NODE_REF, COMPO_LIST, fields("bcpg:code")));
 	}
 
 	private List<AttributeExtractorStructure> fields(String fieldName) {
