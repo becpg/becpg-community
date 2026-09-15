@@ -179,7 +179,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			NodeRef itemNodeRef = entry.getKey();
 			if (nodeService.exists(itemNodeRef) && itemType.equals(nodeService.getType(itemNodeRef))) {
 				boolean hasPermission = false;
-				Map<String, Object> item = cache != null ? cache.get(itemNodeRef, metadataFields) : null;
+				Map<String, Object> item = cache != null ? cache.get(itemNodeRef, itemType, metadataFields) : null;
 				if (item != null) {
 					hasPermission = true;
 				} else if (permissionService.hasPermission(itemNodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {

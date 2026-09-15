@@ -315,7 +315,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final ExcelExportCache cache) {
 
-		Map<String, Object> cached = cache != null ? cache.get(nodeRef, metadataFields) : null;
+		Map<String, Object> cached = cache != null ? cache.get(nodeRef, itemType, metadataFields) : null;
 
 		if (cached != null) {
 			return cached;
@@ -384,12 +384,17 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, List<Map<String, Object>> ret) {
 
-						Map<String, Object> cached = cache != null ? cache.get(itemNodeRef, field.getChildrens()) : null;
+						if (permissionService.hasPermission(itemNodeRef, PermissionService.READ) != AccessStatus.ALLOWED) {
+							return;
+						}
+
+						QName itemType = nodeService.getType(itemNodeRef);
+
+						Map<String, Object> cached = cache != null ? cache.get(itemNodeRef, itemType, field.getChildrens()) : null;
 
 						if (cached != null) {
 							ret.add(cached);
-						} else if (permissionService.hasPermission(itemNodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
-							QName itemType = nodeService.getType(itemNodeRef);
+						} else {
 							Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 							ret.add(doExtract(itemNodeRef, itemType, field.getChildrens(), properties, cache));
 						}
@@ -398,7 +403,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 				});
 
 		if (cache != null) {
-			cache.put(nodeRef, metadataFields, result);
+			cache.put(nodeRef, itemType, metadataFields, result);
 		}
 
 		return result;

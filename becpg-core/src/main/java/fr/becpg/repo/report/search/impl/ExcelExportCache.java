@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
@@ -32,9 +33,11 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  * <p>Holds what an excel export builds once and reuses on every row of a sheet: the data extracted
  * for a node, and the styles of the workbook.</p>
  *
- * An extraction entry belongs to a node <b>and</b> to the fields it was extracted with: two columns
- * pointing at the same association rarely ask for the same fields, and serving the entry of the
- * first one to the second would leave that second column empty. Entries are copied in and out, so
+ * An extraction entry belongs to a node, to the type it was extracted as <b>and</b> to the fields
+ * it was extracted with: two columns pointing at the same association rarely ask for the same
+ * fields, and serving the entry of the first one to the second would leave that second column
+ * empty. The type matters just as much, as the same node extracted as its entity and as a list
+ * item does not yield the same data. Entries are copied in and out, so
  * that a row completing its own data - with the columns of its entity or the result of its formulas
  * - does not write them into the entry the next rows will read.
  *
@@ -74,12 +77,13 @@ public class ExcelExportCache {
 	 * extracted yet.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
 	 * @param fields a {@link java.util.List} object
 	 * @return a {@link java.util.Map} object
 	 */
-	public Map<String, Object> get(NodeRef nodeRef, List<AttributeExtractorStructure> fields) {
+	public Map<String, Object> get(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields) {
 
-		Map<String, Object> extracted = entries.get(key(nodeRef, fields));
+		Map<String, Object> extracted = entries.get(key(nodeRef, itemType, fields));
 
 		return extracted != null ? new HashMap<>(extracted) : null;
 	}
@@ -88,11 +92,12 @@ public class ExcelExportCache {
 	 * <p>Keep the data extracted for the given node with the given fields.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
 	 * @param fields a {@link java.util.List} object
 	 * @param extracted a {@link java.util.Map} object
 	 */
-	public void put(NodeRef nodeRef, List<AttributeExtractorStructure> fields, Map<String, Object> extracted) {
-		entries.put(key(nodeRef, fields), new HashMap<>(extracted));
+	public void put(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields, Map<String, Object> extracted) {
+		entries.put(key(nodeRef, itemType, fields), new HashMap<>(extracted));
 	}
 
 	/**
@@ -118,9 +123,11 @@ public class ExcelExportCache {
 		return cellStyles;
 	}
 
-	private static String key(NodeRef nodeRef, List<AttributeExtractorStructure> fields) {
+	private static String key(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> fields) {
 
 		StringBuilder key = new StringBuilder(nodeRef.getId());
+
+		key.append('|').append(itemType != null ? itemType.toString() : "");
 
 		for (AttributeExtractorStructure field : fields) {
 			key.append('|').append(field.getStructureKey());
