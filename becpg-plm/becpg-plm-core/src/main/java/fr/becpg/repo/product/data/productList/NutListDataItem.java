@@ -1088,6 +1088,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.regulatoryUsagesRef = new ArrayList<>(n.regulatoryUsagesRef);
 		this.regulatoryMessage = n.regulatoryMessage;
 		this.regulatoryType = n.regulatoryType;
+		this.depthLevel = n.depthLevel;
+		this.parent = n.parent;
 	}
 
 	/** {@inheritDoc} */
