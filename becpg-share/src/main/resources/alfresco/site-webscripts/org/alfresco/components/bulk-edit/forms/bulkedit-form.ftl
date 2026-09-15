@@ -6,7 +6,9 @@
    <@formLib.renderFormsRuntime formId=formId />
 </#if>
 
-<#assign isTabbed = (form.editTemplate?? && (form.editTemplate == "tab-edit" || form.editTemplate?ends_with("tab-edit-form.ftl"))) || (form.createTemplate?? && (form.createTemplate == "tab-edit" || form.createTemplate?ends_with("tab-edit-form.ftl"))) />
+<#-- A bulk edit asks for the fields it was given, so a tabbed template, which lays out the whole
+     type, would show the create form instead of the chosen fields. -->
+<#assign isTabbed = !(fields??) && ((form.editTemplate?? && (form.editTemplate == "tab-edit" || form.editTemplate?ends_with("tab-edit-form.ftl"))) || (form.createTemplate?? && (form.createTemplate == "tab-edit" || form.createTemplate?ends_with("tab-edit-form.ftl")))) />
 
 
 <div id="${el}-dialog">

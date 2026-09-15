@@ -167,6 +167,7 @@
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 		<property name="preferenceService" ref="preferenceService" />
+		<property name="securityService" ref="securityService" />
 		<property name="defaultExtractor" value="false" />
 	</bean>
 
@@ -366,6 +367,12 @@
 				</entry>
 				<entry key="batchQueueService">
 					<ref bean="batchQueueService" />
+				</entry>
+				<entry key="transactionService">
+					<ref bean="transactionService" />
+				</entry>
+				<entry key="policyBehaviourFilter">
+					<ref bean="policyBehaviourFilter" />
 				</entry>
 			</map>
 		</property>

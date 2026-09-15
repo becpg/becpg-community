@@ -79,7 +79,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	private static final Log logger = LogFactory.getLog(BeCPGJSONConversionComponent.class);
 
 	/** Registered decorators */
-	protected final Map<QName, AssociationDecorator> associationDecorators = new HashMap<>(3);
+	protected final Map<QName, AssociationDecorator> associationDecorators = HashMap.newHashMap(3);
 
 	/**
 	 * Register a property decorator;

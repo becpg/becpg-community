@@ -8,6 +8,8 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
+import fr.becpg.repo.regulatory.AbstractRegulatoryService;
+import fr.becpg.repo.regulatory.IngredientRegulatoryCodes;
 import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -183,7 +185,7 @@ public class ProductDataDecernisJsonService {
 	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
 	/** Constant <code>FOOD_ADDITIVES="FOOD_ADDITIVES"</code> */
 	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
-	
+
     static {
     	moduleToCodeMap.put(FOOD_ADDITIVES, "ADD");
 		moduleToCodeMap.put(STANDARDS_OF_IDENTITY_FOOD, "SOI");
@@ -213,7 +215,7 @@ public class ProductDataDecernisJsonService {
      * @return a boolean
      */
     private boolean isRIDValid(String rid) {
-        return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(DecernisRegulatoryService.UNKNOWN);
+        return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(AbstractRegulatoryService.UNKNOWN);
     }
 
     /**
@@ -342,7 +344,7 @@ public class ProductDataDecernisJsonService {
 
         for (IngListDataItem ingListDataItem : context.getIngList()) {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-            String rid = ingItem.getRegulatoryCode();
+            String rid = extractRid(ingItem);
             if (isRIDValid(rid)) {
                 String ingName = RegulatoryHelper.extractIngName(ingItem);
                 JSONObject ingredient = new JSONObject();
@@ -385,6 +387,16 @@ public class ProductDataDecernisJsonService {
             return payload;
         }
         return null;
+    }
+
+    /**
+     * The Decernis id of an ingredient, read from its {@code bcpg:regulatoryCode}.
+     *
+     * @param ingItem the ingredient charact
+     * @return the id without prefix, null when the ingredient carries none
+     */
+    public static String extractRid(IngItem ingItem) {
+        return IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode()).decernisId().orElse(null);
     }
 
     public List<RequirementListDataItem> recipeAnalysisParseResults(RegulatoryContext context, RegulatoryBatch checkContext,
@@ -591,7 +603,7 @@ public class ProductDataDecernisJsonService {
     }
 
     public Optional<JSONObject> buildIngredientJsonById(IngListDataItem ingListDataItem, IngItem ingItem, String function) {
-        String rid = ingItem.getRegulatoryCode();
+        String rid = extractRid(ingItem);
         if (isRIDValid(rid)) {
             String ingName = RegulatoryHelper.extractIngName(ingItem);
             Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
@@ -744,7 +756,7 @@ public class ProductDataDecernisJsonService {
         reqCtrlItem.addSource(ing);
         reqCtrlItem.setReqDataType(RequirementDataType.Specification);
         reqCtrlItem.setReqMlMessage(reqCtrlMessage);
-        reqCtrlItem.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+        reqCtrlItem.setFormulationChainId(AbstractRegulatoryService.REGULATORY_KEY);
         return reqCtrlItem;
     }
 

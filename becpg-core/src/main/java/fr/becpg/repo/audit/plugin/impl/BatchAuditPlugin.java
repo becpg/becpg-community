@@ -26,8 +26,6 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	public static final String TOTAL_ITEMS = "totalItems";
 	/** Constant <code>TOTAL_ERRORS="totalErrors"</code> */
 	public static final String TOTAL_ERRORS = "totalErrors";
-	/** Constant <code>IS_COMPLETED="isCompleted"</code> */
-	public static final String IS_COMPLETED = "isCompleted";
 	/** Constant <code>BATCH_USER="batchUser"</code> */
 	public static final String BATCH_USER = "batchUser";
 	/** Constant <code>BATCH_ID="batchId"</code> */

@@ -352,6 +352,379 @@
 								scope: this
 							}
 						});
+
+				}
+			});
+
+	YAHOO.Bubbling
+		.fire(
+			"registerToolbarButtonAction",
+			{
+				actionName: "qa-batch-scan",
+				hideLabel: true,
+				evaluate: function(asset, entity) {
+					return asset.name != null && asset.name == "batchAllocationList" && entity != null && entity.type == "qa:batch" && entity.userAccess && entity.userAccess.edit && (!entity.aspects || entity.aspects.indexOf("bcpg:archivedEntityAspect") === -1);
+				},
+				fn: function(instance) {
+					var me = this;
+					var dialogId = me.id + "-scanDialog";
+					
+					var showScanDialog = function() {
+						var lastScannedCode = "";
+						var actionUrl = Alfresco.constants.PROXY_URI + "becpg/quality/scan-batch?nodeRef=" + me.options.entityNodeRef;
+						var templateUrl = YAHOO.lang
+							.substitute(
+								Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=scan&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true&bulkEdit=true&submissionUrl={submissionUrl}",
+								{
+									itemId: me.options.entityNodeRef,
+									submissionUrl: encodeURIComponent(actionUrl)
+								});
+
+						var scanDialog = new Alfresco.module.SimpleDialog(dialogId);
+						scanDialog.setOptions({
+							width: "33em",
+							templateUrl: templateUrl,
+							actionUrl: actionUrl,
+							destroyOnHide: true,
+							firstFocus: dialogId + "_prop_qa_batchScannerInput",
+							doBeforeDialogShow: {
+								fn: function(p_form, p_dialog) {
+									Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", me.msg("button.qa-batch-scan")]);
+									
+									// Explicitly set form action to our dedicated webscript
+									var formEl = Dom.get(p_dialog.id + "-form");
+									if (formEl) {
+										var actionUrl = Alfresco.constants.PROXY_URI + "becpg/quality/scan-batch?nodeRef=" + me.options.entityNodeRef;
+										formEl.action = actionUrl;
+										formEl.setAttribute("action", actionUrl);
+									}
+
+									// Set the dialog submit button label to "Scanner" instead of "Save"
+									var okBtn = p_dialog.widgets.okButton;
+									if (okBtn) {
+										okBtn.set("label", me.msg("button.qa-batch-scan"));
+									}
+
+									var scanAttempts = 0;
+									var bindListeners = function() {
+										var inputEl = Dom.get(p_dialog.id + "_prop_qa_batchScannerInput");
+										if (inputEl) {
+											inputEl.value = "";
+											inputEl.focus();
+										} else if (++scanAttempts < 20) {
+											setTimeout(bindListeners, 50);
+										}
+									};
+
+									bindListeners();
+									
+									var bulkActionCheck = Dom.get(p_dialog.id + "-form-bulkAction");
+									if (!bulkActionCheck) {
+										var submitBtn = Dom.get(p_dialog.id + "-form-submit");
+										if (submitBtn) {
+											var parentEl = submitBtn.parentNode;
+											var checkContainer = document.createElement("span");
+											checkContainer.style.marginRight = "10px";
+											checkContainer.innerHTML = '<input id="' + p_dialog.id + '-form-bulkAction" name="-" type="checkbox" checked="checked">&nbsp;<span id="' + p_dialog.id + '-form-bulkAction-msg" style="vertical-align: middle;">' + me.msg("label.qa-batch-scan-multiple") + '</span>';
+											parentEl.insertBefore(checkContainer, submitBtn);
+										}
+									} else {
+										bulkActionCheck.checked = true;
+										var bulkActionMsg = Dom.get(p_dialog.id + "-form-bulkAction-msg");
+										if (bulkActionMsg) {
+											bulkActionMsg.innerHTML = me.msg("label.qa-batch-scan-multiple");
+										}
+									}
+								},
+								scope: me
+							},
+							doBeforeFormSubmit: {
+								fn: function(form, obj) {
+									var inputEl = Dom.get(dialogId + "_prop_qa_batchScannerInput");
+									if (inputEl) {
+										lastScannedCode = inputEl.value;
+									}
+								},
+								scope: me
+							},
+							onFailure: {
+								fn: function(response) {
+									var bulkActionCheck = Dom.get(dialogId + "-form-bulkAction");
+									var multipleChecked = bulkActionCheck ? bulkActionCheck.checked : true;
+									var inputEl = Dom.get(dialogId + "_prop_qa_batchScannerInput");
+									var scannedCode = (inputEl && inputEl.value) ? inputEl.value : lastScannedCode;
+									var errorMsgKey = "message.qa-batch-scan.malformed";
+									var rawText = "";
+									if (response) {
+										if (response.json && response.json.message) {
+											rawText = response.json.message;
+										} else if (response.serverResponse) {
+											rawText = response.serverResponse;
+										}
+									}
+									if (rawText) {
+										try {
+											var parsed = YAHOO.lang.JSON.parse(rawText);
+											if (parsed && parsed.message) {
+												rawText = parsed.message;
+											}
+										} catch (e) {
+											// Not a JSON string
+										}
+										var idx = rawText.lastIndexOf("(");
+										var lastIdx = rawText.lastIndexOf(")");
+										if (idx !== -1 && lastIdx > idx) {
+											rawText = rawText.substring(idx + 1, lastIdx);
+										}
+										errorMsgKey = rawText;
+									}
+									var errorMsg = me.msg(errorMsgKey);
+									if (errorMsg === errorMsgKey) {
+										errorMsg = errorMsgKey;
+									}
+									if (scannedCode) {
+										errorMsg += " : " + scannedCode;
+									}
+									if (inputEl) {
+										inputEl.focus();
+										inputEl.select();
+									}
+									var okBtnLabel = me.msg("button.ok");
+									if (okBtnLabel === "button.ok") {
+										okBtnLabel = "OK";
+									}
+									Alfresco.util.PopupManager.displayPrompt({
+										title: me.msg("title.qa-batch-scan-error"),
+										text: errorMsg,
+										buttons: [{
+											text: okBtnLabel,
+											handler: function() {
+												this.destroy();
+												if (multipleChecked) {
+													setTimeout(showScanDialog, 150);
+												}
+											},
+											isDefault: true
+										}]
+									});
+								},
+								scope: me
+							},
+							onSuccess: {
+								fn: function(response) {
+									var result = response.json;
+									if (!result && response.serverResponse) {
+										try {
+											result = YAHOO.lang.JSON.parse(response.serverResponse);
+										} catch (e) {
+											// Not JSON
+										}
+									}
+									if (result && result.status === "found") {
+										Alfresco.util.PopupManager.displayMessage({
+											text: me.msg("message.qa-batch-scan.success")
+										});
+										YAHOO.Bubbling.fire("refreshDataGrids", {
+											clearCache: true,
+											cacheTimeStamp: (new Date()).getTime()
+										});
+										var bulkActionCheck = Dom.get(dialogId + "-form-bulkAction");
+										if (bulkActionCheck && bulkActionCheck.checked) {
+											setTimeout(showScanDialog, 150);
+										}
+									} else if (result && result.status === "lot_not_found" && result.allocationNodeRef) {
+										var bulkActionCheck = Dom.get(dialogId + "-form-bulkAction");
+										var multipleChecked = bulkActionCheck ? bulkActionCheck.checked : true;
+
+										setTimeout(function() {
+											var promptDialogId = me.id + "-lotPromptDialog";
+											var lotPromptDialog = new Alfresco.module.SimpleDialog(promptDialogId);
+											var promptTemplateUrl = YAHOO.lang.substitute(
+												Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&formId=batchScan&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true&list=batchAllocationList&siteId={siteId}",
+												{
+													itemId: result.allocationNodeRef,
+													entityNodeRef: me.options.entityNodeRef,
+													entityType: me.entity != null ? encodeURIComponent(me.entity.type) : "qa:batch",
+													siteId: me.options.siteId
+												});
+
+											lotPromptDialog.setOptions({
+												width: "33em",
+												templateUrl: promptTemplateUrl,
+												actionUrl: null,
+												destroyOnHide: true,
+												doBeforeDialogShow: {
+													fn: function(p_form, p_dialog) {
+														Alfresco.util.populateHTML(
+															[promptDialogId + "-dialogTitle", me.msg("message.qa-batch-scan.prompt_lot_title")]
+														);
+
+														if (result.stockNodeRef) {
+															var assocFieldId = promptDialogId + "_assoc_qa_batchAllocationStockRefs";
+															var assocAttempts = 0;
+															var populateAssoc = function() {
+																var addedInput = Dom.get(assocFieldId + "-cntrl-added");
+																if (addedInput) {
+																	addedInput.value = result.stockNodeRef;
+																	YAHOO.Bubbling.fire(assocFieldId + "refreshContent", result.stockNodeRef, this);
+																} else if (++assocAttempts < 20) {
+																	setTimeout(populateAssoc, 50);
+																}
+															};
+															populateAssoc();
+														}
+													},
+													scope: me
+												},
+												doBeforeFormSubmit: {
+													fn: function(form, obj) {
+														if (result.stockNodeRef) {
+															var assocControlId = promptDialogId + "_assoc_qa_batchAllocationStockRefs-cntrl";
+															var addedInput = Dom.get(assocControlId + "-added");
+															var basket = Dom.get(assocControlId + "-basket");
+															if (addedInput && (!addedInput.value || addedInput.value === "")) {
+																if (basket && basket.innerHTML && basket.innerHTML.indexOf("ac-m-selected") !== -1) {
+																	addedInput.value = result.stockNodeRef;
+																}
+															}
+														}
+													},
+													scope: me
+												},
+												onSuccess: {
+													fn: function(response) {
+														var nodeRef = response.json ? response.json.persistedObject : null;
+														if (nodeRef) {
+															YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+																nodeRef: nodeRef
+															});
+														}
+														Alfresco.util.PopupManager.displayMessage({
+															text: me.msg("message.qa-batch-scan.success")
+														});
+														YAHOO.Bubbling.fire("refreshDataGrids", {
+															clearCache: true,
+															cacheTimeStamp: (new Date()).getTime()
+														});
+														if (multipleChecked) {
+															setTimeout(showScanDialog, 150);
+														}
+													},
+													scope: me
+												},
+												onFailure: {
+													fn: function(response) {
+														Alfresco.util.PopupManager.displayMessage({
+															text: me.msg("message.details.failure")
+														});
+														if (multipleChecked) {
+															setTimeout(showScanDialog, 150);
+														}
+													},
+													scope: me
+												}
+											});
+
+											lotPromptDialog.show();
+										}, 150);
+									} else {
+										var bulkActionCheck = Dom.get(dialogId + "-form-bulkAction");
+										var multipleChecked = bulkActionCheck ? bulkActionCheck.checked : true;
+										var inputEl = Dom.get(dialogId + "_prop_qa_batchScannerInput");
+										var scannedCode = (inputEl && inputEl.value) ? inputEl.value : lastScannedCode;
+										if (!scannedCode) {
+											if (result && result.codeErp && result.batchId) {
+												scannedCode = result.codeErp + " - " + result.batchId;
+											} else if (result && result.codeErp) {
+												scannedCode = result.codeErp;
+											}
+										}
+										var status = (result && result.status) ? result.status : "malformed";
+										var errorMsgKey = "message.qa-batch-scan." + status;
+										var errorMsg = me.msg(errorMsgKey);
+										if (errorMsg === errorMsgKey) {
+											errorMsg = (result && result.message) ? result.message : "Error";
+										}
+										if (scannedCode) {
+											errorMsg += " : " + scannedCode;
+										}
+										var okBtnLabel = me.msg("button.ok");
+										if (okBtnLabel === "button.ok") {
+											okBtnLabel = "OK";
+										}
+										Alfresco.util.PopupManager.displayPrompt({
+											title: me.msg("title.qa-batch-scan-error"),
+											text: errorMsg,
+											buttons: [{
+												text: okBtnLabel,
+												handler: function() {
+													this.destroy();
+													if (multipleChecked) {
+														setTimeout(showScanDialog, 150);
+													}
+												},
+												isDefault: true
+											}]
+										});
+									}
+								},
+								scope: me
+							}
+						});
+
+						scanDialog.show();
+					};
+
+					showScanDialog();
+				}
+			});
+
+	YAHOO.Bubbling
+		.fire(
+			"registerToolbarButtonAction",
+			{
+				actionName: "qa-batch-execute",
+				hideLabel: true,
+				evaluate: function(asset, entity) {
+					return asset.name != null && asset.name == "batchAllocationList" && entity != null && entity.type == "qa:batch" && entity.userAccess && entity.userAccess.edit && (!entity.aspects || entity.aspects.indexOf("bcpg:archivedEntityAspect") === -1);
+				},
+				fn: function(instance) {
+					var me = this;
+					Alfresco.util.PopupManager.displayMessage({
+						text: this.msg("message.formulate.please-wait")
+					});
+
+					Alfresco.util.Ajax.request({
+						method: Alfresco.util.Ajax.POST,
+						url: Alfresco.constants.PROXY_URI + "becpg/quality/execute-batch?nodeRef=" + this.options.entityNodeRef,
+						successCallback: {
+							fn: function(response) {
+								Alfresco.util.PopupManager.displayMessage({
+									text: me.msg("message.formulate.success")
+								});
+								YAHOO.Bubbling.fire("refreshDataGrids", {
+									clearCache: true,
+									cacheTimeStamp: (new Date()).getTime()
+								});
+							},
+							scope: this
+						},
+						failureCallback: {
+							fn: function(response) {
+								if (response.json && response.json.message) {
+									Alfresco.util.PopupManager.displayPrompt({
+										title: me.msg("message.formulate.failure"),
+										text: response.json.message
+									});
+								} else {
+									Alfresco.util.PopupManager.displayMessage({
+										text: me.msg("message.formulate.failure")
+									});
+								}
+							},
+							scope: this
+						}
+					});
 				}
 			});
 

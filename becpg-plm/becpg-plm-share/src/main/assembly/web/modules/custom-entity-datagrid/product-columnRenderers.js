@@ -461,6 +461,127 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+    /** Value of a property of the row, null when the datagrid did not extract it. */
+    function scoreRowProp(oRecord, name) {
+        var itemData = oRecord.getData("itemData");
+        return itemData && itemData[name] ? itemData[name].value : null;
+    }
+
+    /** Property of the definition the score points to, null when it is not extracted. */
+    function scoreDefProp(oRecord, name) {
+        var itemData = oRecord.getData("itemData");
+        var target = itemData ? itemData["dt_bcpg_rslScoreDef"] : null;
+        if (!target || !target[0] || !target[0]["itemData"] || !target[0]["itemData"][name]) {
+            return null;
+        }
+        return target[0]["itemData"][name].value;
+    }
+
+    /**
+     * A score entered by hand carries no breakdown: its badge is rebuilt from the verdict
+     * of the row and the scale of its definition, otherwise the cell would stay empty.
+     */
+    function scoreDetailsOrVerdict(oRecord, data) {
+        var details = beCPG.util.score.parseDetails(data ? data.value : null);
+        if (details) {
+            return details;
+        }
+
+        var scoreClass = scoreRowProp(oRecord, "prop_bcpg_rslClass");
+        var value = scoreRowProp(oRecord, "prop_bcpg_rslValue");
+        if ((scoreClass === null || scoreClass === "") && (value === null || value === "")) {
+            return null;
+        }
+
+        return {
+            code: scoreDefProp(oRecord, "prop_bcpg_scoreDefCode"),
+            scale: scoreDefProp(oRecord, "prop_bcpg_scoreDefScale"),
+            unit: scoreDefProp(oRecord, "prop_bcpg_scoreDefUnit"),
+            "class": scoreClass,
+            value: value,
+            parts: []
+        };
+    }
+
+    // Generic score of the score framework: the rendering is driven by the scale carried
+    // by the normalized detail, so a new score needs no renderer of its own.
+    // Score column of the score list: a mark and its axes read as a tree, like the composition
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslScoreDef"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+            var itemData = oRecord.getData("itemData");
+            var depth = itemData && itemData["prop_bcpg_depthLevel"] ? itemData["prop_bcpg_depthLevel"].value : 0;
+            var padding = depth * 25;
+            var tr = scope.widgets.dataTable.getTrEl(elCell);
+            var toggle = "";
+
+            if (depth) {
+                Dom.addClass(tr, "mtl-level-" + depth);
+            }
+
+            if (false === itemData["isLeaf"]) {
+                var open = itemData["open"];
+                toggle = '<div id="group_' + (open ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef")
+                    + '" style="margin-left:' + padding + 'px;" class="onCollapsedAndExpanded">'
+                    + '<a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+                    + (open ? "expanded" : "collapsed") + '"></span></a></div>';
+                Dom.addClass(tr, "mtl-" + (open ? "expanded" : "collapsed"));
+            } else if (true === itemData["isLeaf"]) {
+                // a score standing on its own is not a leaf of anything, it stays flush left
+                if (depth) {
+                    padding += 25;
+                }
+                Dom.addClass(tr, "mtl-leaf");
+            }
+
+            return toggle + '<span style="margin-left:' + padding + 'px;">'
+                + Alfresco.util.encodeHTML(data.displayValue) + "</span>";
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslDetails"],
+        renderer: function(oRecord, data, label, scope) {
+            if (!beCPG.util.score) {
+                return "";
+            }
+
+            var details = scoreDetailsOrVerdict(oRecord, data);
+            if (!details) {
+                return "";
+            }
+
+            var badge = beCPG.util.score.renderBadge(details, scope);
+
+            // the error log has no column of its own, it shows as the warning pictogram
+            var error = scoreRowProp(oRecord, "prop_bcpg_rslErrorLog");
+            if (error) {
+                badge = '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">' + badge + "</span>";
+            }
+
+            return '<div class="score-badge-cell">' + badge + "</div>";
+        }
+    });
+
+    // Logos of a score: the row carries the image, the class alone would say little.
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:sblClass"],
+        renderer: function(oRecord, data, label, scope) {
+            var nodeRef = oRecord.getData("nodeRef");
+            var verdict = Alfresco.util.encodeHTML(data && data.value ? data.value.toString() : "");
+
+            if (!nodeRef) {
+                return verdict;
+            }
+
+            // the file name is not extracted by the grid, the content endpoint does without it
+            var url = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/content/" + nodeRef.replace(":/", "");
+
+            return '<span class="score-badge"><img class="score-badge-img" src="' + url + '" alt="' + verdict
+                + '" onerror="this.style.display=\'none\';" /></span> ' + verdict;
+        }
+    });
+
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources", "bcpg:irlIng", "bcpg:irlSources"],
         renderer: function(oRecord, data, label, scope) {
@@ -691,13 +812,50 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:productState", "bcpg:supplierState", "bcpg:clientState", "bcpg:documentState",
-            "bcpg:productCollectionState", "qa:batchState", "qa:ncState", "qa:qcState"],
+            "bcpg:productCollectionState", "ecm:ecoState", "qa:batchState", "qa:ncState", "qa:qcState"],
         renderer: function(oRecord, data, label, scope) {
             if (data.value != null && data.value !== "") {
                 return '<span class="product-state entity-' + data.value + '">'
                     + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+    // Packaging components carry their hierarchy on a free-text column, so none of the
+    // association renderers above applies and the rows used to be drawn flat even though
+    // the level and the parent were stored (#34468).
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pack:pclComponent", "pack:splComponent"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+
+            var padding = 0;
+            var toogleGroupButton = null;
+            var tr = scope.widgets.dataTable.getTrEl(elCell);
+            var depthLevel = oRecord.getData("itemData")["prop_bcpg_depthLevel"];
+
+            if (depthLevel && depthLevel.value) {
+                padding = (depthLevel.value - 1) * 25;
+
+                Dom.addClass(tr, "mtl-level-" + depthLevel.value);
+            }
+
+            if (false === oRecord.getData("itemData")["isLeaf"]) {
+                toogleGroupButton = '<div id="group_' + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef") + '" style="margin-left:' + padding
+                    + 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+                    + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '"></span></a></div>';
+                Dom.addClass(tr, "mtl-" + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed"));
+
+            } else if (true === oRecord.getData("itemData")["isLeaf"]) {
+                padding += 25;
+
+                Dom.addClass(tr, "mtl-leaf");
+            }
+
+            return (toogleGroupButton != null ? toogleGroupButton : '') + '<span class="' + (data.metadata || "") + '" '
+                + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
         }
 
     });
@@ -2435,6 +2593,23 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
             return Alfresco.util.encodeHTML(data.displayValue);
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: "qa:batchAllocationStockRefs",
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var itemData = oRecord.getData("itemData");
+            var elTr = scope.widgets.dataTable.getTrEl(elCell);
+            var stockRefs = itemData["assoc_qa_batchAllocationStockRefs"];
+            if (stockRefs && stockRefs.length > 0) {
+                Dom.setStyle(elTr, "opacity", "0.6");
+                Dom.setStyle(elTr, "background-color", "#f5f5f5");
+            } else {
+                Dom.setStyle(elTr, "opacity", "");
+                Dom.setStyle(elTr, "background-color", "");
+            }
+            return data ? Alfresco.util.encodeHTML(data.displayValue) : "";
         }
     });
 

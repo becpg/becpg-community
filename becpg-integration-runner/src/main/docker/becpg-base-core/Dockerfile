@@ -28,7 +28,8 @@ RUN dnf update -y && dnf clean all && \
 COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml 
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 
-RUN rm -rf $TOMCAT_DIR/amps/* && \
+RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default list above.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\n' >> $TOMCAT_DIR/conf/catalina.properties && \
+    rm -rf $TOMCAT_DIR/amps/* && \
     mkdir -p ${TOMCAT_DIR}/data && \
     rm -rf $TOMCAT_DIR/alf_data && \
     \

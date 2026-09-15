@@ -97,6 +97,21 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	private static final Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
+	/** The tracker polls the repository every 10s, so a node is never searchable straight away. */
+	private static final long SOLR_POLL_INTERVAL_MS = 500;
+
+	/** A class churning thousands of nodes leaves a backlog the tracker has to drain first. */
+	private static final long SOLR_TIMEOUT_MS = 240_000;
+
+	/** How often a batch is polled while it runs. */
+	private static final long BATCH_POLL_INTERVAL_MS = 500;
+
+	/** How long a batch is given to run to its end. */
+	private static final long BATCH_TIMEOUT_MS = 300_000;
+
+	/** How long the queue is given to let go of a batch that has completed. */
+	private static final long BATCH_RELEASE_TIMEOUT_MS = 30_000;
+
 	private Map<String, NodeRef> testFolders = new HashMap<>();
 
 	@Rule
@@ -340,6 +355,14 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		super.tearDown();
 	}
 	
+	/**
+	 * Blocks until a marker node created here is searchable, which means the tracker has caught up
+	 * with everything this test committed. Transactions are indexed in order, so the wait also
+	 * covers the backlog left behind by the classes that ran before.
+	 *
+	 * Each probe runs in its own short transaction: holding one open for the whole wait would keep
+	 * a database connection busy for minutes and slow down the very tracker being waited for.
+	 */
 	public void waitForSolr() {
 
 		Date startTime = new Date();
@@ -356,46 +379,104 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		});
 
-		inReadTx(() -> {
-			int j = 0;
-			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
-					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
-					&& (j < 30)) {
+		long waitStart = System.currentTimeMillis();
+		long waited = 0;
 
-				logger.info("Wait for solr (2s) : serverIdx retry *" + j);
-				Thread.sleep(2000);
-				j++;
-			}
-			
-			if(j == 30) {
-				Assert.fail("Solr is taking too long!");
-			}
+		while (!inReadTx(() -> isMarkerIndexed(startTime)) && (waited < SOLR_TIMEOUT_MS)) {
+			sleepQuietly(SOLR_POLL_INTERVAL_MS);
+			waited = System.currentTimeMillis() - waitStart;
+		}
 
-			return null;
+		if (waited >= SOLR_TIMEOUT_MS) {
+			Assert.fail("Solr is taking too long! Waited " + (waited / 1000) + "s for the tracker to index the marker node - "
+					+ "the tracker is most likely still draining the backlog of the previous test class");
+		}
 
-		});
+		logger.info("Waited " + waited + "ms for solr");
 
+	}
+
+	private void sleepQuietly(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException("Interrupted while waiting", e);
+		}
+	}
+
+	/**
+	 * Blocks until the queue holds nothing any more. A test that stops on a failed assertion leaves
+	 * its batch behind, and the next test would then be reading a queue it did not fill.
+	 */
+	protected void waitForBatchQueueToDrain() {
+
+		long waitStart = System.currentTimeMillis();
+
+		while (((System.currentTimeMillis() - waitStart) < BATCH_TIMEOUT_MS)
+				&& (!batchQueueService.getBatchesInQueue().isEmpty() || (batchQueueService.getRunningBatchInfo() != null))) {
+			logger.info("Wait for the batch queue to drain, running batch: " + batchQueueService.getRunningBatchInfo());
+			sleepQuietly(BATCH_POLL_INTERVAL_MS);
+		}
+	}
+
+	/**
+	 * Blocks until the queue no longer holds a batch under the given identifier, whoever queued it.
+	 * The scheduled jobs keep running while the campaign does, so an identifier a test is about to
+	 * use may still be busy with a run of its own.
+	 *
+	 * @param batchInfo names the batch to wait for, by its identifier and priority
+	 */
+	protected void waitForBatchQueueToRelease(BatchInfo batchInfo) {
+
+		long waitStart = System.currentTimeMillis();
+
+		while (batchQueueService.isBatchInQueue(batchInfo) && ((System.currentTimeMillis() - waitStart) < BATCH_TIMEOUT_MS)) {
+			logger.info("Wait for the queue to release batch: " + batchInfo.getBatchId());
+			sleepQuietly(BATCH_POLL_INTERVAL_MS);
+		}
+	}
+
+	private boolean isMarkerIndexed(Date startTime) {
+		return BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
+				.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage()
+				.singleValue() != null;
 	}
 	
 
+	/**
+	 * Blocks until the batch has run to its end and the queue has let go of it. A batch the queue
+	 * still holds keeps its identifier busy, so leaving before that turns into a failure of the
+	 * next test rather than of this one.
+	 *
+	 * @param batch the batch to wait for
+	 * @throws java.lang.InterruptedException if the wait is interrupted
+	 */
 	public void waitForBatchEnd(BatchInfo batch) throws InterruptedException {
-		int j = 0;
-		
-		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
-			logger.info("Wait for batch: "+ batch.getBatchId() + ", progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
-			Thread.sleep(5000);
-			j++;
+
+		long waited = 0;
+
+		while (!Boolean.TRUE.equals(batch.getIsCompleted()) && (waited < BATCH_TIMEOUT_MS)) {
+			logger.info("Wait for batch: " + batch.getBatchId() + ", progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
+			Thread.sleep(BATCH_POLL_INTERVAL_MS);
+			waited += BATCH_POLL_INTERVAL_MS;
 		}
-		
-		if(j == 60) {
+
+		if (waited >= BATCH_TIMEOUT_MS) {
 			Assert.fail("Batch is taking too long! Progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()) + ", running batch: "
 					+ batchQueueService.getRunningBatchInfo());
 		}
 
-		int k = 0;
-		while (!batchQueueService.isBatchCompleted(batch) && k < 10) {
-			Thread.sleep(200);
-			k++;
+		waited = 0;
+
+		while (!batchQueueService.isBatchCompleted(batch) && (waited < BATCH_RELEASE_TIMEOUT_MS)) {
+			Thread.sleep(BATCH_POLL_INTERVAL_MS);
+			waited += BATCH_POLL_INTERVAL_MS;
+		}
+
+		if (waited >= BATCH_RELEASE_TIMEOUT_MS) {
+			Assert.fail("Batch '" + batch.getBatchId() + "' has completed but the queue still holds it, running batch: "
+					+ batchQueueService.getRunningBatchInfo() + ", queue: " + batchQueueService.getBatchesInQueue());
 		}
 	}
 	

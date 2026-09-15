@@ -464,7 +464,6 @@
 				    <!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" force="true" />
-					<show id="bcpg:entityScore" force="false" />
 					<show id="pjt:projectManager" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_bcpg:activityList" />
@@ -475,6 +474,7 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityScore" force="false" />
 					<show id="fm:commentCount" force="true" />
 					
 				</field-visibility>
@@ -512,6 +512,50 @@
 						/> -->
 				</appearance>
 
+			</form>
+			<form id="datagrid-gantt">
+				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:completionPercent" />
+					<show id="pjt:projectScore" force="true" />
+					<show id="pjt:projectManager" />
+					<show id="dataList_pjt:taskList" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+					<show id="bcpg:entityScore" force="false" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:code"
+						 read-only="true" label="datasource" />	 
+					<field id="pjt:projectCompletionDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectDueDate"
+						 read-only="true"  label="datasource" />
+					<field id="pjt:projectState"  label="datasource" />		 
+					<field id="cm:name"
+						 read-only="true" />
+					<field id="pjt:projectOverdue"
+						 read-only="true"  label="hidden" />
+					<field id="pjt:completionPercent"
+						 read-only="true"  label="hidden" />
+					<field id="pjt:projectPriority"
+						 read-only="true"  label="hidden" />
+					<field id="bcpg:entityScore" read-only="true" />
+					<field id="dataList_pjt:taskList"
+						label-id="becpg.forms.field.projects.datagrid.taskList.label" />
+					<field id="pjt:projectStartDate"
+						label="hidden" />
+					<field id="fm:commentCount" label="hidden" />	
+				</appearance>
 			</form>
 			<form id="sub-datagrid-projectList">
 				<field-visibility>
@@ -1174,6 +1218,7 @@
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityScore" force="false" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:clients" />
 					<show id="pjt:projectStartDate" />
@@ -1184,7 +1229,6 @@
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectScore" />
-					<show id="bcpg:entityScore" force="false" />
 					<show id="pjt:projectWork" />
 					<show id="pjt:projectBudgetedCost" />
 					<show id="pjt:projectLoggedTime" />
@@ -2172,6 +2216,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:slScoreCriterion" />
+					<show id="pjt:slScoreDefinition" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
 					<show id="pjt:slScoreRange" />
@@ -2205,6 +2250,7 @@
 			<form id="edit-productSpecification">
 				<field-visibility>
 					<show id="pjt:slScoreCriterion" />
+					<show id="pjt:slScoreDefinition" />
 					<show id="pjt:slScreening" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
@@ -2238,6 +2284,7 @@
 			<form>
 				<field-visibility>
 				    <show id="pjt:slScoreCriterion" />
+				    <show id="pjt:slScoreDefinition" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
 					<show id="pjt:slScoreRange" />
@@ -2271,6 +2318,7 @@
 			<form id="create-productSpecification">
 				<field-visibility>
 				    <show id="pjt:slScoreCriterion" />
+				    <show id="pjt:slScoreDefinition" />
 					<show id="pjt:slScreening" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>

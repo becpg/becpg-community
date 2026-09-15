@@ -1,0 +1,7 @@
+<webscript>
+	<shortname>Olap paths</shortname>
+	<description>Localised names of the folders beCPG OLAP has to resolve in the repository</description>
+	<url>/becpg/olap/v4/paths</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+</webscript>

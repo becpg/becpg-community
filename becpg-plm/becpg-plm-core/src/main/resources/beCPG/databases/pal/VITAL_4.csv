@@ -1,0 +1,35 @@
+# VITAL 4.0 reference doses (ED05) - Allergen Bureau, Table 1 of the VITAL 4.0 Summary and FAQ, August 2024 (VITAL 4.0 column).
+# Values are mg of TOTAL PROTEIN of the allergen.
+# Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
+# allergenCode holds the bcpg:allergenCode of the beCPG allergen reference data:
+# regulated categories (AW gluten cereals, AC crustaceans, AE egg, AF fish, AP peanut,
+# AY soy, AM milk, AS sesame, BC celery, BM mustard, UM molluscs, NL lupin) plus the
+# individual tree nuts, whose reference doses differ per species.
+# Sulphites (AU) carry no reference dose and keep the fixed threshold held by the allergen.
+# Lupin and mustard are Risk Management Values; the Dutch legislated values differ
+# (lupin 15,0 and mustard 0,4) and are carried by the NL_ED05 grid.
+# proteinPerc is optional: leave it empty when the declared quantity is already
+# expressed in allergenic protein.
+allergenCode;rfdMg;maxActionPpm;proteinPerc
+AW;5.0;;
+UW;5.0;;
+AC;200.0;;
+AE;2.0;;
+AF;5.0;;
+AP;2.0;;
+AY;10.0;;
+AM;2.0;;
+AS;2.0;;
+BC;1.0;;
+BM;1.0;;
+NL;10.0;;
+UM;20.0;;
+F11;10.0;;
+SA;1.0;;
+SH;3.0;;
+SW;1.0;;
+SC;1.0;;
+SP;1.0;;
+SR;1.0;;
+ST;1.0;;
+PN;1.0;;

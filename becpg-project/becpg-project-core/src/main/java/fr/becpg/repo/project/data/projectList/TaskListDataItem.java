@@ -1231,6 +1231,15 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				&& Objects.equals(workflowName, other.workflowName) && Objects.equals(workflowTaskInstance, other.workflowTaskInstance);
 	}
 
+	/**
+	 * References to other tasks are printed by nodeRef only: parent and refusedTask are
+	 * themselves TaskListDataItem, and a cyclic bcpg:parentLevel / pjt:tlRefusedTaskRef
+	 * would otherwise make toString() recurse until StackOverflowError.
+	 */
+	private static String taskRef(TaskListDataItem task) {
+		return task != null ? String.valueOf(task.getNodeRef()) : null;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
@@ -1240,8 +1249,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				+ taskState + ", completionPercent=" + completionPercent + ", prevTasks=" + prevTasks + ", resources="
 				+ resources + ", observers=" + observers + ", taskLegend=" + taskLegend + ", workflowName="
 				+ workflowName + ", workflowInstance=" + workflowInstance + ", manualDate=" + manualDate
-				+ ", depthLevel=" + depthLevel + ", parent=" + parent + ", refusedTask=" + refusedTask + ", fixedCost="
-				+ fixedCost + ", expense=" + expense + ", invoice=" + invoice
+				+ ", depthLevel=" + depthLevel + ", parent=" + taskRef(parent) + ", refusedTask=" + taskRef(refusedTask)
+				+ ", fixedCost=" + fixedCost + ", expense=" + expense + ", invoice=" + invoice
 				+ ", resourceCost=" + resourceCost + "]";
 	}
 

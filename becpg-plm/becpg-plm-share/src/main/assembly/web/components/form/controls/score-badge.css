@@ -1,0 +1,182 @@
+/*
+ * Generic score badge, driven by the scale of the score definition.
+ * Repository badges are served as <img>; when none exists the image errors out and the
+ * fallback classes below take over, so a repository without custom badges keeps rendering.
+ *
+ * Every rule carries the .score-badge ancestor and is repeated under .datagrid: the project
+ * score list styles span[class^="score-"] in black, and that selector would otherwise win.
+ */
+
+.score-badge,
+.datagrid .score-badge {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    word-spacing: normal;
+}
+
+.score-badge .score-badge-img,
+.datagrid .score-badge .score-badge-img {
+    max-height: 50px;
+    max-width: 120px;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-value,
+.datagrid .score-badge .score-badge-value {
+    font-weight: bold;
+    padding-left: 4px;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-unit,
+.datagrid .score-badge .score-badge-unit {
+    color: #666;
+    padding-left: 2px;
+    font-size: 11px;
+}
+
+/* Stars scale, Health Star Rating and the like */
+
+.score-badge .score-badge-stars,
+.datagrid .score-badge .score-badge-stars {
+    color: #f0a30a;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.score-badge .score-badge-error,
+.datagrid .score-badge .score-badge-error {
+    background: url("../../images/states/warning-16.png") no-repeat;
+    padding-left: 20px;
+}
+
+/* Detail panel, replaces the concatenated title tooltips */
+
+.score-details {
+    border-collapse: collapse;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.score-details th,
+.score-details td {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 3px 6px;
+    text-align: left;
+}
+
+.score-details th {
+    color: #666;
+    font-weight: bold;
+}
+
+.score-details td.score-details-number {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.score-details tr.score-details-step td {
+    background: #f7f7f7;
+    font-style: italic;
+}
+
+.score-details-share {
+    background: #e8e8e8;
+    display: inline-block;
+    height: 8px;
+    vertical-align: middle;
+}
+
+/* Numeric scale with no aggregated verdict, one cell per part */
+
+.score-badge .score-badge-part,
+.datagrid .score-badge .score-badge-part {
+    background: #f0f0f0;
+    border: 1px solid #c8c8c8;
+    border-radius: 3px;
+    color: #333;
+    display: inline-block;
+    flex-direction: column;
+    font-size: 10px;
+    line-height: 13px;
+    margin: 0 2px 2px 0;
+    min-width: 46px;
+    padding: 3px 5px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-part-name,
+.datagrid .score-badge .score-badge-part-name,
+.score-badge .score-badge-part-amount,
+.datagrid .score-badge .score-badge-part-amount {
+    color: inherit;
+    display: block;
+    width: 100%;
+}
+
+.score-badge .score-badge-part-amount,
+.datagrid .score-badge .score-badge-part-amount {
+    font-weight: bold;
+}
+
+/* Mark scale: one row per theme, the way the Planet-score states them */
+
+.score-badge .score-badge-mark,
+.datagrid .score-badge .score-badge-mark {
+    border: 2px solid #1a6b3c;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-mark-row,
+.datagrid .score-badge .score-badge-mark-row {
+    display: block;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+.score-badge .score-badge-mark-name,
+.datagrid .score-badge .score-badge-mark-name {
+    color: #1a3d7c;
+    display: inline-block;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 92px;
+    text-align: left;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+/* Marks drawn as inline SVG: the glyph is centred by the SVG itself, the page only
+   places the drawing on the baseline of its row. */
+
+.score-badge svg,
+.datagrid .score-badge svg {
+    display: inline-block;
+    margin: 1px 2px;
+    vertical-align: middle;
+}
+
+/* The breakdown states the class of an axis next to its name, for the marks whose axes
+   are graded on a scale of their own. */
+
+.score-details .score-details-class {
+    background: #4a4a4a;
+    border-radius: 3px;
+    color: white;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+    margin-left: 4px;
+    min-width: 14px;
+    text-align: center;
+}
+
+.score-details {
+    min-width: 420px;
+}

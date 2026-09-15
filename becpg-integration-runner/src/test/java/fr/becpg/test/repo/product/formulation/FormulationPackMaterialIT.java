@@ -20,9 +20,12 @@ package fr.becpg.test.repo.product.formulation;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -31,11 +34,16 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -49,14 +57,25 @@ import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(FormulationPackMaterialIT.class);
 
+	private static final QName ASPECT_PRODUCT_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "productGeoOriginAspect");
+
 	@Autowired
 	protected ProductService productService;
+
+	@Autowired
+	private AssociationService associationService;
+
+	@Autowired
+	@Qualifier("productReportExtractor")
+	private ProductReportExtractorPlugin productReportExtractor;
 
 	protected NodeRef PF1NodeRef;
 	protected NodeRef SF1NodeRef;
@@ -67,12 +86,16 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	protected NodeRef packaging1NodeRef;
 	protected NodeRef packaging2NodeRef;
 	protected NodeRef packaging3NodeRef;
+	protected NodeRef packaging4NodeRef;
 	protected NodeRef packMaterial1NodeRef;
 	protected NodeRef packMaterial2NodeRef;
 	protected NodeRef packMaterial3NodeRef;
 	protected NodeRef packMaterial4NodeRef;
 	protected NodeRef packMaterial5NodeRef;
 	protected NodeRef packMaterial6NodeRef;
+	protected NodeRef geoOriginFranceNodeRef;
+	protected NodeRef geoOriginSpainNodeRef;
+	protected NodeRef geoOriginItalyNodeRef;
 
 	@Override
 	public void setUp() throws Exception {
@@ -159,6 +182,164 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * A packaging that only references its materials through pack:pmMaterialRefs splits its tare evenly
+	 * between them.
+	 */
+	@Test
+	public void testFormulationPackMaterialFromPackagingMaterials() throws Exception {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Produit fini pmMaterialRefs").withUnit(ProductUnit.P)
+					.withQty(1d)
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P)
+							.withPkgLevel(PackagingLevel.Primary).withProduct(packaging4NodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			DecimalFormat df = new DecimalFormat("0.###");
+			int checks = 0;
+
+			// 0.02kg * 2 pieces = 40g, evenly split between Alluminium and Papier
+			for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)
+						|| packMaterialListDataItem.getPmlMaterial().equals(packMaterial6NodeRef)) {
+					assertEquals(df.format(20d), df.format(packMaterialListDataItem.getPmlWeight()));
+					assertEquals("Both materials take the origin of the packaging", List.of(geoOriginFranceNodeRef),
+							packMaterialListDataItem.getGeoOrigins());
+					checks++;
+				}
+			}
+
+			assertEquals("Verify checks done", 2, checks);
+			return null;
+		});
+	}
+
+	/**
+	 * The geographical origins of the packaging materials must reach the finished product: an origin
+	 * declared on a material line is carried up as is, and the origins of every contributor of the same
+	 * material are merged (see #35025). A packaging that declares no origin on its material lines falls
+	 * back on its own bcpg:productGeoOrigin.
+	 */
+	@Test
+	public void testGeoOriginRollUpFromPackaging() throws Exception {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Produit fini origines").withUnit(ProductUnit.kg).withQty(1d)
+					.withDensity(1d)
+					// Alluminium 20g from France, Carton 40g without origin
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+							.withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef)))
+					.withPackagingList(List.of(
+							// Alluminium 3g from Spain
+							PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging1NodeRef),
+							// Fer and Plastique, both falling back on the origin of the packaging itself
+							PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging3NodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			int checks = 0;
+
+			for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)) {
+					assertEquals("Alluminium merges the origins of the composition and of the packaging", 2,
+							packMaterialListDataItem.getGeoOrigins().size());
+					assertTrue(packMaterialListDataItem.getGeoOrigins().contains(geoOriginFranceNodeRef));
+					assertTrue(packMaterialListDataItem.getGeoOrigins().contains(geoOriginSpainNodeRef));
+					checks++;
+				}
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial2NodeRef)) {
+					assertTrue("Carton declares no origin", packMaterialListDataItem.getGeoOrigins().isEmpty());
+					checks++;
+				}
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial3NodeRef)) {
+					assertEquals("Fer falls back on the origin of its packaging", List.of(geoOriginItalyNodeRef),
+							packMaterialListDataItem.getGeoOrigins());
+					checks++;
+				}
+			}
+
+			assertEquals("Verify checks done", 3, checks);
+			return null;
+		});
+	}
+
+	/**
+	 * The extractPackagingMaterials preference details, for each packaging line, the materials it is
+	 * made of. The weights must match the contribution of that line to the formulated packMaterialList
+	 * (see #31702).
+	 */
+	@Test
+	public void testExtractPackagingMaterialsInReport() throws Exception {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Produit fini rapport").withUnit(ProductUnit.kg).withQty(1d)
+					.withDensity(1d)
+					.withPackagingList(List.of(
+							// Alluminium: 3g
+							PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging1NodeRef),
+							// Fer and Plastique: 453.592g / 2
+							PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging3NodeRef),
+							// Alluminium and Papier: 40g / 2
+							PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging4NodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			Map<String, String> preferences = new HashMap<>();
+			preferences.put("extractPackagingMaterials", "true");
+
+			EntityReportData reportData = productReportExtractor.extract(finishedProductNodeRef, preferences);
+			assertNotNull(reportData.getXmlDataSource());
+
+			List<String> extractedMaterials = extractPackagingMaterials(reportData);
+			logger.info("Extracted packaging materials: " + extractedMaterials);
+
+			assertEquals("One line per material of each packaging", 5, extractedMaterials.size());
+			assertTrue(extractedMaterials.contains("Alluminium|3|100"));
+			assertTrue(extractedMaterials.contains("Fer|226.796|50"));
+			assertTrue(extractedMaterials.contains("Plastique|226.796|50"));
+			assertTrue(extractedMaterials.contains("Alluminium|20|50"));
+			assertTrue(extractedMaterials.contains("Papier|20|50"));
+
+			return null;
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> extractPackagingMaterials(EntityReportData reportData) {
+		DecimalFormat df = new DecimalFormat("0.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+		List<String> extractedMaterials = new ArrayList<>();
+
+		List<Node> packMaterialElts = reportData.getXmlDataSource()
+				.selectNodes("/entity/dataLists/packagingLists/packagingList/packMaterialLists/packMaterialList");
+
+		for (Node packMaterialElt : packMaterialElts) {
+			Element packMaterialListElt = (Element) packMaterialElt;
+			extractedMaterials.add(String.join("|", packMaterialListElt.attributeValue(PackModel.ASSOC_PACK_MATERIAL_LIST_MATERIAL.getLocalName()),
+					df.format(Double.valueOf(packMaterialListElt.attributeValue(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName()))),
+					df.format(Double.valueOf(packMaterialListElt.attributeValue(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName())))));
+		}
+
+		return extractedMaterials;
+	}
+
 	protected FinishedProductData createFinishedProduct() {
 		return FinishedProductData.build().withName("Produit fini 1").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef),
@@ -230,10 +411,25 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		logger.info("Initializing test data");
 		inWriteTx(() -> {
 			createPackMaterials();
+			createGeoOrigins();
 			createCompoProducts();
 			createPackagingMaterials();
 			return null;
 		});
+	}
+
+	private void createGeoOrigins() {
+		geoOriginFranceNodeRef = createGeoOriginNode("France", "FR");
+		geoOriginSpainNodeRef = createGeoOriginNode("Spain", "ES");
+		geoOriginItalyNodeRef = createGeoOriginNode("Italy", "IT");
+	}
+
+	private NodeRef createGeoOriginNode(String geoOriginName, String isoCode) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, geoOriginName);
+		properties.put(PLMModel.PROP_GEO_ORIGIN_ISOCODE, isoCode);
+		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, geoOriginName), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 	}
 
 	private void createPackMaterials() {
@@ -258,7 +454,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		FinishedProductData PF1 = FinishedProductData.build().withName("Finished product 1").withQty(500d).withUnit(ProductUnit.g);
 
 		PF1.setPackMaterialList(Arrays.asList(
-				PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(10d).withPerc(5d).withPkgLevel(PackagingLevel.Primary),
+				PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(10d).withPerc(5d).withPkgLevel(PackagingLevel.Primary)
+						.withGeoOrigins(List.of(geoOriginFranceNodeRef)),
 				PackMaterialListDataItem.build().withMaterial(packMaterial2NodeRef).withWeight(20d).withPkgLevel(PackagingLevel.Primary)));
 
 		PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
@@ -309,7 +506,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	private void createPackagingMaterials() {
 		PackagingMaterialData packagingMaterial1 = PackagingMaterialData.build().withName("Packaging material 1").withTare(0.015d, TareUnit.kg)
 				.withPackMaterialList(List.of(PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(0.015d * 1000)
-						.withRecycledPerc(50d).withPkgLevel(PackagingLevel.Primary)));
+						.withRecycledPerc(50d).withPkgLevel(PackagingLevel.Primary).withGeoOrigins(List.of(geoOriginSpainNodeRef))));
 
 		packaging1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
 
@@ -327,8 +524,20 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 						PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary),
 						PackMaterialListDataItem.build().withMaterial(packMaterial4NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary)));
 
+		packagingMaterial3.getAspects().add(ASPECT_PRODUCT_GEO_ORIGIN);
+		packagingMaterial3.setGeoOrigins(List.of(geoOriginItalyNodeRef));
+
 		packaging3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 
+		/*-- Packaging 4 (materials referenced through pack:pmMaterialRefs, no packMaterialList) --*/
+
+		PackagingMaterialData packagingMaterial4 = PackagingMaterialData.build().withName("Packaging material 4").withTare(0.02d, TareUnit.kg);
+
+		packagingMaterial4.getAspects().add(ASPECT_PRODUCT_GEO_ORIGIN);
+		packagingMaterial4.setGeoOrigins(List.of(geoOriginFranceNodeRef));
+
+		packaging4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
+		associationService.update(packaging4NodeRef, PackModel.ASSOC_PM_MATERIAL, List.of(packMaterial1NodeRef, packMaterial6NodeRef));
 	}
 
 }

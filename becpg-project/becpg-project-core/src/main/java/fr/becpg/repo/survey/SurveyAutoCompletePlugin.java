@@ -1,7 +1,9 @@
 package fr.becpg.repo.survey;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -15,6 +17,7 @@ import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
  * <p>SurveyListValuePlugin class.</p>
@@ -72,11 +75,12 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 				.inSearchTemplate("%(bcpg:code survey:questionLabel)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (listName != null) {
-			queryBuilder.andFTSQuery("ISNULL:" + SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + " OR ="
-					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":'' OR ="
-					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":" + listName);
+			String otherListsClause = excludeOtherSurveyListsClause(listName);
+			if (!otherListsClause.isEmpty()) {
+				queryBuilder.andFTSQuery(otherListsClause);
+			}
 		}
-		
+
 		if (!isAllQuery(query)) {
 			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
@@ -105,6 +109,29 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 		return new AutoCompletePage(queryBuilder.list(), pageNum, pageSize, new NodeRefAutoCompleteExtractor(SurveyModel.PROP_SURVEY_QUESTION_LABEL, nodeService));
 
+	}
+
+	/**
+	 * A question keeps showing up in a survey list unless it is assigned to another one. Testing the
+	 * other names rather than the absence of a name is deliberate: an empty list name may be unset,
+	 * null or an empty string depending on how the question was saved, and Solr indexes the empty
+	 * string as a value that no FTS operator can single out.
+	 *
+	 * @param listName the survey list name the suggestions are requested for
+	 * @return the FTS clause excluding the questions assigned to another list, empty when there is none
+	 */
+	private String excludeOtherSurveyListsClause(String listName) {
+		String property = SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME.toString();
+		List<String> otherListsConditions = new ArrayList<>();
+		for (String surveyListName : SurveyableEntityHelper.surveyListsNames()) {
+			if (!surveyListName.equals(listName)) {
+				otherListsConditions.add("=" + property + ":\"" + surveyListName + "\"");
+			}
+		}
+		if (otherListsConditions.isEmpty()) {
+			return "";
+		}
+		return "NOT (" + String.join(" OR ", otherListsConditions) + ")";
 	}
 
 }

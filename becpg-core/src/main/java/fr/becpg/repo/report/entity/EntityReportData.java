@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.dom4j.Element;
@@ -36,9 +36,11 @@ public class EntityReportData {
 
 	private Element xmlDataSource;
 	
-	private Set<EntityImageInfo> images = new HashSet<>();
+	private Set<EntityImageInfo> images = new LinkedHashSet<>();
 	
-	private Set<ReportableError> logs = new HashSet<>();
+	private Set<ReportableError> logs = new LinkedHashSet<>();
+	
+	private Long datasourceSize;
 	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
@@ -92,6 +94,28 @@ public class EntityReportData {
 	 */
 	public void setLogs(Set<ReportableError> logs) {
 		this.logs = logs;
+	}
+
+	/**
+	 * <p>Getter for the field <code>datasourceSize</code>.</p>
+	 *
+	 * Size in bytes of the serialized XML datasource, published by the engine that
+	 * actually serialized it. Saves the caller a full serialization pass just to
+	 * measure it.
+	 *
+	 * @return the size in bytes, or {@code null} when no engine published one
+	 */
+	public Long getDatasourceSize() {
+		return datasourceSize;
+	}
+
+	/**
+	 * <p>Setter for the field <code>datasourceSize</code>.</p>
+	 *
+	 * @param datasourceSize the size in bytes of the serialized datasource
+	 */
+	public void setDatasourceSize(Long datasourceSize) {
+		this.datasourceSize = datasourceSize;
 	}
 	
 	/**

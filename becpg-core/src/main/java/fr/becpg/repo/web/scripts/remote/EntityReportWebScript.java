@@ -1,7 +1,6 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
@@ -132,7 +132,20 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale,
 						ReportFormat.valueOf(format.toUpperCase()), resp.getOutputStream());
 			}
-		} catch (SocketException e1) {
+		} catch (IOException e1) {
+
+			/*
+			 * A caller giving up mid-stream is an IOException like any other; only
+			 * ReportUtils can tell them apart. Letting it through would fail the request
+			 * with a partially written response — and, since the response is already
+			 * committed, the runtime cannot even render the failure.
+			 *
+			 * Only the client abort is swallowed: a genuine IO error must keep
+			 * propagating rather than be hidden.
+			 */
+			if (!ReportUtils.isClientAbort(e1)) {
+				throw e1;
+			}
 
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message

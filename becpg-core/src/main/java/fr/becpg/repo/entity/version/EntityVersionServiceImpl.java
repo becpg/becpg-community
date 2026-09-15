@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -374,7 +375,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeRef internalCreateInitialVersion(NodeRef entityNodeRef, Date newEffectivity) {
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			// Create the initial-version
-			Map<String, Serializable> versionProperties = new HashMap<>(1);
+			Map<String, Serializable> versionProperties = HashMap.newHashMap(1);
 			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
 			if (logger.isDebugEnabled()) {
@@ -1391,7 +1392,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).toList();
+					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).filter(Objects::nonNull).toList();
 					associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
 					return null;
 				}, false, true);
@@ -1418,25 +1419,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
-		
+		if (parentFolder == null) {
+			return null;
+		}
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		if (reader == null) {
+			return null;
+		}
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, reportName);
-
 		NodeRef reportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
 		if (reportCopy == null ) {
 			reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
 		}
-
-		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
 		writer.setEncoding(reader.getEncoding());
 		writer.setMimetype("application/pdf");
-
+		
 		writer.putContent(reader);
-
 		return reportCopy;
 	}
 	
@@ -1910,7 +1912,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
 			}
 			if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL)) {
-				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				Map<QName, Serializable> aspectProperties = HashMap.newHashMap(2);
 				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
 				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
 				nodeService.addAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
@@ -2037,7 +2039,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 
 			String name = nodeService.getProperty(extractedVersion, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
-			Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
+			Map<QName, Serializable> versionAspectProperties = HashMap.newHashMap(2);
 			versionAspectProperties.put(ContentModel.PROP_NAME, name);
 			versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
 			nodeService.addAspect(extractedVersion, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);

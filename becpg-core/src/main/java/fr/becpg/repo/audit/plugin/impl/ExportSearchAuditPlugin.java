@@ -3,6 +3,7 @@ package fr.becpg.repo.audit.plugin.impl;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ public class ExportSearchAuditPlugin extends AbstractAuditPlugin implements Data
 	public static final String RESULTS_SIZE = "resultsSize";
 	/** Constant <code>ASYNC="async"</code> */
 	public static final String ASYNC = "async";
+	/** Constant <code>DOWNLOAD_NODE_REF="downloadNodeRef"</code> */
+	public static final String DOWNLOAD_NODE_REF = "downloadNodeRef";
 	
 	static {
 		KEY_MAP.put(STARTED_AT, AuditDataType.DATE);
@@ -40,8 +43,21 @@ public class ExportSearchAuditPlugin extends AbstractAuditPlugin implements Data
 		KEY_MAP.put(TEMPLATE, AuditDataType.STRING);
 		KEY_MAP.put(RESULTS_SIZE, AuditDataType.INTEGER);
 		KEY_MAP.put(ASYNC, AuditDataType.BOOLEAN);
+		KEY_MAP.put(DOWNLOAD_NODE_REF, AuditDataType.STRING);
+		KEY_MAP.put(IS_COMPLETED, AuditDataType.BOOLEAN);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 *
+	 * An export is heavy enough to bring the server down: its entry is recorded when the export
+	 * starts so that the user who requested it stays traceable even when it never completes.
+	 */
+	@Override
+	public boolean isRecordOnStart() {
+		return true;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(AuditType type) {
@@ -73,16 +89,26 @@ public class ExportSearchAuditPlugin extends AbstractAuditPlugin implements Data
 		super.setAuditParameters(auditParameters);
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The entry of an asynchronous export is completed by the thread running it, as system: the
+	 * export is credited to the user who requested it, not to the one recording the entry.
+	 */
 	@Override
 	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
-		// nothing
+		AuthenticationUtil.pushAuthentication();
+
+		Serializable username = auditValues.get(USERNAME);
+		if ((username != null) && !username.toString().isBlank()) {
+			AuthenticationUtil.setFullyAuthenticatedUser(username.toString());
+		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
-		// nothing
+		AuthenticationUtil.popAuthentication();
 	}
 
 }

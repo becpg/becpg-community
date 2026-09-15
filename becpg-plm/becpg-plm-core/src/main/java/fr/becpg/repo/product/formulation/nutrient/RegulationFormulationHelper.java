@@ -258,6 +258,63 @@ public class RegulationFormulationHelper {
 	}
 
 	/**
+	 * <p>extractGDAPercPerContainer.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public static Double extractGDAPercPerContainer(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_GDA_PERC_PER_CONTAINER, key);
+	}
+
+	/**
+	 * <p>Extracts the display-ready view of a nutrient for a single regulation.</p>
+	 *
+	 * <p>Single-regulation counterpart of {@link #extractXMLAttribute(Element, String, Locale, boolean, String)}:
+	 * both read the same regulation definition and the same rounded value blob, one returning a record
+	 * and the other writing report attributes.</p>
+	 *
+	 * @param nutListItem a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @param nutCode a {@link java.lang.String} object, the regulatory code of the nutrient
+	 * @param locale a {@link java.util.Locale} object, drives the number formatting
+	 * @param locKey a {@link java.lang.String} object, the regulation key, may differ from the locale
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.RegulatedNutrient} object
+	 */
+	public static RegulatedNutrient extractRegulatedNutrient(NutListDataItem nutListItem, String nutCode, Locale locale, String locKey) {
+
+		String roundedValue = nutListItem.getRoundedValue();
+		String precision = nutListItem.getMeasurementPrecision();
+
+		Double value = extractValue(roundedValue, locKey);
+		Double valuePerServing = extractValuePerServing(roundedValue, locKey);
+		Double valuePerContainer = extractValuePerContainer(roundedValue, locKey);
+
+		return new RegulatedNutrient(nutCode, toDisplayRule(getRegulation(locKey).getNutrientDefinition(nutCode)), value, valuePerServing,
+				valuePerContainer, extractGDAPerc(roundedValue, locKey), extractGDAPercPerContainer(roundedValue, locKey),
+				toDisplayValue(nutListItem.getValue(), value, nutCode, precision, locale, locKey, nutListItem.getUnit()),
+				toDisplayValue(nutListItem.getValuePerServing(), valuePerServing, nutCode, precision, locale, locKey, nutListItem.getUnit()),
+				toDisplayValue(valuePerContainer, valuePerContainer, nutCode, precision, locale, locKey, null));
+	}
+
+	private static NutrientDisplayRule toDisplayRule(NutrientDefinition definition) {
+		if (definition == null) {
+			return NutrientDisplayRule.undefined();
+		}
+		return new NutrientDisplayRule(definition.getSort(), definition.getDepthLevel(), Boolean.TRUE.equals(definition.getBold()),
+				Boolean.TRUE.equals(definition.getMandatory()), Boolean.TRUE.equals(definition.getOptional()),
+				Boolean.TRUE.equals(definition.getShowGDAPerc()), definition.getGda(), definition.getUl(), definition.getUnit());
+	}
+
+	private static String toDisplayValue(Double value, Double roundedValue, String nutCode, String precision, Locale locale, String locKey,
+			String nutUnit) {
+		if (value == null) {
+			return null;
+		}
+		return displayValue(value, roundedValue, nutCode, precision, locale, locKey, nutUnit);
+	}
+
+	/**
 	 * <p>extractValueByKey.</p>
 	 *
 	 * @param roundedValue a {@link java.lang.String} object
@@ -366,6 +423,7 @@ public class RegulationFormulationHelper {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
 			String measurementPrecision = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
+			String nutListUnit = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_UNIT.getLocalName());
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 			String nutListValuePrepared = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
@@ -431,7 +489,7 @@ public class RegulationFormulationHelper {
 						if ((nutListValue != null) && (!nutListValue.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey),
-											nutCode, measurementPrecision, locale, locKey));
+											nutCode, measurementPrecision, locale, locKey, nutListUnit));
 							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
@@ -441,13 +499,13 @@ public class RegulationFormulationHelper {
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
+											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePrepared),
-											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
+											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
 
 							Double nutListValuePreparedPerServing = extractPreparedValuePerServing(roundedValue, locKey);
 
@@ -1003,6 +1061,29 @@ public class RegulationFormulationHelper {
 			return null;
 		}
 		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, measurementPrecision, locale);
+	}
+
+	/**
+	 * <p>displayValue.</p>
+	 *
+	 * <p>Unit-aware variant: {@code value} is expressed in {@code nutUnit} whereas {@code roundedValue}
+	 * is already expressed in the unit of the regulation.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param regulation a {@link java.lang.String} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale,
+			String regulation, String nutUnit) {
+		if (value == null) {
+			return null;
+		}
+		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, measurementPrecision, locale, nutUnit);
 	}
 
 	/**

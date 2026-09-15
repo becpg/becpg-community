@@ -93,7 +93,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		// Get the set of nodes read
 		Set<NodeRef> nodeRefs = TransactionSupportUtil.getResource(KEY_FILES_TO_IMPORT);
 		if (nodeRefs == null) {
-			nodeRefs = new HashSet<>(5);
+			nodeRefs = HashSet.newHashSet(5);
 			TransactionSupportUtil.bindResource(KEY_FILES_TO_IMPORT, nodeRefs);
 		}
 		nodeRefs.add(nodeRef);

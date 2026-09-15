@@ -18,6 +18,7 @@
 package fr.becpg.test.repo.product.report;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +28,7 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -38,9 +40,11 @@ import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -67,6 +71,20 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ExportSearchService exportSearchService;
+
+	private static final String HEADER_VALUES = "VALUES";
+
+	private static final int COMPOSITION_SHEET_INDEX = 1;
+
+	private static final int COLUMNS_ROW_INDEX = 1;
+
+	private static final String COMPONENT_NAME = "Component of a composition line";
+
+	private static final String COMPONENT_ERP_CODE = "ERP-COMPONENT-1";
+
+	private static final String COMPONENT_NAME_COLUMN = "bcpg:compoListProduct|cm:name";
+
+	private static final String COMPONENT_ERP_CODE_COLUMN = "bcpg:compoListProduct|bcpg:erpCode";
 
 	private static final String COMPOSITION_TEMPLATE_FOLDER_PATH = "/app:company_home/cm:System/cm:Reports/cm:ExportSearch/cm:ExportProducts";
 	private static final String COMPOSITION_TEMPLATE_FILE_NAME = "Export des listes composition et emballages.xlsx";
@@ -552,4 +570,80 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 			assertTrue("Should have at least one data row when wUsedAllLevel and IncludeEmpty are separate parameters (data row count: " + dataRowCount + ")", dataRowCount >= 1);
 		}
 	}
+
+	/**
+	 * Every column reading the component of a composition line is exported, not only the first one:
+	 * the template asks for its name, its ERP code and its beCPG code, which are three extractions of
+	 * the same node.
+	 */
+	@Test
+	public void testEveryComponentColumnIsExported() throws IOException {
+		initTestReports();
+
+		NodeRef productNodeRef = createProductWithNamedComponent();
+
+		byte[] reportData = inReadTx(() -> {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			exportSearchService.createReport(PLMModel.TYPE_FINISHEDPRODUCT, compositionPackagingReportTpl, List.of(productNodeRef), ReportFormat.XLSX,
+					out, new String[] { "AllLevel" });
+			return out.toByteArray();
+		});
+
+		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
+			XSSFSheet sheet = workbook.getSheetAt(COMPOSITION_SHEET_INDEX);
+
+			Row componentRow = findFirstDataRow(sheet);
+			assertNotNull("The composition sheet should hold a component row", componentRow);
+
+			assertEquals(COMPONENT_NAME, readColumn(sheet, componentRow, COMPONENT_NAME_COLUMN));
+			assertEquals(COMPONENT_ERP_CODE, readColumn(sheet, componentRow, COMPONENT_ERP_CODE_COLUMN));
+		}
+	}
+
+	private NodeRef createProductWithNamedComponent() {
+		return inWriteTx(() -> {
+			RawMaterialData component = RawMaterialData.build().withName(COMPONENT_NAME).withQty(1d).withUnit(ProductUnit.kg);
+			component.setErpCode(COMPONENT_ERP_CODE);
+			NodeRef componentNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), component).getNodeRef();
+
+			FinishedProductData product = FinishedProductData.build().withName("Product of a named component").withQty(1d)
+					.withUnit(ProductUnit.kg);
+			product.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(componentNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		});
+	}
+
+	/**
+	 * The first row holding values, ie. the first component of the exported composition.
+	 */
+	private Row findFirstDataRow(XSSFSheet sheet) {
+		for (int rownum = 0; rownum <= sheet.getLastRowNum(); rownum++) {
+			Row row = sheet.getRow(rownum);
+
+			if ((row != null) && (row.getCell(0) != null) && HEADER_VALUES.equals(row.getCell(0).getStringCellValue())) {
+				return row;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * The value the given row holds in the column the template declares under the given name.
+	 */
+	private String readColumn(XSSFSheet sheet, Row row, String columnName) {
+		Row headerRow = sheet.getRow(COLUMNS_ROW_INDEX);
+
+		for (int cellnum = 0; cellnum < headerRow.getLastCellNum(); cellnum++) {
+			Cell headerCell = headerRow.getCell(cellnum);
+
+			if ((headerCell != null) && columnName.equals(headerCell.getStringCellValue())) {
+				Cell cell = row.getCell(cellnum);
+				return cell != null ? cell.getStringCellValue() : null;
+			}
+		}
+
+		throw new AssertionError("The template should declare the column " + columnName);
+	}
+
 }

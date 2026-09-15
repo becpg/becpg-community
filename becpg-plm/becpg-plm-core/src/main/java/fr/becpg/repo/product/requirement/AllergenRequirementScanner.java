@@ -88,7 +88,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 			if (item.getAllergen() != null) {
 				boolean isFound = false;
 				for (AllergenListDataItem sl : ret) {
-					if (item.getAllergen().equals(sl.getAllergen())) {
+					if (item.getAllergen().equals(sl.getAllergen()) && hasSameRegulatoryScope(item, sl)) {
 						isFound = true;
 
 						// if one value is true, set to true
@@ -108,7 +108,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 					}
 				}
 				if (!isFound) {
-					ret.add(item);
+					ret.add(item.copy());
 				}
 			}
 		});

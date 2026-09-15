@@ -4,23 +4,28 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.io.OutputStream;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.repo.download.DownloadStorage;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.util.ParameterCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.report.client.ReportFormat;
+import fr.becpg.util.MutexFactory;
 
 /**
  * Class used to render the result of a search in a report
@@ -34,6 +39,8 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);
 
+	private static final String EXPORT_MUTEX_PREFIX = "exportSearch-";
+
 	@Autowired
 	private SearchReportRenderer[] searchReportRenderers;
 
@@ -42,12 +49,12 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 	@Autowired
 	private DownloadStorage downloadStorage;
-	
+
 	@Autowired
-	private NodeService nodeService;
-	
+	private MutexFactory mutexFactory;
+
 	@Autowired
-	private fr.becpg.util.MutexFactory mutexFactory;
+	private ContentService contentService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -105,27 +112,18 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
 		
 
-		NodeRef downloadNode = retryingTransactionHelper.doInTransaction(() -> {
-			
-			java.util.concurrent.locks.ReentrantLock lock = mutexFactory.getMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser());
-			lock.lock();
-			try {
-				// Create a download node
-				NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
-	
-				// Add requested nodes
-				for (NodeRef node : new HashSet<>(searchResults)) {
-					if (nodeService.exists(node)) {
-						downloadStorage.addNodeToDownload(downloadNode1, node);
-					}
-				}
-	
-				return downloadNode1;
-			} finally {
-				lock.unlock();
-				mutexFactory.removeMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser(), lock);
-			}
-		}, false, true);
+		String mutexKey = EXPORT_MUTEX_PREFIX + AuthenticationUtil.getRunAsUser();
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
+		lock.lock();
+
+		NodeRef downloadNode;
+		try {
+			downloadNode = retryingTransactionHelper.doInTransaction(() -> downloadStorage.createDownloadNode(false), false, true);
+			addNodesToDownload(downloadNode, searchResults);
+		} finally {
+			lock.unlock();
+			mutexFactory.removeMutex(mutexKey, lock);
+		}
 
 		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 		if (searchReportRender != null) {
@@ -134,11 +132,30 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 			logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 		}
 
-		// This is done in a new transaction to avoid node not found errors when
-		// the zip creation occurs
-		// on a remote transformation server.
-
 		return downloadNode;
+	}
+
+	/**
+	 * Write the search results to the download node as a JSON array in its cm:content property.
+	 *
+	 * Writing a single content property is extremely fast and scalable, avoiding database locks,
+	 * transactional cache saturation, and JVM memory footprint. It also allows the client progress
+	 * bar to start immediately without any delay.
+	 *
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param searchResults a {@link java.util.List} object
+	 */
+	private void addNodesToDownload(NodeRef downloadNodeRef, List<NodeRef> searchResults) {
+		List<NodeRef> distinctResults = new ArrayList<>(new LinkedHashSet<>(searchResults));
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Writing " + distinctResults.size() + " node(s) to download " + downloadNodeRef + " as JSON");
+		}
+
+		retryingTransactionHelper.doInTransaction(() -> {
+			ExportSearchNodesHelper.storeNodes(contentService, downloadNodeRef, distinctResults);
+			return null;
+		}, false, true);
 	}
 
 }

@@ -57,6 +57,7 @@ function main() {
         "beCPG.product.name.format",
         "beCPG.report.title.format",
         "beCPG.quality.sampleId.format",
+        "beCPG.quality.batch.scanner.format",
         "beCPG.sendToSupplier.entityName.format",
         "beCPG.sendToSupplier.projectName.format",
         "beCPG.report.name.format",

@@ -52,7 +52,9 @@
         YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
         
         YAHOO.Bubbling.on("refreshDataGrids", this.doRefresh, this);
-        
+
+        YAHOO.Bubbling.on("entityFormulated", this.onEntityFormulated, this);
+
         YAHOO.Bubbling.on("versionChangeFilter", this.onVersionChanged,this);
         return this;
     };
@@ -152,7 +154,18 @@
                             	Event.addListener(exitButton, "click", toggleFullscreen);
                             }
                             
-                            // Load the form
+                            this.loadForm();
+
+                            beCPG.component.Properties.superclass.onReady.call(this);
+                        },
+
+                        /**
+                         * Loads the view mode form of the entity.
+                         *
+                         * @method loadForm
+                         */
+                        loadForm: function Properties_loadForm()
+                        {
                             Alfresco.util.Ajax.request(
                             {
                                url: Alfresco.constants.URL_SERVICECONTEXT + "components/form",
@@ -174,11 +187,26 @@
                                scope: this,
                                execScripts: true
                             });
-                            
-                            
-                            beCPG.component.Properties.superclass.onReady.call(this);
                         },
-                        
+
+                        /**
+                         * Reloads the form once the entity has been formulated, so the formulated
+                         * values on screen are the ones the formulation has just written.
+                         *
+                         * @method onEntityFormulated
+                         * @param layer {object} Event fired
+                         * @param args {array} Event parameters
+                         */
+                        onEntityFormulated: function Properties_onEntityFormulated(layer, args)
+                        {
+                            var obj = args[1];
+
+                            if (obj != null && obj.nodeRef == this.options.nodeRef)
+                            {
+                                this.loadForm();
+                            }
+                        },
+
                         /**
                          * Helper function to position DOM elements
                          *
@@ -268,12 +296,14 @@
                     doRefresh: function Properties_doRefresh()
                     {
                         YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
+                        YAHOO.Bubbling.unsubscribe("entityFormulated", this.onEntityFormulated, this);
                         this.refresh('components/entity-charact-views/properties-view?nodeRef={nodeRef}' + (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));
                     },
 
                     onVersionChanged : function Properties_onVersionChanged(layer, args)
                     {
                     	YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
+                        YAHOO.Bubbling.unsubscribe("entityFormulated", this.onEntityFormulated, this);
                         YAHOO.Bubbling.unsubscribe("versionChangeFilter", this.onVersionChanged, this);
                         var obj = args[1];
                         if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)

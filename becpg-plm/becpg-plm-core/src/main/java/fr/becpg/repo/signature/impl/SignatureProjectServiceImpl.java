@@ -138,16 +138,26 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> originalDocuments) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("prepareSignatureProject - project: " + projectNodeRef + ", documents: " + originalDocuments);
+		}
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			originalDocuments = signatureProjectHelper.copyReports(originalDocuments);
 			List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
 			viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
 			associationService.update(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+			if (logger.isDebugEnabled()) {
+				logger.debug("prepareSignatureProject - view recipients: " + viewRecipients);
+			}
 			List<NodeRef> preparedDocuments = prepareDocuments(projectNodeRef, originalDocuments, viewRecipients);
 			ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			TaskListDataItem rejectTask = createRejectTask(project, preparedDocuments);
 			List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
+			if (logger.isDebugEnabled()) {
+				logger.debug("prepareSignatureProject - prepared documents: " + preparedDocuments + ", people recipients: " + recipients
+						+ ", reject task: " + rejectTask.getNodeRef());
+			}
 			NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
 			createValidatingTask(project, originalDocuments, lastTask);
 			project.setDirtyTaskTree(true);
@@ -162,6 +172,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	@Override
 	public NodeRef createEntitySignatureTasks(NodeRef projectNodeRef, NodeRef previousTask, String projectType) {
 		ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("createEntitySignatureTasks - project: " + projectNodeRef + ", previousTask: " + previousTask + ", projectType: "
+					+ projectType + ", entities: " + project.getEntities());
+		}
 		if (!project.getEntities().isEmpty()) {
 			TaskListDataItem firstTask = (TaskListDataItem) alfrescoRepository.findOne(ProjectHelper.findAncestorTask(previousTask, associationService));
 			NodeRef entityNodeRef = project.getEntities().get(0);
@@ -175,6 +189,11 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			}
 			List<NodeRef> documentsToSign = signatureProjectHelper.findDocumentsToSign(entitySignatureFolder, false);
 			List<NodeRef> documentsAlreadySigned = signatureProjectHelper.findDocumentsToSign(entitySignatureFolder, true);
+			if (logger.isDebugEnabled()) {
+				logger.debug("createEntitySignatureTasks - plugin: "
+						+ (signatureProjectPlugin != null ? signatureProjectPlugin.getClass().getSimpleName() : "none") + ", entity signature folder: "
+						+ entitySignatureFolder + ", documents to sign: " + documentsToSign + ", documents already signed: " + documentsAlreadySigned);
+			}
 
 			Map<NodeRef, List<DeliverableListDataItem>> deliverableByDocuments = signatureProjectHelper.getDeliverableByDocuments(project);
 			for (NodeRef doc : documentsAlreadySigned) {
@@ -196,11 +215,18 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 				viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
 				associationService.update(documentToSign, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
 				List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
+				if (logger.isDebugEnabled()) {
+					logger.debug("createEntitySignatureTasks - document to sign: " + documentToSign + ", view recipients: " + viewRecipients
+							+ ", people recipients: " + recipients);
+				}
 				NodeRef lastTask = createOrUpdateSignatureTasks(project, List.of(documentToSign), recipients, previousTask, firstTask);
 				lastsTasks.add(lastTask);
 			}
 			closeSignedTasks(project);
 			if (signatureProjectPlugin != null && !documentsToSign.isEmpty()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("createEntitySignatureTasks - creating or updating closing task after tasks: " + lastsTasks);
+				}
 				signatureProjectPlugin.createOrUpdateClosingTask(project, lastsTasks, firstTask);
 			}
 			project.setDirtyTaskTree(true);
@@ -225,6 +251,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					&& SignatureStatus.Signed.toString().equals(nodeService.getProperty(d.getContent(), SignatureModel.PROP_STATUS)));
 
 			if (allSigned) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("closeSignedTasks - all " + relatedDeliverables.size() + " deliverables signed, completing task: " + task.getTaskName()
+							+ " (" + task.getNodeRef() + ")");
+				}
 				task.setTaskState(TaskState.Completed);
 			}
 		}
@@ -237,12 +267,19 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
 				List<NodeRef> recipients = signatureProjectPlugin.extractRecipients(document);
+				if (logger.isDebugEnabled()) {
+					logger.debug("extractRecipients - plugin " + signatureProjectPlugin.getClass().getSimpleName() + " returned " + recipients
+							+ " for document: " + document);
+				}
 				if (!recipients.isEmpty()) {
 					return recipients;
 				}
 			}
 		}
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("extractRecipients - no plugin returned recipients for document: " + document);
+		}
 		return new ArrayList<>();
 	}
 
@@ -256,6 +293,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
 				if (signatureProjectPlugin.applyTo(projectType)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("findSignatureProjectPlugin - plugin " + signatureProjectPlugin.getClass().getSimpleName()
+								+ " applies to project type: " + projectType);
+					}
 					return signatureProjectPlugin;
 				}
 			}
@@ -274,6 +315,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	private List<NodeRef> prepareDocuments(NodeRef projectNodeRef, List<NodeRef> documents, List<NodeRef> viewRecipients) {
 		List<NodeRef> preparedDocuments = new ArrayList<>();
 		NodeRef externalSignatureFolder = getExternalSignatureFolder(projectNodeRef, documents, viewRecipients);
+		if (logger.isDebugEnabled()) {
+			logger.debug("prepareDocuments - project: " + projectNodeRef + ", documents: " + documents + ", external signature folder: "
+					+ externalSignatureFolder);
+		}
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 		for (NodeRef document : documents) {
 			try {
@@ -294,8 +339,15 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					nodeService.createAssociation(documentCopy, document, ContentModel.ASSOC_ORIGINAL);
 					associationService.update(documentCopy, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
 					writer.putContent(reader);
+					nodeService.addAspect(documentCopy, ContentModel.ASPECT_VERSIONABLE, null);
 					preparedDocuments.add(documentCopy);
+					if (logger.isDebugEnabled()) {
+						logger.debug("prepareDocuments - copied document " + document + " into external signature folder as " + documentCopy);
+					}
 				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("prepareDocuments - no external signature folder, keeping original document: " + document);
+					}
 					preparedDocuments.add(document);
 				}
 			} finally {
@@ -317,10 +369,18 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
 				NodeRef externalSignatureFolder = signatureProjectPlugin.getExternalSignatureFolder(projectNodeRef, documents, viewRecipients);
+				if (logger.isDebugEnabled()) {
+					logger.debug("getExternalSignatureFolder - plugin " + signatureProjectPlugin.getClass().getSimpleName() + " returned: "
+							+ externalSignatureFolder);
+				}
 				if (externalSignatureFolder != null) {
 					return externalSignatureFolder;
 				}
 			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("getExternalSignatureFolder - no plugin provided an external signature folder for project: " + projectNodeRef
+					+ ", documents: " + documents + ", recipients: " + viewRecipients);
 		}
 		return null;
 	}
@@ -334,6 +394,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	 */
 	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask) {
 		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
+		if (logger.isDebugEnabled()) {
+			logger.debug("createValidatingTask - task: " + validatingTask.getNodeRef() + ", previous task: " + lastTask + ", documents: " + documents);
+		}
 		validatingTask.setTaskName(I18NUtil.getMessage(TASK_CHECKIN_NAME_KEY));
 		validatingTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -364,6 +427,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	 */
 	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
 		TaskListDataItem rejectTask = projectService.insertNewTask(project, null);
+		if (logger.isDebugEnabled()) {
+			logger.debug("createRejectTask - task: " + rejectTask.getNodeRef() + ", documents: " + documents);
+		}
 		rejectTask.setTaskName(I18NUtil.getMessage(TASK_REJECT_NAME_KEY));
 		rejectTask.setDescription(I18NUtil.getMessage(TASK_REJECT_DESCRIPTION_KEY));
 		rejectTask.setState(TaskState.Cancelled.toString());
@@ -407,6 +473,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					.filter(task -> (task.getResources() != null) && task.getResources().contains(recipient))
 					.filter(task -> (task.getTaskName() != null) && task.getTaskName().equals(taskName)).findFirst()
 					.orElseGet(() -> projectService.insertNewTask(project, List.of(finalPreviousTask)));
+			if (logger.isDebugEnabled()) {
+				logger.debug("createOrUpdateSignatureTasks - recipient: " + recipient + " (" + resourceFirstName + " " + resourceLastName + "), task: "
+						+ newTask.getNodeRef() + ", previous task: " + previousTask + ", documents: " + documents);
+			}
 			newTask.setTaskState(TaskState.Planned);
 			newTask.setRefusedTask(rejectTask);
 			newTask.setDuration(SIGNATURE_TASK_DURATION);
@@ -469,6 +539,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	@Override
 	public NodeRef cancelProjectSignature(NodeRef documentNodeRef, NodeRef projectNodeRef) {
 		documentNodeRef = signatureService.cancelDocument(documentNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("cancelProjectSignature - document: " + documentNodeRef + ", project: " + projectNodeRef);
+		}
 		
 		VersionHistory versionHistory = versionService.getVersionHistory(documentNodeRef);
 		
@@ -477,8 +550,12 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			Version versionToRestore = versionHistory.getAllVersions().stream()
 					.filter(v -> v.getFrozenModifiedDate().before(projectCreationDate))
 					.max(Comparator.comparing(Version::getFrozenModifiedDate))
-					.orElse(null);
+					.orElse(versionHistory.getRootVersion());
 			if (versionToRestore != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("cancelProjectSignature - reverting document " + documentNodeRef + " to version " + versionToRestore.getVersionLabel()
+							+ " (frozen modified date: " + versionToRestore.getFrozenModifiedDate() + ")");
+				}
 				versionService.revert(documentNodeRef, versionToRestore);
 				documentNodeRef = signatureService.cancelDocument(documentNodeRef);
 				NodeRef checkedOut = checkOutCheckInService.checkout(documentNodeRef);

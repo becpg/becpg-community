@@ -20,49 +20,64 @@
 /**
  * Shared form-resolution helpers for the beCPG portal endpoints.
  *
- * WHY THIS FILE EXISTS
- * --------------------
- * Share owns the form configuration and its resolution cascade
- * (formId + entityType + siteId + list, then fallback to the default form); the
- * repository only describes the fields that Share asks about, through
- * POST /becpg/form. The reference implementation of that dance is
- *   .../modules/entity-datagrid/config/columns.get.js
- * which is the datagrid's own endpoint and must not be touched.
- *
- * The functions below are a faithful extraction of that logic so the portal
- * endpoint can reuse it verbatim instead of reimplementing the cascade — which
- * would guarantee divergence the first time a client overrides a form.
- *
- * DELIBERATE DIFFERENCE with columns.get.js: no AlfrescoUtil.getPreferences call.
- * Column preferences are a Share-internal, per-user notion with no meaning for an
- * external supplier, and depending on them would force this endpoint to run
- * inside an authenticated Share session.
- *
- * Additive: new file, nothing existing is modified.
+ * Faithful extraction of .../modules/entity-datagrid/config/columns.get.js so the
+ * portal reuses the Share resolution cascade instead of reimplementing it. Single
+ * deliberate difference: no AlfrescoUtil.getPreferences call, column preferences
+ * being a per-user Share notion that would require an authenticated Share session.
  */
+
+/**
+ * Makes the `node-type` config evaluator usable outside a Share session.
+ *
+ * NodeMetadataBasedEvaluator resolves the node type through /api/metadata with a
+ * connector built from the Share session; the portal has none, the call returns 401
+ * and every node-type block — where beCPG declares its product forms — silently
+ * vanishes from config.scoped[nodeRef]. The evaluator reads its per-request cache
+ * first, so fetching the metadata with the caller's own ticket and storing it under
+ * that key restores the whole cascade, with the caller's own permissions.
+ */
+var PORTAL_PRIMED_NODES = {};
+
+function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
+	if (entityNodeRef == null || ("" + entityNodeRef).indexOf("://") === -1) {
+		return;
+	}
+
+	if (PORTAL_PRIMED_NODES["" + entityNodeRef] === true) {
+		return;
+	}
+	PORTAL_PRIMED_NODES["" + entityNodeRef] = true;
+
+	// Must match NodeMetadataBasedEvaluator.callMetadataService: it is the cache key.
+	var metadataUrl = "/api/metadata?nodeRef=" + entityNodeRef + "&shortQNames=true";
+
+	try {
+		var endpoint = "alfresco";
+		var path = metadataUrl;
+		if (alfTicket != null && ("" + alfTicket).length > 0) {
+			endpoint = "alfresco-noauth";
+			path = metadataUrl + "&alf_ticket=" + encodeURIComponent("" + alfTicket);
+		}
+
+		var response = remote.connect(endpoint).get(path);
+		if (parseInt(response.status.code, 10) === 200) {
+			context.setValue("forms.cache." + metadataUrl, "" + response.response);
+		}
+	} catch (e) {
+		if (logger.isLoggingEnabled()) {
+			logger.log("portalPrimeNodeTypeEvaluator: " + e);
+		}
+	}
+}
 
 /**
  * Finds the form configuration for an item, applying the beCPG resolution
  * cascade. Extracted from columns.get.js::getFormConfig.
  *
- * CHOOSING THE LOOKUP KEY — this is the subtlety that makes `form` steps work.
- *
- * `config.scoped[x]` passes `x` straight to `ConfigService.getConfig(x)` as the
- * evaluation context (see ConfigModel.ScopedConfigMap in spring-webscripts). So the
- * key decides which evaluator can fire:
- *
- *   - a type QName ("bcpg:nutList") matches `evaluator="model-type"`;
- *   - a nodeRef string ("workspace://SpacesStore/…") matches `evaluator="node-type"`,
- *     because NodeMetadataBasedEvaluator.applies() only accepts a String matching
- *     `.+://.+/.+`, then resolves the node's type through /api/metadata.
- *
- * beCPG declares its datalist forms under BOTH evaluators (becpg-plm-form-config.xml:
- * 64 model-type blocks, 63 node-type ones) but its PRODUCT types only under
- * `node-type`. Passing the type QName therefore finds datalist forms and misses
- * product forms — which is exactly the symptom the portal saw.
- *
- * Hence `lookupKey`: the caller passes the nodeRef when it has one, and the type
- * QName otherwise.
+ * The lookup key decides which evaluator can fire: a type QName matches
+ * `evaluator="model-type"`, a nodeRef matches `evaluator="node-type"`. beCPG declares
+ * its datalist forms under both but its product types only under `node-type`, hence a
+ * caller passing the nodeRef whenever it has one and the type QName otherwise.
  *
  * @param lookupKey the config evaluation key: a nodeRef (preferred) or a type QName
  * @param itemId the type QName the form belongs to, used for logging
@@ -121,6 +136,109 @@ function portalGetFormConfig(lookupKey, itemId, formId, mode, prefixedSiteId, pr
 	}
 
 	return formConfig;
+}
+
+/**
+ * The <control> a field declares, as a plain object the FTL can serialise.
+ *
+ * The template names the widget - autocomplete.ftl, textfield.ftl - and the
+ * parameters carry what makes it work, first of all the "ds" of an autocomplete.
+ *
+ * @param field a form configuration field, or null
+ * @return Object {template, params}, or null when the field declares nothing
+ */
+function portalReadControl(field) {
+	var control = field !== null && field !== undefined ? field.control : null;
+	if (control === null || control === undefined) {
+		return null;
+	}
+
+	var params = {}, hasParam = false;
+	// `getParams()` answers a ControlParam[], each carrying its own name and value
+	// - not a Map, and not something for..in can walk under Rhino.
+	var declared = control.params;
+	if (declared !== null && declared !== undefined) {
+		for (var p = 0; p < declared.length; p++) {
+			var param = declared[p];
+			if (param !== null && param.name !== null) {
+				// The XML indents its control-param values, so the declared `ds`
+				// arrives with a trailing newline and tabs. Trimmed here rather
+				// than in every consumer.
+				params["" + param.name] = ("" + param.value).replace(/^\s+|\s+$/g, "");
+				hasParam = true;
+			}
+		}
+	}
+
+	var template = control.template !== null && control.template !== undefined ? "" + control.template : null;
+	if (template === null && !hasParam) {
+		return null;
+	}
+
+	return { template: template, params: params };
+}
+
+/**
+ * The resolved form's control completed by the default form's.
+ *
+ * A datagrid form often repeats the template and drops the parameters -
+ * `bcpg:ingListGeoOrigin` declares its `autocomplete-association.ftl` and no
+ * `ds`. Taking that control as it stands would shadow the datasource the default
+ * form declares, so the two are merged, the resolved form winning key by key.
+ *
+ * @param control the control of the resolved form, or null
+ * @param fallback the control of the default form, or null
+ * @return Object {template, params}, or null when neither declares anything
+ */
+function portalMergeControl(control, fallback) {
+	if (control === null) {
+		return fallback;
+	}
+	if (fallback === null) {
+		return control;
+	}
+
+	var params = {}, name;
+	for (name in fallback.params) {
+		params[name] = fallback.params[name];
+	}
+	for (name in control.params) {
+		params[name] = control.params[name];
+	}
+
+	return {
+		template: control.template !== null ? control.template : fallback.template,
+		params: params
+	};
+}
+
+/**
+ * The same field, as the item's DEFAULT form describes it.
+ *
+ * A datagrid form lists the columns to show and almost never repeats the
+ * control, while the default form is where the picker is described: on
+ * `bcpg:ingList`, the `datagrid` form declares `bcpg:ingListIngTypes` bare and
+ * the default form carries its `ds`. Share resolves the same way when it edits a
+ * row, so a client rendering its own grid sees what Share's editor sees.
+ *
+ * @param itemType prefixed type, e.g. bcpg:ingList
+ * @param fieldId the field to look up
+ * @return the field configuration, or null
+ */
+function portalDefaultFormField(itemType, fieldId) {
+	if (itemType === null || itemType === undefined || fieldId === null || fieldId === undefined) {
+		return null;
+	}
+	var nodeConfig = config.scoped["" + itemType];
+	if (nodeConfig === null || nodeConfig === undefined) {
+		return null;
+	}
+	var formsConfig = nodeConfig.forms;
+	var defaultForm = formsConfig !== null && formsConfig !== undefined ? formsConfig.defaultForm : null;
+	if (defaultForm === null || defaultForm === undefined || defaultForm.fields === null) {
+		return null;
+	}
+	return defaultForm.fields["" + fieldId];
 }
 
 /**
@@ -289,6 +407,14 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 	var lookupKey = "" + itemType;
 	if (useNodeRefLookup === true && entityNodeRef != null && ("" + entityNodeRef).indexOf("://") !== -1) {
 		lookupKey = "" + entityNodeRef;
+		// Without this the node-type evaluator cannot answer outside a Share session and
+		// the product forms — which beCPG declares only there — resolve to nothing.
+		//
+		// Falling back to the item type instead does NOT work: measured locally on
+		// bcpg:rawMaterial with a valid ticket, the type lookup finds no configuration at
+		// all and step1 still returns no-form-config (lookupKey "bcpg:rawMaterial"),
+		// because the product forms carry no `model-type` declaration to inherit from.
+		portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket);
 	}
 
 	var formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
@@ -364,11 +490,26 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 		};
 	}
 
-	var formModel = eval('(' + response.response + ')');
+	// Parsed, not evaluated: the answer is data, and `eval` would run whatever it contains.
+	var formModel = null;
+	try {
+		formModel = jsonUtils.toObject("" + response.response);
+	} catch (eParse) {
+		if (logger.isLoggingEnabled()) {
+			logger.log("portalResolveDefinition: /becpg/form returned a non-JSON body for " + itemType);
+		}
+		return {
+			error: "form-service-error",
+			status: statusCode,
+			endpoint: endpoint,
+			fields: [], sets: [], tabs: [], nested: post.nested
+		};
+	}
+
 	var fields = formModel.fields != null ? formModel.fields : [];
 
 	// Enrich with what only Share knows: the overridden label, the help text, the
-	// read-only flag and the owning set.
+	// control, the read-only flag and the owning set.
 	for (var i = 0; i < fields.length; i++) {
 		var field = fields[i];
 		var shareField = null;
@@ -385,11 +526,34 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 					field.label = "" + msg.get(shareField.labelId);
 				}
 			} catch (eLbl) { /* keep the repository label */ }
+			// `help` is the literal attribute, `help-id` a message key — and beCPG
+			// uses the second almost everywhere (becpg-plm-form-config.xml declares
+			// help-id on some ninety fields and help on none). Reading only
+			// getHelpText() therefore returned null for all of them, and the portal
+			// rendered every field without its help text.
 			try {
 				if (shareField.getHelpText() != null) {
 					field.help = "" + shareField.getHelpText();
+				} else if (shareField.getHelpTextId() != null) {
+					field.help = "" + msg.get(shareField.getHelpTextId());
 				}
 			} catch (eHelp) { /* no help configured */ }
+			// The CONTROL, and this is not cosmetic: the datasource of a picker
+			// lives in `<control-param name="ds">`, and nowhere else. Dropped, the
+			// portal could still derive the default datasource of a true
+			// association (`…/targetassoc/associations/<endpointType>`), but not the
+			// one of a `d:noderef` PROPERTY — `bcpg:ingTypeV2` (Catégorie
+			// réglementaire) points at `bcpg:ingTypeItem`, which only this `ds`
+			// says. Those fields answered "carries no datasource" and the supplier
+			// portal showed "la recherche a échoué" on them.
+			try {
+				var control = portalMergeControl(
+					portalReadControl(shareField),
+					portalReadControl(portalDefaultFormField(itemType, field.name)));
+				if (control !== null) {
+					field.control = control;
+				}
+			} catch (eCtrl) { /* no control declared: the repository default applies */ }
 			try {
 				if (shareField.isReadOnly()) {
 					field.readOnly = true;

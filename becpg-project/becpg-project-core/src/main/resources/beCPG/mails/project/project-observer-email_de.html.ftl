@@ -207,8 +207,7 @@
 	 	 									 	<#if (args.taskDescription)?? && args.taskDescription != "">                                             
 	 	 									 	<li>Beschreibung : ${args.taskDescription}</li>                                       
 	 	 									 	</#if> 
-                                             	</ul>         
-                             </#if> 
+                                             	</ul>
 	                                             <#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Kommentar :</p>
 	                                                        <div class="comment">

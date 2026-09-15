@@ -65,24 +65,33 @@ public class SavedSearchIT extends RepoBaseTestCase {
 
 	@Test
 	public void testObsoleteDocumentsSampleSavedSearch() {
+		assertSampleSavedSearch("product-list-bcpg:document", "Obsolete documents", "\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\"");
+	}
+
+	@Test
+	public void testUpcomingQualityControlsSampleSavedSearch() {
+		assertSampleSavedSearch("product-list-qa:qualityControl", "Quality controls to perform",
+				"\\\"prop_qa_qcNextAnalysisDate-date-range\\\":\\\"NOW|NOW+7DAY\\\"");
+	}
+
+	private void assertSampleSavedSearch(String searchType, String name, String expectedFilter) {
 
 		inReadTx(() -> {
 
 			SavedSearch filter = new SavedSearch();
-			filter.setSearchType("product-list-bcpg:document");
+			filter.setSearchType(searchType);
 
-			List<SavedSearch> savedSearches = savedSearchService.findSavedSearch(filter).stream()
-					.filter(s -> "Obsolete documents".equals(s.getName())).toList();
+			List<SavedSearch> savedSearches = savedSearchService.findSavedSearch(filter).stream().filter(s -> name.equals(s.getName())).toList();
 
 			assertEquals(1, savedSearches.size());
 
-			SavedSearch obsoleteDocuments = savedSearches.get(0);
-			assertTrue(Boolean.TRUE.equals(obsoleteDocuments.getIsGlobal()));
-			assertNotNull(obsoleteDocuments.getTitle());
+			SavedSearch sampleSavedSearch = savedSearches.get(0);
+			assertTrue(Boolean.TRUE.equals(sampleSavedSearch.getIsGlobal()));
+			assertNotNull(sampleSavedSearch.getTitle());
 
-			String content = savedSearchService.getSavedSearchContent(obsoleteDocuments);
+			String content = savedSearchService.getSavedSearchContent(sampleSavedSearch);
 			assertNotNull(content);
-			assertTrue(content.contains("\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\""));
+			assertTrue(content.contains(expectedFilter));
 
 			return null;
 		});

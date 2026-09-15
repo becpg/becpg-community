@@ -657,15 +657,19 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			// check workflow props
-			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			return null;
+		}, false, true);
+
+		// The Activiti task is updated after commit, see ProjectWorkflowServiceImpl#runAfterCommit
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
-			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
-			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
-			assertTrue(taskListDataItem.getResources().containsAll(taskListDataItemDB.getResources())); //order is not guarenteed
+			assertEquals("task1 modified", taskListDataItemDB.getTaskName());
+			assertEquals(Integer.valueOf(3), taskListDataItemDB.getDuration());
 			assertEquals(2, taskListDataItemDB.getResources().size());
-			checkWorkflowProperties(workflowInstanceId, taskListDataItemDB.getNodeRef(), "Pjt 1 - task1 modified", taskListDataItemDB.getEnd(),
-					taskListDataItemDB.getResources());
+			checkWorkflowProperties(taskListDataItemDB.getWorkflowInstance(), taskListDataItemDB.getNodeRef(), "Pjt 1 - task1 modified",
+					taskListDataItemDB.getEnd(), taskListDataItemDB.getResources());
 
 			return null;
 		}, false, true);
@@ -687,7 +691,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(), "Pjt 1 - task1", taskListDataItem.getEnd(),
 					taskListDataItem.getResources());
 
-			// modify WF props (duration and add a resource)
+			// modify WF props (duration and replace the resource by a group)
 			logger.info("modify WF props");
 			taskListDataItem.setTaskName("task4 modified");
 			taskListDataItem.setDuration(3);
@@ -696,29 +700,39 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+			return null;
+		}, false, true);
 
-			Assert.assertNull(task.getProperties().get(ContentModel.PROP_OWNER));
+		// The Activiti task is updated after commit, see ProjectWorkflowServiceImpl#runAfterCommit
+		final String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			String workflowInstanceId = projectData.getTaskList().get(0).getWorkflowInstance();
+
+			WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+			Assert.assertNull("A pooled task has no owner", task.getProperties().get(ContentModel.PROP_OWNER));
 
 			Map<QName, Serializable> taskProp = new HashMap<>();
-
 			taskProp.put(ContentModel.PROP_OWNER, BeCPGTestHelper.USER_ONE);
-
 			workflowService.updateTask(task.getId(), taskProp, null, null);
 
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			// check workflow props
-			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
-			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
-			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
-			assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
-			assertEquals(1, taskListDataItemDB.getResources().size());
+			return workflowInstanceId;
+		}, false, true);
 
-			task = getNextTaskForWorkflow(workflowInstanceId);
-			Assert.assertEquals(BeCPGTestHelper.USER_ONE, task.getProperties().get(ContentModel.PROP_OWNER));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
+			assertEquals("task4 modified", taskListDataItemDB.getTaskName());
+			assertEquals(Integer.valueOf(3), taskListDataItemDB.getDuration());
+			assertEquals(1, taskListDataItemDB.getResources().size());
+			assertEquals(groupTwo, taskListDataItemDB.getResources().get(0));
+
+			WorkflowTask task = getNextTaskForWorkflow(workflowInstance);
+			Assert.assertEquals("The owner a user claimed is kept", BeCPGTestHelper.USER_ONE, task.getProperties().get(ContentModel.PROP_OWNER));
 
 			return null;
 		}, false, true);

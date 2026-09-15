@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -29,6 +30,7 @@ import fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext;
 import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService;
 import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService.EnvironmentalFootprintValue;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.score.ScoreContext;
 
 /**
  * <p>FrenchEcoScore class.</p>
@@ -61,6 +63,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 	/** Constant <code>ECO_SCORE_SOURCE_TYPE="ecoscore"</code> */
 	public static final String ECO_SCORE_SOURCE_TYPE = "ecoscore";
+
+	/** Constant <code>SCORE_VERSION="2021"</code> */
+	public static final String SCORE_VERSION = "2021";
 
 	/**
 	 *
@@ -146,6 +151,28 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	@Override
 	public boolean accept(ScorableEntity productData) {
 		return (productData instanceof ProductData) && ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_ECO_SCORE);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String getCode() {
+		return EcoScoreContext.SCORE_CODE;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String getVersion() {
+		return SCORE_VERSION;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
+		String details = ((ProductData) scorableEntity).getEcoScoreDetails();
+		if ((details == null) || details.isBlank()) {
+			return Optional.empty();
+		}
+		return Optional.of(EcoScoreContext.parse(details).toScoreContext(SCORE_VERSION));
 	}
 
 	/** {@inheritDoc} */

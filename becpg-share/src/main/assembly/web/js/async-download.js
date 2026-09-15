@@ -37,6 +37,13 @@
 			       n.indexOf(".rptdesign") > 0;
 		};
 
+		var SEARCH_FLAG_SUFFIX = "_isListProperty";
+
+		var isSearchFlag = function(prop) {
+			return prop.length > SEARCH_FLAG_SUFFIX.length
+				&& prop.indexOf(SEARCH_FLAG_SUFFIX, prop.length - SEARCH_FLAG_SUFFIX.length) !== -1;
+		};
+
 		var getCriteria = function(urlStr) {
 			if (!urlStr) return null;
 			var searchString = urlStr.split('?')[1];
@@ -56,7 +63,7 @@
 				}
 			}
 			var critList = [];
-			if (term) {
+			if (term && term !== "*") {
 				critList.push(term);
 			}
 			if (tag) {
@@ -66,7 +73,9 @@
 				try {
 					var qObj = JSON.parse(query);
 					for (var prop in qObj) {
-						if (qObj.hasOwnProperty(prop) && prop !== "datatype") {
+						// The advanced search flags its multi valued properties in the query itself:
+						// those flags are not criteria and their value says nothing to the user
+						if (qObj.hasOwnProperty(prop) && prop !== "datatype" && !isSearchFlag(prop) && qObj[prop] !== "") {
 							critList.push(qObj[prop]);
 						}
 					}
@@ -121,6 +130,18 @@
 				Dom.setStyle(this.id + "-aggregate-progress-span", "left", overallLeft + "px");
 				Dom.get(this.id + "-file-count-span").innerHTML = this.msg("file.status" + this.mimeType, json.filesAdded,
 					json.totalFiles);
+			};
+
+			downloadDialog.deleteDownload = function() {
+				// A search export answers with its download nodeRef only once the whole result set has been
+				// collected, which takes minutes on a large search. Until then _resetGUI has left
+				// _currentArchiveNodeURL empty, and cancelling would delete "api/internal/downloads/" with no
+				// nodeRef at all, which the repository rejects. Guard it the way getArchivingProgress does.
+				if (this._currentArchiveNodeURL != null && this._currentArchiveNodeURL != "") {
+					Alfresco.util.Ajax.jsonDelete({
+						url: Alfresco.constants.PROXY_URI + "api/internal/downloads/" + this._currentArchiveNodeURL
+					});
+				}
 			};
 
 			downloadDialog.handleArchiveComplete = function() {

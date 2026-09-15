@@ -1,0 +1,32 @@
+<#--
+  Standard vertical nutrition facts panel, 21 CFR 101.9(d).
+
+  Its opening block is the servings count followed by the serving size; everything below it is
+  the shared panel body. The body is drawn into a captured variable so that the svg envelope
+  can declare the exact height the content ended up needing, which nf.cursorY carries back.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.title text=nf_data.label("title") y=y/>
+	<#assign y = y + nf.TITLE_SIZE>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 1>
+
+	<#if nf_data.serving().hasServingsPerContainer()>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.SERVING_ROW_H>
+	</#if>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.right()}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	</#if>
+	<#assign y = y + nf.SERVING_ROW_H>
+
+	<@nf.panelBody data=nf_data y=y/>
+</#assign>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>

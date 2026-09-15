@@ -15,6 +15,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>TaskListExcelReportSearch class.</p>
@@ -46,7 +47,7 @@ public class TaskListExcelReportSearch extends DefaultExcelReportSearchPlugin{
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
+			Map<QName, Serializable> properties, final ExcelExportCache cache) {
 		
 		Map<String, Object> ret =  super.doExtract(nodeRef, itemType, metadataFields, properties, cache);
 		

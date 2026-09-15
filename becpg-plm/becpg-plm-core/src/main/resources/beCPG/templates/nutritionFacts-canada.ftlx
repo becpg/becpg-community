@@ -1,0 +1,26 @@
+<#--
+  Canadian nutrition facts panel, B.01.401.
+
+  It opens on a single "Per <serving>" line instead of the two lines of the FDA one, its footnote
+  states the little/lot rule rather than the daily diet disclaimer, and its percentages stay in
+  the body face.
+
+  The same template draws the unilingual and the bilingual panel, B.01.454: a bilingual panel
+  states its title, its serving and its footnote once per language, and joins the two languages of
+  a nutrient on the line of that nutrient. It is wider, two languages needing the room.
+
+  Both are wider than an FDA panel: the daily value header shares the line of the calories here,
+  where the FDA gives it a line of its own.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.canadianHeading data=nf_data y=y/>
+	<#assign y = nf.cursorY>
+
+	<@nf.canadianBody data=nf_data y=y/>
+</#assign>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>

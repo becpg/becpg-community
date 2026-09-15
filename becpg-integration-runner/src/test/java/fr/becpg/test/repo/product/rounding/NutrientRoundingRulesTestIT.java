@@ -218,6 +218,23 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(0.10d, RegulationFormulationHelper.round(101d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 		assertEquals(1.2d, RegulationFormulationHelper.round(1150d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 
+		// #35829 : the raw value is expressed in mg whereas the EU regulation expects g
+		assertEquals("< 0,005", RegulationFormulationHelper.displayValue(2.33d,
+				RegulationFormulationHelper.round(2.33d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("0,01", RegulationFormulationHelper.displayValue(10.36d,
+				RegulationFormulationHelper.round(10.36d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("0,1", RegulationFormulationHelper.displayValue(101d,
+				RegulationFormulationHelper.round(101d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH, "EU",
+				"mg/100g"));
+		assertEquals("2,0", RegulationFormulationHelper.displayValue(2000d,
+				RegulationFormulationHelper.round(2000d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("11", RegulationFormulationHelper.displayValue(11000d,
+				RegulationFormulationHelper.round(11000d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+
 		// less than
 		assertEquals(null, RegulationFormulationHelper.displayValue(null,
 				RegulationFormulationHelper.round(null, NutrientCode.Fat, Locale.FRENCH, "g/100g"), NutrientCode.Fat, Locale.FRENCH));

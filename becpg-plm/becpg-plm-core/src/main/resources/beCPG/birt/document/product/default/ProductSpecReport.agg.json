@@ -1,0 +1,102 @@
+{
+  "header": {
+    "logo": "becpg-logo.png",
+    "title": "SLabel.specificationSheet",
+    "subtitle": "${legalName}",
+    "date": "${cm:modified?date}",
+    "startNumberingAt": 1
+  },
+
+  "tableOfContents": {
+    "enabled": false
+  },
+
+  "pagination": {
+    "enabled": true,
+    "format": "Page ${page} / ${total}",
+    "startNumberingAt": 1,
+    "font": "Arial",
+    "size": 8,
+    "color": "#404040"
+  },
+
+  "componentHeadingStyle": {
+    "font": "Arial-Bold",
+    "size": 11,
+    "color": "#1F3864",
+    "prefix": "> "
+  },
+
+  "placeholderStyle": {
+    "font": "Arial-Bold",
+    "size": 9,
+    "color": "#000000"
+  },
+
+  "annexes": [
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
+      "title": "SLabel.annexRawMaterials",
+      "scope": "COMPO_CHILDREN",
+      "recurse": true,
+      "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
+      "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexRawMaterialsEmptyPlaceholder",
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
+      "title": "SLabel.annexPrimaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Primary",
+      "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexPrimaryPackagingEmptyPlaceholder",
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
+      "title": "SLabel.annexSecondaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Secondary",
+      "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexSecondaryPackagingEmptyPlaceholder",
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Photos",
+      "title": "SLabel.annexPhotos",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.annexPhotosEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf", "image/png", "image/jpeg"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=QualityDocuments",
+      "title": "SLabel.annexQualityDocuments",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.annexQualityDocumentsEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Subcontractors",
+      "title": "SLabel.annexSubcontractors",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.annexSubcontractorsEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    }
+  ]
+}

@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
@@ -165,6 +167,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>REPORT_LOGO_ID="report_logo"</code> */
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	/** Constant <code>TAG_COMMENTS="comments"</code> */
+	private static final String CHECKPOINT_END_DATALIST = "end_datalist_";
+
 	private static final String TAG_COMMENTS = "comments";
 	/** Constant <code>TAG_COMMENT="comment"</code> */
 	private static final String TAG_COMMENT = "comment";
@@ -531,21 +535,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
 
-		List<Element> elements = imgsElt.elements(TAG_IMAGE);
-		int cnt = elements != null ? elements.size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (NodeRef imgNodeRef : associationService.getChildAssocs(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS)) {
 
-				String imgId = String.format(PRODUCT_IMG_ID, cnt);
-				String name = (String) nodeService.getProperty(imagesFolderNodeRef, ContentModel.PROP_NAME);
-				if (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
+				String imgId = null;
+				String name = (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME);
+				if (name != null && (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault())))) {
 					imgId = REPORT_LOGO_ID;
 				}
-				if (extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes)) {
-					cnt++;
-				}
+				extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
 			}
 		}
 
@@ -666,6 +666,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				return false;
 			}
 			context.getExtractedImages().add(imgNodeRef);
+
+			if (imgId == null) {
+				imgId = findOrGenerateImageId(imgNodeRef, context);
+			}
+
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
@@ -695,6 +700,29 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 			context.getReportData().getImages().add(imgInfo);
 			return true;
+		}
+		return false;
+	}
+
+	private String findOrGenerateImageId(NodeRef imgNodeRef, DefaultExtractorContext context) {
+		for (EntityImageInfo info : context.getReportData().getImages()) {
+			if (Objects.equals(info.getImageNodeRef(), imgNodeRef)) {
+				return info.getId();
+			}
+		}
+		int cnt = context.getReportData().getImages().size();
+		String imgId;
+		do {
+			imgId = String.format(PRODUCT_IMG_ID, cnt++);
+		} while (isImageIdUsed(imgId, context.getReportData().getImages()));
+		return imgId;
+	}
+
+	private boolean isImageIdUsed(String id, Set<EntityImageInfo> images) {
+		for (EntityImageInfo info : images) {
+			if (Objects.equals(info.getId(), id)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -792,10 +820,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage(), prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				Element imgsElt = entityElt.element(TAG_IMAGES);
+				Element imgsElt = resolveEntityImagesElement(entityElt);
 				if (imgsElt != null) {
-					List<Element> selectNodes = imgsElt.elements(TAG_IMAGE);
-					int cnt = selectNodes != null ? selectNodes.size() : 1;
+					int cnt = imgsElt.elements(TAG_IMAGE).size();
 
 					for (NodeRef nodeRef : nodeRefs) {
 						if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -809,6 +836,27 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 		return isExtracted;
+	}
+
+	/**
+	 * Resolves the images element the association images have to be appended to.
+	 *
+	 * They always belong to the root entity, whichever element is currently being loaded: a data
+	 * list item element carries no images element of its own, so looking one up locally would
+	 * silently drop every image extracted from that item.
+	 *
+	 * @param entityElt the element currently being loaded
+	 * @return the images element of the root entity, or null when there is none
+	 */
+	private Element resolveEntityImagesElement(Element entityElt) {
+		Document document = entityElt.getDocument();
+		if (document != null) {
+			Element rootElt = document.getRootElement();
+			if ((rootElt != null) && TAG_ENTITY.equals(rootElt.getName())) {
+				return rootElt.element(TAG_IMAGES);
+			}
+		}
+		return entityElt.element(TAG_IMAGES);
 	}
 
 	/**
@@ -1577,39 +1625,64 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				continue;
 			}
 
-			if (context != null && !context.getExtractedNodes().contains(nodeRef)) {
-
-				context.getExtractedNodes().add(nodeRef);
-				QName qName = nodeService.getType(nodeRef);
-
-				Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
-				appendPrefix(qName, nodeElt);
-
-				EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
-				if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
-					((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
-				} else {
-
-					if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
-						List<QName> hiddentAttributes = new ArrayList<>();
-						hiddentAttributes.addAll(hiddenNodeAttributes);
-						hiddentAttributes.addAll(hiddenDataListItemAttributes);
-
-						loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
-					} else {
-						loadNodeAttributes(nodeRef, nodeElt, true, context);
-					}
-					if (extractDataList) {
-
-						Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
-						loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
-					}
-				}
-				assocElt.add(nodeElt);
-				context.cacheProductData(cacheKey, nodeElt);
-
-				context.getExtractedNodes().remove(nodeRef);
+			if (context == null) {
+				continue;
 			}
+
+			if (context.getExtractedNodes().contains(nodeRef)) {
+				appendCutAssocName(assocElt, assocDef, nodeRef);
+				continue;
+			}
+
+			context.getExtractedNodes().add(nodeRef);
+			QName qName = nodeService.getType(nodeRef);
+
+			Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
+			appendPrefix(qName, nodeElt);
+
+			EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
+			if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
+				((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
+			} else {
+
+				if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
+					List<QName> hiddentAttributes = new ArrayList<>();
+					hiddentAttributes.addAll(hiddenNodeAttributes);
+					hiddentAttributes.addAll(hiddenDataListItemAttributes);
+
+					loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
+				} else {
+					loadNodeAttributes(nodeRef, nodeElt, true, context);
+				}
+				if (extractDataList) {
+
+					Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+					loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
+				}
+			}
+			assocElt.add(nodeElt);
+			context.cacheProductData(cacheKey, nodeElt);
+
+			context.getExtractedNodes().remove(nodeRef);
+		}
+	}
+
+	/**
+	 * Renders the target name when the extraction of an association has to be cut.
+	 *
+	 * A node already being extracted higher in the stack is skipped to avoid an infinite loop, the
+	 * most common case being an entity template referencing itself through bcpg:entityTplRef. The
+	 * cut used to leave an empty element behind, so the name is rendered instead, the very way a
+	 * non-extracted association is rendered.
+	 *
+	 * @param assocElt the association element being filled
+	 * @param assocDef the association definition
+	 * @param nodeRef the target node whose extraction is cut
+	 */
+	private void appendCutAssocName(Element assocElt, AssociationDefinition assocDef, NodeRef nodeRef) {
+		String name = extractName(assocDef.getTargetClass().getName(), nodeRef);
+		if ((name != null) && !name.isEmpty()) {
+			assocElt.addCDATA(XMLTextHelper.writeCData(name));
 		}
 	}
 
@@ -1715,12 +1788,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				int dlNodes = countNodes(addedElt);
 				String dlXml = addedElt.asXML();
 				int dlSize = dlXml == null ? 0 : dlXml.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_nodes_" + dlNodes + "_size_" + dlSize);
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_nodes_" + dlNodes + "_size_" + dlSize);
 			} else {
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_empty");
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_empty");
 			}
 		} else {
-			StopWatchSupport.addCheckpoint("end_datalist_" + key);
+			StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key);
 		}
 	}
 

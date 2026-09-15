@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.action.Action;
@@ -20,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,7 +94,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 			QName mainType = null;
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-				XSSFSheet sheet = workbook.getSheetAt(i);
+				Sheet sheet = workbook.getSheetAt(i);
 				mainType = fillSheet(sheet, searchResults, mainType, parameters);
 				sheet.setForceFormulaRecalculation(true);
 			}
@@ -117,8 +116,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 		List<AttributeExtractorStructure> metadataFields;
 		String[] parameters;
-		Map<NodeRef, Map<String, Object>> cache;
-		private final int cacheMaxEntries;
+		ExcelExportCache cache;
 		QName itemType;
 		QName mainType;
 		AttributeExtractorStructure keyColumn;
@@ -132,15 +130,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			this.metadataFields = metadataFields;
 			this.itemType = itemType;
 			this.mainType = mainType;
-			// Configure a bounded LRU cache to limit memory growth during large exports
-			this.cacheMaxEntries = Integer.getInteger("becpg.excel.cache.maxEntries", 10000);
-			this.cache = new java.util.LinkedHashMap<NodeRef, Map<String, Object>>(16, 0.75f, true) {
-				private static final long serialVersionUID = 1L;
-				@Override
-				protected boolean removeEldestEntry(java.util.Map.Entry<NodeRef, Map<String, Object>> eldest) {
-					return size() > ExcelSheetExportContext.this.cacheMaxEntries;
-				}
-			};
+			this.cache = new ExcelExportCache();
 		}
 
 		public List<AttributeExtractorStructure> getMetadataFields() {
@@ -151,7 +141,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			return parameters;
 		}
 
-		public Map<NodeRef, Map<String, Object>> getCache() {
+		public ExcelExportCache getCache() {
 			return cache;
 		}
 
@@ -189,23 +179,23 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	/**
 	 * <p>readHeader.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
 	 */
-	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType) {
+	public ExcelSheetExportContext readHeader(Sheet sheet, QName mainType) {
 		return readHeader(sheet, mainType, null);
 	}
 
 	/**
 	 * <p>readHeader.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param extraParameters an array of {@link java.lang.String} objects.
 	 * @return a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
 	 */
-	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType, String[] extraParameters) {
+	public ExcelSheetExportContext readHeader(Sheet sheet, QName mainType, String[] extraParameters) {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
@@ -266,12 +256,12 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	/**
 	 * <p>fillSheet.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param searchResults a {@link java.util.List} object.
 	 * @param excelSheetExportContext a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
 	 * @return a {@link org.alfresco.service.namespace.QName} object.
 	 */
-	public QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, ExcelSheetExportContext excelSheetExportContext) {
+	public QName fillSheet(Sheet sheet, List<NodeRef> searchResults, ExcelSheetExportContext excelSheetExportContext) {
 		if (excelSheetExportContext != null) {
 			ExcelReportSearchPlugin plugin = null;
 
@@ -302,13 +292,13 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	/**
 	 * <p>fillSheet.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
 	 * @param searchResults a {@link java.util.List} object
 	 * @param mainType a {@link org.alfresco.service.namespace.QName} object
 	 * @param parameters an array of {@link java.lang.String} objects
 	 * @return a {@link org.alfresco.service.namespace.QName} object
 	 */
-	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, String[] parameters) {
+	private QName fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, String[] parameters) {
 
 		ExcelSheetExportContext excelSheetExportContext = readHeader(sheet, mainType, parameters);
 

@@ -334,10 +334,23 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 					}
 				}
 				if (!isFound) {
-					ret.add(item);
+					ret.add(detachedCopy(item));
 				}
 			}
 		});
+	}
+
+	/**
+	 * Merging writes the strictest thresholds of the specification hierarchy on the retained
+	 * requirement, so the requirement must be detached from the specification: the data list items
+	 * are shared through the entity cache and must not be altered by a formulation.
+	 *
+	 * @param item a T object
+	 * @return a detached copy of the requirement
+	 */
+	@SuppressWarnings("unchecked")
+	private T detachedCopy(T item) {
+		return (T) item.copy();
 	}
 
 	/**
@@ -348,7 +361,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * @return a boolean
 	 */
 	protected boolean shouldMerge(T item, T sl) {
-		return item.getCharactNodeRef().equals(sl.getCharactNodeRef());
+		return item.getCharactNodeRef().equals(sl.getCharactNodeRef()) && hasSameRegulatoryScope(item, sl);
 	}
 
 }

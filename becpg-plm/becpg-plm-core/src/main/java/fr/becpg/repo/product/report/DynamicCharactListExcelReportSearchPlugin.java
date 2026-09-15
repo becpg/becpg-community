@@ -9,7 +9,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -18,6 +18,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>DynamicCharactListExcelReportSearchPlugin class.</p>
@@ -30,13 +31,13 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 
 	/** {@inheritDoc} */
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 
 		for (NodeRef entityNodeRef : searchResults) {
-			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
+			if (nodeService.exists(entityNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
 					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 					if (key == null) {

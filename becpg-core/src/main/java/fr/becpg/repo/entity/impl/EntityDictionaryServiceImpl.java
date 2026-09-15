@@ -245,7 +245,9 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 					}
 				} else {
 					AssociationDefinition defaultPivotAssocDef = getAssociation(defaultPivotAssoc);
-					if (targetType.equals(defaultPivotAssocDef.getTargetClass().getName())) {
+					if (defaultPivotAssocDef == null) {
+						logger.warn("Default pivot assoc not found in dictionary, ignoring: " + defaultPivotAssoc);
+					} else if (targetType.equals(defaultPivotAssocDef.getTargetClass().getName())) {
 						assocs.add(defaultPivotAssocDef.getName());
 					}
 				}
@@ -292,7 +294,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 		if (fieldLocalName.contains(itemLocalName)) {
 			QName newQname = QName.createQName(fieldQname.getNamespaceURI(), fieldLocalName.replace(itemLocalName, newItemType.getLocalName()));
-			ClassAttributeDefinition ret = getPropDef(newQname);
+			QName mappedNewQName = propDefMapping.get(newQname);
+			ClassAttributeDefinition ret = getPropDef(mappedNewQName != null ? mappedNewQName : newQname);
 			if (ret != null) {
 				return ret;
 			}

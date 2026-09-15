@@ -13,7 +13,7 @@
    
 </@>
 
-<@markup id="customSearch-widgets" target="css" action="replace">
+<@markup id="customSearch-widgets" target="widgets" action="replace">
    <@createWidgets group="search"/>
 </@>
 
@@ -33,8 +33,10 @@
                      </span>
                   </span>
                </span>
-               <#-- menu list of available forms -->
-               <div id="${el}-selected-form-list" class="yuimenu" style="visibility:hidden">
+               <#-- Menu list of available forms. Positioned inline so it never takes layout
+                    space before the YUI stylesheets are applied, which would otherwise push
+                    the search button out of its row. -->
+               <div id="${el}-selected-form-list" class="yuimenu" style="visibility:hidden; position:absolute">
                   <div class="bd">
                      <ul>
                         <#list searchForms as f>

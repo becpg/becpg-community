@@ -26,6 +26,7 @@ import static org.alfresco.web.site.servlet.config.SecurityUtils.isAuthorization
 import static org.alfresco.web.site.servlet.config.SecurityUtils.toMultiMap;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -189,6 +190,31 @@ public class BeCPGAIMSFilter implements Filter
     /** Constant <code>SHARE_AIMS_DOLOGIN="/page/aims-dologin"</code> */
     public static final String SHARE_AIMS_DOLOGIN = "/page/aims-dologin";
 
+    /** Session attribute carrying the step of a re-authentication asked with prompt=true. */
+    private static final String REAUTH_STEP_ATTRIBUTE = "becpg.aims.reauthStep";
+    /** A re-authentication older than this is forgotten, so a stale marker cannot force the identity provider later. */
+    private static final long REAUTH_MAX_AGE_MILLIS = 5L * 60L * 1000L;
+
+    /** The steps of a re-authentication asked with prompt=true, kept in the session while the identity provider round trip runs. */
+    private enum ReauthStep
+    {
+        REQUESTED, REDIRECTED
+    }
+
+    /**
+     * The re-authentication marker stored in the session: the step reached and when the re-authentication started.
+     *
+     * @param step the step reached
+     * @param startedAt when the re-authentication was asked, in milliseconds
+     */
+    private record ReauthMarker(ReauthStep step, long startedAt) implements Serializable
+    {
+        boolean isExpired()
+        {
+            return System.currentTimeMillis() - startedAt > REAUTH_MAX_AGE_MILLIS;
+        }
+    }
+
     private ClientRegistrationRepository clientRegistrationRepository;
     private OAuth2AuthorizedClientService oauth2ClientService;
     private final RedirectStrategy authorizationRedirectStrategy;
@@ -215,6 +241,14 @@ public class BeCPGAIMSFilter implements Filter
      * expire in the middle of a downstream request.
      */
     private static final Duration TOKEN_EXPIRY_REFRESH_MARGIN = Duration.ofSeconds(60);
+
+    /**
+     * Identity provider error codes telling the refresh token itself was rejected. Any other failure is treated
+     * as transient, so that a temporary problem with the identity provider does not destroy the user session.
+     */
+    private static final Set<String> UNRECOVERABLE_REFRESH_ERROR_CODES =
+        Set.of(OAuth2ErrorCodes.INVALID_GRANT, OAuth2ErrorCodes.INVALID_TOKEN, OAuth2ErrorCodes.INVALID_CLIENT,
+               OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
 
     /**
      * <p>Constructor for BeCPGAIMSFilter.</p>
@@ -312,42 +346,40 @@ public class BeCPGAIMSFilter implements Filter
                             // the AIMS filter runs before Share establishes it, so bind it here to avoid a
                             // NullPointerException that would otherwise invalidate the session on every refresh.
                             this.initRequestContext(request, response);
-                            refreshToken(attribute, session);
+                            refreshToken(attribute, session, request);
                         }
                     }
-                    catch (Exception oauth2AuthenticationException)
+                    catch (Exception refreshException)
                     {
-                        LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
-                                         + request.getRequestURI() + "): " + oauth2AuthenticationException.getMessage(),
-                                     oauth2AuthenticationException);
-                        session.invalidate();
-                        if (!request.getRequestURI()
-                            .contains(this.shareContext + SHARE_AIMS_LOGOUT))
+                        if (isUnrecoverableRefreshFailure(refreshException))
                         {
-                            isAuthenticated = false;
+                            LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
+                                             + request.getRequestURI() + "): " + refreshException.getMessage(),
+                                         refreshException);
+                            session.invalidate();
+                            if (!request.getRequestURI()
+                                .contains(this.shareContext + SHARE_AIMS_LOGOUT))
+                            {
+                                isAuthenticated = false;
+                            }
+                        }
+                        else
+                        {
+                            // A transient failure, such as an unreachable identity provider, must not cost the user
+                            // its session: the current token is still usable and the next request retries the refresh.
+                            LOGGER.warn("Transient failure while refreshing OAuth2 token, keeping the session (URI="
+                                            + request.getRequestURI() + "): " + refreshException.getMessage(),
+                                        refreshException);
                         }
                     }
                 }
             }
         }
         
-        if (this.enabled && request.getRequestURI().contains(SHARE_AIMS_LOGIN_PAGE) &&
-            "true".equalsIgnoreCase(request.getParameter("prompt"))) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Explicit re-authentication requested for URI: " + request.getRequestURI() + " due to prompt=true.");
-            }
-
-            if (isAuthenticated) {
-                LOGGER.info("User is currently authenticated, but prompt=true found. Invalidating session to force IdP re-authentication.");
-                if (session != null) {
-                    session.invalidate();
-                    session = null; // Nullify after invalidation for subsequent logic
-                }
-                SecurityContextHolder.clearContext();
-                isAuthenticated = false; // Update local state for the rest of this filter invocation
-            } else {
-                LOGGER.debug("prompt=true found, user is already unauthenticated. Proceeding to login normally.");
-            }
+        if (this.enabled && isAuthenticated && forcesIdentityProviderRoundTrip(request, session))
+        {
+            // This request goes through the identity provider while the session stays alive for the other windows
+            isAuthenticated = false;
         }
 
         if (!isAuthenticated && this.enabled && (request.getRequestURI().contains(this.shareContext + SHARE_PAGE) || request.getRequestURI().contains(this.shareContext + SHARE_AIMS_LOGOUT)))
@@ -363,8 +395,7 @@ public class BeCPGAIMSFilter implements Filter
             {
                 if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " requestedSessionId="
-                                     + request.getRequestedSessionId() + " sessionIdValid="
+                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " sessionIdValid="
                                      + request.isRequestedSessionIdValid() + " newSession=" + session.isNew());
                 }
                 try
@@ -495,21 +526,7 @@ public class BeCPGAIMSFilter implements Filter
                 String alfTicket = this.getAlfTicket(session, username, accessToken);
                 if (alfTicket != null)
                 {
-                    // Ensure User ID is in session so the web-framework knows we have logged in
-                    session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
-                    session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH_AIMS, true);
-
-                    // Set the alfTicket into connector's session for further use on repo calls (will be set on the RemoteClient)
-                    Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
-                    connector.getConnectorSession()
-                        .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
-
-                    // Set credential username for further use on repo
-                    // if there is no pass, as in our case, there will be a "X-Alfresco-Remote-User" header set using this value
-                    CredentialVault vault = FrameworkUtil.getCredentialVault(session, username);
-                    Credentials credentials = vault.newCredentials(AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
-                    credentials.setProperty(Credentials.CREDENTIAL_USERNAME, username);
-                    vault.store(credentials);
+                    this.bindAlfrescoSession(session, username, alfTicket);
 
                     // Inform the Slingshot login controller of a successful login attempt as further processing may be required ?
                      beforeSuccess(request, response);
@@ -530,6 +547,35 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
     
+    /**
+     * Binds the Alfresco ticket and the credentials of the authenticated user to the session, so that repository
+     * calls keep authenticating. Shared by the initial login and by the renewal that follows a token refresh.
+     *
+     * @param session the HTTP session
+     * @param username the authenticated user name
+     * @param alfTicket the Alfresco ticket to bind
+     * @throws org.springframework.extensions.surf.exception.ConnectorServiceException if the connector cannot be obtained
+     */
+    private void bindAlfrescoSession(HttpSession session, String username, String alfTicket)
+        throws ConnectorServiceException
+    {
+        // Ensure User ID is in session so the web-framework knows we have logged in
+        session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
+        session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH_AIMS, true);
+
+        // Set the alfTicket into connector's session for further use on repo calls (will be set on the RemoteClient)
+        Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
+        connector.getConnectorSession()
+            .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
+
+        // Set credential username for further use on repo
+        // if there is no pass, as in our case, there will be a "X-Alfresco-Remote-User" header set using this value
+        CredentialVault vault = FrameworkUtil.getCredentialVault(session, username);
+        Credentials credentials = vault.newCredentials(AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
+        credentials.setProperty(Credentials.CREDENTIAL_USERNAME, username);
+        vault.store(credentials);
+    }
+
     /** Constant <code>SESSION_ATTRIBUTE_KEY_USER_GROUPS="_alf_USER_GROUPS"</code> */
 	private static final String SESSION_ATTRIBUTE_KEY_USER_GROUPS = "_alf_USER_GROUPS";
 
@@ -702,6 +748,95 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
+     * <p>Tells whether this request must go through the identity provider although the session is authenticated.</p>
+     *
+     * A re-authentication (#28065) is asked with prompt=true on the aims-login page, which forwards it to aims-dologin,
+     * whose answer comes back with the authorization code. The session used to be invalidated to force that round
+     * trip, but the main window shares it and re-authenticates on its own as soon as it dies, overwriting the saved
+     * request and the authorization request of the popup, which then lands on the home page instead of its callback
+     * (#36351). The session is now kept, and a marker carries the step of the round trip so that exactly these three
+     * requests bypass the authenticated state.
+     *
+     * @param request the current request
+     * @param session the current session
+     * @return true when the request must be treated as unauthenticated
+     */
+    private boolean forcesIdentityProviderRoundTrip(HttpServletRequest request, HttpSession session)
+    {
+        String uri = request.getRequestURI();
+        boolean prompt = "true".equalsIgnoreCase(request.getParameter("prompt"));
+
+        if (uri.contains(SHARE_AIMS_LOGIN_PAGE) && prompt)
+        {
+            LOGGER.info("Re-authentication requested with prompt=true, keeping the session and forcing the identity provider round trip.");
+            session.setAttribute(REAUTH_STEP_ATTRIBUTE, new ReauthMarker(ReauthStep.REQUESTED, System.currentTimeMillis()));
+            return true;
+        }
+
+        ReauthMarker marker = currentReauthMarker(session);
+        if (!uri.contains(SHARE_AIMS_DOLOGIN) || marker == null)
+        {
+            return false;
+        }
+        if (marker.step() == ReauthStep.REQUESTED && prompt)
+        {
+            session.setAttribute(REAUTH_STEP_ATTRIBUTE, new ReauthMarker(ReauthStep.REDIRECTED, marker.startedAt()));
+            return true;
+        }
+        if (marker.step() == ReauthStep.REDIRECTED && isAuthorizationResponse(toMultiMap(request.getParameterMap())))
+        {
+            LOGGER.info("Re-authentication answered by the identity provider, completing it in the existing session.");
+            session.removeAttribute(REAUTH_STEP_ATTRIBUTE);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * <p>The re-authentication marker of the session, dropped when it is too old.</p>
+     *
+     * @param session the current session
+     * @return the marker, or null when there is none
+     */
+    private ReauthMarker currentReauthMarker(HttpSession session)
+    {
+        Object attribute = session.getAttribute(REAUTH_STEP_ATTRIBUTE);
+        if (!(attribute instanceof ReauthMarker marker))
+        {
+            return null;
+        }
+        if (marker.isExpired())
+        {
+            session.removeAttribute(REAUTH_STEP_ATTRIBUTE);
+            return null;
+        }
+        return marker;
+    }
+
+    /**
+     * <p>Tells whether the identity provider answered for the user the session belongs to.</p>
+     *
+     * A re-authentication completes in the session it was asked from, so the answer must name the same user: another
+     * one would leave a session bound to one user and a security context bound to another.
+     *
+     * @param session the current session
+     * @param authenticationResult the answer of the identity provider
+     * @return true when the session has no user yet or the same user
+     */
+    private boolean belongsToSessionUser(HttpSession session, OAuth2LoginAuthenticationToken authenticationResult)
+    {
+        Object sessionUser = session.getAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID);
+        String username = authenticationResult.getPrincipal().getAttribute(this.principalAttribute);
+        if (sessionUser == null || sessionUser.equals(username))
+        {
+            return true;
+        }
+        LOGGER.warn("The identity provider identified " + username + " while the session belongs to " + sessionUser
+                        + ", closing the session.");
+        return false;
+    }
+
+    /**
      * <p>matchesAuthorizationResponse.</p>
      *
      * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
@@ -767,6 +902,13 @@ public class BeCPGAIMSFilter implements Filter
                 uriBuilder.queryParam("error_uri", new Object[]{error.getUri()});
             }
             this.redirectStrategy.sendRedirect(request, response, uriBuilder.build().encode().toString());
+            return;
+        }
+
+        if (!belongsToSessionUser(session, authenticationResult))
+        {
+            session.invalidate();
+            this.redirectStrategy.sendRedirect(request, response, "/");
             return;
         }
 
@@ -1028,6 +1170,11 @@ public class BeCPGAIMSFilter implements Filter
         // If we don't have redirect URL, redirect to the home page
         if (encodedOriginalUrl == null || encodedOriginalUrl.isEmpty())
         {
+            // The target only survives the identity provider round trip through the saved request, which lives
+            // in a session this flow may have invalidated. Losing it silently sends the caller to the dashboard
+            // instead of the page it asked for, so say it out loud.
+            LOGGER.warn("No redirectUrl on " + request.getRequestURI() + ", falling back to the home page. Saved request: "
+                            + (this.requestCache.getRequest(request, response) != null));
             this.redirectStrategy.sendRedirect(request, response, "/");
             return;
         }
@@ -1151,8 +1298,9 @@ public class BeCPGAIMSFilter implements Filter
      *
      * @param attribute a {@link org.springframework.security.core.context.SecurityContext} object
      * @param session a {@link jakarta.servlet.http.HttpSession} object
+     * @param request the HTTP request being served, used to re-initialise the user metadata
      */
-    private synchronized void refreshToken(SecurityContext attribute, HttpSession session)
+    private synchronized void refreshToken(SecurityContext attribute, HttpSession session, HttpServletRequest request)
     {
         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
             (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
@@ -1195,18 +1343,20 @@ public class BeCPGAIMSFilter implements Filter
         // The Alfresco ticket is baked into the connector session only at initial login. Renew it here so that
         // long-lived sessions do not keep sending a stale ticket to the repository (which would fail with 401
         // once the ticket expires on its own AFTER_INACTIVITY timeout).
-        renewAlfTicket(session, oidcUser, accessTokenResponse.getAccessToken());
+        renewAlfTicket(session, oidcUser, accessTokenResponse.getAccessToken(), request);
     }
 
     /**
-     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and store it on the connector session,
-     * so repository calls keep authenticating once the previously obtained ticket has expired.
+     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and rebind the session, so repository calls
+     * keep authenticating once the previously obtained ticket has expired.
      *
      * @param session the HTTP session
      * @param oidcUser the refreshed OIDC user
      * @param accessToken the refreshed access token
+     * @param request the HTTP request being served, used to re-initialise the user metadata
      */
-    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken)
+    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken,
+                                HttpServletRequest request)
     {
         try
         {
@@ -1219,15 +1369,35 @@ public class BeCPGAIMSFilter implements Filter
             String alfTicket = this.getAlfTicket(session, username, accessToken.getTokenValue());
             if (alfTicket != null)
             {
-                Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
-                connector.getConnectorSession()
-                    .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
+                // Rebind the whole session, not only the ticket: the request served during this refresh would
+                // otherwise reach the web scripts without a user in its request context, and fail on "user is
+                // not defined".
+                this.bindAlfrescoSession(session, username, alfTicket);
+                this.initUser(request);
             }
         }
-        catch (ConnectorServiceException e)
+        catch (ConnectorServiceException | UserFactoryException e)
         {
             LOGGER.error("Failed to renew Alfresco ticket after token refresh: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Tells a definitive refresh failure, where the identity provider rejected the refresh token itself, from a
+     * transient one such as an unreachable provider or an error raised by the surrounding framework.
+     *
+     * @param refreshException the failure raised while refreshing the token
+     * @return true when the session has to be invalidated
+     */
+    private boolean isUnrecoverableRefreshFailure(Exception refreshException)
+    {
+        if (refreshException instanceof OAuth2AuthorizationException oAuth2AuthorizationException)
+        {
+            return UNRECOVERABLE_REFRESH_ERROR_CODES.contains(oAuth2AuthorizationException.getError()
+                .getErrorCode());
+        }
+
+        return false;
     }
 
     /**

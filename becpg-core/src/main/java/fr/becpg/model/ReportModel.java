@@ -65,6 +65,9 @@ public class ReportModel {
 	/** Constant <code>PROP_REPORT_TPL_ITERATION_PARAMETER</code> */
 	public static final QName PROP_REPORT_TPL_ITERATION_PARAMETER = QName.createQName(REPORT_URI, "reportTplIterationParameter");
 
+	/** Constant <code>PROP_REPORT_TPL_IS_AGGREGATE</code> */
+	public static final QName PROP_REPORT_TPL_IS_AGGREGATE = QName.createQName(REPORT_URI, "reportTplIsAggregate");
+
 	/** Constant <code>PROP_REPORT_TEXT_PARAMETERS</code> */
 	public static final QName PROP_REPORT_TEXT_PARAMETERS = QName.createQName(REPORT_URI, "reportTextParameters");
 

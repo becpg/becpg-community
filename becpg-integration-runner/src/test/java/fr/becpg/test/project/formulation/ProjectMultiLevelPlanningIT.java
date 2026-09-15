@@ -52,13 +52,12 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 			assertNotNull(projectData.getTaskList());
 			assertEquals(6, projectData.getTaskList().size());
 			 
-			Calendar now = Calendar.getInstance();
-			now.set(Calendar.HOUR_OF_DAY, 0);
-			now.set(Calendar.MINUTE, 0);
-			now.set(Calendar.SECOND, 0);
-			now.set(Calendar.MILLISECOND, 0);
-			
-		
+			// The repository stores task dates as the current calendar day at midnight in
+			// PROJECT_TIMEZONE, so the expected dates have to be built the same way: a calendar
+			// on the default zone gives a different instant everywhere except GMT.
+			Calendar now = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
+			now.setTime(today);
+
 			assertEquals(dateFormat.parse("15/11/2012"), projectData.getTaskList().get(1).getStart());
 			assertEquals(projectData.getTaskList().get(1).getStart(), projectData.getTaskList().get(0).getStart());
 			assertEquals(projectData.getTaskList().get(2).getEnd(), projectData.getTaskList().get(0).getEnd()); 
@@ -87,12 +86,9 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			 now = Calendar.getInstance();
-				now.set(Calendar.HOUR_OF_DAY, 0);
-				now.set(Calendar.MINUTE, 0);
-				now.set(Calendar.SECOND, 0);
-				now.set(Calendar.MILLISECOND, 0);
-			
+			now = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
+			now.setTime(today);
+
 			// check
 			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(0).getStart());

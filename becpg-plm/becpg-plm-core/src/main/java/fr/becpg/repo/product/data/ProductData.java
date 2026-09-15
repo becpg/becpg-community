@@ -42,6 +42,7 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingComponentListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
@@ -49,10 +50,13 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.PubChannelListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.product.data.productList.SupplierPackagingListDataItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
+import fr.becpg.repo.score.ScoredEntity;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
@@ -84,7 +88,8 @@ import fr.becpg.repo.variant.model.VariantEntity;
  */
 @BeCPGPublicApi
 public class ProductData extends AbstractScorableEntity
-		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
+		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity,
+		ScoredEntity {
 
 	/** Constant <code>serialVersionUID=764534088277737617L</code> */
 	private static final long serialVersionUID = 764534088277737617L;
@@ -132,6 +137,7 @@ public class ProductData extends AbstractScorableEntity
 	private Double servingSize;
 	private MLText servingSizeByCountry;
 	private ProductUnit servingSizeUnit;
+	private String allergenRegulatoryFramework;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
 	private Double productLossPerc;
@@ -264,6 +270,8 @@ public class ProductData extends AbstractScorableEntity
 	private List<LabelingListDataItem> labelingList;
 	private List<ResourceParamListItem> resourceParamList;
 	private List<PackMaterialListDataItem> packMaterialList;
+	private List<PackagingComponentListDataItem> packagingComponentList;
+	private List<SupplierPackagingListDataItem> supplierPackagingList;
 	private List<StockListDataItem> stockList;
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
@@ -320,6 +328,7 @@ public class ProductData extends AbstractScorableEntity
 	 * Survey score
 	 */
 	private List<ScoreListDataItem> scoreList;
+	private List<RegulatoryScoreListDataItem> regulatoryScoreList;
 	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
@@ -1458,6 +1467,29 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
+	 * <p>Getter for the field <code>allergenRegulatoryFramework</code>.</p>
+	 *
+	 * Code of the reference-dose grid (PAL / VITAL) applicable to this product. When
+	 * empty, the fixed involuntary thresholds carried by the allergens apply.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:allergenRegulatoryFramework")
+	public String getAllergenRegulatoryFramework() {
+		return allergenRegulatoryFramework;
+	}
+
+	/**
+	 * <p>Setter for the field <code>allergenRegulatoryFramework</code>.</p>
+	 *
+	 * @param allergenRegulatoryFramework a {@link java.lang.String} object.
+	 */
+	public void setAllergenRegulatoryFramework(String allergenRegulatoryFramework) {
+		this.allergenRegulatoryFramework = allergenRegulatoryFramework;
+	}
+
+	/**
 	 * <p>Getter for the field <code>servingSizeByCountry</code>.</p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
@@ -2401,6 +2433,46 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
+	 * <p>Getter for the field <code>packagingComponentList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "pack:packagingComponentList")
+	public List<PackagingComponentListDataItem> getPackagingComponentList() {
+		return packagingComponentList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>packagingComponentList</code>.</p>
+	 *
+	 * @param packagingComponentList a {@link java.util.List} object
+	 */
+	public void setPackagingComponentList(List<PackagingComponentListDataItem> packagingComponentList) {
+		this.packagingComponentList = packagingComponentList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>supplierPackagingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "pack:supplierPackagingList")
+	public List<SupplierPackagingListDataItem> getSupplierPackagingList() {
+		return supplierPackagingList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>supplierPackagingList</code>.</p>
+	 *
+	 * @param supplierPackagingList a {@link java.util.List} object
+	 */
+	public void setSupplierPackagingList(List<SupplierPackagingListDataItem> supplierPackagingList) {
+		this.supplierPackagingList = supplierPackagingList;
+	}
+
+	/**
 	 * <p>Getter for the field <code>stockList</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object
@@ -2538,6 +2610,28 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
 		this.pubChannelList = pubChannelList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Getter for the field <code>regulatoryScoreList</code>.</p>
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:regulatoryScoreList")
+	@Override
+	public List<RegulatoryScoreListDataItem> getRegulatoryScoreList() {
+		return regulatoryScoreList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Setter for the field <code>regulatoryScoreList</code>.</p>
+	 */
+	@Override
+	public void setRegulatoryScoreList(List<RegulatoryScoreListDataItem> regulatoryScoreList) {
+		this.regulatoryScoreList = regulatoryScoreList;
 	}
 
 	/**

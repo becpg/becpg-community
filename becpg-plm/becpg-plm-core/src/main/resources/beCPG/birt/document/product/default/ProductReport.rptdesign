@@ -7862,7 +7862,7 @@ if (nbOfDays % 30 == 0)  {
                                         <row id="8422">
                                             <cell id="8423">
                                                 <label id="8424">
-                                                    <property name="fontSize">7.5pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="marginTop">4pt</property>
                                                     <property name="marginBottom">6pt</property>
@@ -7902,7 +7902,7 @@ if (nbOfDays % 30 == 0)  {
                                                 <data id="9122">
                                                     <property name="fontSize">8pt</property>
                                                     <property name="fontWeight">bold</property>
-                                                    <property name="marginTop">7pt</property>
+                                                    <property name="marginTop">1pt</property>
                                                     <property name="marginBottom">2.5pt</property>
                                                     <property name="display">inline</property>
                                                     <property name="resultSetColumn">roundedGDAPerc</property>
@@ -8055,7 +8055,7 @@ row["HML"] == "HIGH"</expression>
                                             <cell id="8437">
                                                 <property name="paddingLeft">0pt</property>
                                                 <label id="8438">
-                                                    <property name="fontSize">7.5pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="marginTop">5pt</property>
                                                     <property name="paddingLeft">0pt</property>
@@ -8085,10 +8085,11 @@ row["HML"] == "HIGH"</expression>
                                     <footer>
                                         <row id="8443">
                                             <cell id="8444">
+                                                <property name="paddingBottom">1pt</property>
                                                 <text id="8517">
                                                     <property name="fontSize">8.5pt</property>
                                                     <property name="fontWeight">bold</property>
-                                                    <property name="marginTop">10pt</property>
+                                                    <property name="marginTop">5pt</property>
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF>row["HML"]</VALUE-OF>]]></text-property>
                                                 </text>
@@ -8096,14 +8097,15 @@ row["HML"] == "HIGH"</expression>
                                         </row>
                                         <row id="8446">
                                             <cell id="8447">
+                                                <property name="paddingTop">1pt</property>
                                                 <data id="9132">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="display">inline</property>
                                                     <property name="resultSetColumn">roundedGDAPerc</property>
                                                 </data>
                                                 <label id="8449">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="display">inline</property>
                                                     <text-property name="text">%</text-property>
@@ -8236,7 +8238,7 @@ row["HML"] == "HIGH"</expression>
                                             <cell id="8454">
                                                 <property name="paddingLeft">0pt</property>
                                                 <label id="8455">
-                                                    <property name="fontSize">7.5pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="marginTop">5pt</property>
                                                     <property name="paddingLeft">0pt</property>
@@ -8266,10 +8268,11 @@ row["HML"] == "HIGH"</expression>
                                     <footer>
                                         <row id="8460">
                                             <cell id="8461">
+                                                <property name="paddingBottom">1pt</property>
                                                 <text id="8462">
                                                     <property name="fontSize">8.5pt</property>
                                                     <property name="fontWeight">bold</property>
-                                                    <property name="marginTop">10pt</property>
+                                                    <property name="marginTop">5pt</property>
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF>row["HML"]</VALUE-OF>]]></text-property>
                                                 </text>
@@ -8277,16 +8280,62 @@ row["HML"] == "HIGH"</expression>
                                         </row>
                                         <row id="8463">
                                             <cell id="8464">
+                                                <property name="paddingTop">1pt</property>
                                                 <data id="9137">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="display">inline</property>
                                                     <property name="resultSetColumn">roundedGDAPerc</property>
                                                 </data>
                                                 <label id="8466">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="backgroundAttachment">scroll</property>
+                                                    <property name="backgroundPositionX">0%</property>
+                                                    <property name="backgroundPositionY">0%</property>
+                                                    <property name="backgroundRepeat">repeat</property>
+                                                    <property name="fontFamily">"arial"</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
+                                                    <property name="fontStyle">normal</property>
+                                                    <property name="fontVariant">normal</property>
+                                                    <property name="color">black</property>
+                                                    <property name="textLineThrough">none</property>
+                                                    <property name="textOverline">none</property>
+                                                    <property name="textUnderline">none</property>
+                                                    <property name="borderBottomColor">black</property>
+                                                    <property name="borderBottomStyle">none</property>
+                                                    <property name="borderBottomWidth">medium</property>
+                                                    <property name="borderLeftColor">black</property>
+                                                    <property name="borderLeftStyle">none</property>
+                                                    <property name="borderLeftWidth">medium</property>
+                                                    <property name="borderRightColor">black</property>
+                                                    <property name="borderRightStyle">none</property>
+                                                    <property name="borderRightWidth">medium</property>
+                                                    <property name="borderTopColor">black</property>
+                                                    <property name="borderTopStyle">none</property>
+                                                    <property name="borderTopWidth">medium</property>
+                                                    <property name="marginTop">0pt</property>
+                                                    <property name="marginLeft">0pt</property>
+                                                    <property name="marginBottom">0pt</property>
+                                                    <property name="marginRight">0pt</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">1pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">1pt</property>
+                                                    <property name="textAlign">center</property>
+                                                    <property name="letterSpacing">normal</property>
+                                                    <property name="lineHeight">normal</property>
+                                                    <property name="orphans">2</property>
+                                                    <property name="textTransform">none</property>
+                                                    <property name="whiteSpace">normal</property>
+                                                    <property name="widows">2</property>
+                                                    <property name="wordSpacing">normal</property>
                                                     <property name="display">inline</property>
+                                                    <property name="pageBreakAfter">auto</property>
+                                                    <property name="pageBreakBefore">auto</property>
+                                                    <property name="pageBreakInside">avoid</property>
+                                                    <property name="showIfBlank">false</property>
+                                                    <property name="canShrink">false</property>
+                                                    <property name="overflow">visible</property>
                                                     <text-property name="text">%</text-property>
                                                 </label>
                                             </cell>
@@ -8418,7 +8467,7 @@ row["HML"] == "HIGH"</expression>
                                             <cell id="8471">
                                                 <property name="paddingLeft">0pt</property>
                                                 <label id="8472">
-                                                    <property name="fontSize">7.5pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="marginTop">5pt</property>
                                                     <property name="paddingLeft">0pt</property>
@@ -8448,10 +8497,11 @@ row["HML"] == "HIGH"</expression>
                                     <footer>
                                         <row id="8477">
                                             <cell id="8478">
+                                                <property name="paddingBottom">1pt</property>
                                                 <text id="8479">
                                                     <property name="fontSize">8.5pt</property>
                                                     <property name="fontWeight">bold</property>
-                                                    <property name="marginTop">10pt</property>
+                                                    <property name="marginTop">5pt</property>
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF>row["HML"]</VALUE-OF>]]></text-property>
                                                 </text>
@@ -8459,16 +8509,62 @@ row["HML"] == "HIGH"</expression>
                                         </row>
                                         <row id="8480">
                                             <cell id="8481">
+                                                <property name="paddingTop">1pt</property>
                                                 <data id="9138">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="display">inline</property>
                                                     <property name="resultSetColumn">roundedGDAPerc</property>
                                                 </data>
                                                 <label id="8483">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="backgroundAttachment">scroll</property>
+                                                    <property name="backgroundPositionX">0%</property>
+                                                    <property name="backgroundPositionY">0%</property>
+                                                    <property name="backgroundRepeat">repeat</property>
+                                                    <property name="fontFamily">"arial"</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
+                                                    <property name="fontStyle">normal</property>
+                                                    <property name="fontVariant">normal</property>
+                                                    <property name="color">black</property>
+                                                    <property name="textLineThrough">none</property>
+                                                    <property name="textOverline">none</property>
+                                                    <property name="textUnderline">none</property>
+                                                    <property name="borderBottomColor">black</property>
+                                                    <property name="borderBottomStyle">none</property>
+                                                    <property name="borderBottomWidth">medium</property>
+                                                    <property name="borderLeftColor">black</property>
+                                                    <property name="borderLeftStyle">none</property>
+                                                    <property name="borderLeftWidth">medium</property>
+                                                    <property name="borderRightColor">black</property>
+                                                    <property name="borderRightStyle">none</property>
+                                                    <property name="borderRightWidth">medium</property>
+                                                    <property name="borderTopColor">black</property>
+                                                    <property name="borderTopStyle">none</property>
+                                                    <property name="borderTopWidth">medium</property>
+                                                    <property name="marginTop">0pt</property>
+                                                    <property name="marginLeft">0pt</property>
+                                                    <property name="marginBottom">0pt</property>
+                                                    <property name="marginRight">0pt</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">1pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">1pt</property>
+                                                    <property name="textAlign">center</property>
+                                                    <property name="letterSpacing">normal</property>
+                                                    <property name="lineHeight">normal</property>
+                                                    <property name="orphans">2</property>
+                                                    <property name="textTransform">none</property>
+                                                    <property name="whiteSpace">normal</property>
+                                                    <property name="widows">2</property>
+                                                    <property name="wordSpacing">normal</property>
                                                     <property name="display">inline</property>
+                                                    <property name="pageBreakAfter">auto</property>
+                                                    <property name="pageBreakBefore">auto</property>
+                                                    <property name="pageBreakInside">avoid</property>
+                                                    <property name="showIfBlank">false</property>
+                                                    <property name="canShrink">false</property>
+                                                    <property name="overflow">visible</property>
                                                     <text-property name="text">%</text-property>
                                                 </label>
                                             </cell>
@@ -8596,7 +8692,7 @@ row["HML"] == "HIGH"</expression>
                                             <cell id="8488">
                                                 <property name="paddingLeft">0pt</property>
                                                 <label id="8489">
-                                                    <property name="fontSize">7.5pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="marginTop">5pt</property>
                                                     <property name="paddingLeft">0pt</property>
@@ -8626,10 +8722,11 @@ row["HML"] == "HIGH"</expression>
                                     <footer>
                                         <row id="8494">
                                             <cell id="8495">
+                                                <property name="paddingBottom">1pt</property>
                                                 <text id="8496">
                                                     <property name="fontSize">8.5pt</property>
                                                     <property name="fontWeight">bold</property>
-                                                    <property name="marginTop">10pt</property>
+                                                    <property name="marginTop">5pt</property>
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF>row["HML"]</VALUE-OF>]]></text-property>
                                                 </text>
@@ -8637,16 +8734,62 @@ row["HML"] == "HIGH"</expression>
                                         </row>
                                         <row id="8497">
                                             <cell id="8498">
+                                                <property name="paddingTop">1pt</property>
                                                 <data id="9139">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
                                                     <property name="display">inline</property>
                                                     <property name="resultSetColumn">roundedGDAPerc</property>
                                                 </data>
                                                 <label id="8500">
-                                                    <property name="fontSize">8pt</property>
+                                                    <property name="backgroundAttachment">scroll</property>
+                                                    <property name="backgroundPositionX">0%</property>
+                                                    <property name="backgroundPositionY">0%</property>
+                                                    <property name="backgroundRepeat">repeat</property>
+                                                    <property name="fontFamily">"arial"</property>
+                                                    <property name="fontSize">7pt</property>
                                                     <property name="fontWeight">bold</property>
+                                                    <property name="fontStyle">normal</property>
+                                                    <property name="fontVariant">normal</property>
+                                                    <property name="color">black</property>
+                                                    <property name="textLineThrough">none</property>
+                                                    <property name="textOverline">none</property>
+                                                    <property name="textUnderline">none</property>
+                                                    <property name="borderBottomColor">black</property>
+                                                    <property name="borderBottomStyle">none</property>
+                                                    <property name="borderBottomWidth">medium</property>
+                                                    <property name="borderLeftColor">black</property>
+                                                    <property name="borderLeftStyle">none</property>
+                                                    <property name="borderLeftWidth">medium</property>
+                                                    <property name="borderRightColor">black</property>
+                                                    <property name="borderRightStyle">none</property>
+                                                    <property name="borderRightWidth">medium</property>
+                                                    <property name="borderTopColor">black</property>
+                                                    <property name="borderTopStyle">none</property>
+                                                    <property name="borderTopWidth">medium</property>
+                                                    <property name="marginTop">0pt</property>
+                                                    <property name="marginLeft">0pt</property>
+                                                    <property name="marginBottom">0pt</property>
+                                                    <property name="marginRight">0pt</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">1pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">1pt</property>
+                                                    <property name="textAlign">center</property>
+                                                    <property name="letterSpacing">normal</property>
+                                                    <property name="lineHeight">normal</property>
+                                                    <property name="orphans">2</property>
+                                                    <property name="textTransform">none</property>
+                                                    <property name="whiteSpace">normal</property>
+                                                    <property name="widows">2</property>
+                                                    <property name="wordSpacing">normal</property>
                                                     <property name="display">inline</property>
+                                                    <property name="pageBreakAfter">auto</property>
+                                                    <property name="pageBreakBefore">auto</property>
+                                                    <property name="pageBreakInside">avoid</property>
+                                                    <property name="showIfBlank">false</property>
+                                                    <property name="canShrink">false</property>
+                                                    <property name="overflow">visible</property>
                                                     <text-property name="text">%</text-property>
                                                 </label>
                                             </cell>
@@ -9157,7 +9300,6 @@ indent_docx (0, 1, this, "right");]]></method>
                                     <property name="paddingBottom">0pt</property>
                                     <property name="paddingRight">1pt</property>
                                     <grid id="9096">
-                                        <property name="backgroundPositionX">-90%</property>
                                         <property name="marginTop">2pt</property>
                                         <property name="marginLeft">1pt</property>
                                         <property name="marginBottom">2pt</property>
@@ -9171,72 +9313,53 @@ indent_docx (0, 1, this, "right");]]></method>
                                         </list-property>
                                         <column id="9097"/>
                                         <row id="9098">
-                                            <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
-if (!(reportContext.getOutputFormat().toString()== "docx")) {
-
-	var coef = -251;
-	var roundedGDAPerc = this.getRowData().getColumnValue("roundedGDAPerc");
-	var color = this.getRowData().getColumnValue("color");
-	
-	if (color == "" || color == null  ) {
-		color = "#CCCCCC";
-	}
-	
-	if(roundedGDAPerc != null &amp;&amp; roundedGDAPerc != "") {
-		this.getStyle().backgroundImage = "cccccc-200X30.png";
-		this.getStyle().backgroundPositionX = ((parseFloat(roundedGDAPerc)/100) * coef) + "%";
-		this.getStyle().backgroundRepeat = "no-repeat";
-		this.getStyle().backgroundColor = color;
-	}
-}]]></method>
-                                            <property name="backgroundImageType">embed</property>
-                                            <property name="backgroundRepeat">no-repeat</property>
                                             <property name="height">0.188in</property>
                                             <cell id="9099">
                                                 <property name="paddingTop">0pt</property>
                                                 <property name="paddingLeft">2pt</property>
                                                 <property name="paddingBottom">0pt</property>
                                                 <property name="paddingRight">2pt</property>
-                                                <grid id="9100">
-                                                    <property name="height">0.344in</property>
-                                                    <property name="width">100%</property>
-                                                    <column id="9101">
-                                                        <property name="textAlign">left</property>
-                                                    </column>
-                                                    <column id="9102">
-                                                        <property name="textAlign">right</property>
-                                                    </column>
-                                                    <row id="9103">
-                                                        <property name="backgroundImageType">embed</property>
-                                                        <cell id="9104">
-                                                            <property name="paddingTop">0pt</property>
-                                                            <property name="paddingLeft">0pt</property>
-                                                            <property name="paddingBottom">0pt</property>
-                                                            <property name="paddingRight">0pt</property>
-                                                            <text id="9105">
-                                                                <property name="fontSize">9pt</property>
-                                                                <property name="fontWeight">bold</property>
-                                                                <property name="color">#000000</property>
-                                                                <property name="contentType">html</property>
-                                                                <text-property name="content"><![CDATA[<VALUE-OF>row["roundedGDAPerc"]+ "%"</VALUE-OF>]]></text-property>
-                                                            </text>
-                                                        </cell>
-                                                        <cell id="9107">
-                                                            <property name="paddingTop">0pt</property>
-                                                            <property name="paddingLeft">0pt</property>
-                                                            <property name="paddingBottom">0pt</property>
-                                                            <property name="paddingRight">0pt</property>
-                                                            <text-data id="9108">
-                                                                <expression name="valueExpr">if(row["nutCode"] ==  "NA" ){
-	reportContext.getMessage( "of", reportContext.getLocale()) + row["regulGDA"] + row["nutListUnit"].replace("/100g", "").replace("/100mL", ""); 
-} else {
-	reportContext.getMessage( "of", reportContext.getLocale()) + row["regulGDA"] + row["nutListUnit"].replace("/100g", "").replace("/100mL", "");
-}</expression>
-                                                                <property name="contentType">html</property>
-                                                            </text-data>
-                                                        </cell>
-                                                    </row>
-                                                </grid>
+                                                <text-data id="9109">
+                                                    <property name="contentType">html</property>
+                                                    <expression name="valueExpr" type="javascript"><![CDATA[
+// Jauge des apports de reference. Deux cellules HTML dont la largeur porte le
+// pourcentage : plus d'image de fond a decaler, donc plus de coefficient de calage
+// a reajuster quand la largeur de la colonne change.
+// Contraintes de l'emetteur PDF respectees ici : une seule expression (d'ou
+// l'encapsulation), colonnes liees passees en parametres, largeurs entieres, et
+// du texte dans chaque cellule pour que la bande soit peinte.
+(function (rawPercent, rawColor, label, reference) {
+	var percent = parseFloat(rawPercent);
+	if (isNaN(percent)) {
+		return "";
+	}
+
+	var fillColor = (rawColor == null || rawColor == "") ? "#CCCCCC" : rawColor;
+	var filled = Math.round(Math.max(0, Math.min(100, percent)));
+	var track = "background-color:#EDEDED";
+	var strong = "font-size:9pt;font-weight:bold";
+	var cells;
+
+	// sous 25 %, la part coloree est trop etroite pour accueillir le libelle
+	if (filled >= 25) {
+		cells = "<td style=\"width:" + filled + "%;background-color:" + fillColor + ";"
+				+ strong + ";padding-left:3pt\">" + label + "</td>"
+			+ "<td style=\"" + track + ";font-size:8pt;text-align:right;padding-right:3pt\">"
+				+ reference + "</td>";
+	} else {
+		cells = "<td style=\"width:" + filled + "%;background-color:" + fillColor
+				+ ";font-size:9pt\">&#160;</td>"
+			+ "<td style=\"" + track + ";" + strong + ";padding-left:3pt\">" + label + "</td>"
+			+ "<td style=\"" + track + ";font-size:8pt;text-align:right;padding-right:3pt\">"
+				+ reference + "</td>";
+	}
+
+	return "<table style=\"width:100%;border-collapse:collapse\"><tr>" + cells + "</tr></table>";
+})(row["roundedGDAPerc"], row["color"], row["roundedGDAPerc"] + "%",
+	reportContext.getMessage("of", reportContext.getLocale()) + row["regulGDA"]
+		+ row["nutListUnit"].replace("/100g", "").replace("/100mL", ""))
+                                                    ]]></expression>
+                                                </text-data>
                                             </cell>
                                         </row>
                                     </grid>

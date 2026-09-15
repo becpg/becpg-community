@@ -36,12 +36,17 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.impl.ExportSearchAuditPlugin;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -69,6 +74,12 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(ExportSearchWebScriptIT.class);
+
+	/** How long an export is given to render and complete its audit entry. */
+	private static final long EXPORT_TIMEOUT_MS = 120_000;
+
+	/** How often the audit is polled while the export runs. */
+	private static final long EXPORT_POLL_INTERVAL_MS = 500;
 
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/fr/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/fr/ExportSearchQuery.xml";
@@ -363,6 +374,147 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 			assertNull("Should not throw an exception", e);
 		}
 
+	}
+
+	/**
+	 * Test that an export search completes the audit entry recorded when it started.
+	 */
+	@Test
+	public void testExportSearchIsAudited() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			initTests();
+			return null;
+
+		}, false, true);
+
+		waitForSolr();
+
+		int entriesBeforeExport = listAuditEntries(exportedTemplateQuery()).size();
+
+		try {
+
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
+					+ URLEncoder.encode("{\"prop_cm_name\":\"FP\",\"datatype\":\"bcpg:product\"}", StandardCharsets.UTF_8.toString());
+
+			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+			assertNotNull(response.getContentAsString());
+
+		} catch (Exception e) {
+			logger.error("Failed to execute webscript", e);
+			assertNull("Should not throw an exception", e);
+		}
+
+		JSONObject auditEntry = waitForCompletedAuditEntry(exportedTemplateQuery(), entriesBeforeExport + 1);
+
+		assertEquals("The export is synchronous", "false", auditEntry.get(ExportSearchAuditPlugin.ASYNC).toString());
+		assertTrue("The export start is dated", auditEntry.has(AuditPlugin.STARTED_AT));
+		assertTrue("The export end is dated", auditEntry.has(AuditPlugin.COMPLETED_AT));
+		assertTrue("The export duration is measured", Integer.parseInt(auditEntry.get(AuditPlugin.DURATION).toString()) >= 0);
+	}
+
+	/**
+	 * Test that an asynchronous export search completes its audit entry from the thread rendering it.
+	 */
+	@Test
+	public void testAsyncExportSearchIsAudited() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			initTests();
+			return null;
+
+		}, false, true);
+
+		waitForSolr();
+
+		String downloadNodeRef = requestAsyncExport();
+
+		AuditQuery auditQuery = AuditQuery.createQuery().filter(ExportSearchAuditPlugin.DOWNLOAD_NODE_REF, downloadNodeRef);
+
+		JSONObject auditEntry = waitForCompletedAuditEntry(auditQuery, 1);
+
+		assertEquals("The export is asynchronous", "true", auditEntry.get(ExportSearchAuditPlugin.ASYNC).toString());
+		assertTrue("The export end is dated by the thread having rendered it", auditEntry.has(AuditPlugin.COMPLETED_AT));
+		assertTrue("The export duration is measured", Integer.parseInt(auditEntry.get(AuditPlugin.DURATION).toString()) >= 0);
+	}
+
+	/**
+	 * Request an asynchronous export and return the download it renders into.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	private String requestAsyncExport() {
+		try {
+
+			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/")
+					+ "/Excel.xlsx?async=true&repo=true&term=&query="
+					+ URLEncoder.encode("{\"prop_cm_name\":\"FP\",\"datatype\":\"bcpg:product\"}", StandardCharsets.UTF_8.toString());
+
+			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+
+			return new JSONObject(response.getContentAsString()).getString("nodeRef");
+
+		} catch (Exception e) {
+			logger.error("Failed to execute webscript", e);
+			throw new IllegalStateException("The asynchronous export could not be requested", e);
+		}
+	}
+
+	/**
+	 * Block until the entry matching the given query is flagged as completed in the audit.
+	 *
+	 * The client is served before the server closes the audit scope, so an export is not completed
+	 * yet when its response comes back.
+	 *
+	 * @param auditQuery a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @param expectedEntries the number of entries the export is expected to leave behind
+	 * @return a {@link org.json.JSONObject} object
+	 */
+	private JSONObject waitForCompletedAuditEntry(AuditQuery auditQuery, int expectedEntries) {
+
+		long waitStart = System.currentTimeMillis();
+
+		while ((System.currentTimeMillis() - waitStart) < EXPORT_TIMEOUT_MS) {
+			List<JSONObject> auditEntries = listAuditEntries(auditQuery);
+
+			assertTrue("The entry recorded when the export started is replaced, not duplicated", auditEntries.size() <= expectedEntries);
+
+			if ((auditEntries.size() == expectedEntries) && "true".equals(auditEntries.get(0).get(AuditPlugin.IS_COMPLETED).toString())) {
+				return auditEntries.get(0);
+			}
+
+			sleepQuietly();
+		}
+
+		fail("The export did not complete its audit entry in " + (EXPORT_TIMEOUT_MS / 1000) + "s");
+
+		return null;
+	}
+
+	private void sleepQuietly() {
+		try {
+			Thread.sleep(EXPORT_POLL_INTERVAL_MS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException("Interrupted while waiting for the export to complete", e);
+		}
+	}
+
+	/**
+	 * The export search audit entries of the template under test, most recent first.
+	 *
+	 * @return a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 */
+	private AuditQuery exportedTemplateQuery() {
+		return AuditQuery.createQuery().filter(ExportSearchAuditPlugin.TEMPLATE, exportProductReportTpl.toString())
+				.sortBy(AuditPlugin.STARTED_AT).asc(false).dbAsc(false);
+	}
+
+	private List<JSONObject> listAuditEntries(AuditQuery auditQuery) {
+		return transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> beCPGAuditService.listAuditEntries(AuditType.EXPORT_SEARCH, auditQuery), true, true);
 	}
 
 	/**

@@ -42,6 +42,8 @@
 	<#assign currUnits="d,mo,y">
    <#elseif unit=="-">
 	<#assign currUnits="-,mega,milli,micro">
+   <#else>
+	<#assign currUnits="">
  </#if>
 
 <#if field.value?is_number>
@@ -90,10 +92,10 @@
 		<#assign currValue=field.value*1000>
 	   <#elseif field.value?abs &lt; 10  >
 		<#assign currUnit="mm" >
-		<#assign currValue=field.value*1000 >
+		<#assign currValue=field.value >
       <#elseif field.value?abs &lt; 100  >
 		<#assign currUnit="cm" >
-		<#assign currValue=field.value*100 >
+		<#assign currValue=field.value*0.1 >
   	  <#else>
 		<#assign currUnit="m">
 	 </#if>
@@ -103,7 +105,7 @@
 	   <#assign currUnit="cm">
 	  <#elseif field.value?abs &lt; 0.001  >
 	   <#assign currUnit="micro_m">
-	   <#assign currValue=field.value*10000>
+	   <#assign currValue=field.value*1000>
 	  <#elseif field.value?abs &lt; 0.01  >
 	   <#assign currUnit="mm">
 	   <#assign currValue=field.value>
@@ -139,12 +141,12 @@
 		<#assign currUnit="micro_m">
 	 </#if>
      <#elseif currUnit=="ft">
-	  <#assign currValue=field.value* 3.28084 >
+	  <#assign currValue=field.value*0.00328084 >
 	  <#if currValue == 0  >
         <#assign currUnit="ft">
       <#elseif currValue?abs &lt; 1  >
 		<#assign currUnit="in" >
-		<#assign currValue=field.value*39.37008 >
+		<#assign currValue=field.value*0.03937008 >
 	  </#if> 
 	 <#elseif currUnit=="in">
 	 <#assign currValue=field.value/25.4 >
@@ -211,7 +213,7 @@
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
-				 <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>	             
+				 <#if currUnits?has_content && (!field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>	             
 	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit"
 	         <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> >
 	               <#list currUnits?split(",") as nameValue>
@@ -228,6 +230,11 @@
 	         			var updateVal = function (){
 
 							var sel = YAHOO.util.Dom.get("${fieldHtmlId}-unit");
+							if (sel == null) {
+								YAHOO.util.Dom.get("${fieldHtmlId}-val").value =
+									beCPG.util.convertUnit(YAHOO.util.Dom.get("${fieldHtmlId}").value, "${unit}", "${unit}");
+								return true;
+							}
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = 
 				         		beCPG.util.convertUnit(YAHOO.util.Dom.get("${fieldHtmlId}").value, sel.value,"${unit}");
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =	

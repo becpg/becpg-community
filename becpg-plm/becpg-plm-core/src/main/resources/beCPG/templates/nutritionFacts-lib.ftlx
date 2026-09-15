@@ -1,0 +1,899 @@
+<#--
+  Shared geometry and drawing macros of the regulatory nutrition facts panels.
+
+  Units: 1 SVG user unit = 1 point, so every figure below is directly the measurement the
+  regulation states. Never switch to pixels.
+
+  Rules are drawn as <rect> and never as <line>: a line of width 0.25 straddles its coordinate
+  and ends up anti-aliased over two device pixels, which is what makes a panel look off by a
+  hair once printed. A rect has exact edges.
+
+  Model access uses the method form (line.label(), not line.label): the model is made of Java
+  records, and record accessors are not JavaBean getters, so FreeMarker only sees them as
+  methods.
+-->
+
+<#-- Panel box -->
+<#assign PANEL_W = 144>
+<#assign PAD = 4>
+<#assign BORDER = 0.5>
+
+<#--
+  Width of the panel being drawn. Every macro below derives from it, so a format wider than a
+  vertical panel declares its own width once, before it draws anything:
+
+    <#assign W = 252 in nf>
+-->
+<#assign W = PANEL_W>
+
+<#-- Right margin the figures are pinned to. -->
+<#function right>
+	<#return W - PAD>
+</#function>
+
+<#-- Width available between the two margins. -->
+<#function contentWidth>
+	<#return W - 2 * PAD>
+</#function>
+
+<#-- Rules, as thick as the regulation requires -->
+<#assign HAIRLINE = 0.25>
+<#assign RULE_MEDIUM = 3>
+<#assign RULE_THICK = 7>
+
+<#-- Type -->
+<#assign FONT_BODY = "Helvetica, 'Nimbus Sans', Arial, 'Liberation Sans', sans-serif">
+<#assign FONT_HEAVY = "'Helvetica Black', 'Arial Black', Helvetica, Arial, sans-serif">
+<#assign TITLE_SIZE = 27>
+<#assign SERVING_SIZE = 10>
+<#assign CAPTION_SIZE = 6>
+<#assign CALORIES_LABEL_SIZE = 16>
+<#assign CALORIES_VALUE_SIZE = 22>
+<#assign NUTRIENT_SIZE = 8>
+<#assign FOOTNOTE_SIZE = 5>
+
+<#-- Vertical rhythm -->
+<#assign NUTRIENT_ROW_H = 11>
+<#assign SERVING_ROW_H = 12>
+<#assign CAPTION_ROW_H = 8>
+<#assign INDENT = 5.5>
+
+<#-- Air kept above a caption that a rule would otherwise touch -->
+<#assign CAPTION_LEAD = 3>
+
+<#-- Ratio of the Arial cap height to the font size, to place a baseline from the top of a line -->
+<#assign ASCENT_RATIO = 0.716>
+
+<#--
+  Average width of a glyph, as a ratio of the font size, used to wrap free text. Measured on
+  Arial and on the metrically compatible faces the panels fall back to. Prose runs narrower than
+  a sentence stating figures, digits and parentheses being wider than letters, and the heavy face
+  runs wider than both, so the wrap counts a line with the ratio matching what it holds.
+-->
+<#assign GLYPH_RATIO = 0.45>
+<#assign FIGURE_GLYPH_RATIO = 0.53>
+<#assign HEAVY_GLYPH_RATIO = 0.62>
+
+<#--
+  Baseline of a text whose top edge sits at "top". The y attribute of an SVG text is its
+  baseline, and dominant-baseline is not reliable enough in Batik to be used instead.
+-->
+<#function baseline top size>
+	<#return top + size * ASCENT_RATIO>
+</#function>
+
+<#-- Height a text of that size takes, its descender included. -->
+<#function lineHeight size>
+	<#return size * ASCENT_RATIO + 3>
+</#function>
+
+<#-- How many glyphs of that size fit in a width, which is what the free text wrap counts in. -->
+<#function charsPerWidth width size ratio=GLYPH_RATIO>
+	<#return (width / (size * ratio))?floor>
+</#function>
+
+<#--
+  Horizontal rule. It spans the content width by default, but the regulation asks for a
+  shortened rule above a declaration nested under another one, "Includes Added Sugars" being
+  the case the FDA spells out: the rule then starts at the indentation of the line it precedes.
+
+  It can also stop short of the right margin, which is how a Canadian panel closes its calories:
+  the rule runs to the middle of the panel and leaves the daily value header standing free.
+-->
+<#macro rule y height=HAIRLINE fromX=PAD toX=-1>
+	<#local end = (toX gte 0)?then(toX, W - PAD)>
+	<rect x="${fromX}" y="${y}" width="${end - fromX}" height="${height}"/>
+</#macro>
+
+<#-- Horizontal rule spanning a single band of a panel laid out across its width. -->
+<#macro bandRule x y width height=HAIRLINE>
+	<rect x="${x}" y="${y}" width="${width}" height="${height}"/>
+</#macro>
+
+<#-- Vertical rule, separating two columns of figures. -->
+<#macro columnRule x fromY toY>
+	<rect x="${x}" y="${fromY}" width="${HAIRLINE}" height="${toY - fromY}"/>
+</#macro>
+
+<#-- Abscissa a rule starts at, given the line it sits above. -->
+<#function ruleStart line>
+	<#return (line.indentLevel() gte 3)?then(PAD + (line.indentLevel() - 1) * INDENT, PAD)>
+</#function>
+
+<#-- Panel border. Drawn as four rects so that its thickness is exact on every side. -->
+<#macro border height>
+	<rect x="0" y="0" width="${W}" height="${BORDER}"/>
+	<rect x="0" y="${height - BORDER}" width="${W}" height="${BORDER}"/>
+	<rect x="0" y="0" width="${BORDER}" height="${height}"/>
+	<rect x="${W - BORDER}" y="0" width="${BORDER}" height="${height}"/>
+</#macro>
+
+<#--
+  Panel title. textLength forces the exact width whatever font the rendering host resolves,
+  which keeps the panel identical when Helvetica Black is missing and Arial Black steps in,
+  and when the wording changes with the language.
+-->
+<#macro title text y size=TITLE_SIZE>
+	<text x="${PAD}" y="${baseline(y, size)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${size}"
+		textLength="${contentWidth()}" lengthAdjust="spacingAndGlyphs">${text}</text>
+</#macro>
+
+<#--
+  Title left at its natural width, which is what a panel titling itself in two languages needs:
+  condensing each of them to the width of the panel would set them at two different sizes.
+
+  It is wrapped instead, the wording of a supplemented food being far too long for one line, and
+  leaves the ordinate it ended on in cursorY.
+-->
+<#macro heading text y size x=PAD width=-1>
+	<#local available = (width gte 0)?then(width, contentWidth())>
+	<#assign cursorY = y>
+	<#list wrap(text, charsPerWidth(available, size, HEAVY_GLYPH_RATIO)) as headingLine>
+	<text x="${x}" y="${baseline(cursorY, size)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${size}">${headingLine}</text>
+	<#assign cursorY = cursorY + size + 1>
+	</#list>
+</#macro>
+
+<#--
+  A nutrient line: name, value, and the percent daily value pinned to the right margin.
+
+  The regulation sets the percentages of the mandatory nutrients in the heavy face and leaves
+  those of the vitamins and minerals in the body face, hence boldPercent.
+
+  A percentage covering two lines is dropped half a line down so that it reads as belonging to
+  both, which is how the Canadian panel states saturated and trans fat together.
+
+  mark is the reference the panel prints after the declaration, the supplemented food facts table
+  marking that way the amounts its closing note covers.
+-->
+<#macro nutrientRow line y boldPercent=true mark="">
+	<#local top = y + 2>
+	<#local base = baseline(top, NUTRIENT_SIZE)>
+	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.printsValue()> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if><#if mark?has_content><tspan font-family="${FONT_BODY}" font-weight="normal">${mark}</tspan></#if></text>
+	<#if line.hasDailyValue()>
+	<text x="${right()}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-family="${FONT_HEAVY}" font-weight="900"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
+	</#if>
+</#macro>
+
+<#-- How far below its own baseline a percentage sits when it covers the line under it as well. -->
+<#function sharedPercentShift line>
+	<#return line.hasSharedDailyValue()?then(NUTRIENT_ROW_H / 2, 0)>
+</#function>
+
+<#--
+  A pair of micronutrients on one line, separated by a drawn dot. The bullet is a circle and
+  not a glyph: a typographic bullet shifts with the font and never lands on the centre.
+-->
+<#macro micronutrientPair pair y>
+	<#local base = baseline(y + 2, NUTRIENT_SIZE)>
+	<#local first = pair[0]>
+	<text x="${PAD}" y="${base}" font-size="${NUTRIENT_SIZE}">${first.abbreviatedLabel()}<#if first.printsValue()> ${first.value()}</#if><#if first.hasDailyValue()> ${first.dailyValuePercent()}</#if></text>
+	<#if (pair?size gt 1)>
+	<#local second = pair[1]>
+	<circle cx="${W / 2}" cy="${base - NUTRIENT_SIZE * 0.3}" r="0.9"/>
+	<text x="${right()}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${second.abbreviatedLabel()}<#if second.printsValue()> ${second.value()}</#if><#if second.hasDailyValue()> ${second.dailyValuePercent()}</#if></text>
+	</#if>
+</#macro>
+
+<#--
+  Vertical cursor left behind by panelBody, so that a format can size its svg once the body has
+  been drawn. A macro cannot return a value, but an assignment made inside it lands in this
+  namespace, which the calling template reads back as nf.cursorY.
+-->
+<#assign cursorY = 0>
+
+<#--
+  Everything a panel draws below its opening block: the thick rule, the calories, the daily
+  value header, the two nutrient blocks and the footnote. Only the opening block differs from
+  one regulation to the next, so this is what the formats share.
+
+  A caption or a footnote with no wording is skipped rather than drawn empty, which is how a
+  regulation that has no "Amount per serving" line opts out of it.
+-->
+<#macro panelBody data y pairedMicronutrients=false>
+	<#assign cursorY = y>
+
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK + CAPTION_LEAD>
+
+	<#if data.label("amountPerServing")?has_content>
+	<text x="${PAD}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900">${data.label("amountPerServing")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H>
+	</#if>
+
+	<#if data.calories()??>
+	<text x="${PAD}" y="${baseline(cursorY, CALORIES_VALUE_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL_SIZE}">${data.calories().label()}</text>
+	<#if data.calories().value()??>
+	<text x="${right()}" y="${baseline(cursorY, CALORIES_VALUE_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_VALUE_SIZE}" text-anchor="end">${data.calories().value()}</text>
+	</#if>
+	<#assign cursorY = cursorY + lineHeight(CALORIES_VALUE_SIZE)>
+	</#if>
+
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + CAPTION_LEAD>
+
+	<text x="${right()}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="end">${data.label("dailyValue")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H + 1>
+
+	<#list data.nutrients() as line>
+	<@rule y=cursorY fromX=ruleStart(line)/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	<@nutrientRow line=line y=cursorY/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+
+	<#if data.micronutrients()?has_content>
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK>
+	<#if pairedMicronutrients>
+	<#list data.micronutrients()?chunk(2) as pair>
+	<#if (pair?index gt 0)>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	</#if>
+	<@micronutrientPair pair=pair y=cursorY/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+	<#else>
+	<#list data.micronutrients() as line>
+	<#if (line?index gt 0)>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	</#if>
+	<@nutrientRow line=line y=cursorY boldPercent=false/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+	</#if>
+	</#if>
+
+	<#if data.footNote()?has_content>
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+	<@footNote text=data.footNote() y=cursorY/>
+	</#if>
+
+	<#assign cursorY = cursorY + BORDER + 1>
+</#macro>
+
+<#--
+  The two languages of a bilingual panel gathered on one line, "Fat / Lipides", which is how a
+  panel written as a sentence states them. A wording that reads the same in both is stated once.
+-->
+<#function joined primary secondary>
+	<#if !secondary?has_content || (primary == secondary)>
+	<#return primary>
+	</#if>
+	<#return primary + " / " + secondary>
+</#function>
+
+<#-- Daily value header of a panel, one line per language it is written in. -->
+<#function dailyValueHeaders data>
+	<#local headers = [data.label("dailyValue")]>
+	<#if data.isBilingual() && data.secondaryLabel("dailyValue")?has_content>
+	<#local headers = headers + [data.secondaryLabel("dailyValue")]>
+	</#if>
+	<#return headers>
+</#function>
+
+<#--
+  Sentence broken into styled runs, the given wordings being the ones the regulation sets in the
+  heavy face: the Canadian footnote emphasises its two verdicts, "5% or less is a little".
+
+  The runs keep the spacing of the sentence exactly, so they are drawn by styledLine and not by
+  the paragraph macro, which measures words to wrap them and would lose the punctuation.
+-->
+<#function emphasise sentence words>
+	<#local segments = [text(sentence)]>
+	<#list words?split(",") as word>
+		<#if word?trim?has_content>
+		<#local segments = highlight(segments, word?trim)>
+		</#if>
+	</#list>
+	<#return segments>
+</#function>
+
+<#-- Same runs, with every occurrence of one wording pulled out into a run of its own. -->
+<#function highlight segments word>
+	<#local result = []>
+	<#list segments as segment>
+		<#if segment.bold || !segment.text?contains(word)>
+		<#local result = result + [segment]>
+		<#else>
+		<#list segment.text?split(word) as part>
+			<#if (part?index gt 0)>
+			<#local result = result + [emphasis(word)]>
+			</#if>
+			<#if part?has_content>
+			<#local result = result + [text(part)]>
+			</#if>
+		</#list>
+		</#if>
+	</#list>
+	<#return result>
+</#function>
+
+<#-- One drawn line of styled runs, keeping the spacing of the sentence it comes from. -->
+<#macro styledLine segments y size=FOOTNOTE_SIZE indent=PAD anchor="start">
+	<text x="${indent}" y="${baseline(y, size)}" font-size="${size}" xml:space="preserve"<#if anchor != "start"> text-anchor="${anchor}"</#if>><#list segments as segment><#if segment.bold><tspan font-family="${FONT_HEAVY}" font-weight="900">${segment.text}</tspan><#else>${segment.text}</#if></#list></text>
+</#macro>
+
+<#--
+  Footnote of a panel, one line per language, the regulated wordings in the heavy face. A panel
+  drawn across the package has the room to state both languages on the same line, and states them
+  there rather than stacking two lines under a table that is only a few lines tall.
+-->
+<#macro emphasisedFootNote data y size=FOOTNOTE_SIZE indent=PAD singleLine=false anchor="start">
+	<#assign cursorY = y>
+	<#local lines = footNoteLines(data)>
+	<#if singleLine && (lines?size gt 1)>
+	<#local lines = [lines[0] + [text("   ")] + lines[1]]>
+	</#if>
+	<#list lines as segments>
+	<@styledLine segments=segments y=cursorY size=size indent=indent anchor=anchor/>
+	<#assign cursorY = cursorY + lineHeight(size)>
+	</#list>
+</#macro>
+
+<#-- The footnote of the panel, as styled runs, one entry per language it is written in. -->
+<#function footNoteLines data>
+	<#local lines = []>
+	<#if data.footNote()?has_content>
+	<#local lines = lines + [emphasise(data.footNote(), data.label("footNoteEmphasis"))]>
+	</#if>
+	<#if data.isBilingual() && data.secondaryFootNote()?has_content>
+	<#local lines = lines + [emphasise(data.secondaryFootNote(), data.secondaryLabel("footNoteEmphasis"))]>
+	</#if>
+	<#return lines>
+</#function>
+
+<#-- Size of the calories of a Canadian panel, which states them on one line with their wording. -->
+<#assign CA_CALORIES_SIZE = 13>
+
+<#--
+  Rule closing the opening block of a Canadian panel. It is lighter than the rules parting the
+  panel itself: the regulation marks out the calories, the core nutrients and the minerals in the
+  medium weight, and closes the title and the serving on a light rule.
+-->
+<#assign CA_RULE_OPENING = 1>
+
+<#--
+  Mark a supplemented food facts table prints on every declaration whose amount covers more than
+  what was added to the food, and which its closing note explains.
+-->
+<#assign SUPPLEMENT_MARK = "†">
+
+<#--
+  Body of a Canadian panel, B.01.401. It parts from the FDA one on three counts: the daily value
+  header sits in the calories band instead of taking a line of its own, a rule separates the
+  groups of nutrients and not every single line, and the percentages stay in the body face.
+
+  Three of these rules are drawn in the medium weight, the regulation marking out the three parts
+  of the panel: the calories, closed by a rule stopping at the middle so that the daily value
+  header stands free, the core nutrients, and the minerals.
+
+  A supplemented food closes on the block of what it was supplemented with, which comes after the
+  footnote and not before it: the little/lot rule reads on the table, not on the added ingredients.
+-->
+<#macro canadianBody data y withSupplemental=false>
+	<#assign cursorY = y>
+
+	<@rule y=cursorY height=CA_RULE_OPENING/>
+	<#assign cursorY = cursorY + CA_RULE_OPENING + 1>
+
+	<@caloriesBand data=data y=cursorY/>
+	<#assign cursorY = cursorY + caloriesBandHeight(data)>
+
+	<@rule y=cursorY height=RULE_MEDIUM toX=PAD + contentWidth() / 2/>
+	<#assign cursorY = cursorY + RULE_MEDIUM>
+
+	<@canadianGroup lines=data.nutrients() y=cursorY marked=withSupplemental/>
+	<#assign cursorY = groupBottom>
+
+	<#if (data.micronutrients()?size gt 0)>
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM>
+	<@canadianGroup lines=data.micronutrients() y=cursorY marked=withSupplemental/>
+	<#assign cursorY = groupBottom>
+	</#if>
+
+	<#if data.footNote()?has_content>
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+	<@emphasisedFootNote data=data y=cursorY/>
+	</#if>
+
+	<#if withSupplemental && data.hasSupplementalIngredients()>
+	<@supplementalBlock data=data y=cursorY/>
+	</#if>
+
+	<#assign cursorY = cursorY + BORDER + 1>
+</#macro>
+
+<#--
+  One group of nutrient lines, hairlines separating the top level declarations inside it. The
+  ordinate it ended on is left in groupBottom, the group being drawn between two rules the caller
+  places itself.
+
+  A supplemented table marks the nutrients the food was supplemented with and that the regulation
+  keeps on their own line: their amount covers the naturally occurring one as well.
+-->
+<#assign groupBottom = 0>
+<#macro canadianGroup lines y marked=false>
+	<#assign groupBottom = y>
+	<#list lines as line>
+	<#if (line.indentLevel() lte 1) && (line?index gt 0)>
+	<@rule y=groupBottom/>
+	<#assign groupBottom = groupBottom + HAIRLINE>
+	</#if>
+	<@nutrientRow line=line y=groupBottom boldPercent=false mark=(marked && line.supplemental())?then(SUPPLEMENT_MARK, "")/>
+	<#assign groupBottom = groupBottom + NUTRIENT_ROW_H>
+	</#list>
+</#macro>
+
+<#--
+  Calories of a Canadian panel, with the daily value header pinned to the right of the same band.
+  The header lines are stacked so that the last one closes on the baseline of the calories.
+-->
+<#macro caloriesBand data y>
+	<#local headers = dailyValueHeaders(data)>
+	<#local bandHeight = caloriesBandHeight(data)>
+	<#if data.calories()??>
+	<#local caloriesY = y + bandHeight - lineHeight(CA_CALORIES_SIZE)>
+	<text x="${PAD}" y="${baseline(caloriesY, CA_CALORIES_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CA_CALORIES_SIZE}">${data.calories().label()}<#if data.calories().value()??> ${data.calories().value()}</#if></text>
+	</#if>
+	<#local headerY = y + bandHeight - headers?size * lineHeight(CAPTION_SIZE)>
+	<#list headers as header>
+	<text x="${right()}" y="${baseline(headerY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="end">${header}</text>
+	<#local headerY = headerY + lineHeight(CAPTION_SIZE)>
+	</#list>
+</#macro>
+
+<#-- Height of that band: the calories, or the daily value header when it takes more room. -->
+<#function caloriesBandHeight data>
+	<#return [lineHeight(CA_CALORIES_SIZE), dailyValueHeaders(data)?size * lineHeight(CAPTION_SIZE)]?max>
+</#function>
+
+<#--
+  Width a Canadian panel needs, never less than the minimum its format states. The calories and
+  the daily value header share one line, and the header is where the wording varies most from one
+  language to the next: "% valeur quotidienne*" runs half again as long as "% Daily Value*" and
+  would be printed over the calories at the width the English panel needs.
+-->
+<#function canadianWidth data minimum>
+	<#local caloriesText = (data.calories()??)?then(data.calories().label() + " " + (data.calories().value()!""), "")>
+	<#local headerWidth = 0>
+	<#list dailyValueHeaders(data) as header>
+		<#local headerWidth = [headerWidth, header?length * CAPTION_SIZE * HEAVY_GLYPH_RATIO]?max>
+	</#list>
+	<#local needed = 2 * PAD + caloriesText?length * CA_CALORIES_SIZE * HEAVY_GLYPH_RATIO + CAPTION_SIZE + headerWidth>
+	<#return [minimum, needed?ceiling]?max>
+</#function>
+
+<#--
+  Opening block of a Canadian panel: the title and the serving, each stated once per language.
+
+  The title is set in the largest type of the panel but is not condensed to its width, which is
+  what the directory of formats figures and what keeps the two languages the same size.
+-->
+<#macro canadianHeading data y titleSize=15 servingSize=9 x=PAD width=-1 titleKey="title">
+	<#assign cursorY = y>
+
+	<@heading text=data.label(titleKey) y=cursorY size=titleSize x=x width=width/>
+	<#if data.isBilingual()>
+	<@heading text=data.secondaryLabel(titleKey) y=cursorY size=titleSize x=x width=width/>
+	</#if>
+
+	<text x="${x}" y="${baseline(cursorY, servingSize)}" font-size="${servingSize}">${data.label("servingSize")}<#if data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
+	<#assign cursorY = cursorY + lineHeight(servingSize)>
+	<#if data.isBilingual()>
+	<text x="${x}" y="${baseline(cursorY, servingSize)}" font-size="${servingSize}">${data.secondaryLabel("servingSize")}<#if data.secondary().hasServingSize()> ${data.secondary().servingSize()}<#elseif data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
+	<#assign cursorY = cursorY + lineHeight(servingSize)>
+	</#if>
+
+	<#assign cursorY = cursorY + 1>
+</#macro>
+
+<#--
+  Size a title is set at so that it holds on a single line in every language the panel states it
+  in, never above the size the format states. A title that wraps reads as two titles, which the
+  wording of a supplemented food is long enough to provoke.
+-->
+<#function fittedTitleSize data key maximum width=-1>
+	<#local available = (width gte 0)?then(width, contentWidth())>
+	<#local size = maximum>
+	<#list panelWordings(data, key) as heading>
+	<#local size = [size, (available / ([heading?length, 1]?max * HEAVY_GLYPH_RATIO))?floor]?min>
+	</#list>
+	<#return size>
+</#function>
+
+<#--
+  Ingredients a supplemented food was supplemented with, SOR/2022-143. They are declared in a
+  block of their own, under the caption the regulation words, so that the reader tells them from
+  what the food contains on its own.
+
+  The caption is set like the declaration of a nutrient and not like a caption: the regulation
+  gives it the weight of the Sodium or the Protein line. It carries the mark of the block, which
+  the closing note explains: the amount declared for an ingredient is the amount the food holds,
+  and not only what was added to it.
+-->
+<#macro supplementalBlock data y>
+	<#assign cursorY = y>
+
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+
+	<text x="${PAD}" y="${baseline(cursorY + 2, NUTRIENT_SIZE)}" font-size="${NUTRIENT_SIZE}" font-family="${FONT_HEAVY}" font-weight="900">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}${SUPPLEMENT_MARK}</text>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+
+	<#list data.supplementalIngredients() as line>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	<@nutrientRow line=line y=cursorY boldPercent=false/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE + 1>
+	<@supplementalNote data=data y=cursorY/>
+</#macro>
+
+<#--
+  Note closing the supplemental block, stated once per language the panel is written in and opening
+  on the mark of the declarations it explains, so that the reader ties the two together.
+-->
+<#macro supplementalNote data y>
+	<#assign cursorY = y>
+	<#list panelWordings(data, "supplementedNote") as note>
+	<@footNote text=SUPPLEMENT_MARK + note y=cursorY/>
+	</#list>
+</#macro>
+
+<#-- A fixed wording of the panel in every language it is written in, empty ones left out. -->
+<#function panelWordings data key>
+	<#local notes = []>
+	<#if data.label(key)?has_content>
+	<#local notes = notes + [data.label(key)]>
+	</#if>
+	<#if data.isBilingual() && data.secondaryLabel(key)?has_content>
+	<#local notes = notes + [data.secondaryLabel(key)]>
+	</#if>
+	<#return notes>
+</#function>
+
+<#-- Footnote of a panel, wrapped to the width it is given. -->
+<#macro footNote text y width=-1 x=PAD anchor="start" size=FOOTNOTE_SIZE>
+	<#local available = (width gte 0)?then(width, contentWidth())>
+	<#assign cursorY = y>
+	<#list wrap(text, charsPerWidth(available, size)) as footNoteLine>
+	<text x="${x}" y="${baseline(cursorY, size)}" font-size="${size}"<#if anchor != "start"> text-anchor="${anchor}"</#if>>${footNoteLine}</text>
+	<#assign cursorY = cursorY + lineHeight(size)>
+	</#list>
+</#macro>
+
+<#--
+  Body of the dual column format, 21 CFR 101.9(e)(6)(i): the same nutrients, but two columns of
+  figures, one per serving and one per container, each with its own amount and percentage.
+  Required when a container holds a small number of servings and could be eaten in one go.
+
+  The two columns are strictly of the same width and are separated from the wording, and from
+  each other, by a vertical rule: with four columns of figures, nothing else tells the reader
+  which figure belongs to which serving.
+-->
+<#macro dualColumnBody data y labelW=100>
+	<#assign cursorY = y>
+	<#local columnW = (W - PAD - labelW) / 2>
+	<#local servingValueX = labelW + columnW * 0.62>
+	<#local servingPercentX = labelW + columnW - 3>
+	<#local containerValueX = labelW + columnW + columnW * 0.62>
+	<#local containerPercentX = labelW + 2 * columnW - 3>
+
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK + CAPTION_LEAD>
+	<#local columnsTop = cursorY>
+
+	<text x="${labelW + columnW / 2}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="middle">${data.label("perServing")}</text>
+	<text x="${labelW + columnW + columnW / 2}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="middle">${data.label("perContainer")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H>
+
+	<#if data.calories()??>
+	<text x="${PAD}" y="${baseline(cursorY, CALORIES_LABEL_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL_SIZE}">${data.calories().label()}</text>
+	<#if data.calories().value()??>
+	<text x="${servingPercentX}" y="${baseline(cursorY, CALORIES_LABEL_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL_SIZE}" text-anchor="end">${data.calories().value()}</text>
+	</#if>
+	<#if data.calories().valuePerContainer()??>
+	<text x="${containerPercentX}" y="${baseline(cursorY, CALORIES_LABEL_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL_SIZE}" text-anchor="end">${data.calories().valuePerContainer()}</text>
+	</#if>
+	<#assign cursorY = cursorY + lineHeight(CALORIES_LABEL_SIZE)>
+	</#if>
+
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + CAPTION_LEAD>
+
+	<text x="${servingPercentX}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="end">${data.label("dailyValueShort")}</text>
+	<text x="${containerPercentX}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="end">${data.label("dailyValueShort")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H + 1>
+
+	<#list data.nutrients() as line>
+	<@rule y=cursorY fromX=ruleStart(line)/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	<@dualColumnRow line=line y=cursorY servingValueX=servingValueX servingPercentX=servingPercentX
+		containerValueX=containerValueX containerPercentX=containerPercentX/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+
+	<#if data.micronutrients()?has_content>
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK>
+	<#list data.micronutrients() as line>
+	<#if (line?index gt 0)>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	</#if>
+	<@dualColumnRow line=line y=cursorY servingValueX=servingValueX servingPercentX=servingPercentX
+		containerValueX=containerValueX containerPercentX=containerPercentX boldPercent=false/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+	</#if>
+
+	<@columnRule x=labelW fromY=columnsTop toY=cursorY/>
+	<@columnRule x=labelW + columnW fromY=columnsTop toY=cursorY/>
+
+	<#if data.footNote()?has_content>
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+	<@footNote text=data.footNote() y=cursorY/>
+	</#if>
+
+	<#assign cursorY = cursorY + BORDER + 1>
+</#macro>
+
+<#--
+  One nutrient across the four columns of figures. The name is printed alone, its amount going
+  to the serving column, so that nothing overlaps whatever the length of the wording. The
+  abbreviated wording is what fits the narrower label column, "Incl. Added Sugars" being the
+  case the FDA spells out.
+-->
+<#macro dualColumnRow line y servingValueX servingPercentX containerValueX containerPercentX boldPercent=true>
+	<#local top = y + 2>
+	<#local base = baseline(top, NUTRIENT_SIZE)>
+	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.columnLabel()}</text>
+	<#if line.value()??>
+	<text x="${servingValueX}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${line.value()}</text>
+	</#if>
+	<#if line.hasDailyValue()>
+	<text x="${servingPercentX}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-family="${FONT_HEAVY}" font-weight="900"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
+	</#if>
+	<#if line.valuePerContainer()??>
+	<text x="${containerValueX}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${line.valuePerContainer()}</text>
+	</#if>
+	<#if line.dailyValuePercentPerContainer()??>
+	<text x="${containerPercentX}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-family="${FONT_HEAVY}" font-weight="900"</#if> text-anchor="end">${line.dailyValuePercentPerContainer()}</text>
+	</#if>
+</#macro>
+
+<#--
+  Run-on sentence of the linear format, 21 CFR 101.9(j)(13)(ii)(A)(2). Nutrients are named by
+  their regulated abbreviation, in the heavy face, and their percentage is parenthesised, the
+  whole panel being a single paragraph rather than a table.
+
+  It is returned as styled segments and not as a string: the name of a nutrient is set in the
+  heavy face while its figures stay in the body face, which a single text run cannot express.
+-->
+<#function linearSegments data last=".">
+	<#return linearGroupSegments(data, data.nutrients() + data.micronutrients(), last)>
+</#function>
+
+<#--
+  Same, for one group of lines only, which is how the Canadian format states its declaration in
+  the four lines the regulation fixes.
+
+  A percentage covering two nutrients is stated after the second of them, "saturés 1 g + trans 0 g
+  (5 %)": read after the first one it would look like the percentage of that one alone.
+-->
+<#function linearGroupSegments data lines last=".">
+	<#local segments = []>
+	<#local carried = "">
+	<#list lines as line>
+		<#local segments = segments + [emphasis(line.plainAbbreviatedLabel())]>
+		<#local figures = "">
+		<#if line.value()??><#local figures = " " + line.value()></#if>
+		<#if line.hasSharedDailyValue()>
+			<#local carried = percentIn(data, line)>
+		<#else>
+			<#if line.hasDailyValue()><#local figures = figures + percentIn(data, line)></#if>
+			<#local figures = figures + carried>
+			<#local carried = "">
+		</#if>
+		<#local segments = segments + [text(figures + (line?is_last)?then(last, ","))]>
+	</#list>
+	<#return segments>
+</#function>
+
+<#-- Parenthesised percentage of a line, as a linear panel states it. -->
+<#function percentIn data line>
+	<#return " (" + line.dailyValuePercent() + dailyValueSuffix(data) + ")">
+</#function>
+
+<#--
+  Lines of a panel picked by nutrient code, in the order the codes are given. A code the product
+  does not declare is simply absent, which is what lets a format state the fixed order of the
+  regulation without assuming every nutrient of it is on the label.
+-->
+<#function linesByCode lines codes>
+	<#local selected = []>
+	<#list codes as code>
+		<#list lines as line>
+			<#if line.nutCode() == code>
+			<#local selected = selected + [line]>
+			</#if>
+		</#list>
+	</#list>
+	<#return selected>
+</#function>
+
+<#-- Lines none of the given codes names, so that an optional nutrient is never left undeclared. -->
+<#function linesOutside lines codes>
+	<#local remaining = []>
+	<#list lines as line>
+		<#if !codes?seq_contains(line.nutCode())>
+		<#local remaining = remaining + [line]>
+		</#if>
+	</#list>
+	<#return remaining>
+</#function>
+
+<#--
+  What closes a parenthesised percentage in a linear panel. The FDA names the daily value inside
+  the parenthesis, "(5% DV)", where Canada states the bare percentage and explains it in a legend
+  at the foot of the panel.
+-->
+<#function dailyValueSuffix data>
+	<#return data.label("dailyValueSuffix")?has_content?then(" " + data.label("dailyValueSuffix"), "")>
+</#function>
+
+<#-- A run of text set in the body face, as the flowing paragraph of a linear panel takes it. -->
+<#function text value>
+	<#return {"text": value, "bold": false}>
+</#function>
+
+<#-- A run of text set in the heavy face. -->
+<#function emphasis value>
+	<#return {"text": value, "bold": true}>
+</#function>
+
+<#--
+  Paragraph of styled runs, wrapped to the width of the panel. The runs are broken into words so
+  that a line ends between two words and never in the middle of one, whatever the styling.
+-->
+<#macro paragraph segments y size=NUTRIENT_SIZE indent=PAD>
+	<#local charsPerLine = charsPerWidth(W - PAD - indent, size, FIGURE_GLYPH_RATIO)>
+	<#local line = []>
+	<#local length = 0>
+	<#assign cursorY = y>
+	<#list segmentWords(segments) as word>
+		<#if (length gt 0) && (length + 1 + word.width gt charsPerLine)>
+		<@paragraphLine parts=line y=cursorY size=size indent=indent/>
+		<#assign cursorY = cursorY + lineHeight(size)>
+		<#local line = []>
+		<#local length = 0>
+		</#if>
+		<#local line = line + [word]>
+		<#local length = length + (length gt 0)?then(1, 0) + word.width>
+	</#list>
+	<#if (line?size gt 0)>
+	<@paragraphLine parts=line y=cursorY size=size indent=indent/>
+	<#assign cursorY = cursorY + lineHeight(size)>
+	</#if>
+</#macro>
+
+<#--
+  One drawn line of a paragraph, the heavy runs being the only ones carrying a tspan.
+
+  xml:space is preserved because the spaces between two runs are the only thing separating the
+  words: the default handling drops a text node holding nothing but a space, which is exactly
+  what sits between two emphasised words.
+-->
+<#macro paragraphLine parts y size indent>
+	<text x="${indent}" y="${baseline(y, size)}" font-size="${size}" xml:space="preserve"><#list mergedRuns(parts) as run><#if (run?index gt 0)> </#if><#if run.bold><tspan font-family="${FONT_HEAVY}" font-weight="900">${run.text}</tspan><#else>${run.text}</#if></#list></text>
+</#macro>
+
+<#-- Words of one line gathered back into as few runs as their styling allows. -->
+<#function mergedRuns parts>
+	<#local runs = []>
+	<#list parts as part>
+		<#if (runs?size gt 0) && (runs?last.bold == part.bold)>
+		<#local runs = runs[0..*(runs?size - 1)] + [{"text": runs?last.text + " " + part.text, "bold": part.bold}]>
+		<#else>
+		<#local runs = runs + [{"text": part.text, "bold": part.bold}]>
+		</#if>
+	</#list>
+	<#return runs>
+</#function>
+
+<#--
+  Words of a run of styled segments, each keeping the styling of the segment it comes from and
+  carrying the width it takes, counted in glyphs of the body face so that one wrap can measure
+  a line whatever the faces it mixes.
+-->
+<#function segmentWords segments>
+	<#local words = []>
+	<#list segments as segment>
+		<#local ratio = segment.bold?then(HEAVY_GLYPH_RATIO / FIGURE_GLYPH_RATIO, 1)>
+		<#list segment.text?trim?split(r"\s+", "r") as word>
+			<#if (word?length gt 0)>
+			<#local words = words + [{"text": word, "bold": segment.bold, "width": word?length * ratio}]>
+			</#if>
+		</#list>
+	</#list>
+	<#return words>
+</#function>
+
+<#-- The svg envelope, identical for every format: white ground, border, then the drawn body. -->
+<#macro panel height>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}pt" height="${height}pt" viewBox="0 0 ${W} ${height}"
+	preserveAspectRatio="xMinYMin meet" font-family="${FONT_BODY}" fill="#000000">
+	<rect x="0" y="0" width="${W}" height="${height}" fill="#ffffff"/>
+	<@border height=height/>
+	<#nested>
+</svg>
+</#macro>
+
+<#--
+  One nutrient of the tabular format, 21 CFR 101.9(d)(11)(iii), the wording and the percentage
+  sitting at the two ends of a column.
+-->
+<#macro tabularRow line y labelX percentX boldPercent=true>
+	<#local base = baseline(y + 2, NUTRIENT_SIZE)>
+	<#local x = labelX + (line.indentLevel() - 1) * INDENT>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.printsValue()> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if></text>
+	<#if line.hasDailyValue()>
+	<text x="${percentX}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-family="${FONT_HEAVY}" font-weight="900"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
+	</#if>
+</#macro>
+
+<#--
+  Greedy word wrap, by character count. The footnote is the only free text of a panel and it
+  never has to align with anything, so an approximate measure is enough here; a glyph accurate
+  wrap would need the font metrics.
+-->
+<#function wrap text charsPerLine>
+	<#local lines = []>
+	<#local current = "">
+	<#list text?trim?split(r"\s+", "r") as word>
+		<#if current?length == 0>
+			<#local current = word>
+		<#elseif (current?length + 1 + word?length) lte charsPerLine>
+			<#local current = current + " " + word>
+		<#else>
+			<#local lines = lines + [current]>
+			<#local current = word>
+		</#if>
+	</#list>
+	<#if (current?length gt 0)>
+		<#local lines = lines + [current]>
+	</#if>
+	<#return lines>
+</#function>

@@ -12,10 +12,11 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
@@ -31,6 +32,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>MultiLevelExcelReportSearchPlugin class.</p>
@@ -84,8 +86,8 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	/** {@inheritDoc} */
 	@Deprecated
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
 		boolean wUsed = false;
@@ -105,7 +107,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			depthLevel = "All";
 		}
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 		
 		final int depthLevelNum = "All".equals(depthLevel) ? -1 : Integer.parseInt(depthLevel);
 		
@@ -153,7 +155,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * <p>appendNextLevel.</p>
 	 *
 	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
-	 * @param sheet an {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet an {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @param cache a {@link java.util.Map} object.
@@ -169,19 +171,18 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param wUsedAssocCache a {@link java.util.Map} object
 	 */
 	@Deprecated
-	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
-			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
+	protected int appendNextLevel(MultiLevelListData listData, Sheet sheet, QName itemType,
+			List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, int rownum,
 			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,
 			Map<String, List<String>> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
 			if (nodeService.exists(itemNodeRef) && itemType.equals(nodeService.getType(itemNodeRef))) {
 				boolean hasPermission = false;
-				Map<String, Object> item = null;
-				if (cache != null && cache.containsKey(itemNodeRef)) {
-					item = new HashMap<>(cache.get(itemNodeRef));
+				Map<String, Object> item = cache != null ? cache.get(itemNodeRef, metadataFields) : null;
+				if (item != null) {
 					hasPermission = true;
-				} else if (nodeService.exists(itemNodeRef) && permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+				} else if (permissionService.hasPermission(itemNodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 					hasPermission = true;
 					Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 					item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);

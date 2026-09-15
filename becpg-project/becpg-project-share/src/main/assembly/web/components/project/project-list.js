@@ -91,6 +91,7 @@ var g; // gantt var
                         configurableColumns : false,
                         itemType : "pjt:project",
                         list : "projectList",
+                        columnFormId : view == "gantt" ? "datagrid-gantt" : null,
                         groupBy : "prop_pjt_projectHierarchy2",
                         sortId : "ProjectList",
                         saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
@@ -251,6 +252,7 @@ var g; // gantt var
                                                 if (this.view == "gantt")
                                                 {
                                                     this.options.pageSize = 10;
+                                                    this.options.columnFormId = "datagrid-gantt";
                                                     this.initGantt();
                                                 }
 
@@ -355,93 +357,99 @@ var g; // gantt var
                                     g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');
 
-                                    for (var i = 0; i < recordSet.getLength(); i++)
-                                    {
+                                     for (var i = 0; i < recordSet.getLength(); i++)
+                                     {
 
-                                        var oRecord = recordSet.getRecord(i);
-                                        var oData = oRecord.getData();
-                                        var projectId = oData.nodeRef;
+                                         var oRecord = recordSet.getRecord(i);
+                                         var oData = oRecord.getData();
+                                         var itemData = oData.itemData || {};
+                                         var projectId = oData.nodeRef;
 
-                                        var title = '<span class="' + this.getOverdueClass(oData) + '">' + this
-                                                .getProjectTitle(oData) + '</span>';
+                                         var title = '<span class="' + this.getOverdueClass(oData) + '">' + this
+                                                 .getProjectTitle(oData) + '</span>';
 
-                                        var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue;
+                                         var initiator = itemData["assoc_pjt_projectManager"] != null ? itemData["assoc_pjt_projectManager"].displayValue : null;
 
-                                        if (initiator && initiator != null && initiator.length > 0)
-                                        {
-                                            initiator = '<span class="resource-title">' + initiator + '</span>';
-                                        }
-                                        var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
+                                         if (initiator && initiator != null && initiator.length > 0)
+                                         {
+                                             initiator = '<span class="resource-title">' + initiator + '</span>';
+                                         }
+                                         var percent = itemData["prop_pjt_completionPercent"] != null ? itemData["prop_pjt_completionPercent"].value : 0;
 
-                                        var dates = this.extractDates(oData);
+                                         var dates = this.extractDates(oData);
 
-                                        g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due,
-                                                'FFBC00', '', 0, initiator, percent, 1, 0, 0));
+                                         g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due,
+                                                 'FFBC00', '', 0, initiator, percent, 1, 0, 0));
 
-                                        var start = dates.start;
+                                         var start = dates.start;
 
-                                        var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
+                                         var taskList = itemData["dt_pjt_taskList"];
 
-                                        for (var j in taskList)
-                                        {
-                                            var task = taskList[j];
-                                            var taskId = task.nodeRef;
-                                            var precTaskIds = "";
-                                            for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"])
-                                            {
-                                                var precTaskId = task["itemData"]["assoc_pjt_tlPrevTasks"][z].value;
-                                                if (precTaskIds.length > 0)
-                                                {
-                                                    precTaskIds += ",";
-                                                }
-                                                precTaskIds += precTaskId;
+                                         for (var j in taskList)
+                                         {
+                                             var task = taskList[j];
+                                             if (!task || !task.nodeRef || !task["itemData"]) continue;
+                                             var tItemData = task["itemData"];
+                                             var taskId = task.nodeRef;
+                                             var precTaskIds = "";
+                                             if (tItemData["assoc_pjt_tlPrevTasks"])
+                                             {
+                                                 for ( var z in tItemData["assoc_pjt_tlPrevTasks"])
+                                                 {
+                                                     var precTaskId = tItemData["assoc_pjt_tlPrevTasks"][z].value;
+                                                     if (precTaskIds.length > 0)
+                                                     {
+                                                         precTaskIds += ",";
+                                                     }
+                                                     precTaskIds += precTaskId;
 
-                                                if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
-                                                        .getTime() > start.getTime())
-                                                {
-                                                    start = this.cache[precTaskId].end;
-                                                }
+                                                     if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
+                                                             .getTime() > start.getTime())
+                                                     {
+                                                         start = this.cache[precTaskId].end;
+                                                     }
 
-                                            }
-                                            
+                                                 }
+                                             }
+                                             
 
-                                            var pParent = projectId;
+                                             var pParent = projectId;
 
-                                            if (task["itemData"]["prop_bcpg_parentLevel"].value != null)
-                                            {
-                                                  pParent = task["itemData"]["prop_bcpg_parentLevel"].value;
-                                            }
-                                            var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
+                                             if (tItemData["prop_bcpg_parentLevel"] && tItemData["prop_bcpg_parentLevel"].value != null)
+                                             {
+                                                   pParent = tItemData["prop_bcpg_parentLevel"].value;
+                                             }
+                                             var pGroup = (!tItemData["prop_pjt_tlIsGroup"] || !tItemData["prop_pjt_tlIsGroup"].value) ? 0 : 1;
 
 
-                                            var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
-                                            var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
+                                             var tlIsMilestone = (tItemData["prop_pjt_tlIsMilestone"] && tItemData["prop_pjt_tlIsMilestone"].value);
+                                             var tlPercent = (tItemData["prop_pjt_completionPercent"] && tItemData["prop_pjt_completionPercent"].value != null) ? tItemData["prop_pjt_completionPercent"].value : 0;
 
-                                            var taskOwner = null;
-                                            
-                                            if(task["itemData"]["assoc_pjt_tlResources"].length>0){
-                                            	taskOwner = "";
-                                            	for(var zz in  task["itemData"]["assoc_pjt_tlResources"]){
-                                            		taskOwner += '<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][zz].displayValue + '</span>';                               	
-                                            	}
-                                            }
- 
+                                             var taskOwner = null;
+                                             
+                                             if(tItemData["assoc_pjt_tlResources"] && tItemData["assoc_pjt_tlResources"].length>0){
+                                             	taskOwner = "";
+                                             	for(var zz in  tItemData["assoc_pjt_tlResources"]){
+                                             		taskOwner += '<span class="resource-title">' + tItemData["assoc_pjt_tlResources"][zz].displayValue + '</span>';                               	
+                                             	}
+                                             }
+  
 
-                                            var tdates = this.cache[taskId];
-                                            if (!tdates)
-                                            {
-                                                tdates = this.extractDates(task, start, true);
-                                                this.cache[taskId] = tdates;
-                                            }
+                                             var tdates = this.cache[taskId];
+                                             if (!tdates)
+                                             {
+                                                 tdates = this.extractDates(task, start, true);
+                                                 this.cache[taskId] = tdates;
+                                             }
 
-                                            g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
-                                                    oData.nodeRef), tdates.start, tdates.end, this
-                                                    .getTaskColor(task), null, tlIsMilestone ? 1 : 0, taskOwner,
-                                                    tlPercent, pGroup, pParent, 1, precTaskIds));
+                                             g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
+                                                     oData.nodeRef), tdates.start, tdates.end, this
+                                                     .getTaskColor(task), null, tlIsMilestone ? 1 : 0, taskOwner,
+                                                     tlPercent, pGroup, pParent, 1, precTaskIds));
 
-                                        }
+                                         }
 
-                                    }
+                                     }
 
                                     g.Draw();
                                     g.DrawDependencies();

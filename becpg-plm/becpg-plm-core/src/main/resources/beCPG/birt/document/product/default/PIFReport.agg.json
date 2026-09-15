@@ -1,0 +1,106 @@
+{
+  "header": {
+    "logo": "becpg-logo.png",
+    "title": "SLabel.pifReportTitle",
+    "subtitle": "${legalName}",
+    "date": "${cm:modified?date}",
+    "startNumberingAt": 1
+  },
+
+  "tableOfContents": {
+    "enabled": false
+  },
+
+  "pagination": {
+    "enabled": true,
+    "format": "Page ${page} / ${total}",
+    "startNumberingAt": 1,
+    "font": "Arial",
+    "size": 8,
+    "color": "#404040"
+  },
+
+  "componentHeadingStyle": {
+    "font": "Arial-Bold",
+    "size": 11,
+    "color": "#004254",
+    "prefix": "> "
+  },
+
+  "placeholderStyle": {
+    "font": "Arial-Bold",
+    "size": 9,
+    "color": "#000000"
+  },
+
+  "annexes": [
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=CompoQualiQuanti",
+      "title": "SLabel.pifAnnexCompoQualiQuanti",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
+      "title": "SLabel.pifAnnexRawMaterials",
+      "scope": "COMPO_CHILDREN",
+      "recurse": true,
+      "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
+      "title": "SLabel.pifAnnexPrimaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Primary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=CPSR",
+      "title": "SLabel.pifAnnexCPSR",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexCPSREmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=StabilityMicro",
+      "title": "SLabel.pifAnnexStabilityMicro",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexStabilityMicroEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=ClaimEfficacy",
+      "title": "SLabel.pifAnnexClaimEfficacy",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexClaimEfficacyEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=GMPAnimalTesting",
+      "title": "SLabel.pifAnnexGMPAnimalTesting",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexGMPAnimalTestingEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    }
+  ]
+}

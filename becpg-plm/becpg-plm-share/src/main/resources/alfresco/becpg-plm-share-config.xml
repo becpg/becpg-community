@@ -134,6 +134,7 @@
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />
 			<list id="lcaList" index="125" />
+			<list id="regulatoryScoreList" index="126" />
 			<list id="priceList" index="130" />
 			<list id="nutList" index="140" />
 			<list id="ingLabelingList" index="150" view="true" />
@@ -144,6 +145,8 @@
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
 			<list id="packMaterialList" index="212"/>
+			<list id="packagingComponentList" index="61" view="true" />
+			<list id="supplierPackagingList" index="62" view="true" />
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
 			<list id="toxList" index="215"/>
@@ -247,9 +250,12 @@
  					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step9" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
-					listId="organoList" itemId="bcpg:organoList" 
+					listId="organoList" itemId="bcpg:organoList"></step>
+				<step id="step10" labelId="becpg.wizard.supplier.supplierPackagingList.label"
+					titleId="becpg.wizard.supplier.supplierPackagingList.title" type="entityDataList"
+					listId="supplierPackagingList" itemId="pack:supplierPackagingList"
 					nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
-				<step id="step10" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step11" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-finishedProduct" draft="true" comments="true"
@@ -323,11 +329,18 @@
 				<step id="step3" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList" 
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-				<step id="step4" labelId="becpg.wizard.supplier.packMaterialList.label"
+				<step id="step4" labelId="becpg.wizard.supplier.packagingComponentList.label"
+					titleId="becpg.wizard.supplier.packagingComponentList.title" type="entityDataList"
+					listId="packagingComponentList" itemId="pack:packagingComponentList"
+					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
+				<step id="step5" labelId="becpg.wizard.supplier.packMaterialList.label"
 					titleId="becpg.wizard.supplier.packMaterialList.title" type="entityDataList"
-					listId="packMaterialList" itemId="pack:packMaterialList"
+					listId="packMaterialList" itemId="pack:packMaterialList"></step>
+				<step id="step6" labelId="becpg.wizard.supplier.supplierPackagingList.label"
+					titleId="becpg.wizard.supplier.supplierPackagingList.title" type="entityDataList"
+					listId="supplierPackagingList" itemId="pack:supplierPackagingList"
 					nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments"></step>
-				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step7" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-packagingKit" draft="true"
@@ -387,6 +400,33 @@
 					listId="surveyList@1" itemId="survey:surveyList"
 					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 			</wizard>
+			<!-- Consultation d'un cahier des charges par le fournisseur.
+
+			     readOnly : ce que le CLIENT exige, pas ce que le fournisseur remplit.
+			     Rien n'est saisissable et aucun bouton de validation n'est offert.
+			     enforceTask : un cahier des charges ne porte pas de tache ; le lire
+			     ne doit pas en exiger une.
+
+			     Additif : aucune instance ne demande cet id aujourd'hui, la
+			     configuration reste donc inerte tant qu'un client ne l'appelle pas. -->
+			<wizard id="supplier-productSpecification" readOnly="true" comments="false"
+					enforceTask="false" skipSecurityRules="false">
+				<step id="step1" labelId="becpg.wizard.spec.forbiddenIngList.label"
+					titleId="becpg.wizard.spec.forbiddenIngList.title" type="entityDataList"
+					listId="forbiddenIngList" itemId="bcpg:forbiddenIngList"></step>
+				<step id="step2" labelId="becpg.wizard.spec.allergenList.label"
+					titleId="becpg.wizard.spec.allergenList.title" type="entityDataList"
+					listId="allergenList" itemId="bcpg:allergenList"></step>
+				<step id="step3" labelId="becpg.wizard.spec.microbioList.label"
+					titleId="becpg.wizard.spec.microbioList.title" type="entityDataList"
+					listId="microbioList" itemId="bcpg:microbioList"></step>
+				<step id="step4" labelId="becpg.wizard.spec.nutList.label"
+					titleId="becpg.wizard.spec.nutList.title" type="entityDataList"
+					listId="nutList" itemId="bcpg:nutList"></step>
+				<step id="step5" labelId="becpg.wizard.spec.physicoChemList.label"
+					titleId="becpg.wizard.spec.physicoChemList.title" type="entityDataList"
+					listId="physicoChemList" itemId="bcpg:physicoChemList"></step>
+			</wizard>
 		</wizards>
 	</config>
 	
@@ -415,6 +455,9 @@
 				<css src="/components/form/controls/nutrient-class.css" />
 				<!-- ECO score -->
 				<css src="/components/form/controls/ecoscore-class.css" />
+				<!-- Score framework -->
+				<css src="/components/form/controls/score-badge.css" />
+				<js src="/components/form/controls/score-badge.js" />
 				<!-- Decision tree -->
 				<css src="/components/form/controls/decision-tree.css" />
 				<js src="/components/form/controls/decision-tree.js" />

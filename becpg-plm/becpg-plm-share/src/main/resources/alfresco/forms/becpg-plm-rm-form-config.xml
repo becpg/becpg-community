@@ -16,6 +16,10 @@
 					<show force="false" id="bcpg:productState" />
 					<show force="false" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
+					<!-- Ecobalyse -->
+					<show force="true" id="bcpg:ecobalyseCode" />
+					<show force="true" id="bcpg:apScenario" />
+					<show force="true" id="bcpg:apCropGroup" />
 					<show force="false" id="bcpg:casNumber" />
 					<show force="false" id="bcpg:ecNumber" />
 					<show force="false" id="bcpg:ceNumber" />
@@ -382,6 +386,14 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"></control>
 					</field>
 
+					<set appearance="bordered-panel" id="ecobalyse" label-id="becpg.forms.set.ecobalyse.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:ecobalyseCode" set="ecobalyse">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+						</control>
+					</field>
+					<field id="bcpg:apScenario" set="ecobalyse" />
+					<field id="bcpg:apCropGroup" set="ecobalyse" />
 					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:regulatoryCountries" set="regulatory">
 						<control
@@ -2026,6 +2038,7 @@
 					<show force="true" id="bcpg:productHierarchy2" />
 					<show force="true" id="bcpg:legalName" />
 					<show force="true" id="bcpg:productState" />
+					<show force="false" id="bcpg:entityScore" />
 					<show force="true" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
 					<show force="true" id="bcpg:eanCode" />
@@ -2094,7 +2107,6 @@
 					<show force="false" id="ghs:sdsOnuCode" />
 					<show force="false" id="ghs:sdsClassCode" />
 					<show force="false" id="ghs:sdsPackagingGroupCode" />
-					<show force="false" id="bcpg:entityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>

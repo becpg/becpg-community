@@ -47,6 +47,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final NodeService mlNodeService;
 	protected final NodeService nodeService;
+	protected final NodeService unsecuredNodeService;
 	protected final NamespaceService namespaceService;
 	protected final EntityDictionaryService entityDictionaryService;
 	protected final ContentService contentService;
@@ -103,6 +104,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		super();
 		this.mlNodeService = remoteServiceRegisty.mlNodeService();
 		this.nodeService = remoteServiceRegisty.nodeService();
+		this.unsecuredNodeService = remoteServiceRegisty.unsecuredNodeService();
 		this.namespaceService = remoteServiceRegisty.namespaceService();
 		this.entityDictionaryService = remoteServiceRegisty.entityDictionaryService();
 		this.contentService = remoteServiceRegisty.contentService();
@@ -125,6 +127,12 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	/**
 	 * <p>getPrimaryParentRef.</p>
 	 *
+	 * <p>Both {@code AccessDeniedException} types are caught on purpose: the {@code NodeService} AOP
+	 * proxy translates the acegi one into {@link org.alfresco.repo.security.permissions.AccessDeniedException}
+	 * before it leaves, and the two classes share no hierarchy. Catching only the acegi type would
+	 * let an unreadable parent escape through the whole visitor, ending the JSON export on an empty
+	 * body with an HTTP 200 that can no longer be turned into an error.</p>
+	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
@@ -133,7 +141,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		try {
 			return Optional.ofNullable(nodeService.getPrimaryParent(nodeRef)).map(ChildAssociationRef::getParentRef)
 					.orElse(null);
-		} catch (final AccessDeniedException e) {
+		} catch (final AccessDeniedException | org.alfresco.repo.security.permissions.AccessDeniedException e) {
 			throw new RemoteException(String.format("Cannot read entity %s's primary parent", nodeRef.toString()), e);
 		}
 	}

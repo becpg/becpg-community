@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="author">beCPG</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0</property>
+    <simple-property-list name="includeResource">
+        <value>./ProductReport</value>
+        <value>./PIFReport</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <list-property name="cssStyleSheets">
+        <structure>
+            <property name="fileName">becpg-report.css</property>
+            <property name="useExternalCss">true</property>
+        </structure>
+    </list-property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
+            <property name="FILELIST">beCPG/birt/document/product/default/ProductReport.xml</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="Product" id="453">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">versionLabelToShow</property>
+                    <expression name="expression">if(row["versionLabelBcpg"] != null){
+	row["versionLabelBcpg"]
+} else if(row["versionLabel"] != null){
+	row["versionLabel"]
+} else "1.0"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">fullProductTitle</property>
+                    <expression name="expression">var n = row["name"] != null ? row["name"] : "";
+var c = row["code"] != null ? " - " + row["code"] : "";
+n + c;</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">codeAndVersion</property>
+                    <expression name="expression">var c = row["code"] != null ? row["code"] : "";
+var v = row["versionLabelToShow"] != null ? " (" + row["versionLabelToShow"] + ")" : "";
+c + v;</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="2">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="becpg-header-type" id="12189">
+            <property name="color">black</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontSize">12pt</property>
+            <property name="textAlign">center</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="marginBottom">2pt</property>
+        </style>
+        <style name="becpg-meta-grid" id="12190">
+            <property name="fontSize">7.5pt</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="textAlign">left</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-meta-cell-label" id="12191"/>
+        <style name="becpg-meta-cell-data" id="12192">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-header-table" id="12193">
+            <property name="width">100%</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-header-title" id="12194">
+            <property name="marginTop">2pt</property>
+        </style>
+        <style name="becpg-chapter-header" id="4">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textAlign">center</property>
+            <property name="paddingTop">5pt</property>
+            <property name="paddingBottom">5pt</property>
+        </style>
+        <style name="UnderlinedSubTitle" id="6">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">9pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textUnderline">underline</property>
+            <property name="textTransform">uppercase</property>
+            <property name="paddingTop">8pt</property>
+            <property name="paddingBottom">4pt</property>
+        </style>
+        <style name="rowHeaderUpper" id="7">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-cell-data" id="8">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="paddingLeft">4pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-toc-title" id="9">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">9pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-toc-page" id="10">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8.5pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">right</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-row-border" id="11">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#E0E0E0</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="10">
+            <property name="type">a4</property>
+            <property name="orientation">portrait</property>
+            <property name="topMargin">1cm</property>
+            <property name="leftMargin">1.5cm</property>
+            <property name="bottomMargin">0.4cm</property>
+            <property name="rightMargin">1.5cm</property>
+            <property name="headerHeight">1.2in</property>
+            <property name="footerHeight">0.3in</property>
+            <page-header>
+                <grid id="765">
+                    <property name="style">becpg-header-table</property>
+                    <column id="766"/>
+                    <column id="767">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="768"/>
+                    <row id="769">
+                        <cell id="770">
+                            <property name="paddingLeft">1pt</property>
+                            <property name="textAlign">left</property>
+                            <image name="customLogo" id="12231">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                        </cell>
+                        <cell id="772">
+                            <label id="773">
+                                <property name="style">becpg-header-type</property>
+                                <text-property name="text" key="SLabel.pifReportTitle">DOSSIER D'INFORMATION PRODUIT (DIP)</text-property>
+                            </label>
+                            <data id="3333">
+                                <property name="style">becpg-header-title</property>
+                                <property name="fontSize">9pt</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">title</property>
+                                        <expression name="expression" type="javascript">if(dataSetRow["title"] != null &amp;&amp; dataSetRow["title"] != ""){ dataSetRow["title"] } else { dataSetRow["name"] }</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">title</property>
+                            </data>
+                        </cell>
+                        <cell id="776">
+                            <grid id="777">
+                                <property name="style">becpg-meta-grid</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">created</property>
+                                        <text-property name="displayName">created</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">modified</property>
+                                        <text-property name="displayName">modified</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">code</property>
+                                        <text-property name="displayName">code</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">versionLabelToShow</property>
+                                        <text-property name="displayName">versionLabelToShow</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">erpCode</property>
+                                        <text-property name="displayName">erpCode</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <column id="778">
+                                    <property name="width">55%</property>
+                                </column>
+                                <column id="1519"/>
+                                <row id="7352">
+                                    <cell id="7260">
+                                        <property name="style">becpg-meta-cell-label</property>
+                                        <property name="textAlign">right</property>
+                                         <label id="3406">
+                                             <text-property name="text" key="created">Créé le :</text-property>
+                                         </label>
+                                     </cell>
+                                     <cell id="7261">
+                                         <property name="style">becpg-meta-cell-data</property>
+                                         <property name="textAlign">right</property>
+                                         <data id="3407">
+                                             <structure name="dateTimeFormat">
+                                                 <property name="category">Medium Date</property>
+                                                 <property name="pattern">Medium Date</property>
+                                             </structure>
+                                             <property name="dataSet">Product</property>
+                                             <list-property name="boundDataColumns">
+                                                 <structure>
+                                                     <property name="name">created</property>
+                                                     <text-property name="displayName">created</text-property>
+                                                     <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                                                     <property name="dataType">date-time</property>
+                                                 </structure>
+                                             </list-property>
+                                             <property name="resultSetColumn">created</property>
+                                         </data>
+                                     </cell>
+                                 </row>
+                                 <row id="779">
+                                     <cell id="780">
+                                         <property name="style">becpg-meta-cell-label</property>
+                                         <property name="textAlign">right</property>
+                                         <label id="1520">
+                                             <text-property name="text" key="modified">Modifié le :</text-property>
+                                         </label>
+                                     </cell>
+                                     <cell id="1516">
+                                         <property name="style">becpg-meta-cell-data</property>
+                                         <property name="textAlign">right</property>
+                                         <data id="1522">
+                                             <structure name="dateTimeFormat">
+                                                 <property name="category">Medium Date</property>
+                                                 <property name="pattern">Medium Date</property>
+                                             </structure>
+                                             <property name="whiteSpace">nowrap</property>
+                                             <property name="dataSet">Product</property>
+                                             <list-property name="boundDataColumns">
+                                                 <structure>
+                                                     <property name="name">modified</property>
+                                                     <text-property name="displayName">modified</text-property>
+                                                     <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                     <property name="dataType">date</property>
+                                                     <property name="allowExport">true</property>
+                                                 </structure>
+                                             </list-property>
+                                             <property name="resultSetColumn">modified</property>
+                                         </data>
+                                     </cell>
+                                 </row>
+                                 <row id="783">
+                                     <cell id="784">
+                                         <property name="style">becpg-meta-cell-label</property>
+                                         <property name="textAlign">right</property>
+                                         <label id="1521">
+                                             <text-property name="text" key="codeWithColon">Code beCPG :</text-property>
+                                         </label>
+                                     </cell>
+                                     <cell id="1517">
+                                         <property name="style">becpg-meta-cell-data</property>
+                                         <property name="textAlign">right</property>
+                                         <data id="1523">
+                                             <property name="whiteSpace">nowrap</property>
+                                             <property name="dataSet">Product</property>
+                                             <list-property name="boundDataColumns">
+                                                 <structure>
+                                                     <property name="name">code</property>
+                                                     <text-property name="displayName">code</text-property>
+                                                     <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                                     <property name="dataType">string</property>
+                                                 </structure>
+                                             </list-property>
+                                             <property name="resultSetColumn">code</property>
+                                         </data>
+                                     </cell>
+                                 </row>
+                                 <row id="786">
+                                     <cell id="787">
+                                         <property name="style">becpg-meta-cell-label</property>
+                                         <property name="textAlign">right</property>
+                                         <label id="788">
+                                             <text-property name="text" key="version">Version :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="789">
+                                        <property name="style">becpg-meta-cell-data</property>
+                                        <property name="textAlign">right</property>
+                                        <data id="790">
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">versionLabelToShow</property>
+                                                    <text-property name="displayName">versionLabelToShow</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">versionLabelToShow</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <!-- Page 1: Table of Contents Banner -->
+        <grid id="100">
+            <property name="width">100%</property>
+            <column id="101"/>
+            <row id="102">
+                <cell id="103">
+                    <property name="style">becpg-chapter-header</property>
+                    <label id="104">
+                        <property name="style">becpg-chapter-header</property>
+                        <text-property name="text" key="SLabel.tableOfContents">TABLE DES MATIÈRES</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <grid id="200">
+            <property name="width">100%</property>
+            <property name="marginTop">10pt</property>
+            <column id="201">
+                <property name="width">65%</property>
+            </column>
+            <column id="202">
+                <property name="width">35%</property>
+            </column>
+            
+            <!-- Summary Body -->
+            <row id="203">
+                <property name="style">becpg-row-border</property>
+                <cell id="204">
+                    <label id="205">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
+                    </label>
+                </cell>
+                <cell id="206">
+                    <label id="207">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">2</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 1: Compo Quali-Quanti -->
+            <row id="208">
+                <property name="style">becpg-row-border</property>
+                <cell id="209">
+                    <label id="210">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
+                    </label>
+                </cell>
+                <cell id="211">
+                    <label id="212">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:CompoQualiQuanti}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 2: Raw Materials -->
+            <row id="213">
+                <property name="style">becpg-row-border</property>
+                <cell id="214">
+                    <label id="215">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
+                    </label>
+                </cell>
+                <cell id="216">
+                    <label id="217">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:SupplierSheet}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 3: Packaging -->
+            <row id="218">
+                <property name="style">becpg-row-border</property>
+                <cell id="219">
+                    <label id="220">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT</text-property>
+                    </label>
+                </cell>
+                <cell id="221">
+                    <label id="222">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:PackagingSheet}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 4: CPSR / DSE -->
+            <row id="223">
+                <property name="style">becpg-row-border</property>
+                <cell id="224">
+                    <label id="225">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT (DSE / CPSR)</text-property>
+                    </label>
+                </cell>
+                <cell id="226">
+                    <label id="227">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:CPSR}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 5: Stability & Micro -->
+            <row id="228">
+                <property name="style">becpg-row-border</property>
+                <cell id="229">
+                    <label id="230">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
+                    </label>
+                </cell>
+                <cell id="231">
+                    <label id="232">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:StabilityMicro}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 6: Claim Efficacy -->
+            <row id="233">
+                <property name="style">becpg-row-border</property>
+                <cell id="234">
+                    <label id="235">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
+                    </label>
+                </cell>
+                <cell id="236">
+                    <label id="237">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:ClaimEfficacy}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 7: GMP & Animal Testing -->
+            <row id="238">
+                <property name="style">becpg-row-border</property>
+                <cell id="239">
+                    <label id="240">
+                        <property name="style">becpg-toc-title</property>
+                        <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATIONS DE CONFORMITÉ</text-property>
+                    </label>
+                </cell>
+                <cell id="241">
+                    <label id="242">
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
+                        <text-property name="text">{{page:GMPAnimalTesting}}</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <!-- Page 2: Core Item Specification Body Summary Table -->
+        <table id="300">
+            <property name="pageBreakBefore">always</property>
+            <property name="width">100%</property>
+            <property name="dataSet">Product</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">name</property>
+                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">codeAndVersion</property>
+                    <expression name="expression" type="javascript">dataSetRow["codeAndVersion"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">legalName</property>
+                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">preparationTips</property>
+                    <expression name="expression" type="javascript">dataSetRow["preparationTips"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">productHierarchy1</property>
+                    <expression name="expression" type="javascript">dataSetRow["productHierarchy1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">storageConditionsDescription</property>
+                    <expression name="expression" type="javascript">dataSetRow["storageConditionsDescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">precautionOfUseDescription</property>
+                    <expression name="expression" type="javascript">dataSetRow["precautionOfUseDescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">productState</property>
+                    <expression name="expression" type="javascript">dataSetRow["productState"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">modified</property>
+                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">eanCode</property>
+                    <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="301"/>
+            <detail>
+                <row id="302">
+                    <cell id="303">
+                        <!-- Chapter Header Banner -->
+                        <grid id="304">
+                            <property name="width">100%</property>
+                            <column id="305"/>
+                            <row id="306">
+                                <cell id="307">
+                                    <property name="style">becpg-chapter-header</property>
+                                    <label id="308">
+                                        <property name="style">becpg-chapter-header</property>
+                                        <text-property name="text" key="SLabel.pifProductName">INFORMATIONS PRODUIT</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+
+                        <!-- Section 1: DÉSIGNATION -->
+                        <grid id="310">
+                            <property name="width">100%</property>
+                            <column id="311"/>
+                            <row id="312">
+                                <cell id="313">
+                                     <label id="314">
+                                         <property name="style">UnderlinedSubTitle</property>
+                                         <text-property name="text" key="SLabel.pifSection1Title">DÉSIGNATION</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <grid id="320">
+                             <property name="width">100%</property>
+                             <column id="321">
+                                 <property name="width">30%</property>
+                             </column>
+                             <column id="322">
+                                 <property name="width">70%</property>
+                             </column>
+
+                             <row id="323">
+                                 <cell id="324">
+                                     <label id="325">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelCommercialName">Dénomination commerciale :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="326">
+                                     <data id="327">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">name</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="328">
+                                 <cell id="329">
+                                     <label id="330">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelCode">Code &amp; Version :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="331">
+                                     <data id="332">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">codeAndVersion</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="333">
+                                 <cell id="334">
+                                     <label id="335">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelLegalName">Dénomination légale :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="336">
+                                     <data id="337">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">legalName</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="338">
+                                 <cell id="339">
+                                     <label id="340">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelEan">GTIN/EAN UVC :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="341">
+                                     <data id="342">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">eanCode</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="343">
+                                 <cell id="344">
+                                     <label id="345">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelDescription">Description :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="346">
+                                     <data id="347">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">description</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="348">
+                                 <cell id="349">
+                                     <label id="350">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelIntendedUse">Usage prévu &amp; Conseils d'emploi :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="351">
+                                     <data id="352">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">preparationTips</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="353">
+                                 <cell id="354">
+                                     <label id="355">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelHierarchy">Catégorie de produit :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="356">
+                                     <data id="357">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">productHierarchy1</property>
+                                     </data>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <!-- Section 2: INFORMATIONS DE CONSOMMATION ET CONSERVATION -->
+                         <grid id="360">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="361"/>
+                             <row id="362">
+                                 <cell id="363">
+                                     <label id="364">
+                                         <property name="style">UnderlinedSubTitle</property>
+                                         <text-property name="text" key="SLabel.pifSection2Title">INFORMATIONS DE CONSOMMATION ET CONSERVATION</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <grid id="370">
+                             <property name="width">100%</property>
+                             <column id="371">
+                                 <property name="width">30%</property>
+                             </column>
+                             <column id="372">
+                                 <property name="width">70%</property>
+                             </column>
+
+                             <row id="373">
+                                 <cell id="374">
+                                     <label id="375">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelStorageConditions">Conditions de stockage :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="376">
+                                     <data id="377">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">storageConditionsDescription</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="378">
+                                 <cell id="379">
+                                     <label id="380">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelPrecautions">Précautions d'emploi :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="381">
+                                     <data id="382">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">precautionOfUseDescription</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="383">
+                                 <cell id="384">
+                                     <label id="385">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelProductState">Statut du produit :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="386">
+                                     <data id="387">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">productState</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="388">
+                                 <cell id="389">
+                                     <label id="390">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="SLabel.pifLabelModified">Dernière modification :</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="391">
+                                    <data id="392">
+                                        <property name="style">becpg-cell-data</property>
+                                        <property name="resultSetColumn">modified</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+
+                    </cell>
+                </row>
+            </detail>
+        </table>
+
+    </body>
+</report>

@@ -5,9 +5,7 @@ import java.util.List;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
-import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +21,7 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.workflow.WorkflowTaskFinder;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 import fr.becpg.repo.supplier.SupplierPortalService;
@@ -49,8 +48,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	private SupplierPortalService supplierPortalService;
 
 	@Autowired
-	@Qualifier("WorkflowService")
-	private WorkflowService workflowService;
+	private WorkflowTaskFinder workflowTaskFinder;
 
 	@Autowired
 	@Qualifier("workflowPackageImpl")
@@ -135,21 +133,11 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	 * @return true if user has a matching task
 	 */
 	private boolean hasMatchingTask(List<String> contentWorkflowIds) {
-		String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
-
-		List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(supplierAccount, WorkflowTaskState.IN_PROGRESS);
-		boolean matching = assignedTasks.stream()
-				.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId())
-						&& hasSupplierWizardDeliverable(task));
-
-		if (!matching) {
-			List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(supplierAccount);
-			matching = pooledTasks.stream()
-					.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId())
-							&& hasSupplierWizardDeliverable(task));
-		}
-
-		return matching;
+		// `hasSupplierWizardDeliverable` loads the whole project, so it is passed as a filter
+		// rather than applied over every task: it is then only evaluated on the tasks the
+		// workflow query already retained.
+		return workflowTaskFinder.hasTaskOn(AuthenticationUtil.getFullyAuthenticatedUser(), contentWorkflowIds,
+				this::hasSupplierWizardDeliverable);
 	}
 
 	/**

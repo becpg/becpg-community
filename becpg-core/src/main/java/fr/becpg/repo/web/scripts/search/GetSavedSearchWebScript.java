@@ -106,14 +106,14 @@ public class GetSavedSearchWebScript extends AbstractSearchWebScript {
 	}
 
 	/**
-	 * Extracts the display name of a saved search, using the localized title when available.
+	 * Extracts the display name of a saved search, using the title translated in the UI locale when available.
 	 *
 	 * @param savedSearch the saved search
 	 * @return the localized title or the node name as fallback
 	 */
 	private String extractDisplayName(SavedSearch savedSearch) {
 		if ((savedSearch.getTitle() != null) && !savedSearch.getTitle().isEmpty()) {
-			String localizedTitle = MLTextHelper.getClosestValue(savedSearch.getTitle(), I18NUtil.getContentLocale());
+			String localizedTitle = MLTextHelper.getClosestValue(savedSearch.getTitle(), I18NUtil.getLocale());
 			if ((localizedTitle != null) && !localizedTitle.isBlank()) {
 				return localizedTitle;
 			}

@@ -377,6 +377,37 @@ public class BeCPGLicenseManager {
 		
 		return false;
 	}
+
+	/**
+	 * <p>getUserLicenseGroup.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} containing the license group key identifier
+	 */
+	public String getUserLicenseGroup(String username) {
+		if (username == null) {
+			return "nolicense";
+		}
+		if (isSpecialLicenseUser(username)) {
+			return "specialuser";
+		}
+		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseWriteNamed.toString())) {
+			return "licensewritenamed";
+		}
+		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseWriteConcurrent.toString())) {
+			return "licensewriteconcurrent";
+		}
+		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseReadNamed.toString())) {
+			return "licensereadnamed";
+		}
+		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseReadConcurrent.toString())) {
+			return "licensereadconcurrent";
+		}
+		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseSupplierConcurrent.toString())) {
+			return "licensesupplierconcurrent";
+		}
+		return "nolicense";
+	}
 	
 	/**
 	 * <p>hasWriteLicense.</p>

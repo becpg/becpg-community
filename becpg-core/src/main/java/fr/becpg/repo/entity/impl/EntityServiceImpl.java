@@ -129,7 +129,7 @@ public class EntityServiceImpl implements EntityService {
 	private SystemConfigurationService systemConfigurationService;
 
 	/** Constant <code>IGNORE_PARENT_ASSOC_TYPES</code> */
-	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
+	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = HashSet.newHashSet(7);
 	static {
 		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_MEMBER);
 		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_IN_ZONE);

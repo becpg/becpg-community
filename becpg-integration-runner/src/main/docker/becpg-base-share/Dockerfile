@@ -26,7 +26,8 @@ RUN mkdir -p ${TOMCAT_DIR}/shared/classes/alfresco/messages/custom && \
 RUN mkdir -p ${TOMCAT_DIR}/data
       
 
-RUN mkdir -p ${TOMCAT_DIR}/conf/Catalina/localhost && \
+RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default list above.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\n' >> $TOMCAT_DIR/conf/catalina.properties && \
+         mkdir -p ${TOMCAT_DIR}/conf/Catalina/localhost && \
          groupadd -g ${GROUPID} ${GROUPNAME} && \
          useradd -u ${USERID} -G ${GROUPNAME} ${IMAGEUSERNAME} && \
          chgrp -R ${GROUPNAME} ${TOMCAT_DIR} && \

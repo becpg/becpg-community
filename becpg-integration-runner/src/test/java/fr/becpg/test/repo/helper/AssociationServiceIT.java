@@ -65,6 +65,44 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	/**
 	 * Test check out check in.
 	 */
+	/**
+	 * bcpg:productGeoOrigin is declared by bcpg:productGeoOriginAspect, so the
+	 * integrity checker refuses it on a source that does not carry that aspect,
+	 * and it does so at commit rather than at the call. A caller that sets such an
+	 * association without having declared the aspect first - the remote import
+	 * does exactly that, it applies the payload aspects in a later pass - must not
+	 * bring the whole transaction down.
+	 *
+	 * The test commits, which is where an integrity failure would surface.
+	 */
+	@Test
+	public void testUpdateAssocDeclaredByAnAspect() {
+
+		QName productGeoOrigin = QName.createQName(BeCPGModel.BECPG_URI, "productGeoOrigin");
+
+		final NodeRef geoOriginNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "GeoOrigin assoc test");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName("GeoOrigin assoc test"), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+		}, false, true);
+
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP geo origin assoc"), false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			associationService.update(rawMaterialNodeRef, productGeoOrigin, List.of(geoOriginNodeRef));
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, productGeoOrigin);
+			assertEquals("the association is kept", 1, targetNodeRefs.size());
+			assertEquals("and points at the geo origin", geoOriginNodeRef, targetNodeRefs.get(0));
+			return null;
+		}, true, true);
+	}
+
 	@Test
 	public void testCheckinAssocs() {
 

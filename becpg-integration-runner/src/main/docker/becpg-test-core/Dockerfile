@@ -18,7 +18,7 @@ FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
 ENV TOMCAT_DIR=/usr/local/tomcat
 
 # Download Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar \
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.15/org.jacoco.agent-0.8.15-runtime.jar \
     -o $TOMCAT_DIR/jacoco-runtime.jar
 
 # Copy hotswap configurations

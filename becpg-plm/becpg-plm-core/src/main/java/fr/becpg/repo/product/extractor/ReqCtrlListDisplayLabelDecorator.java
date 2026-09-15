@@ -9,11 +9,13 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.DataListItemDecorator;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -29,8 +31,6 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	private static final String DISPLAY_LABEL = "displayLabel";
 
 	private static final String CODE_SEPARATOR = " - ";
-
-	private static final String DECERNIS_PREFIX = "DECERNIS_";
 
 	private static final NodeRef NOT_FOUND = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "not-found");
 
@@ -82,8 +82,8 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		String countryCode = (separator >= 0) ? regulatoryCode.substring(0, separator).trim() : regulatoryCode.trim();
 		String usageCode = (separator >= 0) ? regulatoryCode.substring(separator + CODE_SEPARATOR.length()).trim() : "";
 
-		String countryLabel = resolveLegalName(countryCode);
-		String usageLabel = resolveLegalName(usageCode);
+		String countryLabel = resolveLegalName(countryCode, PLMModel.TYPE_GEO_ORIGIN);
+		String usageLabel = resolveLegalName(usageCode, PLMModel.TYPE_REGULATORY_USAGE);
 
 		return usageLabel.isEmpty() ? countryLabel : countryLabel + CODE_SEPARATOR + usageLabel;
 	}
@@ -93,19 +93,21 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	 * code, falling back to the raw code when no node matches.</p>
 	 *
 	 * @param code the regulatory code
+	 * @param type the target node type
 	 * @return the legal name, or the raw code as fallback
 	 */
-	private String resolveLegalName(String code) {
+	private String resolveLegalName(String code, QName type) {
 		if (code == null || code.isEmpty()) {
 			return "";
 		}
-		NodeRef charact = nodeRefByCode.computeIfAbsent(code, this::findCharactByCode);
+		String cacheKey = type.getLocalName() + ":" + code;
+		NodeRef charact = nodeRefByCode.computeIfAbsent(cacheKey, k -> findCharactByCode(code, type));
 		if (NOT_FOUND.equals(charact)) {
 			return code;
 		}
 		if (!nodeService.exists(charact)) {
-			nodeRefByCode.remove(code, charact);
-			charact = nodeRefByCode.computeIfAbsent(code, this::findCharactByCode);
+			nodeRefByCode.remove(cacheKey, charact);
+			charact = nodeRefByCode.computeIfAbsent(cacheKey, k -> findCharactByCode(code, type));
 			if (NOT_FOUND.equals(charact)) {
 				return code;
 			}
@@ -127,18 +129,22 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	 * component of their stored code.</p>
 	 *
 	 * @param code the regulatory code
+	 * @param type the target node type
 	 * @return the matching node, or {@link #NOT_FOUND} when none exists
 	 */
-	private NodeRef findCharactByCode(String code) {
+	private NodeRef findCharactByCode(String code, QName type) {
 		List<NodeRef> results = BeCPGQueryBuilder.createQuery().inDB()
+				.ofType(type)
 				.andPropEquals(PLMModel.PROP_REGULATORY_CODE, code).list();
 		if (!results.isEmpty()) {
 			return results.get(0);
 		}
-		for (NodeRef usageRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_REGULATORY_USAGE).list()) {
-			String charactCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
-			if (matchesComponent(charactCode, code)) {
-				return usageRef;
+		if (PLMModel.TYPE_REGULATORY_USAGE.equals(type)) {
+			for (NodeRef usageRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_REGULATORY_USAGE).list()) {
+				String charactCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
+				if (matchesComponent(charactCode, code)) {
+					return usageRef;
+				}
 			}
 		}
 		return NOT_FOUND;
@@ -157,8 +163,8 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		if (charactCode == null) {
 			return false;
 		}
-		for (String part : charactCode.split(",(?=" + DECERNIS_PREFIX + ")")) {
-			String candidate = part.startsWith(DECERNIS_PREFIX) ? part.substring(DECERNIS_PREFIX.length()) : part;
+		for (String part : charactCode.split(",(?=" + RegulatoryHelper.DECERNIS_PREFIX + ")")) {
+			String candidate = part.startsWith(RegulatoryHelper.DECERNIS_PREFIX) ? part.substring(RegulatoryHelper.DECERNIS_PREFIX.length()) : part;
 			if (token.equals(candidate.trim())) {
 				return true;
 			}

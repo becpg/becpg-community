@@ -57,6 +57,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	private static final String IGNORED_LISTS = "AuditEntityListItemPolicy.IgnoredLists";
 	/** Constant <code>CATALOG_ONLY="AuditEntityListItemPolicy.CatalogOnly"</code> */
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
+	/** Constant <code>VARIANT_ENTITIES="AuditEntityListItemPolicy.VariantEntities"</code> */
+	private static final String VARIANT_ENTITIES = "AuditEntityListItemPolicy.VariantEntities";
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
@@ -146,6 +148,13 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onUpdateProperties"));
 
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_VARIANT,
+				new JavaBehaviour(this, "onCreateVariant"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_VARIANT,
+				new JavaBehaviour(this, "onDeleteVariant"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_VARIANT,
+				new JavaBehaviour(this, "onUpdateVariantProperties"));
+
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 	}
@@ -233,12 +242,66 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	}
 
 	/**
+	 * <p>Propagates the creation of a variant to its entity.</p>
+	 *
+	 * @param childAssocRef a {@link org.alfresco.service.cmr.repository.ChildAssociationRef} object
+	 */
+	public void onCreateVariant(ChildAssociationRef childAssocRef) {
+		queueVariantEntity(childAssocRef.getParentRef());
+	}
+
+	/**
+	 * <p>Propagates the deletion of a variant to its entity.</p>
+	 *
+	 * @param childAssocRef a {@link org.alfresco.service.cmr.repository.ChildAssociationRef} object
+	 * @param isNodeArchived a boolean
+	 */
+	public void onDeleteVariant(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
+		queueVariantEntity(childAssocRef.getParentRef());
+	}
+
+	/**
+	 * <p>Propagates the update of a variant to its entity.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
+	public void onUpdateVariantProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && (before != null) && (after != null)) {
+			Set<QName> changedEntries = extractChangedEntries(before, after);
+			if (!changedEntries.isEmpty() && changedEntries.stream().noneMatch(BehaviourRegistry::shouldIgnoreAuditField)) {
+				queueVariantEntity(nodeService.getPrimaryParent(nodeRef).getParentRef());
+			}
+		}
+	}
+
+	/**
+	 * <p>Queues the entity a variant belongs to. Unlike a datalist item, a variant is a direct child of
+	 * the entity, so there is no list folder to walk up from.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void queueVariantEntity(NodeRef entityNodeRef) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM) && policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
+			queueNode(VARIANT_ENTITIES, entityNodeRef);
+		}
+	}
+
+	/**
 	 * {@inheritDoc}
 	 *
 	 * Store in the entity list folder that an item has been deleted.
 	 */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		if (VARIANT_ENTITIES.equals(key)) {
+			for (NodeRef entityNodeRef : pendingNodes) {
+				updateEntityAuditedFields(entityNodeRef, null, false);
+			}
+			return true;
+		}
+
 		Set<NodeRef> listNodeRefs = new HashSet<>();
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
 		Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
@@ -300,19 +363,33 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/**
+	 * <p>Lists the properties that differ between the two states of a node.</p>
+	 *
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 * @return a {@link java.util.Set} object
+	 */
+	private Set<QName> extractChangedEntries(Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		MapDifference<QName, Serializable> diff = Maps.difference(before, after);
+		Set<QName> changedEntries = new HashSet<>();
+		if (!diff.areEqual()) {
+			changedEntries.addAll(diff.entriesDiffering().keySet());
+			changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
+			changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
+		}
+		return changedEntries;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before != null && after != null) {
 
-			MapDifference<QName, Serializable> diff = Maps.difference(before, after);
-			
-			if (!diff.areEqual()) {
-				Set<QName> changedEntries = new HashSet<>();
-				changedEntries.addAll(diff.entriesDiffering().keySet());
-				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
-				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
-				
+			Set<QName> changedEntries = extractChangedEntries(before, after);
+
+			if (!changedEntries.isEmpty()) {
+
 				boolean shouldIgnoreAudit = changedEntries.stream().anyMatch(BehaviourRegistry::shouldIgnoreAuditField);
 				
 				if (!shouldIgnoreAudit) {

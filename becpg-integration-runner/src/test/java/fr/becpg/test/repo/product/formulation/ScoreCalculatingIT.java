@@ -286,7 +286,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 	private NodeRef getFamilyNodeRef() {
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			Map<QName, Serializable> props = new HashMap<>(1);
+			Map<QName, Serializable> props = HashMap.newHashMap(1);
 			props.put(BeCPGModel.PROP_LKV_VALUE, "Famille 1-"+(Calendar.getInstance().getTimeInMillis()));
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) props.get(BeCPGModel.PROP_LKV_VALUE)),

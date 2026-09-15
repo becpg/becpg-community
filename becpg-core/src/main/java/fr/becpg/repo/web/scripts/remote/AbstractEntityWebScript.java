@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import org.alfresco.error.ExceptionStackUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.query.EmptyPagingResults;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -58,6 +60,7 @@ import fr.becpg.repo.entity.remote.RemoteRateLimiter;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
+import net.sf.acegisecurity.AccessDeniedException;
 
 /**
  * Abstract remote entity webscript
@@ -115,6 +118,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected NamespaceService namespaceService;
 	
+	/** HTTP 429: absent from Surf's Status, which stops before it. */
+	private static final int STATUS_TOO_MANY_REQUESTS = 429;
+
 	protected RemoteRateLimiter remoteRateLimiter;
 	
 	protected SystemConfigurationService systemConfigurationService;
@@ -248,7 +254,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		 if (!remoteRateLimiter.allowRequest()) {
-			 throw new WebScriptException("beCPG Remote API Call RATE limit reached");
+			 // 429 rather than 500: a caller must be able to tell "slow down" from "the server is broken".
+			 // Written straight on the response instead of thrown: a WebScriptException would go through
+			 // AbstractRuntime, which logs an ERROR and a stack trace per rejected call - a client hitting
+			 // the limit would then flood the log with hundreds of them. RemoteRateLimiter already logs
+			 // one throttled WARN naming the offending client, which is the trace worth keeping.
+			 resp.setStatus(STATUS_TOO_MANY_REQUESTS);
+			 resp.setHeader("Retry-After", "1");
+			 resp.setContentType("application/json");
+			 resp.setContentEncoding(StandardCharsets.UTF_8.name());
+			 resp.getWriter().write("{\"status\":429,\"message\":\"beCPG Remote API call rate limit reached, retry in a second\"}");
+			 resp.getWriter().flush();
+			 return;
 	      }
 		 executeInternal(req,resp);
 	}
@@ -344,6 +361,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			} else {
 			    pagingNodes = advSearchResults.subList(startIndex, endIndex);
 			}
+			boolean advSearchCapped = !isMaxResultsQuery && (advSearchResultsSize == advSearchMaxResults);
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
@@ -351,7 +369,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(advSearchResultsSize, advSearchResultsSize);
+					return new Pair<>(advSearchResultsSize, advSearchCapped ? null : advSearchResultsSize);
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -379,7 +397,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning " + refs.getTotalResultCount() + " entities");
 				}
-				return refs;
+				return withKnownTotalCount(refs, queryBuilder);
 			}
 			
 			if (logger.isDebugEnabled()) {
@@ -388,6 +406,54 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		return new EmptyPagingResults<>();
 
+	}
+
+	/**
+	 * <p>Completes a page whose total is unknown with the number of matches reported by the index.</p>
+	 *
+	 * <p>The transactional query engine stops counting one row past the requested page, so it cannot tell
+	 * how many entities match as soon as another page follows. The index reports that number without
+	 * reading the nodes back, at the cost of its eventual consistency. An index that reports fewer
+	 * entities than the page holds is not answering for this query, and the total is left unknown.</p>
+	 *
+	 * @param refs a {@link org.alfresco.query.PagingResults} object, the page returned by the query
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object, the builder that ran the query
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
+	private PagingResults<NodeRef> withKnownTotalCount(PagingResults<NodeRef> refs, BeCPGQueryBuilder queryBuilder) {
+
+		if (refs.getTotalResultCount().getSecond() != null) {
+			return refs;
+		}
+
+		int indexedCount = queryBuilder.indexedCount().intValue();
+		if (indexedCount < refs.getPage().size()) {
+			return refs;
+		}
+
+		int totalCount = Math.max(indexedCount, refs.getTotalResultCount().getFirst());
+
+		return new PagingResults<NodeRef>() {
+			@Override
+			public List<NodeRef> getPage() {
+				return refs.getPage();
+			}
+
+			@Override
+			public boolean hasMoreItems() {
+				return refs.hasMoreItems();
+			}
+
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return new Pair<>(totalCount, totalCount);
+			}
+
+			@Override
+			public String getQueryExecutionId() {
+				return refs.getQueryExecutionId();
+			}
+		};
 	}
 
 	/**
@@ -770,7 +836,60 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return false;
 	}
 
-	
-	
+	/** Constant <code>ACCESS_DENIED_MESSAGE="You have no right to see this node"</code> */
+	protected static final String ACCESS_DENIED_MESSAGE = "You have no right to see this node";
+
+	/**
+	 * <p>accessDenied.</p>
+	 *
+	 * Builds the refusal to report to the caller, and records it without its stack: a permission
+	 * the caller does not hold is an answer, not a server fault.
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return the {@link org.springframework.extensions.webscripts.WebScriptException} to throw
+	 */
+	protected WebScriptException accessDenied(NodeRef nodeRef) {
+		logger.warn("User " + AuthenticationUtil.getFullyAuthenticatedUser() + " is not allowed to read " + nodeRef);
+		return new WebScriptException(Status.STATUS_FORBIDDEN, ACCESS_DENIED_MESSAGE);
+	}
+
+	/**
+	 * <p>endOnError.</p>
+	 *
+	 * Reports the error to the caller, unless the response output stream has already been taken:
+	 * the container then renders the error by asking the response for its writer, which fails on
+	 * "getOutputStream() has already been called" and replaces the real cause with a message about
+	 * the response. Past that point the caller keeps the truncated body it already holds, and the
+	 * cause is only what the log says.
+	 *
+	 * @param resp a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 * @param streaming whether the response output stream has already been taken
+	 * @param error the error to report
+	 */
+	protected void endOnError(WebScriptResponse resp, boolean streaming, WebScriptException error) {
+		if (streaming) {
+			return;
+		}
+		resp.reset();
+		throw error;
+	}
+
+	/**
+	 * <p>isAccessDenied.</p>
+	 *
+	 * <p>Walks the cause chain for a refused permission. Both types are looked for on purpose: the
+	 * {@code NodeService} AOP proxy translates the acegi one into
+	 * {@link org.alfresco.repo.security.permissions.AccessDeniedException} before it leaves, and the
+	 * two classes share no hierarchy. The export then wraps whichever it got into a
+	 * {@link fr.becpg.common.BeCPGException}, so only the chain tells a refusal apart from a
+	 * genuine internal error.</p>
+	 *
+	 * @param t a {@link java.lang.Throwable} object
+	 * @return a boolean
+	 */
+	protected boolean isAccessDenied(Throwable t) {
+		return ExceptionStackUtil.getCause(t, AccessDeniedException.class,
+				org.alfresco.repo.security.permissions.AccessDeniedException.class) != null;
+	}
 
 }

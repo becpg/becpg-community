@@ -21,6 +21,11 @@
 <beans>
 
 	<!-- Product Policies -->
+	<bean id="scoreDefinitionPolicy" class="fr.becpg.repo.score.ScoreDefinitionPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="scoreDefinitionService" ref="scoreDefinitionService" />
+	</bean>
+
 	<bean id="entityCopyPolicy"
 		class="fr.becpg.repo.product.policy.EntityCopyPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">

@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +41,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -57,8 +60,10 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+import fr.becpg.test.repo.product.LabelingInvariants;
 
 /**
  *
@@ -198,6 +203,962 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
 	}
 
+	/**
+	 * The total of the flat table is the sum of its rows as they are displayed: two thickeners rounded on their own
+	 * rows (0,3% + 0,3%) must not be summed as one rounded type (0,5%) in the total (#36438).
+	 */
+	@Test
+	public void testRenderFlatHtmlTableTotalSumsRows() {
+
+		NodeRef flatTableRawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef thickenerANodeRef = createThickener("Thickener A");
+			NodeRef thickenerBNodeRef = createThickener("Thickener B");
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table total raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Flat table total raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Flat table total raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Flat table total raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99.47d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.27d).withIngredient(thickenerANodeRef).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.26d).withIngredient(thickenerBNodeRef).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product flat total " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct.setLegalName("legal Finished product flat total");
+			finishedProduct.setQty(1d);
+			finishedProduct.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(flatTableRawMaterialNodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', true, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+
+		String expectedHtml = "<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\">"
+				+ "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >Ingrédient</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine géographique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine biologique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Quantité (%)</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Qté ap. rdmt (%)</th></tr></thead>"
+				+ "<tbody>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >ing1 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">99,5%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">99,5%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >epaississants french : thickener A french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >epaississants french : thickener B french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">0,3%</td></tr>"
+				+ "<tfoot><tr><th style=\"border: solid 1px; padding: 5px;\" ><b>Total</b></th>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px; padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\"><b>100,1%</b></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td></tr></tfoot>"
+				+ "</tbody></table>";
+
+		checkILL(finishedProductNodeRef, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
+
+	private NodeRef createThickener(String name) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_ING_TYPE_V2, ingType1);
+		MLText legalName = new MLText();
+		legalName.addValue(I18NUtil.getContentLocaleLang(), name + " default");
+		legalName.addValue(Locale.ENGLISH, name + " english");
+		legalName.addValue(Locale.FRENCH, name + " french");
+		properties.put(BeCPGModel.PROP_LEGAL_NAME, legalName);
+
+		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_ING, properties).getChildRef();
+	}
+
+	@Test
+	public void testRenderFlatHtmlTableSubIngsWithYield() {
+
+		NodeRef flatTableRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Flat table sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Flat table sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Flat table sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product flat sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product flat sub ings");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(flatTableRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', false, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		String expectedHtml = "<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\">"
+				+ "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >Ingrédient</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine géographique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine biologique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Quantité (%)</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Qté ap. rdmt (%)</th></tr></thead>"
+				+ "<tbody>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >ing3 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">100%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">200%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >&nbsp;&nbsp;ing1 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">60%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">120%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >&nbsp;&nbsp;ing2 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">40%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">80%</td></tr>"
+				+ "</tbody></table>";
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
+
+	/**
+	 * #34702 : same product as {@link #testRenderFlatHtmlTableSubIngsWithYield()}, rendered as text this time. The
+	 * sub-ingredients of a detailed composite ingredient must carry the parent yield exactly once, so that they still
+	 * sum up to their parent (100/200 %, 60/120 %, 40/80 % in the flat table). The yield used to be applied twice on
+	 * them - once through the parent ratio, once through their own "with yield" quantity - which inflated them by
+	 * 1/yield (240 % and 160 % here).
+	 */
+	@Test
+	public void testRenderSubIngsWithYield() {
+
+		NodeRef subIngsRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Text sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Text sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Text sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Text sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product text sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product text sub ings");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(subIngsRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		// show the percentage of the detailed composite ingredient itself, like the customer template does
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 200% (ing1 french 120%, ing2 french 80%)", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, retest of 2026-08-14: the ingredient list is right but the labeling is not. When a sub-ingredient
+	 * evaporates, the percentages rendered for the sub-ingredients must stay aligned with the "Qty with yield" column
+	 * of the ingredient list, and the composite parent must remain the sum of its children.
+	 */
+	@Test
+	public void testRenderSubIngsWithYieldAndEvaporation() {
+
+		NodeRef evaporatingRawMaterialNodeRef = inWriteTx(() -> {
+
+			nodeService.setProperty(ing1, PLMModel.PROP_EVAPORATED_RATE, 50d);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Evaporating sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Evaporating sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Evaporating sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Evaporating sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// 2 kg in, 1.6 kg net : the 400 g lost are taken from ing1, the only ingredient that evaporates
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product evaporating sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product evaporating sub ings");
+			finishedProduct1.setQty(1.6d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(evaporatingRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("force100Perc=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		// show the percentage of the detailed composite ingredient itself, like the customer template does
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param3").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercWithYieldByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercWithYieldByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPercWithYield());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercWithYieldByIng.get(ing3) + " evaporating="
+				+ qtyPercWithYieldByIng.get(ing1) + " other=" + qtyPercWithYieldByIng.get(ing2);
+		logger.info("Rendered labeling with evaporating sub ingredient:" + context);
+
+		List<Double> renderedPercs = extractPercentages(rendered);
+		Assert.assertEquals("Expecting the composite ingredient and its two sub ingredients:" + context, 3, renderedPercs.size());
+
+		double parentPerc = renderedPercs.get(0);
+		double firstChildPerc = renderedPercs.get(1);
+		double secondChildPerc = renderedPercs.get(2);
+
+		// Before the fix the yield was applied twice on the sub ingredients : they came out at 75 % and 50 % while
+		// their parent stayed at 100 %, so the parenthesis no longer added up to the ingredient it details.
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, parentPerc,
+				firstChildPerc + secondChildPerc, 0.2d);
+		Assert.assertEquals("The only top level ingredient must be at 100%:" + context, 100d, parentPerc, 0.2d);
+
+		// The water lost by the composite is shared over its sub ingredients proportionally to their declared
+		// percentages, so they keep their 60/40 split instead of charging the whole loss to the evaporating one.
+		Assert.assertEquals("Evaporating sub ingredient must keep its share of its parent:" + context, 60d, firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient must keep its share of its parent:" + context, 40d, secondChildPerc, 0.2d);
+
+		// The labeling must tell the same story as the "Qty with yield" column of the ingredient list
+		Assert.assertNotNull("Composite ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing3));
+		Assert.assertNotNull("Evaporating sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing1));
+		Assert.assertNotNull("Sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing2));
+
+		Assert.assertEquals("Composite ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing3).doubleValue(), parentPerc, 0.2d);
+		Assert.assertEquals("Evaporating sub ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing1).doubleValue(), firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing2).doubleValue(), secondChildPerc, 0.2d);
+	}
+
+	/**
+	 * #34702 : a detailed composite standing next to other ingredients, in a product that loses weight. The composite
+	 * covers its raw material on its own here, which is the case that already worked - it is kept as the control of
+	 * {@link #testRenderSubIngsOfNestedCompositeInYieldingProduct()}, where the composite shares its raw material.
+	 */
+	@Test
+	public void testRenderSubIngsOfCompositeInYieldingProduct() {
+
+		NodeRef compositeRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Composite sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal composite raw material");
+			legalName.addValue(Locale.FRENCH, "Legal composite raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal composite raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef waterRawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef water = CharactTestHelper.getOrCreateIng(nodeService, "ING Water 34702p");
+			nodeService.setProperty(water, PLMModel.PROP_EVAPORATED_RATE, 100d);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Evaporating water raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal water raw material");
+			legalName.addValue(Locale.FRENCH, "Legal water raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal water raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+			rawMaterial.setIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(water).withIsManual(false)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// 100 kg in, 80 kg net : the 20 kg lost are the water, so the product carries a yield of its own on top of
+		// the composite - which is what Elodie's pizza does and what the first fix did not cover.
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product composite in yielding product " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product composite in yielding product");
+			finishedProduct1.setQty(80d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(compositeRawMaterialNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(waterRawMaterialNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(60d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("force100Perc=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param3").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercWithYieldByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercWithYieldByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPercWithYield());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercWithYieldByIng.get(ing3) + " child1="
+				+ qtyPercWithYieldByIng.get(ing1) + " child2=" + qtyPercWithYieldByIng.get(ing2);
+		logger.info("Rendered labeling of a composite in a yielding product:" + context);
+
+		double compositePerc = extractCompositePerc(rendered);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		Assert.assertEquals("Expecting the two sub ingredients between brackets:" + context, 2, subPercs.size());
+
+		double childrenSum = subPercs.get(0) + subPercs.get(1);
+
+		// The parenthesis details the ingredient it follows : it cannot add up to more than that ingredient.
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, compositePerc, childrenSum, 0.2d);
+
+		// And it must tell the same story as the "Qty with yield" column of the ingredient list.
+		Assert.assertNotNull("Composite ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing3));
+		Assert.assertNotNull("First sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing1));
+		Assert.assertNotNull("Second sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing2));
+
+		Assert.assertEquals("Composite percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing3).doubleValue(), compositePerc, 0.2d);
+		Assert.assertEquals("First sub ingredient differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing1).doubleValue(), subPercs.get(0), 0.2d);
+		Assert.assertEquals("Second sub ingredient differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
+	}
+
+	/**
+	 * #34702, retest of 2026-08-18 on Elodie's pizza : the ingredient list is right but the labeling still inflated the
+	 * sub ingredients - "tomato puree 21.6% (tomato 25.3%, vegetable oil 0.3%)", where the bracket has to add up to the
+	 * ingredient it details.
+	 *
+	 * What the previous fix missed is a composite that does not cover the item bringing it : the tomato puree is 99 %
+	 * of its raw material, next to 1 % of lysozyme, and comes through a topping while the product loses its water. The
+	 * sub ingredients are then divided by a total that is not the one their own quantities add up to, and the bracket
+	 * overflows its parent - by 1 % here, by 17 % on the pizza.
+	 */
+	@Test
+	public void testRenderSubIngsOfNestedCompositeInYieldingProduct() {
+
+		NodeRef compositeRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Nested composite raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal nested composite raw material");
+			legalName.addValue(Locale.FRENCH, "Legal nested composite raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal nested composite raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			// The composite is only a part of the raw material : it has a sibling, like Elodie's tomato
+			// raw material where the puree sits at 99 % next to 1 % of lysozyme.
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(99d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(1d).withIngredient(ing2).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(1d).withIngredient(ing4).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef waterRawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef water = CharactTestHelper.getOrCreateIng(nodeService, "ING Water 34702n");
+			nodeService.setProperty(water, PLMModel.PROP_EVAPORATED_RATE, 100d);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Nested water raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal nested water raw material");
+			legalName.addValue(Locale.FRENCH, "Legal nested water raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal nested water raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+			rawMaterial.setIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(water).withIsManual(false)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// The topping : 20 kg of composite + 20 kg of water, and it keeps its own weight
+		NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+			SemiFinishedProductData semiFinished = new SemiFinishedProductData();
+			semiFinished.setName("Topping nested composite " + Calendar.getInstance().getTimeInMillis());
+			semiFinished.setLegalName("legal topping nested composite");
+			semiFinished.setQty(40d);
+			semiFinished.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(compositeRawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(waterRawMaterialNodeRef));
+
+			semiFinished.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+		});
+
+		// 100 kg in, 80 kg net : the 20 kg lost are the water carried by the topping
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product nested composite " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product nested composite");
+			finishedProduct1.setQty(80d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(40d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(semiFinishedNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(60d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("force100Perc=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param3").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercWithYieldByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercWithYieldByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPercWithYield());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercWithYieldByIng.get(ing3) + " child1="
+				+ qtyPercWithYieldByIng.get(ing1) + " child2=" + qtyPercWithYieldByIng.get(ing2);
+		logger.info("Rendered labeling of a nested composite in a yielding product:" + context);
+
+		double compositePerc = extractCompositePerc(rendered);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		Assert.assertEquals("Expecting the two sub ingredients between brackets:" + context, 2, subPercs.size());
+
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, compositePerc,
+				subPercs.get(0) + subPercs.get(1), 0.2d);
+
+		Assert.assertEquals("Composite percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing3).doubleValue(), compositePerc, 0.2d);
+		Assert.assertEquals("First sub ingredient differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing1).doubleValue(), subPercs.get(0), 0.2d);
+		Assert.assertEquals("Second sub ingredient differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
+	}
+
+	/**
+	 * #34702, retour du 19/08 sur « FA - PIZZA PIECE » : l'étiquetage cru gonfle lui aussi le détail.
+	 *
+	 * The first fix was gated on {@code ingsLabelingWithYield}, so a label rendered without the yield
+	 * kept the old calculation : "tomate purée 20,2 % (tomate 20,2 %, huile végétale 0,2 %)" where the
+	 * ingredient list reads 20.1685 / 19.9668 / 0.2017. The bracket overflowed its parent by 1.2 %.
+	 *
+	 * The discrepancy comes from the composite not covering the raw material that brings it - here
+	 * 99 % next to a 1 % sibling - and not from the yield, so it shows up with or without it.
+	 */
+	@Test
+	public void testRenderSubIngsOfSharedCompositeWithoutYield() {
+
+		NodeRef compositeRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Shared composite raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal shared composite raw material");
+			legalName.addValue(Locale.FRENCH, "Legal shared composite raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal shared composite raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(99d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(1d).withIngredient(ing2).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(1d).withIngredient(ing4).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// No yield anywhere : 100 kg in, 100 kg net.
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product shared composite raw " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product shared composite raw");
+			finishedProduct1.setQty(100d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(compositeRawMaterialNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(80d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		// Deliberately no ingsLabelingWithYield : this is the raw label.
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPerc());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercByIng.get(ing3) + " child1="
+				+ qtyPercByIng.get(ing1) + " child2=" + qtyPercByIng.get(ing2);
+		logger.info("Rendered raw labeling of a shared composite:" + context);
+
+		double compositePerc = extractCompositePerc(rendered);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		Assert.assertEquals("Expecting the two sub ingredients between brackets:" + context, 2, subPercs.size());
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, compositePerc,
+				subPercs.get(0) + subPercs.get(1), 0.2d);
+
+		// And the raw label must tell the same story as the "Quantity" column of the ingredient list.
+		Assert.assertEquals("Composite percentage differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing3).doubleValue(), compositePerc, 0.2d);
+		Assert.assertEquals("First sub ingredient differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing1).doubleValue(), subPercs.get(0), 0.2d);
+		Assert.assertEquals("Second sub ingredient differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
+	}
+
+	/**
+	 * #34758 (Pasquier) : the flat table renders a "Quantité" and a "Qté ap. rdmt" column side by side, and each needs
+	 * its own ratio. Sharing one left the sub ingredients of the second column scaled in the space of the first, so
+	 * the bracket repeated the raw percentages after the yield.
+	 *
+	 * Asserted as an invariant rather than on a fixed HTML string : in both columns the children of the composite must
+	 * add up to it. The composite shares its raw material (99 % next to a 1 % sibling), which is what makes the two
+	 * spaces diverge.
+	 */
+	@Test
+	public void testRenderFlatHtmlTableSubIngsOfSharedComposite() {
+
+		NodeRef sharedCompositeNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table shared composite " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal flat table shared composite");
+			legalName.addValue(Locale.FRENCH, "Legal flat table shared composite");
+			legalName.addValue(Locale.ENGLISH, "Legal flat table shared composite");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(99d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(1d).withIngredient(ing2).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(1d).withIngredient(ing4).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product flat shared composite " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product flat shared composite");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(sharedCompositeNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', false, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+		String table = formulatedProduct.getLabelingListView().getIngLabelingList().get(0).getValue().getValue(Locale.FRENCH);
+
+		List<double[]> rows = parseFlatTableRows(table);
+		Assert.assertFalse("No row parsed from the flat table : " + table, rows.isEmpty());
+
+		// Row 0 is the composite, rows 1 and 2 its two children.
+		Assert.assertTrue("Expecting the composite and its two children, got " + rows.size() + " rows : " + table, rows.size() >= 3);
+
+		double[] composite = rows.get(0);
+		double[] firstChild = rows.get(1);
+		double[] secondChild = rows.get(2);
+
+		Assert.assertEquals("Quantité column : the children must add up to their parent. Table : " + table, composite[0],
+				firstChild[0] + secondChild[0], 0.35d);
+		Assert.assertEquals("Qté ap. rdmt column : the children must add up to their parent. Table : " + table, composite[1],
+				firstChild[1] + secondChild[1], 0.35d);
+
+		// And the two columns must not be identical : the yield has to move the values.
+		Assert.assertNotEquals("The two columns are identical, the yield was not applied. Table : " + table, composite[0], composite[1], 0.35d);
+	}
+
+	/**
+	 * The other side of the rule #34702 introduced : sub ingredients adding up to LESS than their parent are a
+	 * composite that is only partly declared - a raw material detailing one of its ingredients and not the rest - and
+	 * must be left alone. Rescaling those would inflate the few that are declared up to the whole parent.
+	 */
+	@Test
+	public void testRenderSubIngsOfPartlyDeclaredCompositeAreNotRescaled() {
+
+		NodeRef partlyDeclaredNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Partly declared composite " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal partly declared composite");
+			legalName.addValue(Locale.FRENCH, "Legal partly declared composite");
+			legalName.addValue(Locale.ENGLISH, "Legal partly declared composite");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			// The composite is declared at 100 %, but only a quarter of it is detailed.
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(25d).withIngredient(ing1).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product partly declared " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product partly declared");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			finishedProduct1.getCompoListView().setCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(partlyDeclaredNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+
+		double compositePerc = extractCompositePerc(rendered);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		Assert.assertEquals("Expecting the single declared sub ingredient : " + rendered, 1, subPercs.size());
+		Assert.assertEquals("The composite must stay at 100 % : " + rendered, 100d, compositePerc, 0.2d);
+		Assert.assertEquals("A quarter declared must stay a quarter, not be rescaled up to its parent : " + rendered, 25d, subPercs.get(0), 0.2d);
+	}
+
+	/**
+	 * Characterisation of {@code computePercByParent}, the "declare on 100 % of parent" preference, which had no test
+	 * at all. #27570 reports that it does not hold when the yield is displayed : this records what it does today, with
+	 * and without the yield, so any change to it is a deliberate one.
+	 *
+	 * What the ticket asks for - sub ingredient percentages identical baked and unbaked - is not decided : it conflicts
+	 * with a sub ingredient that evaporates inside its parent, whose share genuinely moves. Hence a characterisation
+	 * rather than an expectation.
+	 */
+	@Test
+	public void testComputePercByParentCharacterisation() {
+
+		NodeRef byParentRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Perc by parent raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal perc by parent raw material");
+			legalName.addValue(Locale.FRENCH, "Legal perc by parent raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal perc by parent raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product perc by parent " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product perc by parent");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			finishedProduct1.getCompoListView().setCompoList(List.of(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(byParentRawMaterialNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		// Without the yield : the sub ingredients are their share of their parent, 60 / 40.
+		Assert.assertEquals("computePercByParent without yield", "60 / 40",
+				renderPercByParent(finishedProductNodeRef1, false));
+
+		// With the yield : they move, which is exactly what #27570 reports.
+		Assert.assertEquals("computePercByParent with yield", "120 / 80",
+				renderPercByParent(finishedProductNodeRef1, true));
+	}
+
+	/** Renders the product with computePercByParent and returns the two sub ingredient percentages, as "a / b". */
+	private String renderPercByParent(NodeRef productNodeRef, boolean withYield) {
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("computePercByParent=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		if (withYield) {
+			labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("ingsLabelingWithYield=true")
+					.withLabelingRuleType(LabelingRuleType.Prefs));
+		}
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param3").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(productNodeRef, labelingRuleList);
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		logger.info("computePercByParent withYield=" + withYield + " -> " + rendered);
+		Assert.assertEquals("Expecting the two sub ingredients : " + rendered, 2, subPercs.size());
+
+		return Math.round(subPercs.get(0)) + " / " + Math.round(subPercs.get(1));
+	}
+
+	/** Reads the two percentage columns of each flat table row, in document order. */
+	private List<double[]> parseFlatTableRows(String table) {
+		List<double[]> rows = new ArrayList<>();
+		Matcher row = Pattern.compile("<tr>(.*?)</tr>", Pattern.DOTALL).matcher(table == null ? "" : table);
+		while (row.find()) {
+			List<Double> percentages = new ArrayList<>();
+			Matcher cell = Pattern.compile(">([0-9]+(?:[.,][0-9]+)?)\\s*%<").matcher(row.group(1));
+			while (cell.find()) {
+				percentages.add(Double.parseDouble(cell.group(1).replace(',', '.')));
+			}
+			if (percentages.size() == 2) {
+				rows.add(new double[] { percentages.get(0), percentages.get(1) });
+			}
+		}
+		return rows;
+	}
+
+	/** The percentage rendered for the ingredient that carries a detail, ie the one followed by a bracket. */
+	private double extractCompositePerc(String rendered) {
+		Matcher matcher = Pattern.compile("([0-9]+(?:[.,][0-9]+)?)\\s*%\\s*\\(").matcher(rendered);
+		Assert.assertTrue("No detailed ingredient in : " + rendered, matcher.find());
+		return Double.parseDouble(matcher.group(1).replace(',', '.'));
+	}
+
+	/** The percentages rendered between the brackets, ie the sub ingredients of the detailed ingredient. */
+	private List<Double> extractSubIngPercentages(String rendered) {
+		Matcher brackets = Pattern.compile("\\(([^)]*)\\)").matcher(rendered);
+		Assert.assertTrue("No bracket in : " + rendered, brackets.find());
+		return extractPercentages(brackets.group(1));
+	}
+
+	private ProductData formulateWithLabelingRules(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList) {
+		return inWriteTx(() -> {
+			ProductData ret = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			ret.getLabelingListView().getLabelingRuleList().clear();
+			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
+
+			alfrescoRepository.save(ret);
+			productService.formulate(ret);
+			alfrescoRepository.save(ret);
+
+			return ret;
+		});
+	}
+
+	private String getFirstIll(ProductData formulatedProduct, Locale locale) {
+		Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+		Assert.assertFalse("IngLabelingList is empty", formulatedProduct.getLabelingListView().getIngLabelingList().isEmpty());
+
+		IngLabelingListDataItem first = formulatedProduct.getLabelingListView().getIngLabelingList().get(0);
+		String rendered = first.getValue().getValue(locale);
+
+		// The tests below go through formulateWithLabelingRules, not checkILL, so the invariants are
+		// checked here too rather than only on the labels checkILL compares.
+		LabelingInvariants.assertHolds(rendered, formulatedProduct.getName());
+
+		return rendered;
+	}
+
+	private List<Double> extractPercentages(String rendered) {
+		List<Double> ret = new ArrayList<>();
+		Matcher matcher = Pattern.compile("([0-9]+(?:[.,][0-9]+)?)\\s*%").matcher(rendered);
+		while (matcher.find()) {
+			ret.add(Double.valueOf(matcher.group(1).replace(',', '.')));
+		}
+		return ret;
+	}
 
 	@Test
 	public void testNullIng() {
@@ -964,8 +1925,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force one").withFormula("1")
 				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
 
+		// The label is ordered on the forced percentage, so ing2 forced to 1% now comes after ing1
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 1%, ing1 french 8,3%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 1%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
@@ -976,7 +1938,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 2%, ing1 french 8,3%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 2%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
@@ -1022,6 +1984,48 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 17%, ing1 french", Locale.FRENCH);
+
+	}
+
+	@Test
+	public void testForcePercentageOrdering() {
+
+		/** #32476 The label is ordered on the forced percentage, not on the computed one */
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 4");
+			finishedProduct.setLegalName("Legal Produit fini 4");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force five").withFormula("5")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 5%", Locale.FRENCH);
 
 	}
 

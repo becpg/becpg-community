@@ -90,6 +90,19 @@ public interface AttributeExtractorService {
 		String extractMetadata(@Nonnull QName type,@Nonnull NodeRef nodeRef);
 		
 		/**
+		 * Extracts the metadata of a node without the display decorations {@link #extractMetadata} may
+		 * append: a variant carries its color as <code>variant-default#RRGGBB</code>, which is a CSS class
+		 * and not something a message bundle can resolve.
+		 * 
+		 * @param type the type of the node
+		 * @param nodeRef the reference to the node
+		 * @return the metadata usable as a message key
+		 */
+		default String extractMetadataKey(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+			return extractMetadata(type, nodeRef);
+		}
+		
+		/**
 		 * Gets the collection of QNames that match the criteria for this extractor.
 		 * 
 		 * @return a collection of matching QNames
@@ -196,6 +209,15 @@ public interface AttributeExtractorService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String extractMetadata(QName type, NodeRef entityNodeRef);
+
+	/**
+	 * <p>extractMetadataKey.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	String extractMetadataKey(QName type, NodeRef entityNodeRef);
 
 	/**
 	 * <p>getPersonDisplayName.</p>

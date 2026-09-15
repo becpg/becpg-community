@@ -39,6 +39,7 @@
 				<value>alfresco/module/${pom.artifactId}/messages/plm</value>
 				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
 				<value>alfresco/module/${pom.artifactId}/messages/system-configuration</value>
+				<value>alfresco/module/${pom.artifactId}/messages/nutrition-facts</value>
 				<!-- Fix #9672 This is copied for ADF becpg form service it doesn't copy i18n translated 
 				   <value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value> -->				
 			</list>
@@ -123,7 +124,15 @@
 	<bean id="webscript.fr.becpg.product.lcaDatabaseImport.post" class="fr.becpg.repo.web.scripts.product.LCADatabaseImportWebScript" parent="webscript">
 		<property name="lcaDatabaseService" ref="lcaDatabaseService"/>
 	</bean>
-	
+
+	<bean id="webscript.fr.becpg.score.scoreBadge.get" class="fr.becpg.repo.web.scripts.score.ScoreBadgeWebScript" parent="webscript">
+		<property name="scoreBadgeService" ref="scoreBadgeService"/>
+		<property name="delegate" ref="webscript.content.streamer" />
+		<property name="permissionService" ref="PermissionService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="mimetypeService" ref="MimetypeService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.product.nutDatabaseCompare.get" class="fr.becpg.repo.web.scripts.product.NutDatabaseCompareWebScript" parent="webscript">
 		<property name="nutDatabaseService" ref="nutDatabaseService"/>
 	</bean>
@@ -239,6 +248,7 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="entityActivityService" ref="entityActivityService"/>
+		<property name="commentService" ref="commentService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.regulatory.regulatoryCheck.get" class="fr.becpg.repo.web.scripts.regulatory.RegulatoryWebScript" parent="webscript">

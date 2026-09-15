@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -74,6 +75,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGSpelFunctions.class);
+
+	private static final String UNKNOWN_QNAME_MESSAGE = "Unknown qname in formula: '%s'. Check the prefix is that of a deployed model.";
 
 	@Autowired
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
@@ -144,13 +147,13 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *</code>
 		 *
 		 * @param nodeRef
-		 * @return repository entity for nodeRef
+		 * @return repository entity for nodeRef, or {@code null} if the node no longer exists
 		 */
 		public RepositoryEntity findOne(NodeRef nodeRef) {
-			if (nodeRef != null) {
-				return formulaService.createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return formulaService.createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 		}
 
 		/**
@@ -160,13 +163,13 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *
 		 * @param nodeRef
 		 * @param qname
-		 * @return node property value
+		 * @return node property value, or {@code null} if the node no longer exists
 		 */
 		public Serializable propValue(NodeRef nodeRef, String qname) {
-			if (nodeRef != null) {
-				return nodeService.getProperty(nodeRef, getQName(qname));
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return nodeService.getProperty(nodeRef, getQName(qname));
 		}
 
 		/**
@@ -181,7 +184,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				assertIsNotMappedQname(item, getQName(qname), false);
 				Serializable value = item.getExtraProperties().get(getQName(qname));
 				if (value == null) {
-					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
+					value = propValue(item.getNodeRef(), qname);
 					item.getExtraProperties().put(getQName(qname), value);
 				}
 				return value;
@@ -249,7 +252,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param mapping comma-separated list of source|target property QName pairs
 		 */
 		public void copyProps(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
-			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+			if (target == null || isMissingNode(sourceNodeRef) || mapping == null || mapping.isBlank()) {
 				return;
 			}
 			Map<QName, Serializable> sourceProps = nodeService.getProperties(sourceNodeRef);
@@ -288,7 +291,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param mapping comma-separated list of source|target association QName pairs
 		 */
 		public void copyAssocs(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
-			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+			if (target == null || isMissingNode(sourceNodeRef) || mapping == null || mapping.isBlank()) {
 				return;
 			}
 			for (String entry : mapping.split(",")) {
@@ -569,10 +572,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return association nodeRef
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
-			if (nodeRef != null) {
-				return associationService.getTargetAssoc(nodeRef, getQName(qname));
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return associationService.getTargetAssoc(nodeRef, getQName(qname));
 		}
 
 		public NodeRef assocValue(String qname) {
@@ -593,10 +596,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return collection of association nodeRefs
 		 */
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
-			if (nodeRef != null) {
-				return associationService.getTargetAssocs(nodeRef, getQName(qname));
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return associationService.getTargetAssocs(nodeRef, getQName(qname));
 		}
 
 		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
@@ -617,10 +620,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return association nodeRef
 		 */
 		public List<NodeRef> sourcesAssocValues(NodeRef nodeRef, String qname) {
-			if (nodeRef != null) {
-				return associationService.getSourcesAssocs(nodeRef, getQName(qname), false, null, null, true);
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return associationService.getSourcesAssocs(nodeRef, getQName(qname), false, null, null, true);
 		}
 
 		public List<NodeRef> sourcesAssocValues(RepositoryEntity entity, String qname) {
@@ -640,11 +643,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return collection of association property values
 		 */
 		public List<Serializable> assocPropValues(NodeRef nodeRef, String assocQname, String propQName) {
-			if (nodeRef != null) {
-				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
-						.filter(Objects::nonNull).toList();
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-			return null;
+			return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> propValue(o, propQName))
+					.filter(Objects::nonNull).toList();
 		}
 
 		public List<Serializable> assocPropValues(RepositoryEntity entity, String assocQname, String propQName) {
@@ -663,13 +666,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return collection of association association values
 		 */
 		public List<NodeRef> assocAssocValues(NodeRef nodeRef, String assocQname, String assocAssocQName) {
-			if (nodeRef != null) {
-				return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream()
-						.flatMap(o -> assocValues(o, assocAssocQName).stream()) // Flatten the list of NodeRef
-						.filter(Objects::nonNull).toList();
+			if (isMissingNode(nodeRef)) {
+				return null;
 			}
-
-			return null;
+			return associationService.getTargetAssocs(nodeRef, getQName(assocQname)).stream().map(o -> assocValues(o, assocAssocQName))
+					.filter(Objects::nonNull).flatMap(List::stream).filter(Objects::nonNull).toList();
 		}
 
 		public List<NodeRef> assocAssocValues(RepositoryEntity entity, String assocQname, String assocAssocQName) {
@@ -737,7 +738,11 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return QName from string
 		 */
 		public QName getQName(String qName) {
-			return QName.createQName(qName, namespaceService);
+			try {
+				return QName.createQName(qName, namespaceService);
+			} catch (NamespaceException e) {
+				throw new FormulateException(String.format(UNKNOWN_QNAME_MESSAGE, qName), e);
+			}
 		}
 
 		/**
@@ -1210,9 +1215,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param listQNames
 		 */
 		public void copy(NodeRef fromNodeRef, Collection<String> propQNames, Collection<String> listQNames) {
-			if (fromNodeRef != null) {
-				copy(alfrescoRepository.findOne(fromNodeRef), propQNames, listQNames);
+			if (isMissingNode(fromNodeRef)) {
+				return;
 			}
+			copy(alfrescoRepository.findOne(fromNodeRef), propQNames, listQNames);
 		}
 
 		public void copy(RepositoryEntity from, Collection<String> propQNames, Collection<String> listQNames) {
@@ -1399,6 +1405,24 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				}
 			}
 
+		}
+
+		/**
+		 * A node reference kept by a property or built by a formula may point to a node that has
+		 * been deleted since. Reading it would break the whole formula, whereas the formula can
+		 * cope with an empty value.
+		 *
+		 * @param nodeRef the node reference to read from
+		 * @return true when there is nothing to read
+		 */
+		private boolean isMissingNode(NodeRef nodeRef) {
+			if ((nodeRef != null) && nodeService.exists(nodeRef)) {
+				return false;
+			}
+			if ((nodeRef != null) && logger.isDebugEnabled()) {
+				logger.debug("Formula reads a node that no longer exists, returning an empty value: " + nodeRef);
+			}
+			return true;
 		}
 
 		private void assertIsNotMappedQname(RepositoryEntity item, QName qName, boolean allowWrite) {

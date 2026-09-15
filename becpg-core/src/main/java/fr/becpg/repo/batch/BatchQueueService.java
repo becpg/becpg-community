@@ -119,12 +119,39 @@ public interface BatchQueueService {
 	BatchInfo retryBatchInError(String batchId);
 
 	/**
+	 * <p>retryBatchEntryInError.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
+	BatchInfo retryBatchEntryInError(String batchId, NodeRef nodeRef);
+
+	/**
 	 * <p>viewErrors.</p>
 	 *
 	 * @param batchId a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
 	String viewErrors(String batchId);
+
+	/**
+	 * <p>viewErrors.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 * @param offset an int
+	 * @param limit an int
+	 * @return a {@link java.lang.String} object
+	 */
+	String viewErrors(String batchId, int offset, int limit);
+
+	/**
+	 * <p>clearBatchError.</p>
+	 *
+	 * @param entry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param batchFullId a {@link java.lang.String} object
+	 */
+	void clearBatchError(NodeRef entry, String batchFullId);
 
 	/**
 	 * <p>createBatchStepWithErrorHandling.</p>

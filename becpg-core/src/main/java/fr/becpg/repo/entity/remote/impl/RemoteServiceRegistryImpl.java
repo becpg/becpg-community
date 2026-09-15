@@ -49,6 +49,10 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 	protected NodeService mlNodeService;
 
 	@Autowired
+	@Qualifier("nodeService")
+	private NodeService unsecuredNodeService;
+
+	@Autowired
 	private NamespaceService namespaceService;
 
 	@Autowired
@@ -101,6 +105,12 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 	@Override
 	public NodeService mlNodeService() {
 		return mlNodeService;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public NodeService unsecuredNodeService() {
+		return unsecuredNodeService;
 	}
 
 	/** {@inheritDoc} */

@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.view.Exporter;
+import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.download.AbstractDownloadExporter;
@@ -25,6 +26,25 @@ public abstract class AbstractSearchDownloadExporter extends AbstractDownloadExp
 	 * The template node reference for the report template.
 	 */
 	protected NodeRef templateNodeRef;
+
+	private String extension;
+
+	private boolean started;
+
+	/** {@inheritDoc} */
+	@Override
+	public String getExtension() {
+		return extension;
+	}
+
+	/**
+	 * <p>Setter for the field <code>extension</code>.</p>
+	 *
+	 * @param extension a {@link java.lang.String} object
+	 */
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
 
 	/**
 	 * <p>Constructor for AbstractSearchDownloadExporter.</p>
@@ -44,6 +64,45 @@ public abstract class AbstractSearchDownloadExporter extends AbstractDownloadExp
 		
 		this.templateNodeRef = templateNodeRef;
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The export is crawled page by page, so this hook - called once per page by the exporter service
+	 * - only opens the export on the first page.
+	 */
+	@Override
+	public void start(ExporterContext exporterContext) {
+		if (!started) {
+			started = true;
+			startExport();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The file is written by {@link #endExport()} once the last page has been crawled, not at the end
+	 * of each page.
+	 */
+	@Override
+	public void end() {
+		// The export is closed by the action driving the pages
+	}
+
+	/**
+	 * Open the export: called once, before the first page is crawled.
+	 */
+	public void startExport() {
+		// Nothing to open by default
+	}
+
+	/**
+	 * Close the export and write the produced file: called once, after the last page.
+	 */
+	public void endExport() {
+		// Nothing to close by default
 	}
 
 	/** {@inheritDoc} */

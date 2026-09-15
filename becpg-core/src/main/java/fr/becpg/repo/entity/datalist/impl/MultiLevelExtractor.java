@@ -42,6 +42,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.security.SecurityService;
 
 /**
  * <p>MultiLevelExtractor class.</p>
@@ -85,6 +86,17 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	PreferenceService preferenceService;
 
+	SecurityService securityService;
+
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>preferenceService</code>.</p>
 	 *
@@ -109,11 +121,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		boolean resetTree = false;
 
-		if (!dataListFilter.isDepthDefined()) {
+		if (dataListFilter.isDepthDefined()) {
+			updateDepthUserPref(dataListFilter);
+			resetTree = true;
+		} else {
 			int depth = getDepthUserPref(dataListFilter);
 			dataListFilter.updateMaxDepth(depth);
-		} else {
-			resetTree = updateDepthUserPref(dataListFilter);
 		}
 
 		int pageSize = dataListFilter.getPagination().getPageSize();
@@ -183,7 +196,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				if (!itemType.equals(dataListFilter.getDataType())) {
 					props.put(PROP_ACCESSRIGHT, false);
 				} else {
-					props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
+					props.put(PROP_ACCESSRIGHT, computeRowWriteAccess(dataListFilter, nodeRef));
 				}
 				if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(nodeRef))) {
 					if (ret.getComputedFields() == null) {
@@ -203,6 +216,35 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex + 1, startIndex, pageSize, props, dataListFilter);
 		}
 		return currIndex;
+	}
+
+	/**
+	 * Compute the write access of a displayed row, ie. the one of the entity owning it.
+	 *
+	 * <p>
+	 * The write access carried by the filter is the one of the entity opened on screen. It cannot be applied as is to
+	 * the sub entities expanded below it: a sub entity may carry its own security rule making the list read only. The
+	 * rule is enforced here, as list items inherit the ACL of their entity folder and are not protected by Alfresco
+	 * permissions.
+	 * </p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return true if the current user may edit this row
+	 */
+	protected boolean computeRowWriteAccess(DataListFilter dataListFilter, NodeRef itemNodeRef) {
+		if (!dataListFilter.hasWriteAccess()) {
+			return false;
+		}
+
+		NodeRef ownerEntityNodeRef = entityListDAO.getEntity(itemNodeRef);
+
+		if ((ownerEntityNodeRef == null) || ownerEntityNodeRef.equals(dataListFilter.getEntityNodeRef())) {
+			return true;
+		}
+
+		return securityService.computeAccessMode(ownerEntityNodeRef, nodeService.getType(ownerEntityNodeRef),
+				dataListFilter.getDataType()) == SecurityService.WRITE_ACCESS;
 	}
 
 	/** {@inheritDoc} */
@@ -290,9 +332,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	 * <p>updateDepthUserPref.</p>
 	 *
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
-	 * @return a boolean
 	 */
-	private boolean updateDepthUserPref(DataListFilter dataListFilter) {
+	private void updateDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
@@ -309,11 +350,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			} catch (ConcurrencyFailureException e) {
 				logger.warn("Depth preference save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
 			}
-
-			return true;
 		}
-		return false;
-
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.report;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +46,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CostType;
@@ -65,6 +68,7 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -78,6 +82,7 @@ import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.report.entity.EntityReportParameters;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -96,6 +101,27 @@ import fr.becpg.repo.variant.model.VariantData;
 @SuppressWarnings("deprecation")
 @Service("productReportExtractor")
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
+
+	/** Element gathering the regulatory nutrition facts panels of an entity. */
+	private static final String TAG_NUTRITION_FACTS = "nutritionFacts";
+
+	private static final String TAG_NUTRITION_FACT = "nutritionFact";
+
+	private static final String ATTR_IMAGE_ID = "imageId";
+
+	private static final String ATTR_CODE = "code";
+
+	private static final String ATTR_LOCALE = "locale";
+
+	/** Prefix of the image id a report binds to, see reportContext.getAppContext(). */
+	private static final String NUTRITION_FACTS_IMAGE_PREFIX = "nutritionFacts_";
+
+	private static final String DEFAULT_PANEL_CODE = "default";
+
+	private static final String SVG_ROOT_ELEMENT = "<svg";
+
+	private static final String SVG_MIME_TYPE = "image/svg+xml";
+
 
 	/** Constant <code>KEY_PRODUCT_IMAGE="productImage"</code> */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
@@ -151,6 +177,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	/** Constant <code>TAG_PACKAGING_LEVEL_MEASURES="packagingLevelMeasures"</code> */
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	/** Constant <code>TAG_PACK_MATERIAL_LISTS="packMaterialLists"</code> */
+	private static final String TAG_PACK_MATERIAL_LISTS = "packMaterialLists";
+	/** Constant <code>PARAM_EXTRACT_PACKAGING_MATERIALS="extractPackagingMaterials"</code> */
+	private static final String PARAM_EXTRACT_PACKAGING_MATERIALS = "extractPackagingMaterials";
+	/** Constant <code>KG_TO_G</code> */
+	private static final BigDecimal KG_TO_G = BigDecimal.valueOf(1000d);
+	/** Constant <code>ONE_HUNDRED</code> */
+	private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100d);
 	/** Constant <code>ATTR_NODEREF="nodeRef"</code> */
 	private static final String ATTR_NODEREF = "nodeRef";
 	/** Constant <code>ATTR_PARENT_NODEREF="parentNodeRef"</code> */
@@ -411,6 +445,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
 				StopWatchSupport.addCheckpoint("start_datalist_nut");
 				loadNutLists(productData, dataListsElt, context);
+				loadNutritionFactsPanels(productData, dataListsElt, context);
 				logDatalistStats(dataListsElt, PLMModel.TYPE_NUTLIST.getLocalName() + "s", "nut");
 			}
 			
@@ -496,7 +531,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					|| hasExtractWUsedModePreference(context))) {
 				StopWatchSupport.addCheckpoint("start_datalist_wused");
 				extractWUsed(productData, dataListsElt, context);
-				logDatalistStats(dataListsElt, "wUseds", "wused");
+				logDatalistStats(dataListsElt, TAG_WUSEDS, "wused");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLABELINGLIST)) {
@@ -1233,6 +1268,80 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param dataListsElt a {@link org.dom4j.Element} object
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
 	 */
+	/**
+	 * Hands the nutrition facts panels rendered by the labeling rules over to the report engine.
+	 *
+	 * <p>A panel is an SVG that lives only in the labeling value, so it is streamed as an in-memory
+	 * image rather than written to the repository first. BIRT embeds it as vector graphics, which
+	 * is what keeps the typography and the rules of a regulated panel exact in the PDF.</p>
+	 */
+	private void loadNutritionFactsPanels(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+
+		if (productData.getLabelingListView().getIngLabelingList() == null) {
+			return;
+		}
+
+		Element panelsElt = dataListsElt.getParent().addElement(TAG_NUTRITION_FACTS);
+
+		for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
+			for (Locale locale : panelLocales(dataItem)) {
+				addNutritionFactsPanel(dataItem, locale, panelsElt, context);
+			}
+		}
+	}
+
+	private Set<Locale> panelLocales(IngLabelingListDataItem dataItem) {
+		Set<Locale> locales = new HashSet<>();
+		if (dataItem.getValue() != null) {
+			locales.addAll(dataItem.getValue().getLocales());
+		}
+		if (dataItem.getManualValue() != null) {
+			locales.addAll(dataItem.getManualValue().getLocales());
+		}
+		return locales;
+	}
+
+	private void addNutritionFactsPanel(IngLabelingListDataItem dataItem, Locale locale, Element panelsElt, DefaultExtractorContext context) {
+
+		String panel = panelValue(dataItem, locale);
+		if ((panel == null) || !panel.stripLeading().startsWith(SVG_ROOT_ELEMENT)) {
+			return;
+		}
+
+		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + toImageIdPart(panelCode(dataItem)) + "_" + MLTextHelper.localeKey(locale);
+
+		Element panelElt = panelsElt.addElement(TAG_NUTRITION_FACT);
+		panelElt.addAttribute(ATTR_IMAGE_ID, imageId);
+		panelElt.addAttribute(ATTR_CODE, panelCode(dataItem));
+		panelElt.addAttribute(ATTR_LOCALE, MLTextHelper.localeKey(locale));
+
+		context.getReportData().getImages().add(new EntityImageInfo(imageId, panel.getBytes(StandardCharsets.UTF_8), SVG_MIME_TYPE));
+	}
+
+	private String panelValue(IngLabelingListDataItem dataItem, Locale locale) {
+		String manualValue = dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : null;
+		if ((manualValue != null) && !manualValue.isBlank()) {
+			return manualValue;
+		}
+		return dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : null;
+	}
+
+	/**
+	 * An image id travels to the report engine as a resource key, and a rule is named freely by
+	 * the user. Anything but letters, digits and underscores makes the image unreachable from the
+	 * report, which fails with "The resource of this report item is not reachable".
+	 */
+	private String toImageIdPart(String code) {
+		return code.replaceAll("[^A-Za-z0-9]+", "_");
+	}
+
+	private String panelCode(IngLabelingListDataItem dataItem) {
+		if (dataItem.getGrp() == null) {
+			return DEFAULT_PANEL_CODE;
+		}
+		return (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+	}
+
 	private void loadNutLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
@@ -2073,6 +2182,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute("futureCost", Double.toString(0d));
 		}
 		loadDataListItemAttributes(dataItem, partElt, context);
+		loadPackagingMaterials(partElt, dataItem, context);
 
 		extractVariants(dataItem.getVariants(), partElt);
 
@@ -2117,6 +2227,110 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					Boolean.toString(dropPackagingOfComponents));
 		}
 		return partElt;
+	}
+
+	/**
+	 * <p>Details the materials of a packaging line, under a &lt;packMaterialLists&gt; element.</p>
+	 * <p>
+	 * The weights are computed as in
+	 * {@link fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler}, so that the detail
+	 * of a packaging line sums up to the packMaterialList formulated on the entity. Extraction is opt-in
+	 * through the <code>extractPackagingMaterials</code> report preference (see #31702).
+	 *
+	 * @param packagingElt a {@link org.dom4j.Element} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void loadPackagingMaterials(Element packagingElt, PackagingListDataItem dataItem, DefaultExtractorContext context) {
+
+		if (!context.isPrefOn(PARAM_EXTRACT_PACKAGING_MATERIALS, Boolean.FALSE) || Boolean.TRUE.equals(dataItem.getIsRecycle())
+				|| (dataItem.getProduct() == null) || !nodeService.exists(dataItem.getProduct())) {
+			return;
+		}
+
+		if (!(alfrescoRepository.findOne(dataItem.getProduct()) instanceof PackagingMaterialData packagingMaterial)) {
+			return;
+		}
+
+		BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingMaterial).multiply(KG_TO_G);
+
+		if ((packagingMaterial.getPackMaterialList() != null) && !packagingMaterial.getPackMaterialList().isEmpty()) {
+			extractPackMaterialList(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare, context);
+		} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
+			extractPackagingMaterialRefs(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare);
+		}
+	}
+
+	/**
+	 * <p>extractPackMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void extractPackMaterialList(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare,
+			DefaultExtractorContext context) {
+
+		BigDecimal unitTare = unitTareInG(packagingMaterial);
+
+		for (PackMaterialListDataItem dataItem : packagingMaterial.getPackMaterialList()) {
+			if (dataItem.getPmlWeight() == null) {
+				continue;
+			}
+
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			loadDataListItemAttributes(dataItem, packMaterialElt, context);
+
+			BigDecimal materialWeight = BigDecimal.valueOf(dataItem.getPmlWeight());
+			BigDecimal weight = materialWeight.multiply(tare);
+
+			if (unitTare.signum() != 0) {
+				weight = weight.divide(unitTare, MathContext.DECIMAL64);
+			}
+
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(weight));
+
+			if ((dataItem.getPmlPerc() == null) && (unitTare.signum() != 0)) {
+				packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(),
+						toString(materialWeight.multiply(ONE_HUNDRED).divide(unitTare, MathContext.DECIMAL64)));
+			}
+		}
+	}
+
+	/**
+	 * <p>Splits the tare evenly when the packaging only references its materials through
+	 * <code>pack:pmMaterialRefs</code>, without any packMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 */
+	private void extractPackagingMaterialRefs(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare) {
+
+		List<NodeRef> packagingMaterials = packagingMaterial.getPackagingMaterials();
+		BigDecimal materialCount = BigDecimal.valueOf(packagingMaterials.size());
+		BigDecimal tareByMaterial = tare.divide(materialCount, MathContext.DECIMAL64);
+		BigDecimal percByMaterial = ONE_HUNDRED.divide(materialCount, MathContext.DECIMAL64);
+
+		for (NodeRef packagingMaterialRef : packagingMaterials) {
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			packMaterialElt.addAttribute(PackModel.ASSOC_PACK_MATERIAL_LIST_MATERIAL.getLocalName(),
+					attributeExtractorService.extractPropName(nodeService.getType(packagingMaterialRef), packagingMaterialRef));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(tareByMaterial));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(), toString(percByMaterial));
+		}
+	}
+
+	/**
+	 * <p>unitTareInG.</p>
+	 *
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @return the tare of a single packaging unit in grams, zero when it is unknown
+	 */
+	private BigDecimal unitTareInG(PackagingMaterialData packagingMaterial) {
+		BigDecimal unitTare = FormulationHelper.getTareInKg(packagingMaterial);
+		return unitTare != null ? unitTare.multiply(KG_TO_G) : BigDecimal.ZERO;
 	}
 
 	/**

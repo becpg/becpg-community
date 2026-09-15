@@ -316,6 +316,8 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 		this.mini = p.mini;
 		this.maxi = p.maxi;
 		this.physicoChem = p.physicoChem;
+		this.type = p.type;
+		this.isFormulated = p.isFormulated;
 		this.regulatoryCountriesRef = new ArrayList<>(p.regulatoryCountriesRef);
 		this.regulatoryUsagesRef = new ArrayList<>(p.regulatoryUsagesRef);
 		this.regulatoryMessage = p.regulatoryMessage;

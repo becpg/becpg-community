@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
@@ -255,6 +256,59 @@ public class RemoteParams {
 			}
 		}
 
+	}
+
+	/**
+	 * Whether a property can be discarded before resolving its prefixed name and its
+	 * definition, both of which are paid once per property and per row.
+	 *
+	 * Only a positive property filter allows the shortcut: an {@code assoc|property}
+	 * request is answered by the association branch and a rejection filter ({@code !field})
+	 * says what to drop rather than what to keep.
+	 *
+	 * @param assocName the association being visited, or {@code null} for the node itself
+	 * @param propQName the raw property QName
+	 * @return true when the property is certainly not wanted
+	 */
+	public boolean canSkipProperty(QName assocName, QName propQName) {
+		if (!ignoredFields.isEmpty()) {
+			return false;
+		}
+		if ((assocName != null) && filteredAssocProperties.containsKey(assocName)) {
+			return false;
+		}
+		if (filteredProperties.isEmpty()) {
+			return false;
+		}
+		return !filteredProperties.contains(propQName);
+	}
+
+	/**
+	 * Whether serialising a node under this filter needs its child and target
+	 * associations walked, a traversal otherwise paid for every row of a listing.
+	 *
+	 * A requested field name lands in the properties set whether it denotes a property
+	 * or an association, hence the dictionary lookup passed in to tell them apart.
+	 *
+	 * @param isAssociation tells whether a QName is an association in the model
+	 * @return true when the associations must be visited
+	 */
+	public boolean requiresAssociations(Predicate<QName> isAssociation) {
+		if (!filteredAssocProperties.isEmpty() || !ignoredFields.isEmpty()) {
+			return true;
+		}
+		if (filteredProperties.isEmpty()) {
+			return true;
+		}
+		if (isAssociation == null) {
+			return true;
+		}
+		for (QName property : filteredProperties) {
+			if (isAssociation.test(property)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

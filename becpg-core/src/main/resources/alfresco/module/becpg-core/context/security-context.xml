@@ -35,6 +35,24 @@
 		<property name="securityService" ref="securityService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 	</bean>
+
+	<!-- Form Processor Filters accepting a whole multilingual value in one submission.
+	     Without them a `d:mltext` posted as a locale map is stored as raw JSON text;
+	     see AbstractMultilingualFormFilter for the guard that keeps a JSON-looking
+	     text value from being reinterpreted as translations. -->
+	<bean id="beCPGMultilingualNodeFormFilter" parent="baseFormFilter"
+		class="fr.becpg.repo.form.filter.MultilingualNodeFormFilter">
+		<property name="filterRegistry" ref="nodeFilterRegistry" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="mlNodeService" ref="mlAwareNodeService" />
+	</bean>
+	<bean id="beCPGMultilingualTypeFormFilter" parent="baseFormFilter"
+		class="fr.becpg.repo.form.filter.MultilingualTypeFormFilter">
+		<property name="filterRegistry" ref="typeFilterRegistry" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
     
 
    <!-- script context -->

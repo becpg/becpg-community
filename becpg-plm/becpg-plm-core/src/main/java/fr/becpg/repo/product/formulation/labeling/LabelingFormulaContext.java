@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -26,11 +27,13 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -75,11 +78,16 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsData;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.template.BeCPGTemplateRenderService;
 
 /**
  * <p>
@@ -137,6 +145,49 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Set<FootNoteRule> footNotes = new HashSet<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
+
+	/** Name under which the labeling context itself is exposed to a template. */
+	private static final String MODEL_CONTEXT = "ctx";
+
+	/** Name under which the formulated product is exposed to a template. */
+	private static final String MODEL_ENTITY = "entity";
+
+	/** Name under which the nutrition facts model is exposed to a template. */
+	private static final String MODEL_NUTRITION_FACTS = "nf_data";
+
+	private static final String NUTRITION_FACTS_TEMPLATE_PREFIX = "nutritionFacts-";
+
+	private static final String NUTRITION_FACTS_TEMPLATE_SUFFIX = ".ftlx";
+
+	private static final String DEFAULT_NUTRITION_FACTS_FORMAT = "vertical";
+
+	/**
+	 * What a format code ends with when the panel has to state everything in both official
+	 * languages: "canadaBilingual" is the Canadian standard panel of "canada", written twice. The
+	 * two share the same template, only the model they are given differs.
+	 */
+	private static final String BILINGUAL_FORMAT_SUFFIX = "Bilingual";
+
+	/**
+	 * Code of the report parameter that declares the nutrients the regulation authorises without
+	 * requiring them. The technical sheet reads it by this code, and a panel of the same product
+	 * has to declare the same nutrients, so it reads the very same parameter.
+	 */
+	private static final String SHOW_OPTIONAL_NUTRIENTS_PARAMETER = "showOptionalNutrients";
+
+	private final BeCPGTemplateRenderService templateRenderService;
+
+	private final NutritionFactsDataBuilder nutritionFactsDataBuilder;
+
+	/**
+	 * A formulation renders one panel per locale and possibly several Render rules ask for the same
+	 * one, so the model is built once per format, regulation and locale.
+	 */
+	private final Map<String, NutritionFactsData> nutritionFactsCache = new HashMap<>();
+
+	private String nutritionFactsFormat = DEFAULT_NUTRITION_FACTS_FORMAT;
+
+	private boolean nutritionFactsShowOptional = false;
 
 	// Spel variable
 	private Locale locale;
@@ -429,13 +480,137 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @param alfrescoRepository
 	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param templateRenderService a {@link fr.becpg.repo.template.BeCPGTemplateRenderService} object
+	 * @param nutritionFactsDataBuilder a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder} object
 	 */
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
-			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService) {
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService,
+			BeCPGTemplateRenderService templateRenderService, NutritionFactsDataBuilder nutritionFactsDataBuilder) {
 		super(mlNodeService);
 		this.alfrescoRepository = alfrescoRepository;
 		this.associationService = associationService;
 		this.formulaService = formulaService;
+		this.templateRenderService = templateRenderService;
+		this.nutritionFactsDataBuilder = nutritionFactsDataBuilder;
+	}
+
+	/**
+	 * <p>Renders a template, the labeling context being available to it as {@code ctx} so that a
+	 * template can call back into {@code render()} or {@code renderAllergens()}.</p>
+	 *
+	 * @param templateName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderTemplate(String templateName) {
+		return renderTemplate(templateName, Collections.emptyMap());
+	}
+
+	/**
+	 * <p>Renders a template with extra variables merged into its model.</p>
+	 *
+	 * @param templateName a {@link java.lang.String} object
+	 * @param extraModel a {@link java.util.Map} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderTemplate(String templateName, Map<String, Object> extraModel) {
+		Map<String, Object> model = new HashMap<>(extraModel);
+		model.put(MODEL_CONTEXT, this);
+		model.put(MODEL_ENTITY, getEntity());
+		return templateRenderService.render(templateName, I18NUtil.getLocale(), model);
+	}
+
+	/**
+	 * <p>Renders the regulatory nutrition facts panel as inline SVG, for the regulation the current
+	 * locale belongs to.</p>
+	 *
+	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical"
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderNutritionFacts(String format) {
+		return renderNutritionFacts(format, null);
+	}
+
+	/**
+	 * <p>Renders the regulatory nutrition facts panel as inline SVG.</p>
+	 *
+	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical",
+	 *            suffixed with "Bilingual" for a panel stating both official languages
+	 * @param regulationKey a {@link java.lang.String} object, overrides the regulation of the locale
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderNutritionFacts(String format, String regulationKey) {
+
+		String panelFormat = (format != null) && !format.isBlank() ? format : nutritionFactsFormat;
+		Locale locale = I18NUtil.getLocale();
+
+		NutritionFactsData nutritionFacts = nutritionFactsCache.computeIfAbsent(nutritionFactsCacheKey(panelFormat, regulationKey, locale),
+				key -> buildNutritionFacts(panelFormat, regulationKey, locale));
+
+		return renderTemplate(nutritionFactsTemplateName(panelFormat), Map.of(MODEL_NUTRITION_FACTS, nutritionFacts));
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsFormat</code>, the panel format a Render rule uses
+	 * when it does not name one itself.</p>
+	 *
+	 * @param nutritionFactsFormat a {@link java.lang.String} object
+	 */
+	public void setNutritionFactsFormat(String nutritionFactsFormat) {
+		this.nutritionFactsFormat = nutritionFactsFormat;
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsShowOptional</code>, whether the panel carries the
+	 * nutrients the regulation allows but does not require. The panel carries them anyway when the
+	 * product asks its reports for them, through the report parameter the technical sheet reads.</p>
+	 *
+	 * @param nutritionFactsShowOptional a boolean
+	 */
+	public void setNutritionFactsShowOptional(boolean nutritionFactsShowOptional) {
+		this.nutritionFactsShowOptional = nutritionFactsShowOptional;
+	}
+
+	private NutritionFactsData buildNutritionFacts(String format, String regulationKey, Locale locale) {
+		String regulation = (regulationKey != null) && !regulationKey.isBlank() ? regulationKey
+				: RegulationFormulationHelper.getLocalKey(locale);
+		NutritionFactsOptions options = NutritionFactsOptions.forRegulation(regulation);
+		if (nutritionFactsShowOptional || showsOptionalNutrients()) {
+			options = options.withOptionalNutrients();
+		}
+		if (isBilingualFormat(format)) {
+			options = options.withBothOfficialLanguages();
+		}
+		return nutritionFactsDataBuilder.build(getEntity(), locale, format, options);
+	}
+
+	private boolean isBilingualFormat(String format) {
+		return format.endsWith(BILINGUAL_FORMAT_SUFFIX);
+	}
+
+	/**
+	 * Tells whether the product asks its reports for the nutrients the regulation merely authorises.
+	 * A single value is accepted as well as a list: a property declared multiple still comes back as
+	 * a bare string when only one value was ever written to it.
+	 */
+	private boolean showsOptionalNutrients() {
+		NodeRef entityNodeRef = getEntity().getNodeRef();
+		if ((entityNodeRef == null) || !mlNodeService.exists(entityNodeRef)) {
+			return false;
+		}
+		Serializable parameters = mlNodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_PARAMETERS);
+		if (parameters instanceof Collection<?> values) {
+			return values.contains(SHOW_OPTIONAL_NUTRIENTS_PARAMETER);
+		}
+		return SHOW_OPTIONAL_NUTRIENTS_PARAMETER.equals(parameters);
+	}
+
+	private String nutritionFactsTemplateName(String format) {
+		String template = isBilingualFormat(format) ? format.substring(0, format.length() - BILINGUAL_FORMAT_SUFFIX.length()) : format;
+		return NUTRITION_FACTS_TEMPLATE_PREFIX + template + NUTRITION_FACTS_TEMPLATE_SUFFIX;
+	}
+
+	private String nutritionFactsCacheKey(String format, String regulationKey, Locale locale) {
+		return format + "|" + regulationKey + "|" + locale;
 	}
 
 	/**
@@ -1917,7 +2092,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		List<LabelingComponent> components = new ArrayList<>(lblCompositeContext.getIngList().values());
 
-		sort(components);
+		sort(components, lblCompositeContext);
 
 		for (LabelingComponent component : components) {
 
@@ -2104,21 +2279,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * <p>sort.</p>
 	 *
 	 * @param toSort a {@link java.util.List} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
 	 */
-	private void sort(List<LabelingComponent> toSort) {
+	private void sort(List<LabelingComponent> toSort, CompositeLabeling parent) {
 		Locale currentLocal = I18NUtil.getLocale();
 		try {
 			if (sortWithSpecificLocale != null) {
 				I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 			}
 
-			Collections.sort(toSort, (a, b) -> {
-				int result = compareLabelingComponents(a, b);
-				if (result == 0) {
-					result = compareIngredientNames(a, b);
-				}
-				return result;
-			});
+			sortInLocale(toSort, computeSortQties(toSort, parent));
 
 		} finally {
 			I18NUtil.setLocale(currentLocal);
@@ -2126,13 +2296,103 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>Sorts the components with the locale already positioned by the caller.</p>
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 */
+	private void sortInLocale(List<LabelingComponent> toSort, Map<LabelingComponent, Double> sortQties) {
+		Collections.sort(toSort, (a, b) -> {
+			int result = compareLabelingComponents(a, b, sortQties);
+			if (result == 0) {
+				result = compareIngredientNames(a, b);
+			}
+			return result;
+		});
+	}
+
+	/**
+	 * <p>Computes the quantities the components have to be sorted on.</p>
+	 *
+	 * The label is ordered on the percentage it actually shows, so a ForcePercentage rule is
+	 * applied here as well. The forced percentage is converted back to the component quantity
+	 * scale, keeping the comparison unit of {@code qtyPrecisionThreshold} unchanged.
+	 *
+	 * An {@link java.util.IdentityHashMap} is required: labeling components rely on a
+	 * value-based equality, so two occurrences of the same ingredient would otherwise share a
+	 * single entry.
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return the quantities to sort on, keyed by component identity
+	 */
+	private Map<LabelingComponent, Double> computeSortQties(List<LabelingComponent> toSort, CompositeLabeling parent) {
+		Map<LabelingComponent, Double> sortQties = new IdentityHashMap<>();
+
+		for (LabelingComponent component : toSort) {
+			Double sortQty = computeSortQty(component, parent);
+			if (sortQty != null) {
+				sortQties.put(component, sortQty);
+			}
+		}
+
+		return sortQties;
+	}
+
+	/**
+	 * <p>Sums the sort quantities of an ingredient type, so that a type is ranked on the
+	 * percentages its ingredients actually show.</p>
+	 *
+	 * @param components the components belonging to the type, in their current order
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 * @return the sum of the quantities
+	 */
+	private Double sumSortQties(List<LabelingComponent> components, Map<LabelingComponent, Double> sortQties) {
+		Double sum = 0d;
+		for (LabelingComponent component : components) {
+			Double sortQty = sortQties.get(component);
+			if (sortQty != null) {
+				sum += sortQty;
+			}
+		}
+		return sum;
+	}
+
+	/**
+	 * <p>computeSortQty.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return the quantity to sort the component on, {@code null} when it has none
+	 */
+	private Double computeSortQty(LabelingComponent component, CompositeLabeling parent) {
+		Double qty = useVolume ? component.getVolume(ingsLabelingWithYield) : component.getQty(ingsLabelingWithYield);
+		if (qty == null) {
+			return null;
+		}
+
+		Double total = useVolume ? parent.getVolumeTotal() : parent.getQtyTotal();
+		boolean hasTotal = (total != null) && (total != 0d);
+
+		Double qtyPerc = hasTotal ? qty / total : qty;
+		Double forcedQtyPerc = getForcedPercentage(component, qtyPerc);
+
+		if (forcedQtyPerc.equals(qtyPerc)) {
+			return qty;
+		}
+
+		return hasTotal ? forcedQtyPerc * total : forcedQtyPerc;
+	}
+
+	/**
 	 * <p>compareLabelingComponents.</p>
 	 *
 	 * @param a a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
 	 * @param b a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
 	 * @return a int
 	 */
-	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
+	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b, Map<LabelingComponent, Double> sortQties) {
 
 		if ((b instanceof CompositeLabeling) && ((CompositeLabeling) b).isGroup()
 				&& !((a instanceof CompositeLabeling) && ((CompositeLabeling) a).isGroup())) {
@@ -2152,26 +2412,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return 1;
 		}
 
-		if (useVolume) {
-			Double volumeA = a.getVolume(ingsLabelingWithYield);
-			Double volumeB = b.getVolume(ingsLabelingWithYield);
-			if ((volumeA == null) && (volumeB == null)) {
-				return 0;
-			} else if (volumeA == null) {
-				return 1; // b is considered greater if a is null
-			} else if (volumeB == null) {
-				return -1; // a is considered greater if b is null
-			}
-			if (Math.abs(volumeB - volumeA) < qtyPrecisionThreshold) {
-				return 0; // Consider them equal if within the threshold
-			} else {
-				return Double.compare(volumeB, volumeA);
-			}
-
-		}
-
-		Double qtyA = a.getQty(ingsLabelingWithYield);
-		Double qtyB = b.getQty(ingsLabelingWithYield);
+		Double qtyA = getSortQty(a, sortQties);
+		Double qtyB = getSortQty(b, sortQties);
 
 		if ((qtyA == null) && (qtyB == null)) {
 			return 0;
@@ -2186,6 +2428,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return Double.compare(qtyB, qtyA);
 		}
 
+	}
+
+	/**
+	 * <p>getSortQty.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 * @return the quantity to sort the component on
+	 */
+	private Double getSortQty(LabelingComponent component, Map<LabelingComponent, Double> sortQties) {
+		if (sortQties.containsKey(component)) {
+			return sortQties.get(component);
+		}
+
+		return useVolume ? component.getVolume(ingsLabelingWithYield) : component.getQty(ingsLabelingWithYield);
 	}
 
 	/**
@@ -2447,7 +2704,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-							BigDecimal subRatio = computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false);
+							BigDecimal subRatio = computeSubIngsRatio(lblCompositeContext, component, DEFAULT_RATIO);
 
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 								subRatio = DEFAULT_RATIO;
@@ -2684,13 +2941,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
 
-		BigDecimal total = getTotal(lblCompositeContext, false);
-		BigDecimal totalWithYield = getTotal(lblCompositeContext, true);
-
-		if (!ingsLabelingWithYield && (yield != null) && (yield != 0)) {
-			totalWithYield = BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
-		}
-
 		StringBuilder tableContent = new StringBuilder();
 		StringBuilder ret = new StringBuilder();
 
@@ -2700,7 +2950,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
 					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
-			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
+			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, DEFAULT_RATIO, 0);
+			BigDecimal total = getFlatTotal(flatList, false);
+			BigDecimal totalWithYield = getFlatTotalWithYield(flatList);
+
 			if (!flatList.isEmpty()) {
 
 				if ((htmlFlatTableHeaderFormat != null) && !htmlFlatTableHeaderFormat.isBlank()) {
@@ -2771,6 +3024,47 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>The total of the flat table, summed on its rows as they are displayed.</p>
+	 *
+	 * The tree table rounds each ingredient type as a whole, but the flat table shows one row per ingredient of the
+	 * type: summing the types would round the emulsifiers once whereas two rows are rounded on their own, and the
+	 * total would no longer be the sum of the rows (#36438). Only the rows of the first level are summed, the sub
+	 * ingredients being a breakdown of their parent.
+	 *
+	 * @param flatList a {@link java.util.List} object, the rows of the table
+	 * @param withYield a boolean, true to sum the "with yield" column
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal getFlatTotal(List<HtmlTableStruct> flatList, boolean withYield) {
+		BigDecimal total = BigDecimal.valueOf(0d);
+
+		for (HtmlTableStruct row : flatList) {
+			Double qtyPerc = withYield ? row.qtyPercWithYield : row.qtyPerc;
+
+			if ((row.level == 0) && (qtyPerc != null) && (qtyPerc > 0)) {
+				total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, row.component)));
+			}
+		}
+
+		return total;
+	}
+
+	/**
+	 * <p>The "with yield" total of the flat table, which is the yield itself when the labeling is not computed after
+	 * yield.</p>
+	 *
+	 * @param flatList a {@link java.util.List} object, the rows of the table
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal getFlatTotalWithYield(List<HtmlTableStruct> flatList) {
+		if (!ingsLabelingWithYield && (yield != null) && (yield != 0)) {
+			return BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
+		}
+
+		return getFlatTotal(flatList, true);
+	}
+
+	/**
 	 * <p>indent.</p>
 	 *
 	 * @param label a {@link java.lang.String} object
@@ -2791,14 +3085,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>flatCompositeLabeling.</p>
+	 * <p>Flattens a labeling tree into the rows of the table, which carries a "without yield" and a "with yield"
+	 * column side by side.</p>
+	 *
+	 * Each column needs its own ratio : sharing one leaves the sub ingredients of the second column scaled in the
+	 * space of the first, so the bracket repeats the raw percentages after the yield (#34758).
 	 *
 	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
-	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param ratio a {@link java.math.BigDecimal} object, the ratio of the "without yield" column
+	 * @param ratioWithYield a {@link java.math.BigDecimal} object, the ratio of the "with yield" column
 	 * @param level a {@link java.lang.Integer} object
 	 * @return a {@link java.util.List} object
 	 */
-	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, Integer level) {
+	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, BigDecimal ratioWithYield, Integer level) {
 		List<HtmlTableStruct> ret = new ArrayList<>();
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
@@ -2810,8 +3109,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-				Double qtyPercWithYield = roundedDouble(computeQtyPerc(parent, component, ratio, true));
-				Double volumePercWithYield = roundedDouble(computeVolumePerc(parent, component, ratio, true));
+				Double qtyPercWithYield = roundedDouble(computeQtyPerc(parent, component, ratioWithYield, true));
+				Double volumePercWithYield = roundedDouble(computeVolumePerc(parent, component, ratioWithYield, true));
 
 				qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
 
@@ -2842,16 +3141,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (!shouldSkip(component, qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
+						// One ratio per column : the sub ingredients of the "with yield" column must be scaled in
+						// that space, otherwise the bracket repeats the raw percentages after the yield (#34758).
+						BigDecimal subRatio = computeSubIngsRatio(parent, component, ratio, false);
+						BigDecimal subRatioWithYield = computeSubIngsRatio(parent, component, ratioWithYield, true);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 							subRatio = DEFAULT_RATIO;
+							subRatioWithYield = DEFAULT_RATIO;
 						}
 
 						ret.add(new HtmlTableStruct(component, ingName, qtyPerc, qtyPercWithYield, geoOriginsLabel != null ? geoOriginsLabel : "",
 								otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "", bioOriginsLabel != null ? bioOriginsLabel : "",
 								additionalInformation, level));
 
-						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
+						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, subRatioWithYield, level + 1));
 
 					} else {
 						logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -3159,7 +3462,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
+					BigDecimal subRatio = computeSubIngsRatio(parent, component, ratio);
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 						subRatio = DEFAULT_RATIO;
@@ -3671,6 +3974,92 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, so that they add up to it.</p>
+	 *
+	 * The sub ingredients of a composite are divided by the total their parent carries, while their own quantities are
+	 * expressed against the item that brings them - the two only coincide when the composite covers that item on its
+	 * own. As soon as it shares it, the bracket adds up to more than the ingredient it details (#34702). Scaling the
+	 * rendered ratio by that discrepancy makes the bracket a breakdown of its parent again.
+	 *
+	 * This holds whether or not the yield is rendered : the discrepancy comes from the composite not covering its
+	 * item, not from the yield, which only widens it.
+	 *
+	 * Only an overshoot is corrected. Sub ingredients adding up to less than their parent are a composite that is
+	 * only partly declared - a raw material detailing one of its four ingredients - and rescaling those would inflate
+	 * the few that are declared up to the whole parent.
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
+		return computeSubIngsRatio(parent, component, ratio, ingsLabelingWithYield);
+	}
+
+	/**
+	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, in a given yield space.</p>
+	 *
+	 * The flat table renders a "without yield" and a "with yield" column side by side, so it needs one ratio per
+	 * column : a single one leaves the sub ingredients of the second column scaled in the space of the first, and
+	 * the bracket then repeats the raw percentages after the yield (#34758).
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
+
+		if (!(component instanceof CompositeLabeling composite)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		BigDecimal renderedRatio = useVolume ? computeVolumePerc(parent, component, ratio, withYield)
+				: computeQtyPerc(parent, component, ratio, withYield);
+		Double qtyTotal = useVolume ? composite.getVolumeTotal() : composite.getQtyTotal();
+		Double subIngsQty = sumSubIngsQty(composite, withYield);
+
+		if ((renderedRatio == null) || (qtyTotal == null) || (subIngsQty == null) || (subIngsQty == 0d)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		// Sub ingredients falling short of their parent are a partial declaration, which is legitimate :
+		// only an overshoot is impossible, and it is the signature of the scale artefact corrected here.
+		if (subIngsQty <= qtyTotal) {
+			return renderedRatio;
+		}
+
+		return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION).divide(BigDecimal.valueOf(subIngsQty), PRECISION);
+	}
+
+	/**
+	 * <p>The quantity the sub ingredients of a composite add up to, read in the space the labeling renders.</p>
+	 *
+	 * Answers null as soon as one sub ingredient carries no quantity : a composite that is only partly quantified
+	 * cannot be rebalanced on its sub ingredients without inflating the few that do carry one.
+	 *
+	 * @param composite a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param withYield a boolean
+	 * @return a {@link java.lang.Double} object, or null
+	 */
+	private Double sumSubIngsQty(CompositeLabeling composite, boolean withYield) {
+
+		double sum = 0d;
+
+		for (CompositeLabeling subIng : composite.getIngList().values()) {
+			Double qty = useVolume ? subIng.getVolume(withYield) : subIng.getQty(withYield);
+			if (qty == null) {
+				return null;
+			}
+			sum += qty;
+		}
+
+		return sum;
+	}
+
+	/**
 	 * <p>computeQtyPerc.</p>
 	 *
 	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
@@ -3876,18 +4265,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (!keepOrder) {
 
-			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
-				sort(entry.getValue());
-			}
-
 			Locale currentLocal = I18NUtil.getLocale();
 			try {
 				if (sortWithSpecificLocale != null) {
 					I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 				}
 
+				Map<LabelingComponent, Double> ingTypeSortQties = new IdentityHashMap<>();
+
+				for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
+					Map<LabelingComponent, Double> groupSortQties = computeSortQties(entry.getValue(), compositeLabeling);
+					ingTypeSortQties.put(entry.getKey(), sumSortQties(entry.getValue(), groupSortQties));
+					sortInLocale(entry.getValue(), groupSortQties);
+				}
+
 				Collections.sort(entries, (a, b) -> {
-					int result = compareLabelingComponents(a.getKey(), b.getKey());
+					int result = compareLabelingComponents(a.getKey(), b.getKey(), ingTypeSortQties);
 					if (result == 0) {
 						String nameA = getLegalIngName(a.getKey());
 						if ((nameA == null) && !a.getValue().isEmpty()) {

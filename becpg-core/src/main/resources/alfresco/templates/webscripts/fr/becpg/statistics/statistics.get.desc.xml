@@ -17,8 +17,8 @@
 -->
 <webscript>
   <shortname>Get statistics</shortname>
-  <description>Get statistics</description>
-  <url>/becpg/stats/{type}?sortBy={sortBy}&amp;filter={filter}&amp;maxResult={maxResult}</url>
+  <description>Read one page of audit entries, by keyset paging on the entry identifiers</description>
+  <url>/becpg/stats/{type}?sortBy={sortBy}&amp;asc={asc}&amp;filter={filter}&amp;maxResults={maxResults}&amp;dbAsc={dbAsc}&amp;startAfterId={startAfterId}</url>
   <format default="json" />
   <authentication>user</authentication>
   <transaction>required</transaction>

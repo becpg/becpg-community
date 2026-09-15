@@ -13,7 +13,7 @@
 		<version>26.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>26.1.0.25-SNAPSHOT</version>
+    <version>26.1.0.42-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -393,7 +393,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.13</version>
+						<version>0.8.15</version>
 						<configuration>
 							<append>true</append>
 

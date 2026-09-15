@@ -62,9 +62,13 @@
 			<id>alfresco-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
+		<!-- Read over plain https: the registry is publicly readable and the
+		     artifactregistry:// scheme is only understood by the wagon, which breaks
+		     any tool resolving the dependency graph on its own (CodeQL build-mode none).
+		     Deployment still goes through artifactregistry:// in becpg-enterprise. -->
 		<repository>
 			<id>becpg-registry</id>
-			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
+			<url>https://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -129,7 +133,7 @@
 		<alfresco-core.version>26.1.0.61</alfresco-core.version>
 		<spring-surf.version>10.4</spring-surf.version>
 	    <spring-webscripts.version>10.2</spring-webscripts.version>
-	    <spring-webscripts-share.version>10.2</spring-webscripts-share.version>
+	    <spring-webscripts-share.version>10.3</spring-webscripts-share.version>
 
 		<alfresco.aos.version>3.4.1</alfresco.aos.version>
 
@@ -175,9 +179,9 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>25.3.0.10</becpg.artworks.version>
-		<becpg.i18n.version>1.0.145</becpg.i18n.version>
-		<becpg.supporttools.version>25.2.0.7-beCPG</becpg.supporttools.version>
+		<becpg.artworks.version>25.3.0.12</becpg.artworks.version>
+		<becpg.i18n.version>1.0.160</becpg.i18n.version>
+		<becpg.supporttools.version>25.2.0.8-beCPG</becpg.supporttools.version>
 		
 	</properties>
 	<dependencyManagement>

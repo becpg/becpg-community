@@ -16,8 +16,10 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
+import fr.becpg.repo.regulatory.IngredientRegulatoryCodes;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
@@ -30,6 +32,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -188,20 +191,57 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
             return false;
         JSONObject json = new JSONObject(analysisResult);
 
+        // The beCPG regulatory service resolves the ingredients in the same call as the analysis, where Decernis
+        // has a dedicated endpoint (see DecernisRegulatoryService#fetchIngredients).
+        productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach(this::storeBecpgCodes);
+
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
-        context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
         List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
         Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountryToUsagePairs(
-                context.getProduct().getRegulatoryList(), parsedRequirements);
+                context.getProduct().getRegulatoryList(), parsedIngRegulatoryElements);
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);
+
+        List<IngRegulatoryListDataItem> filteredIngRegulatoryElements = parsedIngRegulatoryElements.stream()
+                .filter(item -> !isEmptyRegulatoryItem(item))
+                .toList();
+        context.getIngRegulatoryListDataItems().addAll(filteredIngRegulatoryElements);
+
         List<RequirementListDataItem> allRequirementAlerts = Streams.concat(
                 parsedRequirements.stream(), alertsForNotCoveredCountryToUsagePairs, alertsForNotCoveredIngredients
         ).toList();
         context.getRequirements().addAll(allRequirementAlerts);
 
         return true;
+    }
+
+    /**
+     * Stores the codes returned by the beCPG regulatory service on the ingredient, next to the codes of the
+     * other regulatory services, and saves only when something changed.
+     *
+     * @param ingredientId the ingredient node id
+     * @param becpgCodes the comma separated codes returned for this ingredient
+     */
+    private void storeBecpgCodes(String ingredientId, String becpgCodes) {
+        IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, ingredientId));
+        IngredientRegulatoryCodes present = IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode());
+        IngredientRegulatoryCodes updated = present.withBecpgCodes(IngredientRegulatoryCodes.parse(becpgCodes).tokens());
+        if (!updated.equals(present)) {
+            ingItem.setRegulatoryCode(updated.format());
+            alfrescoRepository.save(ingItem);
+        }
+    }
+
+    /**
+     * Elements without requirements are indicating that ingredient was resolved and providing regulatoryCode.
+     */
+    private boolean isEmptyRegulatoryItem(IngRegulatoryListDataItem item) {
+        return (item.getCitation() == null || item.getCitation().isEmpty()) &&
+                (item.getRestrictionLevels() == null || item.getRestrictionLevels().isEmpty()) &&
+                (item.getResultIndicator() == null || item.getResultIndicator().isEmpty()) &&
+                (item.getPrecautions() == null || item.getPrecautions().isEmpty()) &&
+                (item.getComment() == null || item.getComment().isEmpty());
     }
 
     private RemoteParams buildRecipeParams() {

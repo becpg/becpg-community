@@ -1,0 +1,178 @@
+[
+   {
+      "id": "supplierPortal-rawMaterial",
+      "label": "plm.supplier.portal.catalog.rawMaterial.label",
+      "entityType": [
+         "bcpg:rawMaterial"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode",
+         "bcpg:geoOrigin",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1",
+      "i18nMessages": {
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+      }
+   },
+   {
+      "id": "supplierPortal-finishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:finishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode",
+         "cm:title",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1",
+      "i18nMessages": {
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+      }
+   },
+   {
+      "id": "supplierPortal-semiFinishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:semiFinishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode",
+         "formulaNutListNutriscore|spel(@beCPG.sum(nutList, \"(',ENER-KJO,FASAT,SUGAR,NACL,PRO-,FIBTG,').contains(',' + @beCPG.propValue(dataListItem.nut,'gs1:nutrientTypeCode') + ',') and dataListItem.value == null ? 1 : 0\") == 0)",
+         "formulaIngListNotEmpty|spel(ingList != null and !ingList.isEmpty())",
+         "formulaIngListOrigins|spel(@beCPG.sum(ingList, \"dataListItem.geoOrigin == null or dataListItem.geoOrigin.isEmpty() or dataListItem.bioOrigin == null or dataListItem.bioOrigin.isEmpty() or dataListItem.geoTransfo == null or dataListItem.geoTransfo.isEmpty() ? 1 : 0\") == 0)"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1",
+      "i18nMessages": {
+         "formulaNutListNutriscore": "plm.supplier.portal.catalog.check.nutriscore",
+         "formulaIngListNotEmpty": "plm.supplier.portal.catalog.check.ingList",
+         "formulaIngListOrigins": "plm.supplier.portal.catalog.check.ingOrigins"
+      }
+   },
+   {
+      "id": "supplierPortal-localSemiFinishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:localSemiFinishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-packagingMaterial",
+      "label": "plm.supplier.portal.catalog.packaging.label",
+      "entityType": [
+         "bcpg:packagingMaterial"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-packagingKit",
+      "label": "plm.supplier.portal.catalog.packaging.label",
+      "entityType": [
+         "bcpg:packagingKit"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-supplier",
+      "label": "plm.supplier.portal.catalog.supplier.label",
+      "entityType": [
+         "bcpg:supplier"
+      ],
+      "locales": [
+         "en",
+         "fr",
+         "es",
+         "de"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:code"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   }
+]

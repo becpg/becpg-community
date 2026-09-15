@@ -1379,6 +1379,23 @@
 			</properties>
 		</aspect>
 
+		<!-- Identity of an OLAP query, dashboard or application shipped by beCPG. The file is named
+		     by this id, dashboards reference it, the Share dashlet stores it as a preference and the
+		     Saiku repository resolves paths on it. cm:name and cm:title only carry what the user
+		     reads, and may therefore be translated without breaking a single reference. -->
+		<aspect name="bcpg:olapQueryAspect">
+			<properties>
+				<property name="bcpg:olapQueryId">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:erpCodeAspect">
 			<properties>
 				<property name="bcpg:erpCode">
@@ -1651,5 +1668,18 @@
 			<associations/>
 		</aspect>
 		
-	</aspects>
+			<aspect name="bcpg:restrictedAccessAspect">
+			<properties>
+                <property name="bcpg:restrictedAccess">
+		            <type>d:boolean</type>
+		            <mandatory>false</mandatory>
+		            <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+           </properties>
+		</aspect>
+
+</aspects>
 </model>

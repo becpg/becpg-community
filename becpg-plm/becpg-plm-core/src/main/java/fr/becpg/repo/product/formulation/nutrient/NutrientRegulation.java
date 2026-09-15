@@ -54,6 +54,23 @@ public interface NutrientRegulation {
 	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale);
 
 	/**
+	 * <p>displayValue.</p>
+	 *
+	 * <p>Unit-aware counterpart: {@code value} is expressed in {@code nutUnit} and is converted to the
+	 * unit of the regulation before the display rules are applied, {@code roundedValue} being already
+	 * expressed in that unit.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale, String nutUnit);
+
+	/**
 	 * <p>convertValue.</p>
 	 *
 	 * @param value a {@link java.lang.Double} object.

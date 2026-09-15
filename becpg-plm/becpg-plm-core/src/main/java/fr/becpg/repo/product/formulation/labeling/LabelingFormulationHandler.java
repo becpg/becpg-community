@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -66,6 +67,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.EvaporatingFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
@@ -74,6 +76,7 @@ import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.template.BeCPGTemplateRenderService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -92,6 +95,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** Constant <code>NULL_ING_ERROR="message.formulate.labelRule.error.nullI"{trunked}</code> */
 	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
 
+	/** Constant <code>CONTENT_TOO_LONG="message.formulate.labelRule.contentToo"{trunked}</code> */
+	private static final String CONTENT_TOO_LONG = "message.formulate.labelRule.contentTooLong";
+
 	private NodeService nodeService;
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -103,6 +109,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private SpelFormulaService formulaService;
 
 	private SystemConfigurationService systemConfigurationService;
+
+	private BeCPGTemplateRenderService templateRenderService;
+
+	/**
+	 * <p>Setter for the field <code>templateRenderService</code>.</p>
+	 *
+	 * @param templateRenderService a {@link fr.becpg.repo.template.BeCPGTemplateRenderService} object
+	 */
+	public void setTemplateRenderService(BeCPGTemplateRenderService templateRenderService) {
+		this.templateRenderService = templateRenderService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
@@ -245,7 +262,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository,
-					formulaService);
+					formulaService, templateRenderService, new NutritionFactsDataBuilder(mlNodeService, alfrescoRepository));
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
@@ -456,8 +473,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						// Limit label size to prevent property write failures (HTML-safe to avoid breaking the rendered table)
-						truncateRenderedLabel(label);
+						// Keep the label under the property size limit by dropping whole languages, never cutting a value
+						label = dropOversizedLabelValues(label);
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));
@@ -1563,24 +1580,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
 	 */
 	/**
-	 * Truncates the rendered labeling value (bcpg:illValue) to prevent property write failures,
-	 * keeping the same per-locale budget as {@link LargeTextHelper#elipse(MLText)} but truncating
-	 * HTML output on a complete row boundary so the rendered table is not broken mid-tag.
+	 * Keeps every rendered labeling value (bcpg:illValue) within what its own property row can hold,
+	 * to prevent property write failures. No value is ever cut: a language that does not fit is
+	 * replaced as a whole by a notice in its own language, and the other languages are untouched. A
+	 * partially cut ingredient list carries wrong data, whereas a notice tells the user what happened.
 	 *
-	 * @param label the rendered labeling value, modified in place
+	 * @param label the rendered labeling value
+	 * @return the labeling value fitting the size limit
 	 */
-	private void truncateRenderedLabel(MLText label) {
-		if (label.toString().length() <= LargeTextHelper.TEXT_SIZE_LIMIT) {
-			return;
-		}
+	private MLText dropOversizedLabelValues(MLText label) {
+		MLText result = LargeTextHelper.dropOversizedLocales(label, locale -> I18NUtil.getMessage(CONTENT_TOO_LONG, locale));
+		logDroppedLocales(label, result);
+		return result;
+	}
 
-		int localesNumber = Math.max(1, label.keySet().size());
-		int budget = (LargeTextHelper.TEXT_SIZE_LIMIT / localesNumber) - 20;
-
-		for (Locale locale : label.keySet()) {
-			String value = label.get(locale);
-			if ((value != null) && (value.length() > budget)) {
-				label.put(locale, LargeTextHelper.elipseHtml(value, budget));
+	private void logDroppedLocales(MLText label, MLText result) {
+		for (Entry<Locale, String> entry : label.entrySet()) {
+			if (!Objects.equals(entry.getValue(), result.get(entry.getKey()))) {
+				logger.warn("Rendered labeling value of " + entry.getValue().length() + " characters exceeds the "
+						+ LargeTextHelper.MAX_LOCALE_SIZE_BYTES + " bytes a property row can hold for locale " + entry.getKey()
+						+ ", replaced by a notice");
 			}
 		}
 	}
@@ -2727,8 +2746,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace(" -- Adding subings " + ingListItem.getChildren().size() + " to current " + ingLabelItem.getIngList().size());
 					}
 
-					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext, compoListDataItem,
-							errors, calculatedYield);
+					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext,
+							compoListDataItem, errors, calculatedYield);
 
 				}
 

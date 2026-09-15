@@ -180,14 +180,14 @@ public class BeCPGExternalConnector extends RequestCachingConnector {
 		// copy in cookies that have been stored back as part of the connector session
 		ConnectorSession connectorSession = getConnectorSession();
 		if (connectorSession != null) {
-			Map<String, String> cookies = new HashMap<>(8);
+			Map<String, String> cookies = HashMap.newHashMap(8);
 			for (String cookieName : connectorSession.getCookieNames()) {
 				cookies.put(cookieName, connectorSession.getCookie(cookieName));
 			}
 			remoteClient.setCookies(cookies);
 		}
 
-		Map<String, String> headers = new HashMap<>(8);
+		Map<String, String> headers = HashMap.newHashMap(8);
 		if (context != null) {
 			headers.putAll(context.getHeaders());
 		}

@@ -1,0 +1,34 @@
+<#--
+  Dual column panel, per serving and per container, 21 CFR 101.9(e)(6)(i).
+
+  Required when a container holds between two and four servings and could reasonably be eaten in
+  one go: both figures then have to be declared. The nutrients are the same as the vertical
+  panel, only the body carries two columns of figures instead of one.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#-- Four columns of figures need more width than a vertical panel: 3 inches. -->
+<#assign W = 252 in nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.title text=nf_data.label("title") y=y/>
+	<#assign y = y + nf.TITLE_SIZE>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 1>
+
+	<#if nf_data.serving().hasServingsPerContainer()>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.SERVING_ROW_H>
+	</#if>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}</text>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.right()}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	</#if>
+	<#assign y = y + nf.SERVING_ROW_H>
+
+	<@nf.dualColumnBody data=nf_data y=y/>
+</#assign>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>
