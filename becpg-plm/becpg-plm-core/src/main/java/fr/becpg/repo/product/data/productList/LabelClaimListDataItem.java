@@ -498,7 +498,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		this.labelClaim = labelClaimItem.labelClaim;
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
+		this.percentClaim = labelClaimItem.percentClaim;
+		this.percentApplicable = labelClaimItem.percentApplicable;
 		this.isFormulated = labelClaimItem.isFormulated;
+		this.errorLog = labelClaimItem.errorLog;
+		this.missingLabelClaims = new ArrayList<>(labelClaimItem.missingLabelClaims);
 		this.regulatoryCountriesRef = new ArrayList<>(labelClaimItem.regulatoryCountriesRef);
 		this.regulatoryUsagesRef = new ArrayList<>(labelClaimItem.regulatoryUsagesRef);
 		this.regulatoryMessage = labelClaimItem.regulatoryMessage;
