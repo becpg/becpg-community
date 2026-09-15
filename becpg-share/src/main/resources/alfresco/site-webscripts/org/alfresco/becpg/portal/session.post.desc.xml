@@ -1,0 +1,45 @@
+<!--
+  Copyright (C) 2010-2026 beCPG.
+
+  This file is part of beCPG
+
+  beCPG is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  beCPG is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<webscript>
+    <shortname>beCPG Portal: Share session</shortname>
+    <description>
+        Trades a verified OIDC access token for a Share session, so the supplier portal can run
+        beCPG's form-resolution cascade — which only Share knows how to run, and which needs a
+        session because the node-type config evaluator calls /api/metadata through the session
+        connector.
+
+        OFF BY DEFAULT. Answers 404 until becpg.portal.session.enabled is set to true AND every
+        mandatory value is configured (issuer, audiences, authorizedParties, sharedSecret,
+        allowedAddresses). See fr.becpg.web.authentication.PortalSessionConfig.
+
+        POST only, and never GET: it creates a resource and must not be cached, prefetched or
+        reachable from a link. Requires BOTH an Authorization: Bearer header and the
+        X-beCPG-Portal-Key shared secret, and only answers callers whose direct address is in
+        the configured allow list.
+
+        Prefer /share/noauth/becpg/portal/session over /share/service/becpg/portal/session:
+        /noauth/* is mapped to the UrlRewriteFilter alone, so it is not challenged by the AIMS
+        or SSO filters in any deployment mode. Safe here only because this endpoint derives no
+        authority at all from cookies.
+
+        Additive endpoint: BeCPGAIMSFilter, web.xml and every existing bean are untouched.
+    </description>
+    <url>/becpg/portal/session</url>
+    <format default="json"></format>
+    <authentication>none</authentication>
+</webscript>
