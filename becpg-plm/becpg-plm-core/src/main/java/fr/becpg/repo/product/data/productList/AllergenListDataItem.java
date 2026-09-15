@@ -443,11 +443,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.onLine = allergenListDataItem.onLine;
 		this.isCleaned = allergenListDataItem.isCleaned;
 		this.allergenValue = allergenListDataItem.allergenValue;
-		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
-		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
+		this.voluntarySources = allergenListDataItem.voluntarySources != null ? new ArrayList<>(allergenListDataItem.voluntarySources) : null;
+		this.inVoluntarySources = allergenListDataItem.inVoluntarySources != null ? new ArrayList<>(allergenListDataItem.inVoluntarySources) : null;
 		this.allergen = allergenListDataItem.allergen;
-		this.regulatoryCountriesRef = new ArrayList<>(allergenListDataItem.regulatoryCountriesRef);
-		this.regulatoryUsagesRef = new ArrayList<>(allergenListDataItem.regulatoryUsagesRef);
+		this.regulatoryCountriesRef = allergenListDataItem.regulatoryCountriesRef != null ? new ArrayList<>(allergenListDataItem.regulatoryCountriesRef) : null;
+		this.regulatoryUsagesRef = allergenListDataItem.regulatoryUsagesRef != null ? new ArrayList<>(allergenListDataItem.regulatoryUsagesRef) : null;
 		this.regulatoryMessage = allergenListDataItem.regulatoryMessage;
 		this.regulatoryType = allergenListDataItem.regulatoryType;
 	}
