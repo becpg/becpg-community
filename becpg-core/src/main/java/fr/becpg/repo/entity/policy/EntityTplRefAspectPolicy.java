@@ -19,6 +19,9 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -42,6 +45,18 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	private static final Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);
 
 	private static final String TPL_CACHE_NAME = EntityTplServiceImpl.class.getName();
+
+	private static final String PENDING_TPL_CACHE_TYPES = EntityTplRefAspectPolicy.class.getName() + ".pendingTplCacheTypes";
+
+	private final TransactionListenerAdapter tplCacheInvalidationListener = new TransactionListenerAdapter() {
+
+		@Override
+		public void afterCommit() {
+			Set<QName> impactedTypes = TransactionSupportUtil.getResource(PENDING_TPL_CACHE_TYPES);
+			TransactionSupportUtil.bindResource(PENDING_TPL_CACHE_TYPES, null);
+			queueTplCacheInvalidation(impactedTypes);
+		}
+	};
 
 	private AssociationService associationService;
 
@@ -178,8 +193,35 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 			}
 		}
 		
-		invalidateTplCache(impactedTypes);
+		queueTplCacheInvalidation(impactedTypes);
 		return true;
+	}
+
+	/**
+	 * <p>Keep the impacted types aside and drop their cache entry only once the transaction has
+	 * committed.</p>
+	 *
+	 * Dropping the entry while the change is still uncommitted leaves a window in which a concurrent
+	 * reader repopulates it from the state about to be replaced, so the stale entry outlives the
+	 * change that was meant to evict it.
+	 *
+	 * @param impactedTypes a {@link java.util.Set} object
+	 */
+	private void queueTplCacheInvalidation(Set<QName> impactedTypes) {
+
+		if ((impactedTypes == null) || impactedTypes.isEmpty()) {
+			return;
+		}
+
+		Set<QName> pendingTypes = TransactionSupportUtil.getResource(PENDING_TPL_CACHE_TYPES);
+
+		if (pendingTypes == null) {
+			pendingTypes = new HashSet<>();
+			TransactionSupportUtil.bindResource(PENDING_TPL_CACHE_TYPES, pendingTypes);
+			AlfrescoTransactionSupport.bindListener(tplCacheInvalidationListener);
+		}
+
+		pendingTypes.addAll(impactedTypes);
 	}
 
 	private void invalidateTplCache(Set<QName> impactedTypes) {
@@ -205,7 +247,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 				|| isPropChanged(before, after, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT)) {
 			Set<QName> impactedTypes = new HashSet<>(1);
 			impactedTypes.add(nodeService.getType(nodeRef));
-			invalidateTplCache(impactedTypes);
+			queueTplCacheInvalidation(impactedTypes);
 		}
 	}
 
@@ -228,7 +270,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 			throw new IllegalStateException(I18NUtil.getMessage("integrity-checker.association-multiplicity-error", sb.toString()));
 		}
 
-		invalidateTplCache(Set.of(nodeService.getType(nodeRef)));
+		queueTplCacheInvalidation(Set.of(nodeService.getType(nodeRef)));
 	}
 	
 	private String decorate(NodeRef sourceNodeRef) {
