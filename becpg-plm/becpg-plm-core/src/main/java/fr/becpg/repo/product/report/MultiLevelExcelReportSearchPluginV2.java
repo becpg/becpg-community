@@ -342,6 +342,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         boolean isOnlyLevel = parameter != null && parameter.contains(TOKEN_ONLY);
 
         for (NodeRef entityNodeRef : searchResults) {
+            if (!nodeService.exists(entityNodeRef)) {
+                continue;
+            }
             QName entityType = nodeService.getType(entityNodeRef);
             if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
                 Serializable key = extractKey(entityNodeRef, keyColumn);
@@ -395,6 +398,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache, boolean includeEmpty) {
 
         for (NodeRef entityNodeRef : searchResults) {
+            if (!nodeService.exists(entityNodeRef)) {
+                continue;
+            }
             QName entityType = nodeService.getType(entityNodeRef);
             if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
                 Serializable key = extractKey(entityNodeRef, keyColumn);
