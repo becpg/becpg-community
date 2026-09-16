@@ -37,33 +37,41 @@ class PortalSessionMintBudget {
 	private volatile long windowStart = System.currentTimeMillis();
 
 	/**
-	 * Records one attempt and says whether it is within budget.
+	 * Charges one attempt against the budget of every user together, before anything expensive
+	 * is done with the request.
 	 *
-	 * @param username the verified username, or null to only charge the global budget
 	 * @param globalBudget maximum mints per minute, all users together
+	 * @return true when the attempt is allowed
+	 */
+	synchronized boolean tryConsumeGlobal(int globalBudget) {
+		rollWindow();
+		return global.incrementAndGet() <= globalBudget;
+	}
+
+	/**
+	 * Charges one attempt against the budget of a single user. The global budget is charged by
+	 * {@link #tryConsumeGlobal(int)} only, so that one request never costs two units.
+	 *
+	 * @param username the verified username
 	 * @param userBudget maximum mints per minute for one user
 	 * @return true when the attempt is allowed
 	 */
-	synchronized boolean tryConsume(String username, int globalBudget, int userBudget) {
+	synchronized boolean tryConsumeUser(String username, int userBudget) {
+		rollWindow();
+
+		if (perUser.size() >= MAX_TRACKED_USERS) {
+			perUser.clear();
+		}
+		return perUser.computeIfAbsent(username, k -> new AtomicInteger()).incrementAndGet() <= userBudget;
+	}
+
+	private void rollWindow() {
 		long now = System.currentTimeMillis();
 		if (now - windowStart >= WINDOW_MILLIS) {
 			windowStart = now;
 			global.set(0);
 			perUser.clear();
 		}
-
-		if (global.incrementAndGet() > globalBudget) {
-			return false;
-		}
-
-		if (username == null) {
-			return true;
-		}
-
-		if (perUser.size() >= MAX_TRACKED_USERS) {
-			perUser.clear();
-		}
-		return perUser.computeIfAbsent(username, k -> new AtomicInteger()).incrementAndGet() <= userBudget;
 	}
 
 }

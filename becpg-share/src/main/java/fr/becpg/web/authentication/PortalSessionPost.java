@@ -70,6 +70,7 @@ import jakarta.servlet.http.HttpSession;
  * containment does not apply, which is why the cookie must stay server side in the portal.
  *
  * @author matthieu
+ * @since 26.1.0.42
  */
 public class PortalSessionPost extends AbstractWebScript {
 
@@ -194,7 +195,7 @@ public class PortalSessionPost extends AbstractWebScript {
 
 		// Charged before the token is even parsed, so that signature verification cannot be
 		// used as a workload amplifier.
-		if (!budget.tryConsume(null, current.getMaxMintsPerMinute(), current.getMaxMintsPerMinutePerUser())) {
+		if (!budget.tryConsumeGlobal(current.getMaxMintsPerMinute())) {
 			throw refusal(STATUS_TOO_MANY_REQUESTS, PortalSessionException.ERROR_RATE_LIMITED, "global mint budget of "
 					+ current.getMaxMintsPerMinute() + "/min exhausted");
 		}
@@ -209,7 +210,7 @@ public class PortalSessionPost extends AbstractWebScript {
 		// Layer 3 - the token itself, and the azp allow list inside it.
 		String username = verifier().verify(accessToken);
 
-		if (!budget.tryConsume(username, current.getMaxMintsPerMinute(), current.getMaxMintsPerMinutePerUser())) {
+		if (!budget.tryConsumeUser(username, current.getMaxMintsPerMinutePerUser())) {
 			throw refusal(STATUS_TOO_MANY_REQUESTS, PortalSessionException.ERROR_RATE_LIMITED, "mint budget of "
 					+ current.getMaxMintsPerMinutePerUser() + "/min exhausted for one user");
 		}

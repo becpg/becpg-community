@@ -14,6 +14,7 @@ package fr.becpg.web.authentication;
  * </ul>
  *
  * @author matthieu
+ * @since 26.1.0.42
  */
 public class PortalSessionException extends Exception {
 

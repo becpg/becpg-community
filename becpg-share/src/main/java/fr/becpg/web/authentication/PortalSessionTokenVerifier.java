@@ -56,6 +56,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
  * the caller did nothing wrong and must retry, not re-authenticate.
  *
  * @author matthieu
+ * @since 26.1.0.42
  */
 public class PortalSessionTokenVerifier {
 

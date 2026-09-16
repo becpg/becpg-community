@@ -40,6 +40,7 @@ import org.springframework.extensions.config.ConfigService;
  * </pre>
  *
  * @author matthieu
+ * @since 26.1.0.42
  */
 public class PortalSessionConfig {
 
