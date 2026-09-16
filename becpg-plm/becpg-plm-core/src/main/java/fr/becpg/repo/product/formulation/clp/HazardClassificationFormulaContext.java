@@ -71,7 +71,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 */
 	public record SubstanceThreshold(double value, boolean strict) {
 
-		private static final Pattern THRESHOLD_PATTERN = Pattern.compile("^\\s*(>=|>)?\\s*([0-9]+(?:[.,][0-9]+)?)\\s*%?\\s*$");
+		private static final Pattern THRESHOLD_PATTERN = Pattern.compile("^\\s*+(>=|>)?\\s*+([0-9]++(?:[.,][0-9]++)?)\\s*+%?\\s*+$");
 
 		/**
 		 * Parses a threshold expression such as "&gt;=1%", "&gt;0,1%" or "1%".

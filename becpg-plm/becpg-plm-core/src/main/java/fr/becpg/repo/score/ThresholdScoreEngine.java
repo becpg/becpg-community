@@ -193,14 +193,14 @@ public class ThresholdScoreEngine {
 	 * @param context a {@link fr.becpg.repo.score.ScoreContext} object
 	 */
 	private void applyCount(ScoreContext context) {
-		double count = 0d;
+		int count = 0;
 		for (ScorePart part : context.getParts()) {
 			if ((part.getLabel() != null) && !part.getLabel().isBlank()) {
 				count++;
 			}
 		}
-		context.setValue(count);
-		context.setScoreClass(String.valueOf((int) count));
+		context.setValue((double) count);
+		context.setScoreClass(String.valueOf(count));
 	}
 
 	/**

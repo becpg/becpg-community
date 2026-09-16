@@ -343,7 +343,11 @@ public class AggregateReportModelBuilder {
             logger.error("Failed to generate/collect sub-report for component " + entityNodeRef + ": " + e.getMessage(), e);
             return Collections.emptyList();
         } finally {
-            collectingSubReport.set(wasCollecting);
+            if (Boolean.TRUE.equals(wasCollecting)) {
+                collectingSubReport.set(wasCollecting);
+            } else {
+                collectingSubReport.remove();
+            }
         }
     }
 
