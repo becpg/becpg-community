@@ -2588,8 +2588,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		StringBuilder ret = new StringBuilder();
 		StringBuilder tableContent = new StringBuilder();
 
-		BigDecimal total = getTotal(lblCompositeContext, false);
-		BigDecimal totalWithYield = getTotal(lblCompositeContext, true);
+		BigDecimal total = getTotal(lblCompositeContext, new QtyColumn(htmlTableRowFormat, false));
+		BigDecimal totalWithYield = getTotal(lblCompositeContext, new QtyColumn(htmlTableRowFormat, true));
 
 		ret.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
 				+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
@@ -2762,7 +2762,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 			total = total.add(diffValue);
-			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
+			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new QtyColumn(htmlTableRowFormat, false))
 					+ roundedDouble(diffValue);
 
 		}
@@ -2790,28 +2790,59 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>roundeedValue.</p>
+	 * <p>One of the two percentage columns of a labeling table, the quantity and the quantity after yield.</p>
+	 *
+	 * @param rowFormat the row format the column is displayed with, null to round on the default percentage format
+	 * @param withYield true for the "quantity after yield" column, which is the second number of a row
+	 */
+	private record QtyColumn(String rowFormat, boolean withYield) {
+	}
+
+	/**
+	 * <p>Rounds a quantity the way the given column of a labeling table displays it.</p>
 	 *
 	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
 	 * @param qty a {@link java.lang.Double} object
-	 * @param messageFormat a {@link java.text.MessageFormat} object
+	 * @param column a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext.QtyColumn} object
 	 * @return a {@link java.lang.Double} object
 	 */
-	private Double roundeedValue(LabelingComponent component, Double qty, MessageFormat messageFormat) {
+	private Double roundeedValue(LabelingComponent component, Double qty, QtyColumn column) {
+		QtyFormater qtyFormater = getQtyFormater(component, qty, false);
 
-		for (Format format : messageFormat.getFormats()) {
+		if (qtyFormater != null) {
+			return qtyFormater.round(qty);
+		}
+
+		return getDefaultQtyFormater(getQtyDecimalFormat(column), qty).round(qty);
+	}
+
+	/**
+	 * <p>The decimal format a table column displays its percentages with.</p>
+	 *
+	 * A fresh format is built on each call: applying an automatic precision only ever raises the number of decimals
+	 * of a format, so a shared instance would keep the precision of the smallest value it has seen.
+	 *
+	 * @param column a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext.QtyColumn} object
+	 * @return a {@link java.text.DecimalFormat} object, null when the row format holds no number
+	 */
+	private DecimalFormat getQtyDecimalFormat(QtyColumn column) {
+		if (column.rowFormat() == null) {
+			return null;
+		}
+
+		List<DecimalFormat> decimalFormats = new ArrayList<>();
+
+		for (Format format : new MessageFormat(column.rowFormat(), getContentLocale()).getFormats()) {
 			if (format instanceof DecimalFormat decimalFormat) {
-
-				QtyFormater qtyFormater = getQtyFormater(component, qty, false);
-				if (qtyFormater != null) {
-					return qtyFormater.round(qty);
-				} else {
-					return getDefaultQtyFormater(decimalFormat, qty).round(qty);
-				}
+				decimalFormats.add(decimalFormat);
 			}
 		}
-		return qty;
 
+		if (decimalFormats.isEmpty()) {
+			return null;
+		}
+
+		return decimalFormats.get(column.withYield() && (decimalFormats.size() > 1) ? 1 : 0);
 	}
 
 	/**
@@ -2951,7 +2982,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, DEFAULT_RATIO, 0);
-			BigDecimal total = getFlatTotal(flatList, false);
+			BigDecimal total = getFlatTotal(flatList, new QtyColumn(htmlFlatTableRowFormat, false));
 			BigDecimal totalWithYield = getFlatTotalWithYield(flatList);
 
 			if (!flatList.isEmpty()) {
@@ -2992,7 +3023,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					total = total.add(diffValue);
 
 					Double qtyPerc = roundeedValue(flatList.get(0).component, flatList.get(0).qtyPerc,
-							new MessageFormat(htmlFlatTableRowFormat, getContentLocale())) + roundedDouble(diffValue);
+							new QtyColumn(htmlFlatTableRowFormat, false)) + roundedDouble(diffValue);
 
 					Double qtyPercWithYield = flatList.get(0).qtyPercWithYield;
 
@@ -3031,18 +3062,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * total would no longer be the sum of the rows (#36438). Only the rows of the first level are summed, the sub
 	 * ingredients being a breakdown of their parent.
 	 *
+	 * The rows are rounded on the row format of the table, which a preference rule can set to more decimals than the
+	 * default percentage format: rounding the total on the default format instead would display a total that is not
+	 * the sum of the rows, 99,921 % for rows summing to 100,0007 % (#36438).
+	 *
 	 * @param flatList a {@link java.util.List} object, the rows of the table
-	 * @param withYield a boolean, true to sum the "with yield" column
+	 * @param column a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext.QtyColumn} object, the
+	 *            column to sum
 	 * @return a {@link java.math.BigDecimal} object
 	 */
-	private BigDecimal getFlatTotal(List<HtmlTableStruct> flatList, boolean withYield) {
+	private BigDecimal getFlatTotal(List<HtmlTableStruct> flatList, QtyColumn column) {
 		BigDecimal total = BigDecimal.valueOf(0d);
 
 		for (HtmlTableStruct row : flatList) {
-			Double qtyPerc = withYield ? row.qtyPercWithYield : row.qtyPerc;
+			Double qtyPerc = column.withYield() ? row.qtyPercWithYield : row.qtyPerc;
 
 			if ((row.level == 0) && (qtyPerc != null) && (qtyPerc > 0)) {
-				total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, row.component)));
+				total = total.add(BigDecimal.valueOf(roundeedValue(row.component, qtyPerc, column)));
 			}
 		}
 
@@ -3061,7 +3097,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
 		}
 
-		return getFlatTotal(flatList, true);
+		return getFlatTotal(flatList, new QtyColumn(htmlFlatTableRowFormat, true));
 	}
 
 	/**
@@ -3204,29 +3240,30 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>roundeedValue.</p>
-	 *
-	 * @param qty a {@link java.lang.Double} object
-	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
-	 * @return a {@link java.lang.Double} object
-	 */
-	private Double roundeedValue(Double qty, LabelingComponent lblComponent) {
-		QtyFormater qtyFormater = getQtyFormater(lblComponent, qty, false);
-		if (qtyFormater != null) {
-			return qtyFormater.round(qty);
-		}
-		return getDefaultQtyFormater(null, qty).round(qty);
-
-	}
-
-	/**
-	 * <p>getTotal.</p>
+	 * <p>The total the text declaration distributes over its components, rounded on the default percentage
+	 * format.</p>
 	 *
 	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
 	 * @param withYield a boolean
 	 * @return a {@link java.math.BigDecimal} object
 	 */
 	private BigDecimal getTotal(CompositeLabeling compositeLabeling, boolean withYield) {
+		return getTotal(compositeLabeling, new QtyColumn(null, withYield));
+	}
+
+	/**
+	 * <p>The total of a table, summed on the row format its percentages are displayed with.</p>
+	 *
+	 * Each row is rounded as it is displayed, so a row format set to more decimals than the default percentage
+	 * format must round the total the same way, or the total is no longer the sum of the rows (#36438).
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param column a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext.QtyColumn} object, the
+	 *            column to sum
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal getTotal(CompositeLabeling compositeLabeling, QtyColumn column) {
+		boolean withYield = column.withYield();
 		BigDecimal total = BigDecimal.valueOf(0d);
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
@@ -3238,7 +3275,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 				if ((qtyPerc != null) && (qtyPerc > 0d)) {
-					total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, kv.getKey())));
+					total = total.add(BigDecimal.valueOf(roundeedValue(kv.getKey(), qtyPerc, column)));
 				}
 
 			} else {
@@ -3251,7 +3288,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 					if (!shouldSkip(component, qtyPerc) && (qtyPerc != null) && (qtyPerc > 0)) {
-						total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, component)));
+						total = total.add(BigDecimal.valueOf(roundeedValue(component, qtyPerc, column)));
 
 					}
 				}
@@ -3432,11 +3469,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 			if (ingsLabelingWithYield && (total != null) && (qtyPerc != null)) {
-				qtyPerc = roundeedValue(
-						roundedDouble(BigDecimal.valueOf(qtyPerc).divide(total, PRECISION).multiply(BigDecimal.valueOf(1d), PRECISION)), component);
+				qtyPerc = roundeedValue(component,
+						roundedDouble(BigDecimal.valueOf(qtyPerc).divide(total, PRECISION).multiply(BigDecimal.valueOf(1d), PRECISION)),
+						new QtyColumn(null, false));
 			} else if (first && (total != null)) {
 				BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
-				qtyPerc = roundeedValue(qtyPerc, component) + roundedDouble(diffValue);
+				qtyPerc = roundeedValue(component, qtyPerc, new QtyColumn(null, false)) + roundedDouble(diffValue);
 			}
 
 			String ingName = getLegalIngName(component, qtyPerc, false, useTotalPrecision);
