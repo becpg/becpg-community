@@ -163,15 +163,13 @@
       "entityType": [
          "bcpg:supplier"
       ],
-      "locales": [
-         "en",
-         "fr",
-         "es",
-         "de"
-      ],
       "fields": [
-         "bcpg:legalName",
-         "bcpg:code"
+         "bcpg:code",
+         "bcpg:supplierTel",
+         "bcpg:locationAddress1",
+         "bcpg:locationZip",
+         "bcpg:locationCity",
+         "bcpg:locationCountry"
       ],
       "modifiedField": "bcpg:modifiedCatalog1"
    }

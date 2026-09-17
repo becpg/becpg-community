@@ -290,6 +290,13 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * supplier record is by nature a portal object — which does mean the score of every supplier
 	 * record moves at its next formulation. It is the one deliberate exception here.</p>
 	 *
+	 * <p>It is also the one catalogue that declares <b>no {@code locales}</b>, and it asks for the
+	 * identity fields the supplier form actually shows: telephone, address, postal code, city,
+	 * country. A catalogue may only ask for a field the supplier can reach — {@code bcpg:legalName}
+	 * is not on the {@code bcpg:supplier} form, so requiring it reported a gap nobody could close —
+	 * and a postal code has no translation, so scoring it once per language would have asked for
+	 * four.</p>
+	 *
 	 * <p>{@code catalogId} is named in the deliverable URL as well
 	 * ({@link #SUPPLIER_PORTAL_CATALOG_ID}), and that is a different mechanism serving a different
 	 * screen: it is what makes Share's wizard paint its completeness panel. The two coexist.</p>
