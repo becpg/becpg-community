@@ -293,6 +293,84 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, expectedHtml, Locale.FRENCH);
 	}
 
+	/**
+	 * The total of the flat table follows the number of decimals of its row format: rows displayed with three
+	 * decimals must not be summed on the one decimal of the default percentage format, which showed a total of
+	 * 100,1 % under rows summing to exactly 100 % (#36438).
+	 */
+	@Test
+	public void testRenderFlatHtmlTableTotalFollowsRowFormat() {
+
+		final String suffix = String.valueOf(Calendar.getInstance().getTimeInMillis());
+
+		NodeRef flatTableRawMaterialNodeRef = inWriteTx(() -> {
+			NodeRef thickenerANodeRef = createThickener("Thickener row format A " + suffix);
+			NodeRef thickenerBNodeRef = createThickener("Thickener row format B " + suffix);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table row format raw material " + suffix);
+			MLText legalName = new MLText("Legal Flat table row format raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Flat table row format raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Flat table row format raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99.47d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.27d).withIngredient(thickenerANodeRef).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(0.26d).withIngredient(thickenerBNodeRef).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product flat row format " + suffix);
+			finishedProduct.setLegalName("legal Finished product flat row format");
+			finishedProduct.setQty(1d);
+			finishedProduct.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(flatTableRawMaterialNodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Lignes")
+				.withFormula("htmlFlatTableRowFormat = '<tr><td>{0}</td><td>{2}</td><td>{3}</td>"
+						+ "<td>{1,number,0.000%}</td><td>{4,number,0.000%}</td></tr>'")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', true, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+
+		String expectedHtml = "<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\">"
+				+ "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >Ingrédient</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine géographique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine biologique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Quantité (%)</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Qté ap. rdmt (%)</th></tr></thead>"
+				+ "<tbody>"
+				+ "<tr><td>ing1 french</td><td></td><td></td><td>99,470%</td><td>99,470%</td></tr>"
+				+ "<tr><td>epaississants french : thickener row format A " + suffix + " french</td><td></td><td></td>"
+				+ "<td>0,270%</td><td>0,270%</td></tr>"
+				+ "<tr><td>epaississants french : thickener row format B " + suffix + " french</td><td></td><td></td>"
+				+ "<td>0,260%</td><td>0,260%</td></tr>"
+				+ "<tfoot><tr><th style=\"border: solid 1px; padding: 5px;\" ><b>Total</b></th>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px; padding: 5px;\"></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\"><b>100%</b></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\"></td></tr></tfoot>"
+				+ "</tbody></table>";
+
+		checkILL(finishedProductNodeRef, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
+
 	private NodeRef createThickener(String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
