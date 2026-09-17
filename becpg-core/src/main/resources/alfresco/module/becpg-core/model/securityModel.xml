@@ -102,6 +102,8 @@
 	<aspects>
 		<aspect name="sec:securityAspect">
 			<associations>
+				<!-- The local security rule of an entity is a single acl group: the data model, the formulation
+				     handler and the security service all resolve one target (#36608). -->
 				<association name="sec:securityRef">
 					<source>
 						<mandatory>false</mandatory>
@@ -110,7 +112,7 @@
 					<target>
 						<class>sec:aclGroup</class>
 						<mandatory>false</mandatory>
-						<many>true</many>
+						<many>false</many>
 					</target>
 				</association>
 				<association name="sec:readGroups">
