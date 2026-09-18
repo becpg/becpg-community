@@ -319,7 +319,14 @@ Building and running the application is a long and ongoing task; therefore, ensu
 
 ### Running Tests 
 
-When making code changes, use the following commands to test, first rebuild and relaunch the application (3 to 4 minutes):
+**Unit tests** need neither a rebuild nor a running application, so run them on every code change:
+
+```bash
+./mvnw test -pl [module] -Dtest=[TestClassName]
+# Example: ./mvnw test -pl becpg-core -Dtest=SecurePasswordGeneratorTest
+```
+
+**Integration tests** need the application rebuilt and relaunched first (3 to 4 minutes):
 
 1. **Compile and restart**: 
    ```bash
@@ -336,7 +343,13 @@ Then launch the test
 
 
 ### Testing Standards
-1. **Prefer Integration Tests over Unit Tests**: In beCPG, majority are IT tests that require Spring context. Only use unit tests for simple cases that don't need Spring context loaded.
+1. **Unit test the code you add, around 75% of it**: new or modified behaviour ships with a JUnit unit test in the same commit - plain JUnit and Mockito, no Spring context, no repository, no HTTP. Unit tests live in `<module>/src/test/java`, under the package of the class they cover, and are named `<ClassName>Test`.
+
+   The target is roughly 75% of the added code, not 100%. Business rules, computations, parsing, validation, error handling and edge cases are worth a test; getters, plain data holders, Spring wiring, logging and generated code are not. Spend the effort where a regression would actually hurt.
+
+   An integration test does **not** count towards that 75%. `*IT` tests cover the wiring between components and remain welcome for that, but they are slow, need a running context, and do not pin down a single unit of behaviour. The two are complementary, never interchangeable.
+
+   **When a unit test is genuinely impossible, raise the point - never skip it silently.** The usual blockers are a private method on a Spring bean, a class patching Alfresco under `alfresco-patch`, and JavaScript with no test harness. Name what blocks the test and propose the change that would make the code testable; extracting the logic into a small collaborator is usually enough. Shipping untested code is a decision the developer takes explicitly, not a default.
 
 2. **Integration Test Structure**:
    ```java
