@@ -59,6 +59,7 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="false" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
@@ -549,9 +550,12 @@
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>   
+          </field>
           <field  help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
@@ -1494,6 +1498,7 @@
       <form id="nutList">
         <field-visibility>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
@@ -1523,6 +1528,9 @@
             </control>
           </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false">
@@ -2285,6 +2293,7 @@
           <show force="true" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
@@ -2435,6 +2444,9 @@
             </control>
           </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
@@ -2637,6 +2649,7 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
@@ -3019,6 +3032,9 @@
             </control>
           </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
