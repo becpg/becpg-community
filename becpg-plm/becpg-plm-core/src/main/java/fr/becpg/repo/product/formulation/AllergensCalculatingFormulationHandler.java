@@ -413,6 +413,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		List<RequirementListDataItem> ret = new ArrayList<>();
 
+		boolean allergensReviewed = isAllergenDataValidated(partProduct);
+
 		for (AllergenListDataItem allergenListDataItem : partProduct.getAllergenList()) {
 
 			// Look for allergen
@@ -471,7 +473,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						if (!Boolean.TRUE.equals(newAllergenListDataItem.getVoluntary())) {
 							newAllergenListDataItem.setVoluntary(null);
 						}
-						addEmptyError(errors, ret, partProduct);
+						if (!allergensReviewed) {
+							addEmptyError(errors, ret, partProduct);
+						}
 					}
 
 					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
@@ -500,7 +504,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						if (!Boolean.TRUE.equals(newAllergenListDataItem.getInVoluntary())) {
 							newAllergenListDataItem.setInVoluntary(null);
 						}
-						addEmptyError(errors, ret, partProduct);
+						if (!allergensReviewed) {
+							addEmptyError(errors, ret, partProduct);
+						}
 					}
 
 					for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
@@ -610,6 +616,30 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		return ret;
+	}
+
+	/**
+	/**
+	 * Whether the allergen data of a part has been through review: the part itself is
+	 * validated, or its allergen list is. A reviewed list has accepted the lines it leaves
+	 * unspecified, so the formulation must not raise them again on every product using the
+	 * part. Mirrors the state check that already guards MESSAGE_NOT_VALIDATED_ALLERGEN.
+	 *
+	 * @param partProduct the visited part
+	 * @return {@code true} when the unspecified lines must stay silent
+	 */
+	private boolean isAllergenDataValidated(ProductData partProduct) {
+		if (SystemState.Valid.equals(partProduct.getState())) {
+			return true;
+		}
+
+		List<AllergenListDataItem> allergenList = partProduct.getAllergenList();
+		if ((allergenList == null) || allergenList.isEmpty() || (allergenList.get(0).getParentNodeRef() == null)) {
+			return false;
+		}
+
+		return SystemState.Valid.toString()
+				.equals(nodeService.getProperty(allergenList.get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE));
 	}
 
 	/**
