@@ -22,23 +22,24 @@
  *
  * Faithful extraction of .../modules/entity-datagrid/config/columns.get.js so the
  * portal reuses the Share resolution cascade instead of reimplementing it. Single
- * deliberate difference: no AlfrescoUtil.getPreferences call, column preferences
- * being a per-user Share notion that would require an authenticated Share session.
+ * deliberate difference: no AlfrescoUtil.getPreferences call — column preferences are a
+ * per-user Share notion, and the portal renders its own grid.
  */
 
 /**
- * Makes the `node-type` config evaluator usable outside a Share session.
+ * Primes the `node-type` config evaluator's cache.
  *
- * NodeMetadataBasedEvaluator resolves the node type through /api/metadata with a
- * connector built from the Share session; the portal has none, the call returns 401
- * and every node-type block — where beCPG declares its product forms — silently
- * vanishes from config.scoped[nodeRef]. The evaluator reads its per-request cache
- * first, so fetching the metadata with the caller's own ticket and storing it under
- * that key restores the whole cascade, with the caller's own permissions.
+ * NodeMetadataBasedEvaluator resolves the node type through /api/metadata and swallows
+ * a failure: every node-type block — where beCPG declares its product forms — then
+ * silently vanishes from config.scoped[nodeRef], and an entity form comes back empty
+ * rather than refused. It reads its per-request cache first, so fetching the metadata
+ * here and storing it under the key it would use restores the whole cascade.
+ *
+ * The call goes over the session connector, so it carries the caller's own permissions.
  */
 var PORTAL_PRIMED_NODES = {};
 
-function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
+function portalPrimeNodeTypeEvaluator(entityNodeRef) {
 	if (entityNodeRef == null || ("" + entityNodeRef).indexOf("://") === -1) {
 		return;
 	}
@@ -52,14 +53,7 @@ function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
 	var metadataUrl = "/api/metadata?nodeRef=" + entityNodeRef + "&shortQNames=true";
 
 	try {
-		var endpoint = "alfresco";
-		var path = metadataUrl;
-		if (alfTicket != null && ("" + alfTicket).length > 0) {
-			endpoint = "alfresco-noauth";
-			path = metadataUrl + "&alf_ticket=" + encodeURIComponent("" + alfTicket);
-		}
-
-		var response = remote.connect(endpoint).get(path);
+		var response = remote.connect("alfresco").get(metadataUrl);
 		if (parseInt(response.status.code, 10) === 200) {
 			context.setValue("forms.cache." + metadataUrl, "" + response.response);
 		}
@@ -384,11 +378,10 @@ function portalReadAppearance(formConfig) {
  * @param prefixedEntityType "-<entityTypeLocalName>" or ""
  * @param entityNodeRef the entity being edited, or null
  * @param skipSecurityRules whether the wizard asks to bypass the security rules
- * @param alfTicket the caller Alfresco ticket, forwarded to the repository
  * @param useNodeRefLookup true for an entity form (node-type lookup), false for a datalist
  * @return the definition object, or null when no configuration matches
  */
-function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, prefixedEntityType, entityNodeRef, skipSecurityRules, alfTicket, useNodeRefLookup) {
+function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, prefixedEntityType, entityNodeRef, skipSecurityRules, useNodeRefLookup) {
 	if (itemType == null || ("" + itemType).length === 0) {
 		return null;
 	}
@@ -414,7 +407,7 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 		// bcpg:rawMaterial with a valid ticket, the type lookup finds no configuration at
 		// all and step1 still returns no-form-config (lookupKey "bcpg:rawMaterial"),
 		// because the product forms carry no `model-type` declaration to inherit from.
-		portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket);
+		portalPrimeNodeTypeEvaluator(entityNodeRef);
 	}
 
 	var formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
@@ -435,30 +428,17 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 	var visibleFields = portalGetVisibleFields(mode === "create" ? "create" : (mode === "view" ? "view" : "edit"), formConfig);
 	var post = portalCreatePostBody("type", itemType, visibleFields, formConfig, entityNodeRef, skipSecurityRules);
 
-	// Endpoint selection — this is the crux of calling the repository from here.
+	// The "alfresco" endpoint authenticates with the Share session ticket
+	// (authenticator-id alfresco-ticket), so /becpg/form runs as the SESSION's user and
+	// the field-level security rules applied are that user's own — the supplier's, when
+	// the caller is the supplier portal. Its connector refuses the call with a 401 when
+	// there is no session, which is why this endpoint declares <authentication>user.
 	//
-	// The "alfresco" endpoint authenticates with the *Share session* ticket
-	// (authenticator-id alfresco-ticket) and its connector refuses the call outright,
-	// with a 401, when there is no session. The portal has no Share session: it holds an
-	// Alfresco ticket of its own.
-	//
-	// So when the caller forwards a ticket we go through "alfresco-noauth" — the
-	// identity-less endpoint Share itself uses for anonymous access (see
-	// templates/org/alfresco/quickshare.js) — and authenticate the repository call with
-	// that ticket. Consequence, and it is the desired one: /becpg/form runs as the
-	// SUPPLIER, so the field-level security rules applied are the supplier's own.
-	//
-	// With no ticket we keep the session-based endpoint, so this library still works when
-	// called from inside an authenticated Share page.
-	var formUrl = "/becpg/form";
-	var endpoint = "alfresco";
-	if (alfTicket != null && ("" + alfTicket).length > 0) {
-		endpoint = "alfresco-noauth";
-		formUrl = formUrl + "?alf_ticket=" + encodeURIComponent("" + alfTicket);
-	}
-
-	var connector = remote.connect(endpoint);
-	var response = connector.post(formUrl, jsonUtils.toJSONString(post.body), "application/json");
+	// There used to be a second path: a ticket forwarded in the query string and replayed
+	// on "alfresco-noauth", for a caller that had no Share session. The portal opens a
+	// real one now, so that path is gone and no credential is built here.
+	var connector = remote.connect("alfresco");
+	var response = connector.post("/becpg/form", jsonUtils.toJSONString(post.body), "application/json");
 
 	// `response.status` is a Status OBJECT, not an int (Surf ScriptRemoteConnector). Its
 	// numeric value is `status.code`. Comparing the object to a number silently fails,

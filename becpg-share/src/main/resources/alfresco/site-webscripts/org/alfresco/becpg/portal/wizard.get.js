@@ -80,9 +80,6 @@ function main() {
 	var entityType = getArgument("entityType", null);
 	var siteId = getArgument("siteId", null);
 	var mode = getArgument("mode", "edit");
-	// Forwarded by the portal so the repository call runs as the supplier (see
-	// portal-form.lib.js::portalResolveDefinition).
-	var alfTicket = getArgument("portalTicket", null);
 
 	/*
 	 * withItemForm=true adds the DEFAULT form of a datalist item to each list step.
@@ -184,7 +181,6 @@ function main() {
 					prefixedEntityType,
 					nodeRef,
 					skipSecurityRules,
-					alfTicket,
 					// Only an entity form may be resolved through the nodeRef: for a
 					// datalist the nodeRef is the entity's, not the list item's.
 					type === "form");
@@ -202,7 +198,6 @@ function main() {
 						prefixedEntityType,
 						nodeRef,
 						skipSecurityRules,
-						alfTicket,
 						false);
 				}
 			}
