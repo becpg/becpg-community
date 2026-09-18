@@ -613,7 +613,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			params.put("qNameId", qNamePair.getFirst());
 		}
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
-		params.put("workspaceSpacesStoreId", nodeDAO.getStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE).getFirst());
+
+		// The store has to be qualified for the tenant, exactly like the node below: the
+		// query filters on it, so mixing a tenant node with the default store discards
+		// every row and the caller sees no source association at all.
+		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
+		if (AuthenticationUtil.isMtEnabled()) {
+			storeRef = tenantService.getName(storeRef);
+		}
+		params.put("workspaceSpacesStoreId", nodeDAO.getStore(storeRef).getFirst());
+
 		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
 		Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
