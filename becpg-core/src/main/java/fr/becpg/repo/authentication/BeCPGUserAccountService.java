@@ -587,7 +587,7 @@ public class BeCPGUserAccountService {
 		boolean hasLower = false;
 		boolean hasDigit = false;
 		boolean hasSpecial = false;
-		String specialChars = "!@#$%^&*()-_=+[]{}";
+		String specialChars = "!@#$%^&*()-_=+[]{}.";
 		for (int i = 0; i < password.length(); i++) {
 			char c = password.charAt(i);
 			if (Character.isUpperCase(c)) {

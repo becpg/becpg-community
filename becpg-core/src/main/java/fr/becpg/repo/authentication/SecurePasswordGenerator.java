@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * <li>Contains at least one uppercase letter ({@code A-Z}).</li>
  * <li>Contains at least one lowercase letter ({@code a-z}).</li>
  * <li>Contains at least one digit ({@code 0-9}).</li>
- * <li>Contains at least one special character from: {@code !@#$%^&*()-_=+[]{} }.</li>
+ * <li>Contains at least one special character from: {@code !@#$%^&*()-_=+[]{}. }.</li>
  * </ul>
  *
  * @author matthieu
@@ -32,8 +32,8 @@ public class SecurePasswordGenerator {
 	private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
 	/** Constant <code>DIGIT="0123456789"</code> */
 	private static final String DIGIT = "0123456789";
-	/** Constant <code>SPECIAL="!@#$%^&amp;*()-_=+[]{}"</code> */
-	private static final String SPECIAL = "!@#$%^&*()-_=+[]{}";
+	/** Constant <code>SPECIAL="!@#$%^&amp;*()-_=+[]{}."</code> */
+	private static final String SPECIAL = "!@#$%^&*()-_=+[]{}.";
 	/** Constant <code>ALL="UPPER + LOWER + DIGIT + SPECIAL"</code> */
 	private static final String ALL = UPPER + LOWER + DIGIT + SPECIAL;
 	
