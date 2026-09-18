@@ -75,6 +75,9 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 */
 	private static final String SUPPLIER_PORTAL_CATALOG_ID = "supplierPortal-{pjt:projectEntity|@type}";
 
+	/** What identifies the wizard deliverable among a template's, whatever its description says. */
+	private static final String WIZARD_DELIVERABLE_URL_MARKER = "/share/page/wizard?";
+
 	/** Constant <code>SUPPLIER_SPEC_NAME="plm.supplier.portal.specification.name"</code> */
 	private static final String SUPPLIER_SPEC_NAME = "plm.supplier.portal.specification.name";
 
@@ -244,6 +247,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			pjtTpl.getAspects().add(PLMModel.ASPECT_SUPPLIERS);
 
 			alfrescoRepository.save(pjtTpl);
+		} else {
+			visitWizardDeliverableCatalog(projectTplNodeRef);
 		}
 
 		if ((projectTplNodeRef != null) && (documentLibraryNodeRef != null)
@@ -260,6 +265,56 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		return ret;
 
+	}
+
+	/**
+	 * <p>Names the completeness catalogue on the wizard deliverable of an <b>existing</b> project
+	 * template.</p>
+	 *
+	 * <p>The deliverable is only built when the template is created, so every instance that
+	 * already had one — dev, and every customer — kept a wizard URL with no {@code catalogId},
+	 * and neither Share's completeness panel nor the portal's had a catalogue to score against.
+	 * The fix was applied by hand on dev; this is the same gesture, done by the visitor.</p>
+	 *
+	 * <p>Idempotent, and deliberately timid: it appends the parameter only to a deliverable whose
+	 * URL points at the wizard and does not already name a catalogue. A template whose URL was
+	 * given a different {@code catalogId} is left exactly as it is — that is a customer's choice,
+	 * not a gap to fill.</p>
+	 *
+	 * <p>The deliverable is recognised by its URL and not by its description, which is translated
+	 * and which an administrator may have renamed.</p>
+	 *
+	 * <p>On the rule that repository changes ship disabled: this one writes nothing until an
+	 * administrator calls {@code becpg/admin/repository/init-repo}, which is itself the opt-in
+	 * gesture. Until then an instance serves byte-identical responses.</p>
+	 *
+	 * @param projectTplNodeRef the existing supplier project template
+	 */
+	private void visitWizardDeliverableCatalog(NodeRef projectTplNodeRef) {
+		if (projectTplNodeRef == null) {
+			return;
+		}
+
+		ProjectData pjtTpl = alfrescoRepository.findOne(projectTplNodeRef);
+		if ((pjtTpl == null) || (pjtTpl.getDeliverableList() == null)) {
+			return;
+		}
+
+		boolean updated = false;
+		for (DeliverableListDataItem deliverable : pjtTpl.getDeliverableList()) {
+			String url = deliverable.getUrl();
+			if ((url == null) || !url.contains(WIZARD_DELIVERABLE_URL_MARKER) || url.contains("catalogId=")) {
+				continue;
+			}
+			deliverable.setUrl(url + "&catalogId=" + SUPPLIER_PORTAL_CATALOG_ID);
+			updated = true;
+			logger.info("Supplier portal: named the completeness catalogue on the wizard deliverable of "
+					+ projectTplNodeRef);
+		}
+
+		if (updated) {
+			alfrescoRepository.save(pjtTpl);
+		}
 	}
 
 	/**

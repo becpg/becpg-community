@@ -3,10 +3,13 @@
    padding-top: 0.5em;
 }
 
+/* max-height is what makes overflow effective: without a height constraint the
+   field list grows past the viewport and pushes the action bar out of reach. */
 .bulk-edit .bulk-edit-props-container{
      margin-left: 1em;
      padding: 10px;
      overflow: auto;
+     max-height: 50vh;
 }
 
 .bulk-edit .bulk-edit-props-container  td {
