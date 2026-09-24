@@ -31,6 +31,10 @@
           <#if col.control??>
          "control": { "template": <#if col.control.template??>"${jsonUtils.encodeJSONString(col.control.template)}"<#else>null</#if>, "params": {<#list col.control.params?keys as paramName>"${jsonUtils.encodeJSONString(paramName)}": "${jsonUtils.encodeJSONString(col.control.params[paramName])}"<#if paramName_has_next>, </#if></#list>} },
       	 </#if>
+          <#-- Only present when the caller asked for it with withSets=true. -->
+          <#if col.set??>
+         "set": "${jsonUtils.encodeJSONString(col.set)}",
+         </#if>
           <#if col.protectedField??>
          "protectedField": ${col.protectedField?string},
       	 </#if>
@@ -60,12 +64,35 @@
    ]
 
 </#macro>
+<#-- The label-id wins over the literal label, the order Share's FormUIGet resolves a set label in:
+     the section then reads as in the form. -->
+<#function setLabel formSet>
+   <#if formSet.labelId??>
+      <#return msg(formSet.labelId)>
+   </#if>
+   <#return formSet.label>
+</#function>
+<#macro displaySets sets>
+"sets":
+   [
+   <#list sets as formSet>
+      {
+         "id": "${jsonUtils.encodeJSONString(formSet.id)}",
+         "label": "${jsonUtils.encodeJSONString(setLabel(formSet))}"<#if formSet.parentId??>,
+         "parentId": "${jsonUtils.encodeJSONString(formSet.parentId)}"</#if>
+      }<#if formSet_has_next>,</#if>
+   </#list>
+   ]
+</#macro>
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
 <#if error??>
    "error": "${error}"
 <#else>
    <@displayColumns columns/>
+   <#if sets??>
+   ,<@displaySets sets/>
+   </#if>
 </#if>
 }
 </#escape>

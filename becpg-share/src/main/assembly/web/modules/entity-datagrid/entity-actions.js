@@ -37,6 +37,11 @@
     var PICKER_PANEL_WIDTH = "76em";
 
     /**
+     * Delimits the set ids a picker line carries, so that one id is never matched inside another.
+     */
+    var SET_SEPARATOR = "|";
+
+    /**
      * beCPG.module.EntityDataGridActions implementation
      */
     beCPG.module.EntityDataGridActions = {};
@@ -745,15 +750,19 @@
                     + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
                     + (this.options.list != null ? "&list=" + this.options.list : "")
+                    + this._buildSetsArguments(this._getSetsNodeRef(itemType))
                     + ("&noCache=" + timeStamp),
                 successCallback: {
                     fn: function(response) {
+
+                        var setPaths = this._buildSetPaths(response.json.sets);
 
                         this._renderCheckboxPicker({
                             containerEl: containerEl,
                             panel: this.widgets.columnsListPanel,
                             title: this.msg("label.select-columns.title"),
-                            itemsHtml: this._buildColumnPickerItems(response.json.columns, hiddenColumnsInPopup),
+                            itemsHtml: this._buildColumnPickerItems(response.json.columns, hiddenColumnsInPopup, setPaths),
+                            setPaths: setPaths,
                             selectAllButtons: true
                         });
 
@@ -813,18 +822,20 @@
           * @method _buildColumnPickerItems
           * @param columns {Array} the columns returned by the configuration webscript
           * @param hiddenColumns {Array} the column names never offered to the user
+          * @param setPaths {object} the form sets, as built by _buildSetPaths
           * @return {String} the list items markup
           */
-        _buildColumnPickerItems: function EntityDataGrid__buildColumnPickerItems(columns, hiddenColumns) {
+        _buildColumnPickerItems: function EntityDataGrid__buildColumnPickerItems(columns, hiddenColumns, setPaths) {
             var me = this, itemsHtml = "", index = 0;
 
-            var appendColumn = function(column, value) {
+            var appendColumn = function(column, value, setId) {
                 if (column.label && column.label != "hidden" && hiddenColumns.indexOf(value) < 0) {
                     itemsHtml += me._buildPickerItem({
                         id: "propSelected-" + index,
                         value: value,
                         label: column.label,
-                        checked: column.checked
+                        checked: column.checked,
+                        setPath: setPaths[setId]
                     });
                 }
                 index++;
@@ -834,11 +845,12 @@
                 var column = columns[i];
                 var value = column.name.replace(":", "_");
 
-                appendColumn(column, value);
+                appendColumn(column, value, column.set);
 
+                // The columns of a nested entity are shown with it, so they belong to its set.
                 if (column.dataType == "nested_column") {
                     for (var j = 0; j < column.columns.length; j++) {
-                        appendColumn(column.columns[j], value + "_" + column.columns[j].name.replace(":", "_"));
+                        appendColumn(column.columns[j], value + "_" + column.columns[j].name.replace(":", "_"), column.set);
                     }
                 }
             }
@@ -847,16 +859,79 @@
         },
 
         /**
+          * The nodeRef of a row of the listed type, whose edit form gives the columns their sets.
+          * A datagrid form declares no set, and the edit form of a node is the one a client
+          * configuration lays its tabs out in. A row of another type is never taken: its form
+          * would change the sections offered with whichever row the page happens to start with.
+          *
+          * @method _getSetsNodeRef
+          * @param itemType {String} the type the columns are listed for
+          * @return {String} a nodeRef, or null when the grid shows no row of that type
+          */
+        _getSetsNodeRef: function EntityDataGrid__getSetsNodeRef(itemType) {
+            var recordSet = this.widgets.dataTable != null ? this.widgets.dataTable.getRecordSet() : null;
+
+            for (var i = 0, ii = recordSet != null ? recordSet.getLength() : 0; i < ii; i++) {
+                var record = recordSet.getRecord(i);
+                var data = record != null ? record.getData() : null;
+
+                if (data != null && data.nodeRef != null && data.nodeType == itemType) {
+                    return data.nodeRef;
+                }
+            }
+
+            return null;
+        },
+
+        /**
+          * The arguments asking the column webscript for the form sets.
+          *
+          * @method _buildSetsArguments
+          * @param setsNodeRef {String} the node whose edit form holds the sets, or null
+          * @return {String} the query string fragment
+          */
+        _buildSetsArguments: function EntityDataGrid__buildSetsArguments(setsNodeRef) {
+            return "&withSets=true" + (setsNodeRef != null ? "&setsNodeRef=" + encodeURIComponent(setsNodeRef) : "");
+        },
+
+        /**
+          * Indexes the form sets returned by the column webscript by id, each one with its label
+          * prefixed by its parents' ("Parent > Set") and the chain of ids leading back to its root.
+          *
+          * @method _buildSetPaths
+          * @param sets {Array} the {id, label, parentId} sets, parents first, or undefined
+          * @return {object} set id to {id, label, chain}
+          */
+        _buildSetPaths: function EntityDataGrid__buildSetPaths(sets) {
+            var setPaths = {};
+
+            for (var i = 0; sets != null && i < sets.length; i++) {
+                var set = sets[i], parentPath = set.parentId != null ? setPaths[set.parentId] : null;
+
+                setPaths[set.id] = {
+                    id: set.id,
+                    label: parentPath != null ? parentPath.label + " > " + set.label : set.label,
+                    chain: parentPath != null ? [set.id].concat(parentPath.chain) : [set.id]
+                };
+            }
+
+            return setPaths;
+        },
+
+        /**
           * Builds one checkbox line of a picker.
           *
           * @method _buildPickerItem
-          * @param item {object} the html id, the submitted value, the label and the initial state
+          * @param item {object} the html id, the submitted value, the label, the initial state and
+          *           the set path of the field, if any
           * @return {String} the list item markup
           */
         _buildPickerItem: function EntityDataGrid__buildPickerItem(item) {
             var encodedLabel = Alfresco.util.encodeHTML(item.label);
+            var setsAttribute = item.setPath != null
+                ? ' data-sets="' + Alfresco.util.encodeHTML(SET_SEPARATOR + item.setPath.chain.join(SET_SEPARATOR) + SET_SEPARATOR) + '"' : "";
 
-            return '<li class="picker-list-item" data-label="' + encodedLabel + '">'
+            return '<li class="picker-list-item" data-label="' + encodedLabel + '"' + setsAttribute + '>'
                 + '<input id="' + item.id + '" type="checkbox" name="propChecked" value="' + item.value + '"' + (item.checked ? ' checked' : '') + '/>'
                 + '<label for="' + item.id + '">'
                 + '<span class="picker-list-label" title="' + encodedLabel + '">' + encodedLabel + '</span>'
@@ -884,7 +959,8 @@
           *
           * @method _renderCheckboxPicker
           * @param picker {object} the container element, the panel to resize, the title, the items
-          *           markup and whether the select all buttons are wanted
+          *           markup, the form sets the items belong to and whether the select all buttons
+          *           are wanted
           */
         _renderCheckboxPicker: function EntityDataGrid__renderCheckboxPicker(picker) {
             var me = this;
@@ -892,6 +968,7 @@
 
             var html = '<div class="picker-list-header">';
             html += '<span class="picker-list-title">' + picker.title + '</span>';
+            html += '<select class="picker-list-set hidden"></select>';
             html += '<input class="picker-list-filter" type="text" autocomplete="off" placeholder="'
                 + this.msg("label.picker-list.filter") + '" />';
             html += '<span class="picker-list-toggle">'
@@ -916,6 +993,9 @@
                 me._filterPickerItems(picker.containerEl);
             };
 
+            this._renderSetFilter(picker.containerEl, picker.setPaths);
+
+            Event.on(Selector.query("select.picker-list-set", picker.containerEl, true), "change", applyFilter);
             Event.on(Selector.query("input.picker-list-filter", picker.containerEl, true), "input", applyFilter);
             Event.on(Dom.get(checkedOnlyId), "change", applyFilter);
 
@@ -936,7 +1016,67 @@
         },
 
         /**
-          * Hides the picker lines that the search field and the selected only option leave out.
+          * Fills the set drop-down with the sets holding at least one line of the picker, and only
+          * shows it when there is one: a type whose form declares no set keeps the picker as it was.
+          *
+          * @method _renderSetFilter
+          * @param containerEl {object} the element holding the picker
+          * @param setPaths {object} the form sets, as built by _buildSetPaths, or undefined
+          */
+        _renderSetFilter: function EntityDataGrid__renderSetFilter(containerEl, setPaths) {
+            var selectEl = Selector.query("select.picker-list-set", containerEl, true);
+            var usedSetIds = this._collectPickerSetIds(containerEl);
+            var hasSet = false;
+
+            selectEl.appendChild(new Option(this.msg("label.picker-list.all-sets"), ""));
+
+            for (var setId in setPaths) {
+                if (setPaths.hasOwnProperty(setId) && usedSetIds[setId]) {
+                    selectEl.appendChild(new Option(setPaths[setId].label, setId));
+                    hasSet = true;
+                }
+            }
+
+            if (hasSet) {
+                Dom.removeClass(selectEl, "hidden");
+            }
+        },
+
+        /**
+          * @method _collectPickerSetIds
+          * @param containerEl {object} the element holding the picker
+          * @return {object} the ids of the sets, parents included, that the picker lines belong to
+          */
+        _collectPickerSetIds: function EntityDataGrid__collectPickerSetIds(containerEl) {
+            var items = Selector.query("li.picker-list-item", containerEl);
+            var setIds = {};
+
+            for (var i = 0; i < items.length; i++) {
+                var chain = (items[i].getAttribute("data-sets") || "").split(SET_SEPARATOR);
+                for (var j = 0; j < chain.length; j++) {
+                    if (chain[j].length > 0) {
+                        setIds[chain[j]] = true;
+                    }
+                }
+            }
+
+            return setIds;
+        },
+
+        /**
+          * @method _isInPickerSet
+          * @param itemEl {object} a picker line
+          * @param setId {String} the set chosen in the drop-down, empty for all of them
+          * @return {boolean} true when the line belongs to that set or to one of its sub sets
+          */
+        _isInPickerSet: function EntityDataGrid__isInPickerSet(itemEl, setId) {
+            return setId.length === 0
+                || (itemEl.getAttribute("data-sets") || "").indexOf(SET_SEPARATOR + setId + SET_SEPARATOR) > -1;
+        },
+
+        /**
+          * Hides the picker lines that the set drop-down, the search field and the selected only
+          * option leave out.
           *
           * Ticking a line off does not re-run the filter: a line vanishing from under the pointer
           * while the user is unticking a series of them would make the next click land elsewhere.
@@ -945,8 +1085,10 @@
           * @param containerEl {object} the element holding the picker
           */
         _filterPickerItems: function EntityDataGrid__filterPickerItems(containerEl) {
+            var setEl = Selector.query("select.picker-list-set", containerEl, true);
             var filterEl = Selector.query("input.picker-list-filter", containerEl, true);
             var checkedOnlyEl = Selector.query("input.picker-list-checked-only", containerEl, true);
+            var setId = setEl != null ? setEl.value : "";
             var normalizedFilter = this._normalizeForFilter(filterEl != null ? filterEl.value : "");
             var checkedOnly = checkedOnlyEl != null && checkedOnlyEl.checked;
             var items = Selector.query("li.picker-list-item", containerEl);
@@ -954,7 +1096,8 @@
 
             for (var i = 0; i < items.length; i++) {
                 var checkbox = Selector.query('input[type="checkbox"]', items[i], true);
-                var matches = (!checkedOnly || (checkbox != null && checkbox.checked))
+                var matches = this._isInPickerSet(items[i], setId)
+                    && (!checkedOnly || (checkbox != null && checkbox.checked))
                     && (normalizedFilter.length === 0
                         || this._normalizeForFilter(items[i].getAttribute("data-label")).indexOf(normalizedFilter) > -1);
 
