@@ -399,7 +399,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									loadProductData(entityNodeRef, compositionDataItem.getComponent(), nodeElt, context, null);
 								}
 
-								loadDataListItemAttributes(dataListItem, nodeElt, context);
+								loadDataListItemAttributesOverComponent(dataListItem, nodeElt, context);
 
 								if (dataListItem instanceof AbstractManualVariantListDataItem) {
 									extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
@@ -952,7 +952,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 
 			loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Packaging);
-			loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+			loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), currentLevelQuantities.getComponentProductData().getName());
 
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), Double.toString(currentLevelQuantities.getLossRatio()));
@@ -1046,7 +1046,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 			loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Process);
-			loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+			loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 
 			partElt.addAttribute(MPMModel.ASSOC_PL_RESOURCE.getLocalName(), currentLevelQuantities.getComponentProductData().getName());
 			partElt.addAttribute(MPMModel.PROP_PL_QTY_RESOURCE.getLocalName(),
@@ -1142,7 +1142,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
 		loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Composition);
-		loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+		loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 
 		partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(currentLevelQuantities.getQtyForProduct()));
 		partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(currentLevelQuantities.getQtyForCost()));
@@ -2181,7 +2181,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute("previousCost", Double.toString(0d));
 			partElt.addAttribute("futureCost", Double.toString(0d));
 		}
-		loadDataListItemAttributes(dataItem, partElt, context);
+		loadDataListItemAttributesOverComponent(dataItem, partElt, context);
 		loadPackagingMaterials(partElt, dataItem, context);
 
 		extractVariants(dataItem.getVariants(), partElt);
@@ -2353,7 +2353,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(entityNodeRef, dataItem.getComponent(), partElt, context, CostType.Process);
-		loadDataListItemAttributes(dataItem, partElt, context);
+		loadDataListItemAttributesOverComponent(dataItem, partElt, context);
 
 		partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(currentLevelQuantities.getQtyForProduct()));
 		partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(currentLevelQuantities.getQtyForCost()));
@@ -2601,6 +2601,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				context.cacheProductData(cacheKey, tempElt);
 			}
 		}
+	}
+
+	/**
+	 * Loads the attributes of a data list item into an element already holding the ones of its
+	 * component, the item taking precedence over the component for the properties both define.
+	 *
+	 * @param dataListItem the data list item
+	 * @param nodeElt the element holding the component properties
+	 * @param context the extractor context
+	 */
+	private void loadDataListItemAttributesOverComponent(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
+		List<Element> componentElements = new ArrayList<>(nodeElt.elements());
+		loadDataListItemAttributes(dataListItem, nodeElt, context);
+		ComponentElementOverride.removeOverriddenComponentElements(nodeElt, componentElements);
 	}
 
 	/** Constant <code>SHOULD_EXTRACT_COST_CACHE_KEY="shouldExtractCost"</code> */

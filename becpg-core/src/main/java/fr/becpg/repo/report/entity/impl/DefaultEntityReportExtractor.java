@@ -117,6 +117,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>TAG_ENTITY="entity"</code> */
 	public static final String TAG_ENTITY = "entity";
 
+	/** Attribute naming the namespace prefix of a property or association element. */
+	public static final String ATTR_PREFIX = "prefix";
+
 	/** Constant <code>TAG_DATALISTS="dataLists"</code> */
 	protected static final String TAG_DATALISTS = "dataLists";
 	/** Constant <code>TAG_ATTRIBUTES="attributes"</code> */
@@ -1720,7 +1723,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param cDATAElt a {@link org.dom4j.Element} object.
 	 */
 	protected void appendPrefix(QName propertyQName, Element cDATAElt) {
-		cDATAElt.addAttribute("prefix", entityDictionaryService.toPrefixString(propertyQName).split(":")[0]);
+		cDATAElt.addAttribute(ATTR_PREFIX, entityDictionaryService.toPrefixString(propertyQName).split(":")[0]);
 	}
 
 	// Check that images has not been update
