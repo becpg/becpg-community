@@ -108,4 +108,21 @@ public interface NutrientRegulation {
 	default Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
 		return tolerances(value, nutrientTypeCode, nutUnit);
 	}
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * <p>Criteria-aware tolerances: besides the claim, the criteria tell whether the nutrient was
+	 * added to the product, which the Canadian regulation assesses without any tolerance (class I).
+	 * Regulations that ignore that notion fall back to the claim-aware tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param criteria what is known about the nutrient line
+	 * @return the (maximum, minimum) tolerated values, either of them possibly {@code null}
+	 */
+	default Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, NutrientToleranceCriteria criteria) {
+		return tolerances(value, nutrientTypeCode, nutUnit, criteria.claimed());
+	}
 }

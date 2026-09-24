@@ -20,6 +20,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -30,7 +31,9 @@ import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.formulation.nutrient.NutrientToleranceCriteria;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.SupplementalIngredientMarking;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
@@ -273,7 +276,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 
 					boolean isClaimed = (n.getNut() != null) && claimedNutRefs.contains(n.getNut());
-					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n, isClaimed);
+					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n,
+							NutrientToleranceCriteria.ofLine(isClaimed, isAddedNutrient(n)));
 
 					if (transientFormulation) {
 						n.setTransient(true);
@@ -282,6 +286,21 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}
 		});
 
+	}
+
+	/**
+	 * Tells whether the formulator marked the nutrient line as added to the product (fortification),
+	 * which the Canadian regulation assesses without any tolerance. A line not saved yet carries no
+	 * marking.
+	 *
+	 * @param nutListItem the nutrient line
+	 * @return {@code true} when the line is marked as a supplemental ingredient
+	 */
+	private boolean isAddedNutrient(NutListDataItem nutListItem) {
+		if ((nutListItem.getNodeRef() == null) || !nodeService.exists(nutListItem.getNodeRef())) {
+			return false;
+		}
+		return SupplementalIngredientMarking.isMarked(nodeService.getProperty(nutListItem.getNodeRef(), ReportModel.PROP_REPORT_KINDS));
 	}
 
 	/**

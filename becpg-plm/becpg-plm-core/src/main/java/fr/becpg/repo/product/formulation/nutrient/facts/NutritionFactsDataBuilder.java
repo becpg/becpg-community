@@ -17,11 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,13 +35,13 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulatedNutrient;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.SupplementalIngredientMarking;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions.SharedDailyValue;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -252,11 +250,7 @@ public class NutritionFactsDataBuilder {
 		if ((nutListItem.getNodeRef() == null) || !mlNodeService.exists(nutListItem.getNodeRef())) {
 			return false;
 		}
-		Serializable reportKinds = mlNodeService.getProperty(nutListItem.getNodeRef(), ReportModel.PROP_REPORT_KINDS);
-		if (reportKinds instanceof Collection<?> kinds) {
-			return kinds.contains(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT);
-		}
-		return PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT.equals(reportKinds);
+		return SupplementalIngredientMarking.isMarked(mlNodeService.getProperty(nutListItem.getNodeRef(), ReportModel.PROP_REPORT_KINDS));
 	}
 
 	/**
