@@ -36,6 +36,12 @@
                         var dt = Alfresco.util.ComponentManager.find({
                            name : "beCPG.module.EntityDataGrid"
                         })[0];
+
+                        // A custom view without datagrid (e.g. View-regulatory) exports its own content
+                        if (!dt) {
+                           YAHOO.Bubbling.fire("exportCustomView");
+                           return;
+                        }
                         
                         YAHOO.Bubbling.fire("refreshDataGrids",{ clearCache :true,
 			            	    		  cacheTimeStamp : (new Date()).getTime() });
@@ -254,6 +260,8 @@
 
 						Dom.addClass(formulateButton, "loading");
 
+						YAHOO.Bubbling.fire("formulationStarted");
+
 						Alfresco.util.Ajax
 							.request({
 								method: Alfresco.util.Ajax.GET,
@@ -284,6 +292,7 @@
 											});
 										}
 										Dom.removeClass(formulateButton, "loading");
+										YAHOO.Bubbling.fire("formulationFailed");
 									},
 									scope: this
 								}
