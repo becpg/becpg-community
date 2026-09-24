@@ -37,7 +37,8 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 
 	private boolean isCharactAllowed(T specDataItem, T listDataItem) {
-		if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(getValue(specDataItem, listDataItem))) {
+		Double requiredValue = getRequiredValue(specDataItem);
+		if ((requiredValue != null) && !requiredValue.equals(getValue(specDataItem, listDataItem))) {
 			return false;
 		}
 
@@ -58,10 +59,14 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 		return true;
 	}
 
+	/**
+	 * The maximum usable quantity only makes sense when the value exceeds the maximum: a value
+	 * below the minimum would give a meaningless quantity above 100%.
+	 */
 	private Double calculateMaxQty(T specDataItem, T listDataItem) {
 		Double specMaxi = getMaxi(specDataItem, listDataItem);
 		Double value = getValue(specDataItem, listDataItem);
-		if (specMaxi != null && value != null && value != 0) {
+		if ((specMaxi != null) && (value != null) && (value != 0) && (value > specMaxi)) {
 			return (specMaxi / value) * 100d;
 		}
 		return null;
@@ -270,6 +275,17 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * @param specDataItem a T object
 	 */
 	protected abstract String getSpecInfoMessageKey(T specDataItem);
+
+	/**
+	 * Gets the exact value the specification item requires, if any.
+	 * Subclasses can override this when the value of a specification item is not an exact target.
+	 *
+	 * @param specDataItem the specification data item
+	 * @return the exact value required, or null when any value is accepted
+	 */
+	protected Double getRequiredValue(T specDataItem) {
+		return specDataItem.getValue();
+	}
 
 	/**
 	 * Gets the minimum value from the specification item for comparison.
