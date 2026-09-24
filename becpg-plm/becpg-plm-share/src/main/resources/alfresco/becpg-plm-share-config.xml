@@ -149,6 +149,7 @@
 			<list id="supplierPackagingList" index="62" view="true" />
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
+			<list id="View-regulatory" index="214" view="true" />
 			<list id="toxList" index="215"/>
 			<list id="hazardClassificationList" index="216"/>
 			<list id="svhcList" index="217"/>
