@@ -14401,7 +14401,6 @@
                     <show id="bcpg:regulatoryType" force="true" />
                     <show id="bcpg:regulatoryText" force="true" />
                     <show id="bcpg:svhcListIng" />
-                    <show id="bcpg:svhcListMini" />
                     <show id="bcpg:svhcListMaxi" />
                     <show id="bcpg:regulatoryCountries" force="true" />
                     <show id="bcpg:regulatoryUsageRef" force="true" />
@@ -14412,11 +14411,6 @@
                             <control-param name="ds">
                                 becpg/autocomplete/targetassoc/associations/bcpg:ing?filter=bcpg:isSubstanceOfVeryHighConcern%7Ctrue
                             </control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:svhcListMini">
-                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-                            <control-param name="unit">perc</control-param>
                         </control>
                     </field>
                     <field id="bcpg:svhcListMaxi">
@@ -14438,7 +14432,6 @@
                     <show id="bcpg:regulatoryType" force="true" />
                     <show id="bcpg:regulatoryText" force="true" />
                     <show id="bcpg:svhcListIng" />
-                    <show id="bcpg:svhcListMini" />
                     <show id="bcpg:svhcListMaxi" />
                     <show id="bcpg:regulatoryCountries" force="true" />
                     <show id="bcpg:regulatoryUsageRef" force="true" />
@@ -14512,7 +14505,6 @@
                     <show id="bcpg:regulatoryType" force="true" />
                     <show id="bcpg:regulatoryText" force="true" />
                     <show id="bcpg:svhcListIng" />
-                    <show id="bcpg:svhcListMini" />
                     <show id="bcpg:svhcListMaxi" />
                     <show id="bcpg:regulatoryCountries" force="true" />
                     <show id="bcpg:regulatoryUsageRef" force="true" />
@@ -14523,11 +14515,6 @@
                             <control-param name="ds">
                                 becpg/autocomplete/targetassoc/associations/bcpg:ing?filter=bcpg:isSubstanceOfVeryHighConcern%7Ctrue
                             </control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:svhcListMini">
-                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
-                            <control-param name="unit">perc</control-param>
                         </control>
                     </field>
                     <field id="bcpg:svhcListMaxi">

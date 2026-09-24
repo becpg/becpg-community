@@ -41,6 +41,23 @@ public class SvhcRequirementScanner extends SimpleListRequirementScanner<SvhcLis
 		return MESSAGE_SVHC_INFO;
 	}
 
+	/**
+	 * The quantity of a specification item is a legacy maximum (see {@link SvhcListDataItem#getMaxi()}),
+	 * not an exact target.
+	 */
+	@Override
+	protected Double getRequiredValue(SvhcListDataItem specDataItem) {
+		return null;
+	}
+
+	/**
+	 * A minimum content of a substance of very high concern is meaningless: only the maximum is checked.
+	 */
+	@Override
+	protected Double getMini(SvhcListDataItem specDataItem, SvhcListDataItem listDataItem) {
+		return null;
+	}
+
 	@Override
 	protected Double getMaxi(SvhcListDataItem specDataItem, SvhcListDataItem listDataItem) {
 		Double maxi = super.getMaxi(specDataItem, listDataItem);
