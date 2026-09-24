@@ -118,15 +118,15 @@
        	 ],
 
          "score1": [
-           {"attribute": "bcpg:eslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef1_added", "listType": "bcpg:entityScoreList" },
-           {"attribute": "bcpg:eslValue" , "htmlId":"prop_bcpg_advEslValue1-range" },
-           {"attribute": "bcpg:eslClass" , "htmlId":"prop_bcpg_advEslClass1" }
+           {"attribute": "bcpg:rslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef1_added", "listType": "bcpg:regulatoryScoreList" },
+           {"attribute": "bcpg:rslValue" , "htmlId":"prop_bcpg_advEslValue1-range" },
+           {"attribute": "bcpg:rslClass" , "htmlId":"prop_bcpg_advEslClass1" }
        	 ],
 
          "score2": [
-           {"attribute": "bcpg:eslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef2_added", "listType": "bcpg:entityScoreList", "operator": "AND" },
-           {"attribute": "bcpg:eslValue" , "htmlId":"prop_bcpg_advEslValue2-range" },
-           {"attribute": "bcpg:eslClass" , "htmlId":"prop_bcpg_advEslClass2" }
+           {"attribute": "bcpg:rslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef2_added", "listType": "bcpg:regulatoryScoreList", "operator": "AND" },
+           {"attribute": "bcpg:rslValue" , "htmlId":"prop_bcpg_advEslValue2-range" },
+           {"attribute": "bcpg:rslClass" , "htmlId":"prop_bcpg_advEslClass2" }
        	 ],
        	 
 		 "svhc1" : [ 
