@@ -863,6 +863,7 @@
           * A datagrid form declares no set, and the edit form of a node is the one a client
           * configuration lays its tabs out in. A row of another type is never taken: its form
           * would change the sections offered with whichever row the page happens to start with.
+          * A row carries its type as itemType, the key the repository data list extractor writes.
           *
           * @method _getSetsNodeRef
           * @param itemType {String} the type the columns are listed for
@@ -875,7 +876,7 @@
                 var record = recordSet.getRecord(i);
                 var data = record != null ? record.getData() : null;
 
-                if (data != null && data.nodeRef != null && data.nodeType == itemType) {
+                if (data != null && data.nodeRef != null && data.itemType == itemType) {
                     return data.nodeRef;
                 }
             }
