@@ -3,14 +3,20 @@
  */
 package fr.becpg.test.project.formulation;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -33,6 +39,10 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	private NodeService mlAwareNodeService;
 
 	/**
 	 * Tests that the parent project state follows the sub-project states by priority:
@@ -114,6 +124,38 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 				return null;
 			}, false, true);
 		}
+	}
+
+	/**
+	 * Tests that formulation replaces every translation of a sub-project task name with the
+	 * sub-project name, so that no locale keeps the creation placeholder (#36791).
+	 */
+	@Test
+	public void testSubProjectTaskNameReplacesTranslations() {
+
+		final NodeRef subProject1 = createSubProject("Sub Pjt 3.1");
+		final NodeRef subProject2 = createSubProject("Sub Pjt 3.2");
+		final NodeRef parentNodeRef = createParentProject("Parent Pjt 3", subProject1, subProject2);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			for (TaskListDataItem task : ((ProjectData) alfrescoRepository.findOne(parentNodeRef)).getTaskList()) {
+				MLText taskName = (MLText) mlAwareNodeService.getProperty(task.getNodeRef(), ProjectModel.PROP_TL_TASK_NAME);
+				taskName.addValue(Locale.GERMAN, "Sub project");
+				mlAwareNodeService.setProperty(task.getNodeRef(), ProjectModel.PROP_TL_TASK_NAME, taskName);
+			}
+			return null;
+		}, false, true);
+
+		formulateProject(parentNodeRef);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Set<String> taskNames = new HashSet<>();
+			for (TaskListDataItem task : ((ProjectData) alfrescoRepository.findOne(parentNodeRef)).getTaskList()) {
+				taskNames.addAll(((MLText) mlAwareNodeService.getProperty(task.getNodeRef(), ProjectModel.PROP_TL_TASK_NAME)).values());
+			}
+			assertEquals(Set.of("Sub Pjt 3.1", "Sub Pjt 3.2"), taskNames);
+			return null;
+		}, false, true);
 	}
 
 	private NodeRef createSubProject(final String name) {
