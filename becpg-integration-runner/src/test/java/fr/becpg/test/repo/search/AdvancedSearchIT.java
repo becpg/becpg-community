@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.InvalidQNameException;
 import org.alfresco.service.namespace.NamespaceException;
@@ -29,6 +32,8 @@ import fr.becpg.repo.search.AdvSearchQueryFilter;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.ProductAdvSearchPlugin;
+import fr.becpg.repo.search.impl.AdvSearchServiceImpl;
+import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -43,6 +48,10 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 	private static final String DOTTED_ERP_CODE = "REF.001.A";
 
 	private static final String PLAIN_ERP_CODE = "REF002A";
+
+	private static final String STALE_SEARCH_CONFIG = "{\"dataListSearchFilters\":{}}";
+
+	private static final String SCORE_FILTER = "score1";
 
 	@Autowired
 	protected AdvSearchService advSearchService;
@@ -287,6 +296,56 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 
 			return null;
 		});
+	}
+
+	/**
+	 * The parsed search configuration is cached. Initializing the repository rewrites
+	 * <code>search.json</code> and must drop that cache, otherwise the advanced search keeps
+	 * running the criteria of the previous file until the server restarts.
+	 */
+	@Test
+	public void testSearchConfigReloadedAfterRepositoryInit() {
+
+		NodeRef configNodeRef = inReadTx(
+				() -> BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), AdvSearchServiceImpl.CONFIG_PATH));
+		assertNotNull(configNodeRef);
+
+		String shippedConfig = inReadTx(() -> contentService.getReader(configNodeRef, ContentModel.PROP_CONTENT).getContentString());
+
+		try {
+			inWriteTx(() -> {
+				writeSearchConfig(configNodeRef, STALE_SEARCH_CONFIG);
+				beCPGCacheService.clearCache(AdvSearchService.class.getName());
+				return null;
+			});
+
+			assertFalse(inReadTx(() -> hasDataListSearchFilter(SCORE_FILTER)));
+
+			inWriteTx(() -> initRepoVisitorService.run(repositoryHelper.getCompanyHome()));
+
+			assertTrue(inReadTx(() -> hasDataListSearchFilter(SCORE_FILTER)));
+		} finally {
+			inWriteTx(() -> {
+				writeSearchConfig(configNodeRef, shippedConfig);
+				beCPGCacheService.clearCache(AdvSearchService.class.getName());
+				return null;
+			});
+		}
+	}
+
+	private void writeSearchConfig(NodeRef configNodeRef, String content) {
+		ContentWriter writer = contentService.getWriter(configNodeRef, ContentModel.PROP_CONTENT, true);
+		writer.setMimetype(MimetypeMap.MIMETYPE_JSON);
+		writer.putContent(content);
+	}
+
+	private boolean hasDataListSearchFilter(String filterName) {
+		for (DataListSearchFilter filter : advSearchService.getSearchConfig().getDataListSearchFilters()) {
+			if (filterName.equals(filter.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private NodeRef createRawMaterialEndingOn(LocalDate endOfEffectivity, String name) {

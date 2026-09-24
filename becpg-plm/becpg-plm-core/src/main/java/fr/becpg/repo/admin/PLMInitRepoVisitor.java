@@ -116,6 +116,7 @@ import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.SavedSearchService;
 import fr.becpg.repo.search.data.DateFilterType;
@@ -568,7 +569,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		//Config folder
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CONFIG);
 
+		// both caches parse files of the Config folder that the visit above may have rewritten
 		beCPGCacheService.clearCache(EntityCatalogService.class.getName());
+		beCPGCacheService.clearCache(AdvSearchService.class.getName());
 
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
