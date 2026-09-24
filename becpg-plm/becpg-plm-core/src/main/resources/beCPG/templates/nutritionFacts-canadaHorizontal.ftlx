@@ -63,7 +63,7 @@
 
 	<#assign header = nf.joined(nf_data.label("dailyValueShort"), nf_data.isBilingual()?then(nf_data.secondaryLabel("dailyValueShort"), ""))>
 	<#list [COL1_X, COL2_X] as columnX>
-	<text x="${columnX + COL_W - 4}" y="${nf.baseline(top, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${header}</text>
+	<text x="${columnX + COL_W - 4}" y="${nf.baseline(top, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end">${header}</text>
 	</#list>
 	<#assign headerY = top + nf.lineHeight(nf.CAPTION_SIZE)>
 
@@ -81,7 +81,7 @@
 	<#assign leftBottom = nf.cursorY>
 
 	<#if nf_data.calories()??>
-	<text x="${nf.PAD}" y="${nf.baseline(leftBottom, CALORIES_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${CALORIES_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
+	<text x="${nf.PAD}" y="${nf.baseline(leftBottom, CALORIES_SIZE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
 	<#assign leftBottom = leftBottom + nf.lineHeight(CALORIES_SIZE)>
 	</#if>
 

@@ -36,8 +36,8 @@
 	<#assign y = top>
 
 	<#list [COL1_X, COL2_X] as colX>
-	<text x="${colX + 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("amountPerServingShort")}</text>
-	<text x="${colX + COL_W - 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${nf_data.label("dailyValue")}</text>
+	<text x="${colX + 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.label("amountPerServingShort")}</text>
+	<text x="${colX + COL_W - 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end">${nf_data.label("dailyValue")}</text>
 	</#list>
 	<#assign y = y + nf.CAPTION_ROW_H>
 
@@ -73,9 +73,9 @@
 	<#assign columnsBottom = y>
 
 	<#assign y = top>
-	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${TITLE_LINE}">Nutrition</text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${TITLE_LINE}">Nutrition</text>
 	<#assign y = y + TITLE_LINE>
-	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${TITLE_LINE}">Facts</text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${TITLE_LINE}">Facts</text>
 	<#assign y = y + TITLE_LINE + 2>
 
 	<@nf.bandRule x=0 y=y width=LEFT_W/>
@@ -85,7 +85,7 @@
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
 	<#assign y = y + nf.NUTRIENT_ROW_H>
 	</#if>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
 	<#assign y = y + nf.NUTRIENT_ROW_H>
 
 	<#if nf_data.calories()??>
@@ -93,12 +93,12 @@
 	<#assign caloriesH = nf.lineHeight(CALORIES_VALUE) + nf.NUTRIENT_ROW_H>
 	<#assign y = [y + 2, columnsBottom - caloriesH]?max>
 	<@nf.bandRule x=0 y=y - 3 width=LEFT_W/>
-	<text x="${nf.PAD}" y="${nf.baseline(y, CALORIES_VALUE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL}">${nf_data.calories().label()}</text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, CALORIES_VALUE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_LABEL}">${nf_data.calories().label()}</text>
 	<#if nf_data.calories().value()??>
-	<text x="${COL1_X - 6}" y="${nf.baseline(y, CALORIES_VALUE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${CALORIES_VALUE}" text-anchor="end">${nf_data.calories().value()}</text>
+	<text x="${COL1_X - 6}" y="${nf.baseline(y, CALORIES_VALUE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_VALUE}" text-anchor="end">${nf_data.calories().value()}</text>
 	</#if>
 	<#assign y = y + nf.lineHeight(CALORIES_VALUE)>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("perServing")}</text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.label("perServing")}</text>
 	<#assign y = y + nf.NUTRIENT_ROW_H>
 	</#if>
 	<#assign leftBottom = y>

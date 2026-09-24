@@ -50,12 +50,19 @@ public class NutritionFactsTemplateTest {
 	private static final String FOOTNOTE = "* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily "
 			+ "diet. 2,000 calories a day is used for general nutrition advice.";
 
+	private static final String BOLD = "bold";
+
+	private static final String ARIAL = "Arial";
+
 	private static final double HAIRLINE = 0.25d;
 
 	private static final double PANEL_WIDTH = 144d;
 
 	/** Width of a Canadian panel stating "% valeur quotidienne*", which widens it past its minimum. */
-	private static final String CANADA_PANEL_WIDTH = "189pt";
+	private static final String CANADA_PANEL_WIDTH = "170pt";
+
+	/** Minimum width of a bilingual Canadian panel, which already holds its daily value header. */
+	private static final String CANADA_BILINGUAL_PANEL_WIDTH = "180pt";
 
 	private static final double RULE_MEDIUM = 3d;
 
@@ -91,6 +98,15 @@ public class NutritionFactsTemplateTest {
 		Assert.assertEquals("http://www.w3.org/2000/svg", svg.getAttribute("xmlns"));
 		Assert.assertEquals("144pt", svg.getAttribute("width"));
 		Assert.assertTrue("The panel must declare its height", svg.getAttribute("height").endsWith("pt"));
+	}
+
+	@Test
+	public void testPanelIsSetInArialOnly() throws Exception {
+		String svg = renderToString(CANADA_TEMPLATE, canadianPanel());
+
+		Assert.assertTrue("The panel is set in Arial", parse(svg).getDocumentElement().getAttribute("font-family").startsWith(ARIAL));
+		Assert.assertFalse("No text switches to another face", svg.contains("<text font-family") || svg.contains(" font-family=\"'"));
+		Assert.assertFalse("Emphasis is the bold weight, never a black face", svg.contains("font-weight=\"900\""));
 	}
 
 	@Test
@@ -221,9 +237,8 @@ public class NutritionFactsTemplateTest {
 	public void testDailyValueOfAMicronutrientIsNotEmphasised() throws Exception {
 		Document panel = render();
 
-		Assert.assertTrue("The percentage of a mandatory nutrient is set in the heavy face",
-				findText(panel, "10%").getAttribute("font-family").contains("Black"));
-		Assert.assertEquals("The percentage of a vitamin stays in the body face", "", findText(panel, "45%").getAttribute("font-family"));
+		Assert.assertEquals("The percentage of a mandatory nutrient is set in bold", BOLD, findText(panel, "10%").getAttribute("font-weight"));
+		Assert.assertEquals("The percentage of a vitamin stays in the regular weight", "", findText(panel, "45%").getAttribute("font-weight"));
 	}
 
 	@Test
@@ -299,16 +314,16 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianPercentagesStayInTheBodyFace() throws Exception {
 		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
 
-		Assert.assertEquals("The Canadian panel leaves every percentage in the body face", "",
-				findText(panel, "10%").getAttribute("font-family"));
+		Assert.assertEquals("The Canadian panel leaves every percentage in the regular weight", "",
+				findText(panel, "10%").getAttribute("font-weight"));
 	}
 
 	@Test
 	public void testCanadianFootnoteSetsItsVerdictsInTheHeavyFace() throws Exception {
 		String svg = renderToString(CANADA_TEMPLATE, canadianPanel());
 
-		Assert.assertTrue("The little/lot rule states its two verdicts in the heavy face",
-				svg.contains("font-weight=\"900\">peu</tspan>") && svg.contains("font-weight=\"900\">beaucoup</tspan>"));
+		Assert.assertTrue("The little/lot rule states its two verdicts in bold",
+				svg.contains("font-weight=\"bold\">peu</tspan>") && svg.contains("font-weight=\"bold\">beaucoup</tspan>"));
 	}
 
 	@Test
@@ -331,7 +346,7 @@ public class NutritionFactsTemplateTest {
 
 		Assert.assertEquals("The header shares the line of the calories and must never be printed over them", CANADA_PANEL_WIDTH,
 				french.getAttribute("width"));
-		Assert.assertEquals("A bilingual panel states that same header, so it needs that same width", CANADA_PANEL_WIDTH,
+		Assert.assertEquals("A bilingual panel states that same header within its own minimum width", CANADA_BILINGUAL_PANEL_WIDTH,
 				bilingual.getAttribute("width"));
 	}
 
@@ -396,7 +411,7 @@ public class NutritionFactsTemplateTest {
 		Element caption = findText(parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel())), "Supplémenté en");
 
 		Assert.assertEquals("The caption carries the weight the regulation gives the Sodium line", "8", caption.getAttribute("font-size"));
-		Assert.assertTrue("and is set in the heavy face", caption.getAttribute("font-family").contains("Black"));
+		Assert.assertEquals("and is set in bold", BOLD, caption.getAttribute("font-weight"));
 		Assert.assertTrue("It opens the block the closing note explains", caption.getTextContent().endsWith(SUPPLEMENT_MARK));
 	}
 
