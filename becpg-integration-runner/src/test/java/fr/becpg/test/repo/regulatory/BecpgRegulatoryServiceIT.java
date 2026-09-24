@@ -35,6 +35,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -304,7 +305,9 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
             String view = inReadTx(() -> regulatoryComplianceViewService.fetchView(finishedProductNodeRef, true));
 
-            assertEquals(viewBody, view);
+            JSONObject relayed = new JSONObject(view);
+            assertEquals("COMPLIANT", relayed.getJSONObject("summary").getString("verdict"));
+            assertTrue(relayed.has("recipeFetchMs"));
             RecordedRequest request = mockWebServer.takeRequest();
             assertEquals("/v1/regulatory/check/view?refresh=true", request.getPath());
             assertTrue(request.getBody().readUtf8().contains(ing1.getId()));

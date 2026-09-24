@@ -3,6 +3,8 @@
 </@>
 
 <@markup id="js">
+	<#-- Product toolbar actions, among which the AI suggestion button -->
+	<@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/entity-charact-views/regulatory-view.js" group="entity-datalists"/>
 </@>
 

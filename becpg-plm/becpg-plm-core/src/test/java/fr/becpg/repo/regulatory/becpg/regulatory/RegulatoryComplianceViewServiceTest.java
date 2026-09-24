@@ -1,6 +1,7 @@
 package fr.becpg.repo.regulatory.becpg.regulatory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +23,9 @@ public class RegulatoryComplianceViewServiceTest {
 		when(client.fetchRecipe(PRODUCT)).thenReturn(recipe);
 		when(client.checkView(recipe, true)).thenReturn("{\"markets\":[]}");
 
-		assertEquals("{\"markets\":[]}", new RegulatoryComplianceViewService(client).fetchView(PRODUCT, true));
+		JSONObject view = new JSONObject(new RegulatoryComplianceViewService(client).fetchView(PRODUCT, true));
+
+		assertEquals(0, view.getJSONArray("markets").length());
+		assertTrue(view.has(RegulatoryComplianceViewService.KEY_RECIPE_FETCH_MS));
 	}
 }
