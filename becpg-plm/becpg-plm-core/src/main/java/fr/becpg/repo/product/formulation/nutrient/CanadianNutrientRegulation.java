@@ -33,10 +33,6 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 
-	/** Number of 100 g in a kg: turns a serving size in kg into its ratio to 100 g. */
-	private static final BigDecimal HUNDRED_GRAMS_PER_KG = BigDecimal.TEN;
-
-	private static final MathContext LIMIT_PRECISION = new MathContext(4, RoundingMode.HALF_UP);
 
 	private static final Set<String> CLASS_II_MAX_NUTRIENTS = Set.of(NutrientCode.EnergykcalUS, NutrientCode.Fat, NutrientCode.FatSaturated,
 			NutrientCode.FatTrans, NutrientCode.Cholesterol, NutrientCode.Sodium, NutrientCode.Sugar, NutrientCode.Polyols);
@@ -116,10 +112,10 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 		if ((value == null) || roundingStep.isEmpty() || nutrientClass.isEmpty()) {
 			return null;
 		}
-		BigDecimal servingFactor = servingFactor(criteria);
-		double declaredBasisValue = BigDecimal.valueOf(value).multiply(servingFactor).doubleValue();
-		Pair<BigDecimal, BigDecimal> limits = complianceLimits(declaredBasisValue, nutrientTypeCode, roundingStep.get(), nutrientClass.get());
-		return new Pair<>(toListBasis(limits.getFirst(), servingFactor), toListBasis(limits.getSecond(), servingFactor));
+		ServingBasis basis = ServingBasis.of(criteria);
+		Pair<BigDecimal, BigDecimal> limits = complianceLimits(basis.toDeclaredBasis(value), nutrientTypeCode, roundingStep.get(),
+				nutrientClass.get());
+		return new Pair<>(basis.toListBasis(limits.getFirst()), basis.toListBasis(limits.getSecond()));
 	}
 
 	/**
@@ -142,20 +138,6 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 		case CLASS_II_MIN -> new Pair<>(null, minPreRoundedValue(declared, step).subtract(CLASS_II_TOLERANCE.multiply(declared)));
 		case CLASS_II_MAX -> new Pair<>(maxComplianceLimit(declared, step), null);
 		};
-	}
-
-	/**
-	 * <p>Factor that turns an amount per 100 g into the amount per serving, 1 when the product has
-	 * no serving size (the amount per 100 g is then the declared one).</p>
-	 *
-	 * @param criteria the tolerance criteria, carrying the serving size in kg
-	 * @return the factor
-	 */
-	private BigDecimal servingFactor(NutrientToleranceCriteria criteria) {
-		if (!criteria.hasServingSize()) {
-			return BigDecimal.ONE;
-		}
-		return BigDecimal.valueOf(criteria.servingSize()).multiply(HUNDRED_GRAMS_PER_KG);
 	}
 
 	/**
@@ -239,25 +221,6 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 	private BigDecimal digitBelow(BigDecimal value, int digits) {
 		int leadingDigitExponent = (value.precision() - value.scale()) - 1;
 		return BigDecimal.ONE.scaleByPowerOfTen(leadingDigitExponent - digits);
-	}
-
-	/**
-	 * <p>Brings a compliance limit back to the basis of the nutrient list. A limit cannot be
-	 * negative, and one brought back from a serving keeps four significant digits.</p>
-	 *
-	 * @param limit the limit on the declared basis, {@code null} for an unbounded side
-	 * @param servingFactor the factor used to reach the declared basis
-	 * @return the limit on the basis of the list, {@code null} for an unbounded side
-	 */
-	private Double toListBasis(BigDecimal limit, BigDecimal servingFactor) {
-		if (limit == null) {
-			return null;
-		}
-		BigDecimal positiveLimit = limit.max(BigDecimal.ZERO);
-		if (servingFactor.compareTo(BigDecimal.ONE) == 0) {
-			return positiveLimit.doubleValue();
-		}
-		return positiveLimit.divide(servingFactor, LIMIT_PRECISION).doubleValue();
 	}
 
 }

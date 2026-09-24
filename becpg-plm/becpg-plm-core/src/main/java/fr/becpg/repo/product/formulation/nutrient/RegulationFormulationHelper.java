@@ -80,9 +80,9 @@ public class RegulationFormulationHelper {
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
-		regulations.put("TT", new UsNutrientRegulation("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
-		regulations.put("DO", new UsNutrientRegulation("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
-		regulations.put("PE", new UsNutrientRegulation("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
+		regulations.put("TT", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
+		regulations.put("DO", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
+		regulations.put("PE", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
