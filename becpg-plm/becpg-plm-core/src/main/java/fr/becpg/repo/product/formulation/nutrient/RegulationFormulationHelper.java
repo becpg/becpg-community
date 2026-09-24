@@ -46,10 +46,13 @@ public class RegulationFormulationHelper {
 	public static final String ATTR_NUT_CODE = "nutCode";
 	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
-	/** Constant <code>KEY_TOLERANCE_MAX="tu"</code> */
-	private static final String KEY_TOLERANCE_MAX = "tu";
-	/** Constant <code>KEY_TOLERANCE_MIN="tl"</code> */
-	private static final String KEY_TOLERANCE_MIN = "tl";
+	/**
+	 * Key of the maximum tolerated value. The stored keys are historical: "tl" holds the maximum
+	 * and "tu" the minimum, which is how the nutrient list screen reads them.
+	 */
+	private static final String KEY_TOLERANCE_MAX = "tl";
+	/** Key of the minimum tolerated value, see {@link #KEY_TOLERANCE_MAX}. */
+	private static final String KEY_TOLERANCE_MIN = "tu";
 	/** Constant <code>KEY_MINI="min"</code> */
 	private static final String KEY_MINI = "min";
 	/** Constant <code>KEY_MAXI="max"</code> */
@@ -554,7 +557,7 @@ public class RegulationFormulationHelper {
 	 * @param abrv a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
-	private static String keyToXml(String abrv) {
+	static String keyToXml(String abrv) {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
 			return "SecondaryValue";
@@ -663,14 +666,14 @@ public class RegulationFormulationHelper {
 
 				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					tmin.put(key, tolerances.getFirst());
-					tmax.put(key, tolerances.getSecond());
+					tmax.put(key, tolerances.getFirst());
+					tmin.put(key, tolerances.getSecond());
 				}
 
 				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					secondaryTmin.put(key, tolerances.getFirst());
-					secondaryTmax.put(key, tolerances.getSecond());
+					secondaryTmax.put(key, tolerances.getFirst());
+					secondaryTmin.put(key, tolerances.getSecond());
 				}
 
 				if (n instanceof VariantAwareDataItem) {
