@@ -253,6 +253,31 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testTabularFormatDrawsNoVerticalRule() throws Exception {
+		List<Element> rects = elements(parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())), "rect");
+
+		for (Element rect : rects) {
+			Assert.assertNotEquals("The bands and the columns are told apart by the air between them, never by a vertical rule", HAIRLINE,
+					Double.parseDouble(rect.getAttribute("width")), 0.001d);
+		}
+	}
+
+	@Test
+	public void testTabularRulesAreBrokenBetweenTheTwoColumns() throws Exception {
+		List<Element> rects = elements(parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())), "rect");
+
+		double columnWidth = (552d - 148d - 96d) / 2;
+		double hairlines = 0;
+		for (Element rect : rects) {
+			if ((Math.abs(Double.parseDouble(rect.getAttribute("height")) - HAIRLINE) < 0.001d)
+					&& (Double.parseDouble(rect.getAttribute("width")) > columnWidth)) {
+				hairlines++;
+			}
+		}
+		Assert.assertEquals("No hairline runs from one column into the other", 0, hairlines, 0d);
+	}
+
+	@Test
 	public void testDualColumnFormatCarriesBothColumnsOfFigures() throws Exception {
 		String svg = renderToString("nutritionFacts-dualColumn.ftlx", standardPanel());
 
