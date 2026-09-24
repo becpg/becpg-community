@@ -249,7 +249,8 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         params.setFilteredProperties(Set.of(
                 ContentModel.PROP_SYS_NAME, PLMModel.PROP_INGLIST_QTY_PERC,
                 PLMModel.ASSOC_INGLIST_ING,
-                PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES
+                PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES,
+                PLMModel.PROP_REGULATORY_CODE
         ));
         params.setFilteredAssocProperties(Map.of(
                 PLMModel.ASSOC_INGLIST_ING, Set.of(
@@ -260,10 +261,10 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                         PLMModel.PROP_FEMA_NUMBER,
                         PLMModel.PROP_FL_NUMBER,
                         PLMModel.PROP_ING_TYPE_V2,
-                        PLMModel.TYPE_ING_TYPE_ITEM,
                         PLMModel.PROP_ING_TYPE_DEC_THRESHOLD,
                         PLMModel.PROP_PLURAL_LEGAL_NAME
                 ),
+                PLMModel.TYPE_ING_TYPE_ITEM, Set.of(PLMModel.PROP_REGULATORY_CODE),
                 PLMModel.ASSOC_REGULATORY_USAGE_REF, Set.of(PLMModel.PROP_REGULATORY_CODE),
                 PLMModel.ASSOC_REGULATORY_COUNTRIES, Set.of(PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_GEO_ORIGIN_ISOCODE)
         ));
