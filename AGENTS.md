@@ -347,9 +347,15 @@ Then launch the test
 
    The target is roughly 75% of the added code, not 100%. Business rules, computations, parsing, validation, error handling and edge cases are worth a test; getters, plain data holders, Spring wiring, logging and generated code are not. Spend the effort where a regression would actually hurt.
 
-   An integration test does **not** count towards that 75%. `*IT` tests cover the wiring between components and remain welcome for that, but they are slow, need a running context, and do not pin down a single unit of behaviour. The two are complementary, never interchangeable.
+   Code that can be unit tested is unit tested: an integration test does **not** replace a unit test there. `*IT` tests cover the wiring between components and remain welcome for that, but they are slow, need a running context, and do not pin down a single unit of behaviour.
 
-   **When a unit test is genuinely impossible, raise the point - never skip it silently.** The usual blockers are a private method on a Spring bean, a class patching Alfresco under `alfresco-patch`, and JavaScript with no test harness. Name what blocks the test and propose the change that would make the code testable; extracting the logic into a small collaborator is usually enough. Shipping untested code is a decision the developer takes explicitly, not a default.
+   **When a unit test is not possible, fall back on an integration test.** The usual blockers are a private method on a Spring bean, a class patching Alfresco under `alfresco-patch`, behaviour that only exists through the repository (policies, behaviours, formulation over real nodes, webscripts), and JavaScript with no test harness. First check whether extracting the logic into a small collaborator is cheap and within the ticket's scope; if so, unit test the collaborator. Otherwise cover the behaviour with an `*IT`:
+
+   - **extend an existing IT first**: add an assertion or a test method to the IT that already covers the area (same service, same scenario, same test product) rather than creating a new one;
+   - **create a new IT** only when no existing one fits, following the structure below;
+   - state in the Redmine note which IT covers the fix and why a unit test was not possible.
+
+   **When neither a unit test nor an IT is possible, raise the point - never skip it silently.** Name what blocks the test and propose the change that would make the code testable. Shipping untested code is a decision the developer takes explicitly, not a default.
 
 2. **Integration Test Structure**:
    ```java
