@@ -61,17 +61,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 							if (PLMModel.TYPE_REQCTRLLIST.equals(field.getFieldQname())) {
 
 								try {
-									NodeRef charact = null;
-
 									RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
-
-									if (item instanceof SimpleCharactDataItem) {
-										charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
-									} else if (item instanceof LabelClaimListDataItem) {
-										charact = ((LabelClaimListDataItem) item).getLabelClaim();
-									}  else if (item instanceof IngRegulatoryListDataItem) {
-										charact = ((IngRegulatoryListDataItem) item).getIng();
-									}
 
 									NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
 									NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_REQCTRLLIST);
@@ -79,23 +69,8 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 									if (listNodeRef != null) {
 										List<NodeRef> reqCtrlList = entityListDAO.getListItems(listNodeRef, PLMModel.TYPE_REQCTRLLIST);
 
-										for (NodeRef reqCtrl : reqCtrlList) {
-											
-											@SuppressWarnings("unchecked")
-											List<NodeRef> sources = (List<NodeRef>) nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_SOURCES_V2);
-
-											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
-													|| (sources!=null && sources.contains(charact)))) {
-												if (item instanceof IngRegulatoryListDataItem) {
-													String reqCtrlCode = (String) nodeService.getProperty(reqCtrl, PLMModel.PROP_REGULATORY_CODE);
-													if (reqCtrlCode != null && ((IngRegulatoryListDataItem) item).getRegulatoryCountries().stream().anyMatch(u -> reqCtrlCode.contains(((String) nodeService.getProperty(u, PLMModel.PROP_REGULATORY_CODE))))) {
-														addExtracted(reqCtrl, field, mode, ret);
-													}
-												} else {
-													addExtracted(reqCtrl, field, mode, ret);
-												}
-												addExtracted(reqCtrl, field, mode, ret);
-											}
+										for (NodeRef reqCtrl : findMatchingReqCtrls(item, reqCtrlList)) {
+											addExtracted(reqCtrl, field, mode, ret);
 										}
 									}
 								} catch (StackOverflowError e) {
@@ -153,6 +128,51 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 					}
 
 				});
+	}
+
+	/**
+	 * Returns the requirement controls that apply to a characteristic list item, each one only once.
+	 *
+	 * @param item the characteristic list item
+	 * @param reqCtrlList the requirement controls of the entity
+	 * @return the matching requirement controls, in list order
+	 */
+	List<NodeRef> findMatchingReqCtrls(RepositoryEntity item, List<NodeRef> reqCtrlList) {
+		NodeRef charact = getCharact(item);
+		List<NodeRef> matching = new ArrayList<>();
+		for (NodeRef reqCtrl : reqCtrlList) {
+			if (isRelatedToCharact(reqCtrl, charact) && appliesToRegulatoryCountries(item, reqCtrl)) {
+				matching.add(reqCtrl);
+			}
+		}
+		return matching;
+	}
+
+	private NodeRef getCharact(RepositoryEntity item) {
+		if (item instanceof SimpleCharactDataItem) {
+			return ((SimpleCharactDataItem) item).getCharactNodeRef();
+		} else if (item instanceof LabelClaimListDataItem) {
+			return ((LabelClaimListDataItem) item).getLabelClaim();
+		} else if (item instanceof IngRegulatoryListDataItem) {
+			return ((IngRegulatoryListDataItem) item).getIng();
+		}
+		return null;
+	}
+
+	private boolean isRelatedToCharact(NodeRef reqCtrl, NodeRef charact) {
+		@SuppressWarnings("unchecked")
+		List<NodeRef> sources = (List<NodeRef>) nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_SOURCES_V2);
+		return ((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT)))
+				|| ((sources != null) && sources.contains(charact));
+	}
+
+	private boolean appliesToRegulatoryCountries(RepositoryEntity item, NodeRef reqCtrl) {
+		if (!(item instanceof IngRegulatoryListDataItem)) {
+			return true;
+		}
+		String reqCtrlCode = (String) nodeService.getProperty(reqCtrl, PLMModel.PROP_REGULATORY_CODE);
+		return (reqCtrlCode != null) && ((IngRegulatoryListDataItem) item).getRegulatoryCountries().stream()
+				.anyMatch(country -> reqCtrlCode.contains((String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE)));
 	}
 
 	/** {@inheritDoc} */
