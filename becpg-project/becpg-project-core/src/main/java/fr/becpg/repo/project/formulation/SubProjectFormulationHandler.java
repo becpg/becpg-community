@@ -2,18 +2,24 @@ package fr.becpg.repo.project.formulation;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
@@ -145,7 +151,7 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				task.setTargetEnd(ProjectHelper.calculateEndDate(subProject.getTargetStartDate(), subProject.getRealDuration(), provider));
 				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(), subProject.getCompletionDate(), provider));
 				task.setCompletionPercent(subProject.getCompletionPercent());
-				task.setTaskName(subProject.getName());
+				copySubProjectName(task, subProject);
 
 				if ((subProject.getLegends() != null) && !subProject.getLegends().isEmpty()) {
 					task.setTaskLegend(subProject.getLegends().get(0));
@@ -234,6 +240,43 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 		}
 
 		return true;
+	}
+
+	/**
+	 * Copies the sub-project name into the task that carries it, replacing every translation.
+	 * <p>
+	 * A project name is plain text, so the task name must hold that name alone: merging it into the
+	 * content locale would leave the placeholder or a former name in the other locales.
+	 *
+	 * @param task the task that carries the sub-project
+	 * @param subProject the sub-project whose name is copied
+	 */
+	private void copySubProjectName(TaskListDataItem task, ProjectData subProject) {
+		String subProjectName = subProject.getName();
+		task.setTaskName(subProjectName);
+		if ((task.getNodeRef() != null) && holdsOtherNames(task.getNodeRef(), subProjectName)) {
+			task.getExtraProperties().put(ProjectModel.PROP_TL_TASK_NAME, new MLText(I18NUtil.getContentLocale(), subProjectName));
+		}
+	}
+
+	/**
+	 * Tells whether a stored task name holds another value than the given name in any locale.
+	 * <p>
+	 * Replacing the name only in that case keeps an unchanged task clean, since the repository cannot
+	 * compare an {@link MLText} with the stored value and would otherwise save the task on every formulation.
+	 *
+	 * @param taskNodeRef the task node
+	 * @param name the only name the task should hold
+	 * @return true if a locale holds another value, or if the name is not multilingual yet
+	 */
+	private boolean holdsOtherNames(NodeRef taskNodeRef, String name) {
+		boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			Serializable storedName = nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME);
+			return !(storedName instanceof MLText mlText) || !Set.of(name).equals(new HashSet<>(mlText.values()));
+		} finally {
+			MLPropertyInterceptor.setMLAware(wasMLAware);
+		}
 	}
 
 	/**
