@@ -17,7 +17,9 @@ import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryAuthenticationService;
+import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryClient;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
+import fr.becpg.repo.regulatory.becpg.regulatory.RegulatoryComplianceViewService;
 import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
@@ -27,6 +29,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 import fr.becpg.util.MutexFactory;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -71,6 +74,12 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Autowired
     private BecpgRegulatoryAuthenticationService becpgRegulatoryAuthenticationService;
 
+    @Autowired
+    private BecpgRegulatoryClient becpgRegulatoryClient;
+
+    @Autowired
+    private RegulatoryComplianceViewService regulatoryComplianceViewService;
+
     private MockWebServer mockWebServer;
 
     private String mockServerUrl;
@@ -96,8 +105,8 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                 mutexFactory,
                 systemConfigurationService,
                 productDataEntityJsonService,
-                remoteEntityService,
-                becpgRegulatoryAuthenticationService
+                becpgRegulatoryAuthenticationService,
+                becpgRegulatoryClient
         );
 
         mockWebServer = new MockWebServer();
@@ -270,6 +279,65 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                 return null;
             });
         }
+    }
+
+    /**
+     * The embedded compliance view relays the answer of becpg-regulatory as is, whatever the
+     * regulatory mode of the product (Decernis by default), and writes nothing: neither the
+     * ingredient regulatory list nor the becpg codes of the ingredients.
+     */
+    @Test
+    public void testComplianceViewIsRelayedWithoutPersisting() throws Exception {
+        inWriteTx(() -> {
+            nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+            return null;
+        });
+        NodeRef finishedProductNodeRef = createProductWithRegulatoryList("PF BecpgRegulatory testComplianceViewIsRelayedWithoutPersisting");
+        String viewBody = "{\"summary\":{\"verdict\":\"COMPLIANT\"},\"markets\":[]}";
+
+        try {
+            inWriteTx(() -> {
+                systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", mockServerUrl);
+                mockWebServer.enqueue(new MockResponse().setBody(viewBody));
+                return null;
+            });
+
+            String view = inReadTx(() -> regulatoryComplianceViewService.fetchView(finishedProductNodeRef, true));
+
+            assertEquals(viewBody, view);
+            RecordedRequest request = mockWebServer.takeRequest();
+            assertEquals("/v1/regulatory/check/view?refresh=true", request.getPath());
+            assertTrue(request.getBody().readUtf8().contains(ing1.getId()));
+            inReadTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                assertTrue(product.getIngRegulatoryList() == null || product.getIngRegulatoryList().isEmpty());
+                assertEquals("DECERNIS_42", nodeService.getProperty(ing1, PLMModel.PROP_REGULATORY_CODE));
+                return null;
+            });
+        } finally {
+            inWriteTx(() -> {
+                systemConfigurationService.resetConfValue("beCPG.regulatory.serverUrl");
+                return null;
+            });
+        }
+    }
+
+    private NodeRef createProductWithRegulatoryList(String name) {
+        NodeRef countryNodeRef = getCountry("Germany", "DE");
+        NodeRef usageNodeRef = getUsage("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap");
+        NodeRef finishedProductNodeRef = createFinishedProduct(name);
+        inWriteTx(() -> {
+            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            product.getIngList().add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null)
+                    .withIsIonized(null).withIsProcessingAid(null).withIngredient(ing1).withIsManual(null));
+            RegulatoryListDataItem item = new RegulatoryListDataItem();
+            item.setRegulatoryCountriesRef(new ArrayList<>(List.of(countryNodeRef)));
+            item.setRegulatoryUsagesRef(new ArrayList<>(List.of(usageNodeRef)));
+            item.setRegulatoryState(SystemState.Simulation);
+            product.getRegulatoryList().add(item);
+            return alfrescoRepository.save(product);
+        });
+        return finishedProductNodeRef;
     }
 
     @Test

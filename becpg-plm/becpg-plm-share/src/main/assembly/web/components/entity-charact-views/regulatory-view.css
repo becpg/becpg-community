@@ -1,0 +1,15 @@
+.regulatory-view .regulatory-view-message {
+	padding: 1.5em;
+	text-align: center;
+}
+
+.regulatory-view .regulatory-view-message.hidden {
+	display: none;
+}
+
+.regulatory-view .regulatory-view-iframe {
+	display: block;
+	width: 100%;
+	min-height: 600px;
+	border: 0;
+}

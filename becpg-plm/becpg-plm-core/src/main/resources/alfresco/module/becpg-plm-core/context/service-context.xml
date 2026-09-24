@@ -254,6 +254,14 @@
 	<bean id="webscript.fr.becpg.regulatory.regulatoryCheck.get" class="fr.becpg.repo.web.scripts.regulatory.RegulatoryWebScript" parent="webscript">
 		<property name="regulatoryRouterService" ref="regulatoryRouterService" />
 	</bean>
+
+	<bean id="webscript.fr.becpg.regulatory.regulatoryView.get" class="fr.becpg.repo.web.scripts.regulatory.RegulatoryViewWebScript" parent="webscript">
+		<property name="regulatoryComplianceViewService" ref="regulatoryComplianceViewService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.regulatory.regulatoryViewConfig.get" class="fr.becpg.repo.web.scripts.regulatory.RegulatoryViewConfigWebScript" parent="webscript">
+		<property name="regulatoryComplianceViewService" ref="regulatoryComplianceViewService" />
+	</bean>
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
