@@ -696,8 +696,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
 							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
 					if (ingListDataItem != null) {
-						Double adjustedQty = getQtyPercWithYield.apply(ingListDataItem) / yieldFactor;
-						setQtyPercWithYield.accept(ingListDataItem, adjustedQty);
+						Double currentQty = getQtyPercWithYield.apply(ingListDataItem);
+						if (currentQty != null) {
+							setQtyPercWithYield.accept(ingListDataItem, currentQty / yieldFactor);
+						}
 					}
 				}
 			}
