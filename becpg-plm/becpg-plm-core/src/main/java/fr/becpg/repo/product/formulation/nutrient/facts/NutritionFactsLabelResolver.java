@@ -59,6 +59,12 @@ public class NutritionFactsLabelResolver {
 	/** Key of the serving size line. */
 	public static final String LABEL_SERVING_SIZE = "servingSize";
 
+	/** Key of the servings count a linear panel opens on, "Servings:", followed by the count. */
+	public static final String LABEL_SERVINGS_SHORT = "servingsShort";
+
+	/** Key of the serving size a linear panel states, "Serv. size:". */
+	public static final String LABEL_SERVING_SIZE_SHORT = "servingSizeShort";
+
 	/** Key of the "Amount per serving" caption. */
 	public static final String LABEL_AMOUNT_PER_SERVING = "amountPerServing";
 
@@ -96,9 +102,9 @@ public class NutritionFactsLabelResolver {
 	public static final String LABEL_SUPPLEMENTED_NOTE = "supplementedNote";
 
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
-			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING,
-			LABEL_PER_CONTAINER, LABEL_DAILY_VALUE_SUFFIX, LABEL_LINEAR_LEGEND, LABEL_FOOTNOTE_EMPHASIS, LABEL_SUPPLEMENTED_TITLE,
-			LABEL_SUPPLEMENTED_WITH, LABEL_SUPPLEMENTED_NOTE);
+			LABEL_SERVINGS_SHORT, LABEL_SERVING_SIZE_SHORT, LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE,
+			LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING, LABEL_PER_CONTAINER, LABEL_DAILY_VALUE_SUFFIX, LABEL_LINEAR_LEGEND,
+			LABEL_FOOTNOTE_EMPHASIS, LABEL_SUPPLEMENTED_TITLE, LABEL_SUPPLEMENTED_WITH, LABEL_SUPPLEMENTED_NOTE);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 

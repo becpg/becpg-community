@@ -76,6 +76,20 @@ public class NutritionFactsTemplateTest {
 
 	private static final double PAD = 4d;
 
+	private static final String NBSP = "\u00A0";
+
+	private static final String TABULAR_TEMPLATE = "nutritionFacts-tabular.ftlx";
+
+	private static final String DUAL_COLUMN_TEMPLATE = "nutritionFacts-dualColumn.ftlx";
+
+	private static final String LINEAR_TEMPLATE = "nutritionFacts-linear.ftlx";
+
+	private static final String LINEAR_SMALL_TEMPLATE = "nutritionFacts-linearSmall.ftlx";
+
+	private static final double TABULAR_COLUMN_WIDTH = (528d - 148d - 72d) / 2;
+
+	private static final double DUAL_COLUMN_LABEL_WIDTH = 84d;
+
 	private Configuration configuration;
 
 	@Before
@@ -206,7 +220,7 @@ public class NutritionFactsTemplateTest {
 				"5%", null, 2, false, true, false, false, false));
 
 		Assert.assertTrue("The linear format names nutrients by their abbreviation",
-				findText(parse(renderToString("nutritionFacts-linear.ftlx", data)), "Sat. Fat").getTextContent().startsWith("Sat. Fat 1g (5% DV)"));
+				sentence(renderToString(LINEAR_TEMPLATE, data)).contains("Sat. Fat 1g (5% DV)"));
 	}
 
 	@Test
@@ -230,7 +244,7 @@ public class NutritionFactsTemplateTest {
 	public void testSideBySideFormatIsWidenedForItsPairedMicronutrients() throws Exception {
 		Element svg = parse(renderToString("nutritionFacts-sideBySide.ftlx", standardPanel())).getDocumentElement();
 
-		Assert.assertEquals("Two declarations on one line do not fit the width of a vertical panel", "190pt", svg.getAttribute("width"));
+		Assert.assertEquals("Two declarations on one line do not fit the width of a vertical panel", "176pt", svg.getAttribute("width"));
 	}
 
 	@Test
@@ -245,7 +259,7 @@ public class NutritionFactsTemplateTest {
 	public void testTabularFormatIsDrawnWider() throws Exception {
 		Element svg = parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())).getDocumentElement();
 
-		Assert.assertEquals("A tabular panel runs across the width", "552pt", svg.getAttribute("width"));
+		Assert.assertEquals("A tabular panel runs across the width", "528pt", svg.getAttribute("width"));
 
 		String markup = renderToString("nutritionFacts-tabular.ftlx", standardPanel());
 		Assert.assertTrue("Its title is stacked on two lines in the left band", markup.contains(">Nutrition<") && markup.contains(">Facts<"));
@@ -266,11 +280,10 @@ public class NutritionFactsTemplateTest {
 	public void testTabularRulesAreBrokenBetweenTheTwoColumns() throws Exception {
 		List<Element> rects = elements(parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())), "rect");
 
-		double columnWidth = (552d - 148d - 96d) / 2;
 		double hairlines = 0;
 		for (Element rect : rects) {
 			if ((Math.abs(Double.parseDouble(rect.getAttribute("height")) - HAIRLINE) < 0.001d)
-					&& (Double.parseDouble(rect.getAttribute("width")) > columnWidth)) {
+					&& (Double.parseDouble(rect.getAttribute("width")) > TABULAR_COLUMN_WIDTH)) {
 				hairlines++;
 			}
 		}
@@ -278,10 +291,130 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testTabularServingSizeStandsUnderItsWording() throws Exception {
+		Document panel = parse(renderToString(TABULAR_TEMPLATE, standardPanel()));
+
+		Assert.assertEquals("The wording stands alone on its line", "Serving size", findText(panel, "Serving size").getTextContent());
+		Assert.assertTrue("and the serving size goes on the next one", y(findText(panel, "2/3 cup (55g)")) > y(findText(panel, "Serving size")));
+	}
+
+	@Test
+	public void testTabularCaloriesValueIsCentredAgainstItsTwoLines() throws Exception {
+		Document panel = parse(renderToString(TABULAR_TEMPLATE, standardPanel()));
+
+		double calories = y(findText(panel, "Calories"));
+		double perServing = y(findText(panel, "Per serving"));
+		double value = y(findText(panel, "230"));
+		Assert.assertTrue("The value sits between the baselines of Calories and Per serving", (value > calories) && (value < perServing));
+	}
+
+	@Test
+	public void testTabularRuleAboveANestedLineStartsAtItsIndentation() throws Exception {
+		List<Element> rects = elements(parse(renderToString(TABULAR_TEMPLATE, standardPanel())), "rect");
+
+		double nestedStart = 148d + TABULAR_COLUMN_WIDTH + 4d + 2 * INDENT;
+		boolean found = false;
+		for (Element rect : rects) {
+			found |= Math.abs(Double.parseDouble(rect.getAttribute("x")) - nestedStart) < 0.001d;
+		}
+		Assert.assertTrue("The rule above Added Sugars starts where that line starts", found);
+	}
+
+	@Test
+	public void testTabularMicronutrientDeclarationIsNeverSplit() throws Exception {
+		String svg = renderToString(TABULAR_TEMPLATE, standardPanel());
+
+		Assert.assertTrue("A declaration of the vitamin line wraps as a whole", svg.contains("Potassium" + NBSP + "235mg" + NBSP + "6%"));
+	}
+
+	@Test
+	public void testDualColumnLeavesOutAPercentageTheServingColumnLeavesOut() throws Exception {
+		String svg = renderToString(DUAL_COLUMN_TEMPLATE, panelData(line("PRO-", "Protein", "3g", null, 1, true, false, false, "55g", "110%")));
+
+		Assert.assertFalse("Protein declares no daily value per serving, so none per container either", svg.contains("110%"));
+	}
+
+	@Test
+	public void testDualColumnAmountStartsJustAfterItsRule() throws Exception {
+		Element amount = findText(parse(renderToString(DUAL_COLUMN_TEMPLATE, standardPanel())), "8g");
+
+		Assert.assertEquals("An amount is set against the rule opening its column, air kept after the rule",
+				DUAL_COLUMN_LABEL_WIDTH + 4d, Double.parseDouble(amount.getAttribute("x")), 0.001d);
+		Assert.assertEquals("and reads from there", "", amount.getAttribute("text-anchor"));
+	}
+
+	@Test
+	public void testDualColumnFootnoteHoldsOnThreeLines() throws Exception {
+		Document panel = parse(renderToString(DUAL_COLUMN_TEMPLATE, standardPanel()));
+
+		int footnoteLines = 0;
+		for (Element text : elements(panel, "text")) {
+			footnoteLines += Double.parseDouble(text.getAttribute("font-size")) == 6d && y(text) > y(findText(panel, "Potassium")) ? 1 : 0;
+		}
+		Assert.assertEquals("The disclaimer takes three lines", 3, footnoteLines);
+	}
+
+	@Test
+	public void testLinearFormatOpensOnTheServingsAsTheFdaWordsThem() throws Exception {
+		String sentence = sentence(renderToString(LINEAR_SMALL_TEMPLATE, usLinearPanel()));
+
+		Assert.assertTrue("Servings then serving size, both followed by a colon",
+				sentence.startsWith("Nutrition Facts Servings: 8, Serv. size: 2/3 cup (55g), Amount per serving: Calories 230,"));
+	}
+
+	@Test
+	public void testLinearFormatStatesTheCaloriesAndTheFatInOneSentence() throws Exception {
+		Element calories = findText(parse(renderToString(LINEAR_TEMPLATE, usLinearPanel())), "Amount per serving");
+
+		Assert.assertTrue("Total Fat follows the calories on the same line", calories.getTextContent().contains("Calories 230, Total" + NBSP + "Fat 8g"));
+	}
+
+	@Test
+	public void testLinearFormatEmphasisesOnlyTheNutrientsTheColumnsEmphasise() throws Exception {
+		String svg = renderToString(LINEAR_TEMPLATE, usLinearPanel());
+
+		Assert.assertTrue("Total Fat is set in bold", svg.contains(">Total" + NBSP + "Fat</tspan>"));
+		Assert.assertFalse("Saturated Fat stays in the regular weight", svg.contains("Saturated" + NBSP + "Fat</tspan>"));
+		Assert.assertFalse("and so does a vitamin", svg.contains("Vitamin" + NBSP + "D</tspan>"));
+	}
+
+	@Test
+	public void testLinearFormatStatesAddedSugarsInsideTotalSugars() throws Exception {
+		String sentence = sentence(renderToString(LINEAR_TEMPLATE, usLinearPanel()));
+
+		Assert.assertTrue("Added sugars are stated in the parenthesis of total sugars",
+				sentence.contains("Total Sugars 12g (Incl. 10g Added Sugars, 20% DV),"));
+	}
+
+	@Test
+	public void testLinearFormatStatesAVitaminByItsPercentageAlone() throws Exception {
+		String sentence = sentence(renderToString(LINEAR_TEMPLATE, usLinearPanel()));
+
+		Assert.assertTrue("A vitamin is stated without its amount", sentence.contains("Vitamin D (10% DV), Calcium (20% DV)"));
+		Assert.assertFalse("whatever its amount", sentence.contains("2mcg"));
+	}
+
+	@Test
+	public void testLinearFormatLeavesOutTheFootnote() throws Exception {
+		for (String template : List.of(LINEAR_TEMPLATE, LINEAR_SMALL_TEMPLATE)) {
+			Assert.assertFalse(template + " states no daily value footnote", renderToString(template, usLinearPanel()).contains("tells you how much"));
+		}
+	}
+
+	@Test
+	public void testLinearFormatNeverBreaksANutrientName() throws Exception {
+		for (Element text : elements(parse(renderToString(LINEAR_SMALL_TEMPLATE, usLinearPanel())), "text")) {
+			String content = text.getTextContent().trim();
+			Assert.assertFalse("No line starts with the second word of a name: " + content, content.startsWith("Carb.") || content.startsWith("Fat "));
+		}
+		Assert.assertTrue("The words of a name are joined by a no-break space", renderToString(LINEAR_TEMPLATE, usLinearPanel()).contains("Total" + NBSP + "Carb."));
+	}
+
+	@Test
 	public void testDualColumnFormatCarriesBothColumnsOfFigures() throws Exception {
 		String svg = renderToString("nutritionFacts-dualColumn.ftlx", standardPanel());
 
-		Assert.assertEquals("Four columns of figures need a wider panel", "252pt", parse(svg).getDocumentElement().getAttribute("width"));
+		Assert.assertEquals("Four columns of figures need a wider panel, 3 inches", "216pt", parse(svg).getDocumentElement().getAttribute("width"));
 		Assert.assertTrue("The per container header must be drawn", svg.contains("Per container"));
 	}
 
@@ -535,6 +668,19 @@ public class NutritionFactsTemplateTest {
 		return Double.parseDouble(findText(panel, label).getAttribute("x"));
 	}
 
+	/** Every text of a panel read as one sentence, no-break spaces read as spaces. */
+	private String sentence(String svg) throws Exception {
+		StringBuilder sentence = new StringBuilder();
+		for (Element text : elements(parse(svg), "text")) {
+			sentence.append(text.getTextContent().trim()).append(' ');
+		}
+		return sentence.toString().replace(NBSP, " ").replaceAll("\\s+", " ").trim();
+	}
+
+	private double y(Element text) {
+		return Double.parseDouble(text.getAttribute("y"));
+	}
+
 	private Element findText(Document panel, String startsWith) {
 		for (Element text : elements(panel, "text")) {
 			if (text.getTextContent().startsWith(startsWith)) {
@@ -604,6 +750,20 @@ public class NutritionFactsTemplateTest {
 				"Not a significant source of other nutrients.", panelLabels(), NutritionFactsTranslation.none());
 	}
 
+	/** A US panel with the wordings the FDA gives the linear format, Includes Added Sugars embedding its amount. */
+	private NutritionFactsData usLinearPanel() {
+		Map<String, String> labels = panelLabels();
+		labels.put("servingsShort", "Servings:");
+		labels.put("servingSizeShort", "Serv. size:");
+		List<NutritionFactsLine> nutrients = List.of(line("FAT", "Total Fat", "8g", "10%", 1, true), line("FASAT", "Saturated Fat", "1g", "5%", 2, false),
+				line("CHO-", "Total Carbohydrate", "Total Carb.", "37g", "13%", 1, true), line("SUGAR", "Total Sugars", "12g", null, 2, false),
+				new NutritionFactsLine("SUGAD", "Includes 10g Added Sugars", "Incl. 10g Added Sugars", "Includes Added Sugars", "Incl. Added Sugars",
+						"10g", null, "20%", null, 3, false, true, true, false, false));
+		NutritionFactsData standard = panelData();
+		return new NutritionFactsData("linear", "US", standard.serving(), standard.calories(), nutrients, standard.micronutrients(), List.of(),
+				FOOTNOTE, "", labels, NutritionFactsTranslation.none());
+	}
+
 	private Map<String, String> panelLabels() {
 		Map<String, String> labels = new LinkedHashMap<>();
 		labels.put("title", "Nutrition Facts");
@@ -629,8 +789,20 @@ public class NutritionFactsTemplateTest {
 
 	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold,
 			boolean sharedDailyValue, boolean supplemental) {
-		return new NutritionFactsLine(nutCode, label, label, label, label, value, value, dailyValue, dailyValue, indentLevel, bold,
-				dailyValue != null, false, sharedDailyValue, supplemental);
+		return line(nutCode, label, value, dailyValue, indentLevel, bold, sharedDailyValue, supplemental, value, dailyValue);
+	}
+
+	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold,
+			boolean sharedDailyValue, boolean supplemental, String valuePerContainer, String dailyValuePerContainer) {
+		return new NutritionFactsLine(nutCode, label, label, label, label, value, valuePerContainer, dailyValue, dailyValuePerContainer,
+				indentLevel, bold, dailyValue != null, false, sharedDailyValue, supplemental);
+	}
+
+	/** A line whose abbreviated wording differs from its full one, "Total Carb.". */
+	private NutritionFactsLine line(String nutCode, String label, String abbreviation, String value, String dailyValue, int indentLevel,
+			boolean bold) {
+		return new NutritionFactsLine(nutCode, label, abbreviation, label, abbreviation, value, value, dailyValue, dailyValue, indentLevel, bold,
+				dailyValue != null, false, false, false);
 	}
 
 }
