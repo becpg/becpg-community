@@ -4,9 +4,18 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+
+import org.alfresco.util.Pair;
 
 /**
  * <p>UsNutrientRegulation class.</p>
+ *
+ * <p>Tolerances follow 21 CFR 101.9(g), on the amount declared per serving: an added (class I)
+ * vitamin, mineral, protein or dietary fiber must reach the declared value, a naturally occurring
+ * (class II) one 80 % of it, and calories, total sugars, total fat, saturated fat, trans fat,
+ * cholesterol and sodium must not exceed 120 % of it.</p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -14,12 +23,89 @@ import java.util.Locale;
 public class UsNutrientRegulation extends AbstractNutrientRegulation {
 
 	/**
+	 * Nutrients that must not exceed 120 % of the declared value. Added sugars are left out: the
+	 * rule only applies to them when they are the only source of sugars, which the list cannot tell.
+	 */
+	private static final Set<String> NUTRIENTS_TO_LIMIT = Set.of(NutrientCode.EnergykcalUS, NutrientCode.Sugar, NutrientCode.Fat,
+			NutrientCode.FatSaturated, NutrientCode.FatTrans, NutrientCode.Cholesterol, NutrientCode.Sodium);
+
+	/** Nutrients that can be class I when added. Vitamins and minerals are added to them. */
+	private static final Set<String> NUTRIENTS_TO_FORTIFY = Set.of(NutrientCode.FiberDietary);
+
+	/** Nutrients only ever assessed as class II. */
+	private static final Set<String> NATURALLY_OCCURRING_NUTRIENTS = Set.of(NutrientCode.CarbohydrateWithFiber,
+			NutrientCode.FatPolyunsaturated, NutrientCode.FatMonounsaturated);
+
+	/** Codes the mineral list holds although they are not minerals of the rule. */
+	private static final Set<String> NOT_MINERALS = Set.of(NutrientCode.Starch, NutrientCode.Salt);
+
+	private final boolean assessesTolerances;
+
+	/**
 	 * <p>Constructor for UsNutrientRegulation.</p>
 	 *
 	 * @param path a {@link java.lang.String} object.
 	 */
 	public UsNutrientRegulation(String path) {
+		this(path, true);
+	}
+
+	private UsNutrientRegulation(String path, boolean assessesTolerances) {
 		super(path);
+		this.assessesTolerances = assessesTolerances;
+	}
+
+	/**
+	 * <p>Regulation of a country that follows the US rounding rules but not the FDA compliance
+	 * tolerances (Trinidad and Tobago, Dominican Republic, Peru).</p>
+	 *
+	 * @param path the path of the regulation definition
+	 * @return the regulation, without tolerances
+	 */
+	public static UsNutrientRegulation withoutTolerances(String path) {
+		return new UsNutrientRegulation(path, false);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, NutrientToleranceCriteria criteria) {
+		Optional<DeclaredValueTolerance> tolerance = findTolerance(nutrientTypeCode, criteria.added());
+		if (!assessesTolerances || (value == null) || tolerance.isEmpty()) {
+			return null;
+		}
+		return tolerance.get().limits(value, ServingBasis.of(criteria), v -> roundByCode(v, nutrientTypeCode));
+	}
+
+	/**
+	 * <p>Gives the tolerance of a nutrient. A nutrient both naturally present and added is assessed
+	 * on its whole value as an added one.</p>
+	 *
+	 * @param nutrientTypeCode the nutrient code
+	 * @param added whether the nutrient was added to the product
+	 * @return the tolerance, empty when the rule does not assess the nutrient
+	 */
+	private Optional<DeclaredValueTolerance> findTolerance(String nutrientTypeCode, boolean added) {
+		if (NUTRIENTS_TO_LIMIT.contains(nutrientTypeCode)) {
+			return Optional.of(DeclaredValueTolerance.AT_MOST_120_PERCENT);
+		}
+		if (NATURALLY_OCCURRING_NUTRIENTS.contains(nutrientTypeCode)) {
+			return Optional.of(DeclaredValueTolerance.AT_LEAST_80_PERCENT);
+		}
+		if (canBeFortified(nutrientTypeCode)) {
+			return Optional.of(added ? DeclaredValueTolerance.AT_LEAST_DECLARED : DeclaredValueTolerance.AT_LEAST_80_PERCENT);
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * <p>Tells whether a nutrient is class I when added: vitamins, minerals, protein and dietary fiber.</p>
+	 *
+	 * @param nutrientTypeCode the nutrient code
+	 * @return {@code true} when the nutrient can be a class I nutrient
+	 */
+	private boolean canBeFortified(String nutrientTypeCode) {
+		return NUTRIENTS_TO_FORTIFY.contains(nutrientTypeCode) || nutrientTypeCode.startsWith(NutrientCode.Protein) || isVitamin(nutrientTypeCode)
+				|| (isMineral(nutrientTypeCode) && !NOT_MINERALS.contains(nutrientTypeCode));
 	}
 
 	/** {@inheritDoc} */

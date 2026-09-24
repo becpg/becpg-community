@@ -21,6 +21,29 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     var NUMBER_FORMAT = { "maximumFractionDigits": 4 };
     var NUTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "nutDetails");
+
+    /**
+     * Regulations without a flag image: their details link keeps the information icon.
+     */
+    var REGULATIONS_WITHOUT_FLAG = ["CTA"];
+
+    /**
+     * URL of the flag of a regulation key (eg. "EU", "CA").
+     */
+    var getRegulationFlagUrl = function(regulationKey) {
+        return Alfresco.constants.URL_CONTEXT + 'res/components/images/flags/' + regulationKey.split("_")[0].toLowerCase() + '.png';
+    };
+
+    /**
+     * Reads the value a rounded value JSON holds for a regulation, null when there is none.
+     * A tolerance of 0 is a real limit and must not be taken for a missing value.
+     */
+    var getRegulationValue = function(jsonData, valueKey, regulationKey) {
+        if (jsonData[valueKey] && jsonData[valueKey][regulationKey] !== undefined && jsonData[valueKey][regulationKey] !== null) {
+            return jsonData[valueKey][regulationKey];
+        }
+        return null;
+    };
     var CHARACTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "charactDetails");
     var INGLISTING_INFO_EVENTCLASS = Alfresco.util.generateDomId(null, "ingListIngInfo");
 
@@ -1066,26 +1089,27 @@ if (beCPG.module.EntityDataGridRenderers) {
                                     minimumFractionDigits = 1;
                                 }
 
-                                var toleranceMin = jsonData.tl ? jsonData.tl[k] || '' : '';
-                                var toleranceMax = jsonData.tu ? jsonData.tu[k] || '' : '';
+                                // Historical keys: "tl" holds the maximum tolerated value, "tu" the minimum
+                                var toleranceMin = getRegulationValue(jsonData, "tu", k);
+                                var toleranceMax = getRegulationValue(jsonData, "tl", k);
                                 var min = jsonData.min ? jsonData.min[k] || '' : '';
                                 var max = jsonData.max ? jsonData.max[k] || '' : '';
                                 var gda = jsonData.gda ? jsonData.gda[k] || '' : '';
                                 var vps = jsonData.vps ? jsonData.vps[k] || '' : '';
 
                                 ret += '<div>' +
-                                    '<h3>' + scope.msg("nutrient.details.header", k + ' <img  title="' + k + '" src="' + Alfresco.constants.URL_CONTEXT + 'res/components/images/flags/' + k.split("_")[0].toLowerCase() + '.png" />') + '</h3>' +
+                                    '<h3>' + scope.msg("nutrient.details.header", k + ' <img  title="' + k + '" src="' + getRegulationFlagUrl(k) + '" />') + '</h3>' +
                                     '<p>' + scope.msg("nutrient.details.value", value.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
                                     })) + '</p>' +
-                                    (toleranceMin ? '<p>' + scope.msg("nutrient.details.tl", toleranceMin.toLocaleString(beCPG.util.getJSLocale(), {
+                                    (toleranceMin !== null ? '<p>' + scope.msg("nutrient.details.tu", toleranceMin.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
                                     })) + '</p>' : '') +
-                                    (toleranceMax ? '<p>' + scope.msg("nutrient.details.tu", toleranceMax.toLocaleString(beCPG.util.getJSLocale(), {
+                                    (toleranceMax !== null ? '<p>' + scope.msg("nutrient.details.tl", toleranceMax.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
@@ -1108,7 +1132,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                         ret += '</div></div>';
 
                         ret += '<span class="node-' + oColumn.field + "-" + oRecord.getData("nodeRef") + '">';
-                        ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
+                        var flagStyle = '';
+                        if (REGULATIONS_WITHOUT_FLAG.indexOf(key) < 0) {
+                            flagStyle = ' style="background-image:url(\'' + getRegulationFlagUrl(key) + '\');background-position:left center;"';
+                        }
+                        ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + ' (' + key + ')"' + flagStyle + ' href="" >';
                         ret += "&nbsp;";
                         ret += "</a></span>";
 

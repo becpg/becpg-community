@@ -6,6 +6,7 @@
   is the standard one, the selection of nutrients having already been made upstream.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>

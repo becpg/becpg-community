@@ -196,6 +196,12 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutrientTypeCode, nutUnit, NutrientToleranceCriteria.ofClaim(isClaimed));
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, NutrientToleranceCriteria criteria) {
 
 		if (value == null) {
 			return null;
@@ -205,7 +211,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			return null;
 		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			return tolerancesByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode, isClaimed);
+			return tolerancesByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode, criteria);
 		}
 		return null;
 	}
@@ -437,6 +443,22 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 */
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, boolean isClaimed) {
 		return tolerancesByCode(value, nutrientTypeCode);
+	}
+
+	/**
+	 * <p>tolerancesByCode.</p>
+	 *
+	 * <p>Criteria-aware variant. By default it only keeps the claim flag and delegates to
+	 * {@link #tolerancesByCode(Double, String, boolean)}. Regulations that tell added nutrients
+	 * apart (Canadian class I) override this method.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object expressed in the unit of the regulation
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param criteria what is known about the nutrient line
+	 * @return the (maximum, minimum) tolerated values, or {@code null} when the regulation has none
+	 */
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, NutrientToleranceCriteria criteria) {
+		return tolerancesByCode(value, nutrientTypeCode, criteria.claimed());
 	}
 
 }

@@ -69,6 +69,18 @@ public record NutritionFactsLine(String nutCode, String label, String abbreviate
 	}
 
 	/**
+	 * <p>Tells whether the per container daily value column has to be filled for this line. The
+	 * percentage is computed for every nutrient that has a daily value, but a line whose per serving
+	 * percentage the regulation leaves out, Protein being the usual case, leaves it out per container
+	 * as well.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean hasDailyValuePerContainer() {
+		return showDailyValue && (dailyValuePercentPerContainer != null);
+	}
+
+	/**
 	 * <p>Tells whether the percentage of the line covers the nutrient declared under it, the
 	 * Canadian saturated fat line carrying saturated and trans fat together. The regulation prints
 	 * such a percentage between the two lines it covers, and not opposite the first one.</p>

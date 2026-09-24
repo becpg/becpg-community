@@ -6,6 +6,7 @@
   can declare the exact height the content ended up needing, which nf.cursorY carries back.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>

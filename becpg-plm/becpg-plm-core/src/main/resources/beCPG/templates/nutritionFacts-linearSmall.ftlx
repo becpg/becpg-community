@@ -3,9 +3,11 @@
 
   The whole declaration is one paragraph, heading included: a package that cannot carry the
   heading of the linear format on its own line runs it into the sentence. Only the wording the
-  regulation emphasises is set in the heavy face.
+  regulation emphasises is set in the heavy face, and the daily value footnote is left out, as
+  the FDA example of the format leaves it out.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 <#assign WIDTH = 504>
 <#assign W = WIDTH in nf>
 
@@ -16,10 +18,10 @@
 <#function opening data>
 	<#local segments = [nf.emphasis(data.label("title"))]>
 	<#if data.serving().hasServingsPerContainer()>
-	<#local segments = segments + [nf.text(data.serving().servingsPerContainer() + " " + data.label("servingsPerContainer") + ",")]>
+	<#local segments = segments + [nf.text(nf.linearServings(data) + ",")]>
 	</#if>
 	<#if data.serving().servingSize()??>
-	<#local segments = segments + [nf.emphasis(data.label("servingSize") + " " + data.serving().servingSize() + ",")]>
+	<#local segments = segments + [nf.emphasis(nf.linearServingSize(data) + ",")]>
 	</#if>
 	<#if data.calories()??>
 	<#if data.label("amountPerServing")?has_content>
@@ -35,13 +37,6 @@
 
 	<@nf.paragraph segments=opening(nf_data) + nf.linearSegments(nf_data) y=y/>
 	<#assign y = nf.cursorY>
-
-	<#if nf_data.footNote()?has_content>
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE + 2>
-	<@nf.footNote text=nf_data.footNote() y=y/>
-	<#assign y = nf.cursorY>
-	</#if>
 
 	<#assign y = y + nf.BORDER + 2>
 </#assign>

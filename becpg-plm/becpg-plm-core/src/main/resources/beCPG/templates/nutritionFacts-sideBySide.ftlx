@@ -5,10 +5,12 @@
   per line, separated by a drawn dot. Used when the height of the label is constrained.
 
   Two declarations on one line need more width than a vertical panel: at the width of that one,
-  "Vitamin D 0.6mcg 4%" and "Calcium 260mg 20%" run into each other.
+  "Vitamin D 0.6mcg 4%" and "Calcium 260mg 20%" run into each other. The panel is kept just wide
+  enough for the longest pair, "Potassium 4,270mg 90%" included, to keep the dot clear on both sides.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#assign W = 190 in nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
+<#assign W = 176 in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>

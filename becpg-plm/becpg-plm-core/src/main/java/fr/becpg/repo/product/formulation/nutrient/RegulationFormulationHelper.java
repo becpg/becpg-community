@@ -46,10 +46,13 @@ public class RegulationFormulationHelper {
 	public static final String ATTR_NUT_CODE = "nutCode";
 	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
-	/** Constant <code>KEY_TOLERANCE_MAX="tu"</code> */
-	private static final String KEY_TOLERANCE_MAX = "tu";
-	/** Constant <code>KEY_TOLERANCE_MIN="tl"</code> */
-	private static final String KEY_TOLERANCE_MIN = "tl";
+	/**
+	 * Key of the maximum tolerated value. The stored keys are historical: "tl" holds the maximum
+	 * and "tu" the minimum, which is how the nutrient list screen reads them.
+	 */
+	private static final String KEY_TOLERANCE_MAX = "tl";
+	/** Key of the minimum tolerated value, see {@link #KEY_TOLERANCE_MAX}. */
+	private static final String KEY_TOLERANCE_MIN = "tu";
 	/** Constant <code>KEY_MINI="min"</code> */
 	private static final String KEY_MINI = "min";
 	/** Constant <code>KEY_MAXI="max"</code> */
@@ -77,9 +80,9 @@ public class RegulationFormulationHelper {
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
-		regulations.put("TT", new UsNutrientRegulation("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
-		regulations.put("DO", new UsNutrientRegulation("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
-		regulations.put("PE", new UsNutrientRegulation("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
+		regulations.put("TT", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
+		regulations.put("DO", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
+		regulations.put("PE", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
@@ -554,7 +557,7 @@ public class RegulationFormulationHelper {
 	 * @param abrv a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
-	private static String keyToXml(String abrv) {
+	static String keyToXml(String abrv) {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
 			return "SecondaryValue";
@@ -609,7 +612,7 @@ public class RegulationFormulationHelper {
 	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
 	 */
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
-		extractRoundedValue(formulatedProduct, nutCode, n, false);
+		extractRoundedValue(formulatedProduct, nutCode, n, NutrientToleranceCriteria.NONE);
 	}
 
 	/**
@@ -618,9 +621,10 @@ public class RegulationFormulationHelper {
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param nutCode a {@link java.lang.String} object.
 	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
-	 * @param isClaimed whether the nutrient is subject to a nutritional or health claim (EU Table 3 tolerances)
+	 * @param criteria what is known about the nutrient line: claimed (EU Table 3 tolerances), added (Canadian class I);
+	 *                 the serving size of each regulation is added here
 	 */
-	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n, boolean isClaimed) {
+	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n, NutrientToleranceCriteria criteria) {
 		JSONObject jsonRound = new JSONObject();
 		JSONObject jsonPreparedRound = new JSONObject();
 		try {
@@ -657,16 +661,19 @@ public class RegulationFormulationHelper {
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 
-				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit, isClaimed);
+				Double servingSize = getServingSize(key, formulatedProduct);
+				NutrientToleranceCriteria servingCriteria = criteria.withServingSize(servingSize);
+
+				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					tmin.put(key, tolerances.getFirst());
-					tmax.put(key, tolerances.getSecond());
+					tmax.put(key, tolerances.getFirst());
+					tmin.put(key, tolerances.getSecond());
 				}
 
-				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit, isClaimed);
+				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					secondaryTmin.put(key, tolerances.getFirst());
-					secondaryTmax.put(key, tolerances.getSecond());
+					secondaryTmax.put(key, tolerances.getFirst());
+					secondaryTmin.put(key, tolerances.getSecond());
 				}
 
 				if (n instanceof VariantAwareDataItem) {
@@ -679,8 +686,6 @@ public class RegulationFormulationHelper {
 						}
 					}
 				}
-
-				Double servingSize = getServingSize(key, formulatedProduct);
 
 				if ((n.getValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getValue() * (servingSize * 1000d)) / 100;
