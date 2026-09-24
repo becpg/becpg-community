@@ -7,6 +7,7 @@
   the FDA example of the format leaves it out.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 <#assign WIDTH = 504>
 <#assign W = WIDTH in nf>
 

@@ -9,6 +9,7 @@
   enough for the longest pair, "Potassium 4,270mg 90%" included, to keep the dot clear on both sides.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 <#assign W = 176 in nf>
 
 <#assign y = nf.BORDER + 2>

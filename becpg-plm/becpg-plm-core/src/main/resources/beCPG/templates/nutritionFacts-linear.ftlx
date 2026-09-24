@@ -11,6 +11,7 @@
   A sentence needs width rather than height, so the panel is drawn across the package.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 <#assign WIDTH = 504>
 <#assign W = WIDTH in nf>
 

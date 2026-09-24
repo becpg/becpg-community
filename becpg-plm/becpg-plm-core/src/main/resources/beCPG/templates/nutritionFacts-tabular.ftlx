@@ -14,6 +14,7 @@
   told apart by the air between them, each column's rules stopping at the edge of its text.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
 <#assign WIDTH = 528>
 <#assign W = WIDTH in nf>
 

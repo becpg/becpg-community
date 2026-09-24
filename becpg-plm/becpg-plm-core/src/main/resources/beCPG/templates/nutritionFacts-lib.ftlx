@@ -68,6 +68,14 @@
 -->
 <#assign NBSP = "\xA0">
 
+<#--
+  Word a regulation sets in italics wherever a nutrient name carries it, "Trans" for the FDA.
+  A format declares it once, before it draws anything, the way it declares its width:
+
+    <#assign ITALIC_WORD = nf_data.label("italicWord") in nf>
+-->
+<#assign ITALIC_WORD = "">
+
 <#-- Air kept between a vertical rule, or the edge of a column, and the figures next to it. -->
 <#assign CELL_INSET = 4>
 
@@ -183,7 +191,7 @@
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>>${line.label()}<#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if><#if mark?has_content><tspan font-weight="normal">${mark}</tspan></#if></text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.label()/><#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if><#if mark?has_content><tspan font-weight="normal">${mark}</tspan></#if></text>
 	<#if line.hasDailyValue()>
 	<text x="${right()}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-weight="${HEAVY_WEIGHT}"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>
@@ -693,7 +701,7 @@
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>>${line.columnLabel()}</text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.columnLabel()/></text>
 	<#if line.value()??>
 	<text x="${servingValueX}" y="${base}" font-size="${NUTRIENT_SIZE}">${line.value()}</text>
 	</#if>
@@ -910,7 +918,7 @@
   what sits between two emphasised words.
 -->
 <#macro paragraphLine parts y size indent>
-	<text x="${indent}" y="${baseline(y, largestSize(parts))}" font-size="${size}" xml:space="preserve"><#list mergedRuns(parts) as run><#if (run?index gt 0)> </#if><#if run.bold || (run.size != size)><tspan<#if run.bold> font-weight="${HEAVY_WEIGHT}"</#if><#if run.size != size> font-size="${run.size}"</#if>>${run.text}</tspan><#else>${run.text}</#if></#list></text>
+	<text x="${indent}" y="${baseline(y, largestSize(parts))}" font-size="${size}" xml:space="preserve"><#list mergedRuns(parts) as run><#if (run?index gt 0)> </#if><#if run.bold || (run.size != size)><tspan<#if run.bold> font-weight="${HEAVY_WEIGHT}"</#if><#if run.size != size> font-size="${run.size}"</#if>><@wording text=run.text/></tspan><#else><@wording text=run.text/></#if></#list></text>
 </#macro>
 
 <#-- Words of one line gathered back into as few runs as their styling allows. -->
@@ -945,6 +953,21 @@
 	<#return words>
 </#function>
 
+<#--
+  A wording, the word the regulation italicises set in italics when it stands as a word of its
+  own: "Trans Fat" gets it, a word merely containing those letters does not.
+-->
+<#macro wording text>
+	<#local at = ITALIC_WORD?has_content?then(text?index_of(ITALIC_WORD), -1)>
+	<#if (at gte 0) && isWholeWord(text, at)>${text[0..<at]}<tspan font-style="italic">${ITALIC_WORD}</tspan>${text[(at + ITALIC_WORD?length)..]}<#else>${text}</#if><#t>
+</#macro>
+
+<#-- Tells whether the italicised word found at that index stands between two non letters. -->
+<#function isWholeWord text at>
+	<#local end = at + ITALIC_WORD?length>
+	<#return ((at == 0) || !text[at - 1]?matches(r"\p{L}")) && ((end == text?length) || !text[end]?matches(r"\p{L}"))>
+</#function>
+
 <#-- The svg envelope, identical for every format: white ground, border, then the drawn body. -->
 <#macro panel height>
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}pt" height="${height}pt" viewBox="0 0 ${W} ${height}"
@@ -962,7 +985,7 @@
 <#macro tabularRow line y labelX percentX boldPercent=true>
 	<#local base = baseline(y + 2, NUTRIENT_SIZE)>
 	<#local x = labelX + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>>${line.label()}<#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.label()/><#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
 	<#if line.hasDailyValue()>
 	<text x="${percentX}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-weight="${HEAVY_WEIGHT}"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>

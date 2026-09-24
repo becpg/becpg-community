@@ -90,6 +90,8 @@ public class NutritionFactsTemplateTest {
 
 	private static final double DUAL_COLUMN_LABEL_WIDTH = 84d;
 
+	private static final String ITALIC_TRANS = "<tspan font-style=\"italic\">Trans</tspan>";
+
 	private Configuration configuration;
 
 	@Before
@@ -408,6 +410,30 @@ public class NutritionFactsTemplateTest {
 			Assert.assertFalse("No line starts with the second word of a name: " + content, content.startsWith("Carb.") || content.startsWith("Fat "));
 		}
 		Assert.assertTrue("The words of a name are joined by a no-break space", renderToString(LINEAR_TEMPLATE, usLinearPanel()).contains("Total" + NBSP + "Carb."));
+	}
+
+	@Test
+	public void testTransIsSetInItalicsInEveryUsFormat() throws Exception {
+		for (String format : List.of("vertical", "sideBySide", "simplified", "tabular", "dualColumn")) {
+			Assert.assertTrue(format + " sets Trans in italics", renderToString("nutritionFacts-" + format + ".ftlx", standardPanel()).contains(ITALIC_TRANS + " Fat"));
+		}
+		for (String template : List.of(LINEAR_TEMPLATE, LINEAR_SMALL_TEMPLATE)) {
+			Assert.assertTrue(template + " sets Trans in italics", renderToString(template, standardPanel()).contains(ITALIC_TRANS + NBSP + "Fat"));
+		}
+	}
+
+	@Test
+	public void testItalicsApplyToTheWholeWordOnly() throws Exception {
+		String svg = renderToString(VERTICAL_TEMPLATE, panelData(line("TRANSG", "Transglutaminase", "1g", null, 1, false)));
+
+		Assert.assertFalse("A word merely starting with Trans stays upright", svg.contains(ITALIC_TRANS));
+	}
+
+	@Test
+	public void testCanadianPanelsSetNoWordInItalics() throws Exception {
+		for (String template : List.of(CANADA_TEMPLATE, CANADA_LINEAR_TEMPLATE, CANADA_HORIZONTAL_TEMPLATE)) {
+			Assert.assertFalse(template + " declares no italic word", renderToString(template, bilingualCanadianPanel()).contains("font-style"));
+		}
 	}
 
 	@Test
@@ -775,6 +801,7 @@ public class NutritionFactsTemplateTest {
 		labels.put("perServing", "Per serving");
 		labels.put("perContainer", "Per container");
 		labels.put("dailyValueSuffix", "DV");
+		labels.put("italicWord", "Trans");
 		return labels;
 	}
 
