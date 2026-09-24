@@ -41,6 +41,8 @@ function getArgument(argName, defValue) {
 	return result;
 }
 
+var NODE_REF_PATTERN = /^[a-z]+:\/\/[A-Za-z0-9]+\/[A-Za-z0-9-]+$/;
+
 var preferenceRoot = null;
 
 /**
@@ -396,6 +398,16 @@ function main() {
 	 */
 	var withDefaults = getArgument("withDefaults") == "true";
 
+	/*
+	 * withSets=true adds the form set of every column, and the set hierarchy.
+	 *
+	 * Same opt-in rule: without the argument the answer is byte identical. A
+	 * datagrid form lists the columns without any appearance, so the sets are
+	 * read from the edit form of setsNodeRef - a row of the grid - which is the
+	 * form the user knows the fields from. See getSetSources.
+	 */
+	var withSets = getArgument("withSets") == "true";
+
 	var skipSecurityRules = false;
 	var referer = getRequestHeader("Referer");
 	if (referer !== null && referer.indexOf("/share/page/wizard") !== -1) {
@@ -425,6 +437,13 @@ function main() {
 	// pass form ui model to FTL
 	model.withDefaults = withDefaults;
 	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules, withControls);
+
+	// getColumns returns nothing once it has set an error status, which must reach the client as is
+	if (withSets && model.columns != null) {
+		var setSources = getSetSources(itemType, getArgument("setsNodeRef"));
+		assignColumnSets(model.columns, setSources);
+		model.sets = getLabelledSets(setSources);
+	}
 
 }
 
@@ -787,10 +806,177 @@ function getDefaultFormField(itemType, fieldId) {
 	if (itemType == null || fieldId == null) {
 		return null;
 	}
-	var nodeConfig = config.scoped[itemType];
-	var formsConfig = nodeConfig !== null ? nodeConfig.forms : null;
-	var defaultForm = formsConfig !== null ? formsConfig.defaultForm : null;
+	var defaultForm = getDefaultForm(itemType);
 	return defaultForm !== null && defaultForm.fields != null ? defaultForm.fields[fieldId] : null;
+}
+
+/**
+ * The default form of a configuration scope.
+ *
+ * A type name only reaches the model-type configurations and a nodeRef only the
+ * node-type ones: the two scopes are disjoint.
+ *
+ * @method getDefaultForm
+ * @param scope a prefixed type, e.g. pjt:project, or a nodeRef
+ * @return the form configuration, or null
+ */
+function getDefaultForm(scope) {
+	var nodeConfig = config.scoped[scope];
+	var formsConfig = nodeConfig !== null ? nodeConfig.forms : null;
+	return formsConfig !== null ? formsConfig.defaultForm : null;
+}
+
+/**
+ * The forms the sets of the columns are read from, in order of precedence.
+ *
+ * The edit form of a node comes first: it is the form the user knows the
+ * fields from, and a client often declares its whole set hierarchy there and
+ * nowhere else - the project tabs of a client configuration may only exist in
+ * the node-type form. The default form of the type completes it, for the
+ * columns the edit form leaves out and for a grid that shows no row.
+ *
+ * @method getSetSources
+ * @param itemType prefixed type of the columns
+ * @param setsNodeRef nodeRef of an item of that type, or null
+ * @return Array of {form, owners}, the forms that declare at least one labelled set
+ */
+function getSetSources(itemType, setsNodeRef) {
+	var sources = [];
+
+	if (setsNodeRef != null && NODE_REF_PATTERN.test(setsNodeRef)) {
+		appendSetSource(sources, getDefaultForm(setsNodeRef));
+	}
+	if (itemType != null && itemType.length > 0) {
+		appendSetSource(sources, getDefaultForm(itemType));
+	}
+
+	return sources;
+}
+
+/**
+ * @method appendSetSource
+ * @param sources the sources being built
+ * @param formConfig a form configuration, or null
+ */
+function appendSetSource(sources, formConfig) {
+	var owners = getLabelledSetOwners(formConfig);
+	for (var setId in owners) {
+		if (owners[setId] !== null) {
+			sources.push({ form: formConfig, owners: owners });
+			return;
+		}
+	}
+}
+
+/**
+ * Maps every set of the form to the set it is offered as: itself when it has a
+ * label, its closest labelled ancestor otherwise. A layout set such as a bare
+ * 2-column-set has nothing to show in a drop-down, its fields belong to the
+ * panel around it. The default set, whose id is empty, is never offered: an
+ * empty value stands for every set in the drop-down.
+ *
+ * @method getLabelledSetOwners
+ * @param formConfig a form configuration, or null
+ * @return Object set id to {id, label, labelId, parentId}, or to null when no set above is labelled
+ */
+function getLabelledSetOwners(formConfig) {
+	var owners = {};
+	if (formConfig !== null) {
+		var rootSets = formConfig.rootSets;
+		for (var i = 0; i < rootSets.length; i++) {
+			collectSetOwners(rootSets[i], null, owners);
+		}
+	}
+	return owners;
+}
+
+/**
+ * @method collectSetOwners
+ * @param formSet the set to walk down from
+ * @param parentOwner the labelled set above, or null
+ * @param owners the map being filled, in declaration order
+ */
+function collectSetOwners(formSet, parentOwner, owners) {
+	var setId = "" + formSet.setId;
+	var owner = parentOwner;
+
+	if (setId.length > 0 && (hasText(formSet.labelId) || hasText(formSet.label))) {
+		owner = {
+			id: setId,
+			label: hasText(formSet.label) ? "" + formSet.label : null,
+			labelId: hasText(formSet.labelId) ? "" + formSet.labelId : null,
+			parentId: parentOwner !== null ? parentOwner.id : null
+		};
+	}
+
+	owners[setId] = owner;
+
+	var children = formSet.children;
+	for (var i = 0; i < children.length; i++) {
+		collectSetOwners(children[i], owner, owners);
+	}
+}
+
+/**
+ * @method hasText
+ * @param value a string, or null
+ * @return true when the value is neither null nor empty
+ */
+function hasText(value) {
+	return value != null && ("" + value).length > 0;
+}
+
+/**
+ * Sets the "set" of every top level column, taken from the first source that
+ * places the column in a labelled set.
+ *
+ * @method assignColumnSets
+ * @param columns the columns built by getColumns
+ * @param sources the sources built by getSetSources
+ */
+function assignColumnSets(columns, sources) {
+	for (var i = 0; i < columns.length; i++) {
+		for (var j = 0; j < sources.length && columns[i].set == null; j++) {
+			var owner = getFieldSetOwner(sources[j], columns[i].name);
+			if (owner != null) {
+				columns[i].set = owner.id;
+			}
+		}
+	}
+}
+
+/**
+ * @method getFieldSetOwner
+ * @param source a source built by getSetSources
+ * @param fieldId the field to look up
+ * @return the labelled set the form places the field in, or null
+ */
+function getFieldSetOwner(source, fieldId) {
+	var field = source.form.fields != null ? source.form.fields[fieldId] : null;
+	return field != null && field.set != null ? source.owners["" + field.set] : null;
+}
+
+/**
+ * The labelled sets of every source, in declaration order so that a parent
+ * comes before its children. A set declared by several sources is kept as the
+ * first one declares it, the one assignColumnSets gives precedence to.
+ *
+ * @method getLabelledSets
+ * @param sources the sources built by getSetSources
+ * @return Array of {id, label, labelId, parentId}
+ */
+function getLabelledSets(sources) {
+	var ret = [], seen = {};
+	for (var i = 0; i < sources.length; i++) {
+		var owners = sources[i].owners;
+		for (var setId in owners) {
+			if (owners[setId] !== null && owners[setId].id == setId && !seen[setId]) {
+				seen[setId] = true;
+				ret.push(owners[setId]);
+			}
+		}
+	}
+	return ret;
 }
 
 function isChecked(preferences) {

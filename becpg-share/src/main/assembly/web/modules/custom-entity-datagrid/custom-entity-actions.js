@@ -240,15 +240,19 @@
 
 			Alfresco.util.Ajax.jsonGet({
 				url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=bulk-edit&itemType=" + encodeURIComponent(itemType)
-					+ "&formId=bulk-edit",
+					+ "&formId=bulk-edit"
+					+ this._buildSetsArguments(nodeRefs.length > 0 ? nodeRefs[0] : null),
 				successCallback: {
 					fn: function(response) {
+
+						var setPaths = this._buildSetPaths(response.json.sets);
 
 						this._renderCheckboxPicker({
 							containerEl: containerEl,
 							panel: this.widgets.wUsedPanel,
 							title: this.msg("label.select-prop.title"),
-							itemsHtml: this._buildFieldPickerItems(response.json.columns),
+							itemsHtml: this._buildFieldPickerItems(response.json.columns, setPaths),
+							setPaths: setPaths,
 							selectAllButtons: false
 						});
 
@@ -271,9 +275,10 @@
 		 *
 		 * @method _buildFieldPickerItems
 		 * @param columns {Array} the columns returned by the configuration webscript
+		 * @param setPaths {object} the form sets, as built by _buildSetPaths
 		 * @return {String} the list items markup
 		 */
-		_buildFieldPickerItems: function EntityDataGrid__buildFieldPickerItems(columns) {
+		_buildFieldPickerItems: function EntityDataGrid__buildFieldPickerItems(columns, setPaths) {
 			var itemsHtml = "";
 
 			for (var i = 0, ii = columns.length; i < ii; i++) {
@@ -285,7 +290,8 @@
 						id: "propSelected-" + i,
 						value: this._buildFormsName(column),
 						label: column.label,
-						checked: false
+						checked: false,
+						setPath: setPaths[column.set]
 					});
 				}
 			}
