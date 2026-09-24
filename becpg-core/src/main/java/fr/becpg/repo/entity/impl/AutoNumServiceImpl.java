@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -16,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,63 +81,41 @@ public class AutoNumServiceImpl implements AutoNumService {
     @Autowired
     private BehaviourFilter policyBehaviourFilter;
 
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private NodeDAO nodeDAO;
+
     /** {@inheritDoc} */
     @Override
     public String getAutoNumValue(QName className, QName propertyName) {
         validateInputs(className, propertyName);
-        
-        String lockKey = createLockKey(className, propertyName);
-        ReentrantLock lock = lockMap.computeIfAbsent(lockKey, k -> new ReentrantLock());
-        
-        lock.lock();
-        try {
-            return generateNextAutoNumValue(className, propertyName);
-        } finally {
-            lock.unlock();
-        }
+
+        return writeCounter(className, propertyName, () -> generateNextAutoNumValue(className, propertyName));
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean setAutoNumValue(QName className, QName propertyName, Long counter) {
         validateInputs(className, propertyName);
-        
+
         if (counter == null) {
             logger.warn("Attempted to set null counter for " + className + "." + propertyName);
             return false;
         }
 
-        Optional<NodeRef> autoNumNodeRef = findAutoNumNodeRef(className, propertyName);
-        
-        return autoNumNodeRef
-            .filter(nodeService::exists)
-            .map(nodeRef -> {
-                nodeService.setProperty(nodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, counter);
-                if (logger.isDebugEnabled()) {
-                logger.debug("Updated autonum value to " + counter + " for " + className + "." + propertyName);
-            }
-                return true;
-            })
-            .orElse(false);
+        return writeCounter(className, propertyName, () -> updateCounterValue(className, propertyName, counter));
     }
 
     /** {@inheritDoc} */
     @Override
     public void deleteAutoNumValue(QName className, QName propertyName) {
         validateInputs(className, propertyName);
-        
-        Optional<NodeRef> autoNumNodeRef = findAutoNumNodeRef(className, propertyName);
-        
-        autoNumNodeRef.ifPresent(nodeRef -> {
-            String cacheKey = createCacheKey(className, propertyName);
-            beCPGCacheService.removeFromCache(AutoNumServiceImpl.class.getName(), cacheKey);
-            
-            if (nodeService.exists(nodeRef)) {
-                nodeService.deleteNode(nodeRef);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Deleted autonum node for " + className + "." + propertyName);
-                }
-            }
+
+        writeCounter(className, propertyName, () -> {
+            deleteCounter(className, propertyName);
+            return null;
         });
     }
 
@@ -206,6 +187,112 @@ public class AutoNumServiceImpl implements AutoNumService {
         if (propertyName == null) {
             throw new IllegalArgumentException("propertyName cannot be null");
         }
+    }
+
+    /**
+     * Runs a write on a counter node under the lock of that counter, in its own short transaction
+     * whenever the counter is already committed.
+     * <p>
+     * The database row lock taken by the write is then released when the inner transaction commits,
+     * before the Java lock is released. A caller transaction therefore never holds the counter row
+     * while it waits for the Java lock: otherwise two transactions coding several entities each
+     * wait for the other one, a cycle neither the JVM nor the database can detect, that only ends
+     * with the lock wait timeout.
+     * <p>
+     * The write stays in the caller transaction when the counter does not exist yet, or when the
+     * caller transaction has already written it: the inner transaction cannot see the counter, or
+     * the folders it lives in, before the caller commits, and would wait for a row locked by its own
+     * suspended caller.
+     * <p>
+     * A counter value consumed by a caller transaction that rolls back or retries is lost, leaving a
+     * gap in the numbering.
+     *
+     * @param <T> the type returned by the write
+     * @param className the class the counter belongs to
+     * @param propertyName the property the counter numbers
+     * @param write the write to run on the counter node
+     * @return the value returned by the write
+     */
+    private <T> T writeCounter(QName className, QName propertyName, Supplier<T> write) {
+        ReentrantLock lock = lockMap.computeIfAbsent(createLockKey(className, propertyName), k -> new ReentrantLock());
+
+        lock.lock();
+        try {
+            if (isCommittedByAnotherTransaction(className, propertyName)) {
+                return transactionService.getRetryingTransactionHelper().doInTransaction(() -> writeWithoutAuditing(write), false, true);
+            }
+            return write.get();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Tells whether the counter exists and was last written by a transaction other than the current one.
+     *
+     * @param className the class the counter belongs to
+     * @param propertyName the property the counter numbers
+     * @return true if the counter can be written in its own transaction
+     */
+    private boolean isCommittedByAnotherTransaction(QName className, QName propertyName) {
+        return findAutoNumNodeRef(className, propertyName)
+            .filter(nodeService::exists)
+            .map(nodeRef -> !nodeDAO.isInCurrentTxn(nodeDAO.getNodeRefStatus(nodeRef).getDbId()))
+            .orElse(false);
+    }
+
+    /**
+     * Runs a counter write without updating the auditable properties of the counter, as the caller
+     * transaction does for the entity it codes.
+     *
+     * @param <T> the type returned by the write
+     * @param write the write to run on the counter node
+     * @return the value returned by the write
+     */
+    private <T> T writeWithoutAuditing(Supplier<T> write) {
+        policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+        return write.get();
+    }
+
+    /**
+     * Sets the value of an existing counter.
+     *
+     * @param className the class the counter belongs to
+     * @param propertyName the property the counter numbers
+     * @param counter the new value of the counter
+     * @return true if the counter exists and was updated, false otherwise
+     */
+    private boolean updateCounterValue(QName className, QName propertyName, Long counter) {
+        Optional<NodeRef> autoNumNodeRef = findAutoNumNodeRef(className, propertyName).filter(nodeService::exists);
+
+        if (autoNumNodeRef.isEmpty()) {
+            return false;
+        }
+
+        nodeService.setProperty(autoNumNodeRef.get(), BeCPGModel.PROP_AUTO_NUM_VALUE, counter);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Updated autonum value to " + counter + " for " + className + "." + propertyName);
+        }
+        return true;
+    }
+
+    /**
+     * Deletes a counter node and evicts it from the cache.
+     *
+     * @param className the class the counter belongs to
+     * @param propertyName the property the counter numbers
+     */
+    private void deleteCounter(QName className, QName propertyName) {
+        findAutoNumNodeRef(className, propertyName).ifPresent(nodeRef -> {
+            beCPGCacheService.removeFromCache(AutoNumServiceImpl.class.getName(), createCacheKey(className, propertyName));
+
+            if (nodeService.exists(nodeRef)) {
+                nodeService.deleteNode(nodeRef);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Deleted autonum node for " + className + "." + propertyName);
+                }
+            }
+        });
     }
 
     /**
@@ -361,7 +448,10 @@ public class AutoNumServiceImpl implements AutoNumService {
             if (codeExists) {
                 return generateAndSetNewCode(nodeRef, typeQName, codeQName);
             } else {
-                createOrUpdateAutoNumValue(typeQName, codeQName, existingCode);
+                writeCounter(typeQName, codeQName, () -> {
+                    createOrUpdateAutoNumValue(typeQName, codeQName, existingCode);
+                    return null;
+                });
                 return existingCode;
             }
         } else {
