@@ -1216,8 +1216,39 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return res;
 	}
 
-	private String getKeyFromPivots(NodeRef node, List<QName> pivotProperties) {
+	/**
+	 * Builds the key used to match a datalist item between the compared entities, from its pivot values
+	 * and, for multi-level lists, the keys of its parent levels.
+	 *
+	 * @param node the datalist item
+	 * @param pivotProperties the pivot properties or associations of the datalist type
+	 * @return the matching key, empty when the item has no pivot value
+	 */
+	String getKeyFromPivots(NodeRef node, List<QName> pivotProperties) {
+		return getKeyFromPivots(node, pivotProperties, new HashSet<>());
+	}
+
+	private String getKeyFromPivots(NodeRef node, List<QName> pivotProperties, Set<NodeRef> visitedNodeRefs) {
 		logger.debug("getKeyFromPivots, node = " + node);
+		visitedNodeRefs.add(node);
+		StringBuilder builder = new StringBuilder(extractPivotValues(node, pivotProperties));
+
+		NodeRef parentNodeRef = getParentLevel(node);
+		if (parentNodeRef != null) {
+			if (visitedNodeRefs.contains(parentNodeRef)) {
+				logger.warn("Cycle detected in parent level hierarchy of " + node + ", ignoring parent " + parentNodeRef);
+			} else {
+				appendKeyPart(builder, getKeyFromPivots(parentNodeRef, pivotProperties, visitedNodeRefs));
+			}
+		}
+
+		String res = builder.toString();
+		logger.debug("getKeyFromPivots, res = " + res);
+
+		return res;
+	}
+
+	private String extractPivotValues(NodeRef node, List<QName> pivotProperties) {
 		StringBuilder builder = new StringBuilder();
 
 		for (QName pivot : pivotProperties) {
@@ -1228,29 +1259,24 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				NodeRef targetAssoc = associationService.getTargetAssoc(node, pivot);
 				value = (targetAssoc != null) ? extractPivot(targetAssoc,pivot) : "null";
 			}
-
-			if (builder.length() > 0) {
-				builder.append('|');
-			}
-			builder.append(value);
+			appendKeyPart(builder, String.valueOf(value));
 		}
 
+		return builder.toString();
+	}
+
+	private NodeRef getParentLevel(NodeRef node) {
 		if (nodeService.hasAspect(node, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-			NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(node, BeCPGModel.PROP_PARENT_LEVEL);
-			if (parentNodeRef != null) {
-				String parentKey = getKeyFromPivots(parentNodeRef, pivotProperties);
-				if (builder.length() > 0) {
-					builder.append('|');
-				}
-				builder.append(parentKey);
-			}
+			return (NodeRef) nodeService.getProperty(node, BeCPGModel.PROP_PARENT_LEVEL);
 		}
+		return null;
+	}
 
-		String res = builder.toString();
-		logger.debug("getKeyFromPivots, res = " + res);
-
-		return res;
-
+	private static void appendKeyPart(StringBuilder builder, String keyPart) {
+		if (builder.length() > 0) {
+			builder.append('|');
+		}
+		builder.append(keyPart);
 	}
 
 	/**
