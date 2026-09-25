@@ -1,10 +1,12 @@
 <@markup id="css" >
+	<@link href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
 	<@link href="${url.context}/res/components/entity-charact-views/regulatory-view.css" group="entity-datalists" />
 </@>
 
 <@markup id="js">
-	<#-- Product toolbar actions, among which the AI suggestion button -->
+	<#-- Product toolbar actions, among which the AI suggestion button and the unmet requirements -->
 	<@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
+	<@script src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/entity-charact-views/regulatory-view.js" group="entity-datalists"/>
 </@>
 
