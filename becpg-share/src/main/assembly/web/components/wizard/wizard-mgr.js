@@ -158,12 +158,41 @@
                 url: url, method: "GET",
                 successCallback: {
                     fn: function(response) {
-                        nextStep.nodeRef = response.json.nodeRef;
+                        // A 200 without nodeRef (e.g. becpg/project/path when the folder is missing)
+                        // keeps the step on its default nodeRef.
+                        if (response.json && response.json.nodeRef) {
+                            nextStep.nodeRef = response.json.nodeRef;
+                        }
                         this.loadStep(nextStep);
+                    },
+                    scope: this
+                },
+                failureCallback: {
+                    fn: function() {
+                        this.onNextStepWebScriptFailure(nextStep);
                     },
                     scope: this
                 }
             });
+        },
+
+        /**
+         * The next step cannot be resolved: tell the user and go back to the previous step, which is
+         * reloaded on the node already created so that the missing data can be completed. A late
+         * answer, once the user has left the step, is ignored.
+         *
+         * @method onNextStepWebScriptFailure
+         * @param nextStep {object} the step the webscript was resolving
+         */
+        onNextStepWebScriptFailure: function(nextStep) {
+            if (this.currentIndex !== nextStep.index) return;
+
+            Alfresco.util.PopupManager.displayPrompt({
+                title: this.msg("message.failure"),
+                text: this.msg("wizard.nextstep.failure")
+            });
+            isNavigatingBack = true;
+            this.widgets.wizard.steps("previous");
         },
 
         handleFinish: function(currentIndex) {
