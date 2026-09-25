@@ -1,10 +1,15 @@
 package fr.becpg.repo.product.formulation.score;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +52,9 @@ import fr.becpg.repo.score.data.ScoreThresholdListDataItem;
  * the worst of its levels, since that is the one blocking the placing on the market, and the
  * breakdown states one line per level so the failing unit is named.</p>
  *
+ * <p>The steps of the breakdown then state one line per material of each level, with the
+ * rate applied and the key it was read under, so a grade can be justified line by line.</p>
+ *
  * @author matthieu
  */
 @Service("ppwrRecyclability")
@@ -69,6 +77,9 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 
 	/** Constant <code>NOT_RECYCLABLE=0d</code> */
 	private static final double NOT_RECYCLABLE = 0d;
+
+	/** Source stated for a material the repository flags as not recyclable */
+	private static final String FLAGGED_SOURCE = "NR";
 
 	private final ScoreDefinitionService scoreDefinitionService;
 
@@ -135,7 +146,8 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	private ScoreContext buildContext(ProductData product, ScoreDefinitionItem definition) {
 		ScoreContext context = newContext(definition);
 
-		Map<PackagingLevel, PackagingUnit> units = weighUnits(product, definition);
+		List<WeighedLine> lines = weighLines(product, definition);
+		Map<PackagingLevel, PackagingUnit> units = groupByLevel(lines);
 		Double worst = null;
 
 		for (Map.Entry<PackagingLevel, PackagingUnit> entry : units.entrySet()) {
@@ -146,6 +158,7 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 		}
 
 		addUndocumentedPart(context, units.values());
+		addMaterialSteps(context, lines);
 
 		context.setValue(worst);
 
@@ -179,6 +192,21 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	}
 
 	/**
+	 * States one step per material line, in the order of the levels, so the grade of a level
+	 * can be traced back to the weight and the rate of each of its materials.
+	 *
+	 * @param context a {@link fr.becpg.repo.score.ScoreContext} object
+	 * @param lines the weighed material lines, in the order of the levels
+	 */
+	private void addMaterialSteps(ScoreContext context, List<WeighedLine> lines) {
+		for (WeighedLine line : lines) {
+			context.getSteps().add(new ScorePart(levelCode(line.level())).withLabel(materialName(line.material()))
+					.withValue(line.weight(), GRAM).withCoefficients(null, line.rate().value())
+					.withContribution(line.recyclableWeight()).withScoreClass(line.rate().source()));
+		}
+	}
+
+	/**
 	 * <p>newContext.</p>
 	 *
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
@@ -197,14 +225,15 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	}
 
 	/**
-	 * <p>Weight and recyclable weight of each packaging level, in the order of the levels.</p>
+	 * <p>Material lines carrying a weight, with the rate of their material, in the order of
+	 * the levels.</p>
 	 *
 	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
-	 * @return a {@link java.util.Map} object, keyed by packaging level
+	 * @return a {@link java.util.List} object
 	 */
-	private Map<PackagingLevel, PackagingUnit> weighUnits(ProductData product, ScoreDefinitionItem definition) {
-		Map<PackagingLevel, PackagingUnit> units = new EnumMap<>(PackagingLevel.class);
+	private List<WeighedLine> weighLines(ProductData product, ScoreDefinitionItem definition) {
+		List<WeighedLine> lines = new ArrayList<>();
 
 		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
 			if ((line.getPmlWeight() == null) || (line.getPmlWeight() <= 0d)) {
@@ -215,7 +244,25 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 			// data holds: reading it as a level of its own would grade a unit nobody declared
 			PackagingLevel level = (line.getPkgLevel() != null) ? line.getPkgLevel() : PackagingLevel.Primary;
 
-			units.computeIfAbsent(level, key -> new PackagingUnit()).add(line.getPmlWeight(), rateOf(line, definition));
+			lines.add(new WeighedLine(level, line.getPmlMaterial(), line.getPmlWeight(), rateOf(line, definition)));
+		}
+
+		lines.sort(Comparator.comparing(WeighedLine::level));
+
+		return lines;
+	}
+
+	/**
+	 * <p>Weight and recyclable weight of each packaging level, in the order of the levels.</p>
+	 *
+	 * @param lines the weighed material lines
+	 * @return a {@link java.util.Map} object, keyed by packaging level
+	 */
+	private Map<PackagingLevel, PackagingUnit> groupByLevel(List<WeighedLine> lines) {
+		Map<PackagingLevel, PackagingUnit> units = new EnumMap<>(PackagingLevel.class);
+
+		for (WeighedLine line : lines) {
+			units.computeIfAbsent(line.level(), key -> new PackagingUnit()).add(line.weight(), line.rate().value());
 		}
 
 		return units;
@@ -229,17 +276,17 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	 *
 	 * @param line a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
-	 * @return a {@link java.lang.Double} object, null when no rate is known
+	 * @return the rate and the key it was read under, both null when no rate is known
 	 */
-	private Double rateOf(PackMaterialListDataItem line, ScoreDefinitionItem definition) {
+	private MaterialRate rateOf(PackMaterialListDataItem line, ScoreDefinitionItem definition) {
 		NodeRef material = line.getPmlMaterial();
 
 		if (material == null) {
-			return null;
+			return MaterialRate.UNKNOWN;
 		}
 
 		if (isFlaggedNotRecyclable(material)) {
-			return NOT_RECYCLABLE;
+			return new MaterialRate(NOT_RECYCLABLE, FLAGGED_SOURCE);
 		}
 
 		Optional<ScoreThresholdListDataItem> rate = findRate(definition, materialCode(material));
@@ -248,7 +295,28 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 			rate = findRate(definition, ecoTaxeCategory(material));
 		}
 
-		return rate.map(ScoreThresholdListDataItem::getPoints).orElse(null);
+		return rate.map(threshold -> new MaterialRate(threshold.getPoints(), threshold.getNutCode())).orElse(MaterialRate.UNKNOWN);
+	}
+
+	/**
+	 * Name of a packaging material as the breakdown states it, read from the repository. A
+	 * subclass may serve it from elsewhere.
+	 *
+	 * @param material a {@link org.alfresco.service.cmr.repository.NodeRef} object, may be null
+	 * @return a {@link java.lang.String} object, null when the line names no material
+	 */
+	protected String materialName(NodeRef material) {
+		if (material == null) {
+			return null;
+		}
+
+		Serializable name = nodeService.getProperty(material, BeCPGModel.PROP_LV_VALUE);
+
+		if ((name == null) || name.toString().isBlank()) {
+			name = nodeService.getProperty(material, ContentModel.PROP_NAME);
+		}
+
+		return name != null ? name.toString() : null;
 	}
 
 	/**
@@ -322,9 +390,19 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	 * @return a {@link fr.becpg.repo.score.ScorePart} object
 	 */
 	private ScorePart toPart(PackagingLevel level, PackagingUnit unit, ScoreDefinitionItem definition) {
-		return new ScorePart(PART_PREFIX + level.name().toUpperCase()).withValue(unit.getWeight(), GRAM)
+		return new ScorePart(levelCode(level)).withValue(unit.getWeight(), GRAM)
 				.withCoefficients(null, unit.recyclableShare()).withContribution(unit.getRecyclableWeight())
 				.withScoreClass(gradeOf(unit.recyclableShare(), definition));
+	}
+
+	/**
+	 * <p>Code of the parts and steps stating a packaging level.</p>
+	 *
+	 * @param level a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String levelCode(PackagingLevel level) {
+		return PART_PREFIX + level.name().toUpperCase();
 	}
 
 	/**
@@ -352,6 +430,37 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	@Override
 	public Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
 		return Optional.empty();
+	}
+
+	/**
+	 * Recyclability rate of a material and the key of the reference data it was read under.
+	 *
+	 * @param value the rate, in percent, null when no rate is known
+	 * @param source the code or the category matched, or the flag of the repository
+	 */
+	private record MaterialRate(Double value, String source) {
+
+		static final MaterialRate UNKNOWN = new MaterialRate(null, null);
+
+	}
+
+	/**
+	 * One material line of a packaging level, with the rate of its material.
+	 *
+	 * @param level the packaging level of the line
+	 * @param material the material of the line, may be null
+	 * @param weight the weight of the line, in grams
+	 * @param rate the rate of the material
+	 */
+	private record WeighedLine(PackagingLevel level, NodeRef material, double weight, MaterialRate rate) {
+
+		/**
+		 * @return the recyclable weight of the line, null when no rate is known
+		 */
+		Double recyclableWeight() {
+			return rate.value() != null ? (weight * rate.value()) / 100d : null;
+		}
+
 	}
 
 	/**

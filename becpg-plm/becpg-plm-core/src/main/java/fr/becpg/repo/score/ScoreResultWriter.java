@@ -92,6 +92,7 @@ public class ScoreResultWriter {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Score " + context.getCode() + " is entered by hand, keeping the value of the entity");
 			}
+			writeManualDetails(item, context, definition.get());
 			return;
 		}
 
@@ -109,6 +110,30 @@ public class ScoreResultWriter {
 		item.setCategory(category(entity, definition.get()));
 
 		attachToParent(entity, item, definition.get());
+	}
+
+	/**
+	 * Rewrites the breakdown of a score entered by hand around the verdict entered, the value
+	 * and class of the item being left untouched.
+	 *
+	 * <p>The marking and its tooltip are drawn from the breakdown: left as it was, it would
+	 * show the grade computed before the entry rather than the grade entered. The computed
+	 * verdict stays beside it, so the gap between the two remains readable.</p>
+	 *
+	 * @param item the score entered by hand
+	 * @param context the breakdown of the computed score
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 */
+	private void writeManualDetails(RegulatoryScoreListDataItem item, ScoreContext context, ScoreDefinitionItem definition) {
+		context.setScoreClass(scoreClass(context, definition));
+
+		String manualClass = item.getScoreClass();
+		if ((manualClass == null) || manualClass.isBlank()) {
+			manualClass = classOf(item.getValue(), definition);
+		}
+
+		context.overrideVerdict(item.getValue(), manualClass);
+		item.setDetails(context.toJSON().toString());
 	}
 
 	/**
@@ -216,10 +241,21 @@ public class ScoreResultWriter {
 			return context.getScoreClass();
 		}
 
-		if ((context.getValue() == null) || (definition.getRange() == null) || definition.getRange().isBlank()) {
+		return classOf(context.getValue(), definition);
+	}
+
+	/**
+	 * <p>Class of a value, read from the range of the definition.</p>
+	 *
+	 * @param value the value of the score
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @return a {@link java.lang.String} object, null when the value or the range is missing
+	 */
+	private String classOf(Double value, ScoreDefinitionItem definition) {
+		if ((value == null) || (definition.getRange() == null) || definition.getRange().isBlank()) {
 			return null;
 		}
 
-		return new ScoreRangeConverter(definition.getRange()).getScoreLetter(context.getValue());
+		return new ScoreRangeConverter(definition.getRange()).getScoreLetter(value);
 	}
 }

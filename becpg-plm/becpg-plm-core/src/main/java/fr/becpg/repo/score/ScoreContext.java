@@ -40,6 +40,12 @@ public class ScoreContext {
 	public static final String PARTS = "parts";
 	/** Constant <code>STEPS="steps"</code> */
 	public static final String STEPS = "steps";
+	/** Constant <code>MANUAL="manual"</code> */
+	public static final String MANUAL = "manual";
+	/** Constant <code>COMPUTED_VALUE="computedValue"</code> */
+	public static final String COMPUTED_VALUE = "computedValue";
+	/** Constant <code>COMPUTED_CLASS="computedClass"</code> */
+	public static final String COMPUTED_CLASS = "computedClass";
 
 	private String code;
 
@@ -58,6 +64,12 @@ public class ScoreContext {
 	private final List<ScorePart> parts = new ArrayList<>();
 
 	private final List<ScorePart> steps = new ArrayList<>();
+
+	private boolean manual;
+
+	private Double computedValue;
+
+	private String computedClass;
 
 	/**
 	 * <p>Getter for the field <code>code</code>.</p>
@@ -205,6 +217,49 @@ public class ScoreContext {
 	}
 
 	/**
+	 * Replaces the verdict of the breakdown by the one entered by hand, keeping the computed
+	 * verdict beside it: the marking is drawn from the verdict, while the parts still state
+	 * what the formulation reached.
+	 *
+	 * @param manualValue the value entered by hand
+	 * @param manualClass the class entered by hand
+	 */
+	public void overrideVerdict(Double manualValue, String manualClass) {
+		computedValue = value;
+		computedClass = scoreClass;
+		value = manualValue;
+		scoreClass = manualClass;
+		manual = true;
+	}
+
+	/**
+	 * <p>Whether the verdict was entered by hand rather than computed.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isManual() {
+		return manual;
+	}
+
+	/**
+	 * <p>Value the formulation computed, when the verdict was entered by hand.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getComputedValue() {
+		return computedValue;
+	}
+
+	/**
+	 * <p>Class the formulation computed, when the verdict was entered by hand.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String getComputedClass() {
+		return computedClass;
+	}
+
+	/**
 	 * <p>Computes the share of each part in the sum of the contributions.</p>
 	 */
 	public void computeShares() {
@@ -242,6 +297,11 @@ public class ScoreContext {
 		json.putOpt(SCALE, scale);
 		json.put(PARTS, toJSONArray(parts));
 		json.put(STEPS, toJSONArray(steps));
+		if (manual) {
+			json.put(MANUAL, true);
+			json.putOpt(COMPUTED_VALUE, computedValue);
+			json.putOpt(COMPUTED_CLASS, computedClass);
+		}
 		return json;
 	}
 
@@ -276,6 +336,9 @@ public class ScoreContext {
 		context.scoreClass = json.optString(SCORE_CLASS, null);
 		context.range = json.optString(RANGE, null);
 		context.scale = json.optString(SCALE, null);
+		context.manual = json.optBoolean(MANUAL, false);
+		context.computedValue = json.has(COMPUTED_VALUE) && !json.isNull(COMPUTED_VALUE) ? json.getDouble(COMPUTED_VALUE) : null;
+		context.computedClass = json.optString(COMPUTED_CLASS, null);
 
 		fillParts(json.optJSONArray(PARTS), context.parts);
 		fillParts(json.optJSONArray(STEPS), context.steps);

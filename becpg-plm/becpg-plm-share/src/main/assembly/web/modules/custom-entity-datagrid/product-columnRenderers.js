@@ -500,18 +500,39 @@ if (beCPG.module.EntityDataGridRenderers) {
         return target[0]["itemData"][name].value;
     }
 
+    function isManualScore(oRecord) {
+        var isManual = scoreRowProp(oRecord, "prop_bcpg_rslIsManual");
+        return isManual === true || isManual === "true";
+    }
+
+    /**
+     * The breakdown of a score entered by hand is only rewritten around the entry by the next
+     * formulation: until then the row, not the breakdown, holds the verdict to draw.
+     */
+    function withManualVerdict(details, scoreClass, value) {
+        if (!details.manual) {
+            details.computedClass = details["class"];
+            details.computedValue = details.value;
+            details.manual = true;
+        }
+        details["class"] = scoreClass;
+        details.value = value;
+        return details;
+    }
+
     /**
      * A score entered by hand carries no breakdown: its badge is rebuilt from the verdict
      * of the row and the scale of its definition, otherwise the cell would stay empty.
      */
     function scoreDetailsOrVerdict(oRecord, data) {
         var details = beCPG.util.score.parseDetails(data ? data.value : null);
-        if (details) {
-            return details;
-        }
-
         var scoreClass = scoreRowProp(oRecord, "prop_bcpg_rslClass");
         var value = scoreRowProp(oRecord, "prop_bcpg_rslValue");
+
+        if (details) {
+            return isManualScore(oRecord) ? withManualVerdict(details, scoreClass, value) : details;
+        }
+
         if ((scoreClass === null || scoreClass === "") && (value === null || value === "")) {
             return null;
         }

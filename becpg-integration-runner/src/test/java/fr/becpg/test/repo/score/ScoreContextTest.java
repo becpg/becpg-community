@@ -1,7 +1,9 @@
 package fr.becpg.test.repo.score;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -52,6 +54,30 @@ public class ScoreContextTest {
 
 		assertEquals(1, parsed.getSteps().size());
 		assertEquals(-12d, parsed.getSteps().get(0).getContribution(), PRECISION);
+	}
+
+	@Test
+	public void testAManualVerdictSurvivesSerialization() {
+		ScoreContext context = new ScoreContext();
+		context.setValue(56d);
+		context.setScoreClass("NR");
+		context.overrideVerdict(96d, "A");
+
+		ScoreContext parsed = ScoreContext.parse(context.toJSON().toString());
+
+		assertTrue(parsed.isManual());
+		assertEquals("A", parsed.getScoreClass());
+		assertEquals(96d, parsed.getValue(), PRECISION);
+		assertEquals("NR", parsed.getComputedClass());
+		assertEquals(56d, parsed.getComputedValue(), PRECISION);
+	}
+
+	@Test
+	public void testAComputedVerdictCarriesNoManualFlag() {
+		ScoreContext context = new ScoreContext();
+		context.setScoreClass("B");
+
+		assertFalse(context.toJSON().has(ScoreContext.MANUAL));
 	}
 
 	@Test

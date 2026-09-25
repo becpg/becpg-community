@@ -80,6 +80,11 @@ public class PpwrRecyclabilityTest {
 			protected String ecoTaxeCategory(NodeRef material) {
 				return categories.get(material.getId());
 			}
+
+			@Override
+			protected String materialName(NodeRef material) {
+				return material.getId();
+			}
 		};
 	}
 
@@ -162,6 +167,62 @@ public class PpwrRecyclabilityTest {
 		categories.put(CLEAR_PET, RIGID_PET_CATEGORY);
 
 		assertEquals(95d, value(), PRECISION);
+	}
+
+	@Test
+	public void testTheBreakdownStatesTheRateOfEachMaterial() {
+		pack(CLEAR_PET, 24d, PackagingLevel.Primary);
+
+		ScorePart step = step(CLEAR_PET);
+		assertEquals("PPWR_PRIMARY", step.getCode());
+		assertEquals(24d, step.getValue(), PRECISION);
+		assertEquals(95d, step.getWeight(), PRECISION);
+		assertEquals(22.8d, step.getContribution(), PRECISION);
+	}
+
+	@Test
+	public void testTheBreakdownStatesTheKeyTheRateWasReadUnder() {
+		pack("PLASTIC_RIGID_PET", 50d, PackagingLevel.Primary);
+		categories.put("PLASTIC_RIGID_PET", RIGID_PET_CATEGORY);
+
+		assertEquals(RIGID_PET_CATEGORY, step("PLASTIC_RIGID_PET").getScoreClass());
+	}
+
+	@Test
+	public void testTheBreakdownStatesAFlaggedMaterialAsNotRecyclable() {
+		pack(CLEAR_PET, 24d, PackagingLevel.Primary);
+		flagged.add(CLEAR_PET);
+
+		assertEquals("NR", step(CLEAR_PET).getScoreClass());
+		assertEquals(0d, step(CLEAR_PET).getWeight(), PRECISION);
+	}
+
+	@Test
+	public void testTheBreakdownLeavesTheRateOfAnUndocumentedMaterialEmpty() {
+		pack("UNDOCUMENTED", 50d, PackagingLevel.Primary);
+
+		assertNull(step("UNDOCUMENTED").getWeight());
+		assertNull(step("UNDOCUMENTED").getContribution());
+	}
+
+	@Test
+	public void testTheMaterialsAreStatedInTheOrderOfTheLevels() {
+		pack(COMPLEX, 100d, PackagingLevel.Secondary);
+		pack(CLEAR_PET, 24d, PackagingLevel.Primary);
+
+		assertEquals(CLEAR_PET, context().getSteps().get(0).getLabel());
+	}
+
+	/**
+	 * <p>Step of the breakdown stating one material.</p>
+	 *
+	 * @param material the code of the material, which the test also uses as its name
+	 * @return a {@link fr.becpg.repo.score.ScorePart} object
+	 */
+	private ScorePart step(String material) {
+		Optional<ScorePart> found = context().getSteps().stream().filter(step -> material.equals(step.getLabel())).findFirst();
+
+		return found.orElseThrow(() -> new IllegalStateException("No step " + material + " in the breakdown"));
 	}
 
 	/**
