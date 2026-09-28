@@ -108,6 +108,8 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 	@Autowired
+	private ProjectFormulationAuditFilter projectFormulationAuditFilter;
+	@Autowired
 	private ProjectActivityService projectActivityService;
 	@Autowired
 	private ProjectListPolicy projectListPolicy;
@@ -262,7 +264,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				projectFormulationAuditFilter.disableAuditForFormulation();
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
@@ -292,7 +294,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				projectFormulationAuditFilter.enableAuditAfterFormulation();
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
@@ -615,7 +617,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 			try {
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 
-				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+				projectFormulationAuditFilter.runAudited(() -> scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model));
 			} finally {
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 			}
