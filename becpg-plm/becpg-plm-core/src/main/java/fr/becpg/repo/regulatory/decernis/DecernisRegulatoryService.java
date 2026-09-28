@@ -336,7 +336,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		try {
 			ingredientAnalysisResults = ingredientAnalysis(context, checkContext);
 		} catch (RestClientException e) {
-			logger.error("Error during Decernis ingredients analysis: " + cleanError(e.getMessage()), e);
+			logger.error("Error during Decernis ingredients analysis: " + cleanError(e.getMessage()), maskedCause(e));
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
 					.ofDataType(RequirementDataType.Formulation)
@@ -386,7 +386,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			try {
 				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
 			} catch (Exception e) {
-				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), e);
+				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), maskedCause(e));
 				context.getRequirements().addAll(generateReqCtrlErrors(
 						regulatoryBatch.countryBatches().countries(),
 						regulatoryBatch.usageBatches().usages(),
@@ -552,7 +552,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 				context.setRegulatoryRecipeId(recipeId);
 			}
 		} catch (RestClientException e) {
-			logger.error(generateError(e), e);
+			logger.error(generateError(e), maskedCause(e));
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
 					.ofDataType(RequirementDataType.Specification)
@@ -585,8 +585,8 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 					} catch (RestClientException e) {
 						logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
 					} catch (Exception e) {
-						logger.error(e, e);
-						throw new FormulateException("Unexpected decernis error: " + cleanError(e.getMessage()), e);
+						logger.error(cleanError(e.getMessage()), maskedCause(e));
+						throw new FormulateException("Unexpected decernis error: " + cleanError(e.getMessage()), maskedCause(e));
 					}
 				}
 			}
