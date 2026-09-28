@@ -21,6 +21,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
@@ -135,8 +136,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 								? MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED, displayName, catalogName, "(" + lang + ")")
 								: MLTextHelper.getI18NMessage(MESSAGE_MANDATORY_FIELD_MISSING, displayName, catalogName));
 
-						RequirementListDataItem rclDataItem = RequirementListDataItem.forbidden().withMessage(message)
-								.ofDataType(RequirementDataType.Completion);
+						RequirementListDataItem rclDataItem = RequirementListDataItem.build().ofType(getMissingFieldReqType(productData))
+								.withMessage(message).ofDataType(RequirementDataType.Completion);
 
 						productData.getReqCtrlList().add(rclDataItem);
 
@@ -174,6 +175,17 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 		}
 
+	}
+
+	/**
+	 * Returns the level of a missing mandatory field: an empty field is expected while the product is
+	 * still being developed, so it only blocks once the product has left the simulation state.
+	 *
+	 * @param productData the formulated product
+	 * @return {@link RequirementType#Tolerated} in simulation, {@link RequirementType#Forbidden} otherwise
+	 */
+	RequirementType getMissingFieldReqType(ProductData productData) {
+		return SystemState.Simulation.equals(productData.getState()) ? RequirementType.Tolerated : RequirementType.Forbidden;
 	}
 
 	/**

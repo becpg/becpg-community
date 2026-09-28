@@ -2381,57 +2381,77 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 
-    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:entityScore"],
-        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            var scoreValue = data.value,
-                nodeRef = oRecord.getData("nodeRef"),
-                scoreData = null
+    /**
+     * Renders the completion gauge and the forbidden alerts counter of a product.
+     *
+     * @param oRecord {object} the datagrid record
+     * @param data {object} the cell data holding the scores JSON
+     * @param scope {object} the datagrid
+     * @param i {number} the column index
+     * @param localRequirements {boolean} true when the requirements are carried by the scores
+     * @return {string} the HTML of the cell
+     */
+    var renderProductNotificationsCell = function(oRecord, data, scope, i, localRequirements) {
+        var nodeRef = oRecord.getData("nodeRef"),
+            scoreData = null,
             html = '';
 
-            if (scoreValue) {
-                try {
-                    scoreData = JSON.parse(scoreValue);
-                } catch (e) {
-                    // error parsing
-                }
+        if (data.value) {
+            try {
+                scoreData = JSON.parse(data.value);
+            } catch (e) {
+                // error parsing
             }
+        }
 
+        if (scoreData) {
+            var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
 
-            if (scoreData) {
-                var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
+            html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
+                'data-node-ref="' + nodeRef + '" ' +
+                'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
 
-                html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
-                    'data-node-ref="' + nodeRef + '" ' +
-                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
+            setTimeout(function() {
+                var container = document.getElementById(containerId);
+                if (container && !container._productNotificationsInit) {
+                    container._productNotificationsInit = true;
 
-                setTimeout(function() {
-                    var container = document.getElementById(containerId);
-                    if (container && !container._productNotificationsInit) {
-                        container._productNotificationsInit = true;
+                    var toolbar = Alfresco.util.ComponentManager.find({
+                        name: "beCPG.component.ProductListToolbar"
+                    })[0];
 
-                        var toolbar = Alfresco.util.ComponentManager.find({
-                            name: "beCPG.component.ProductListToolbar"
-                        })[0];
+                    var productNotifications = new beCPG.component.ProductNotifications(containerId);
+                    productNotifications.setOptions({
+                        entityNodeRef: nodeRef,
+                        list: scope.datalistMeta ? scope.datalistMeta.name : '',
+                        containerDiv: container,
+                        scores: scoreData,
+                        localRequirements: localRequirements
+                    });
 
-                        var productNotifications = new beCPG.component.ProductNotifications(containerId);
-                        productNotifications.setOptions({
-                            entityNodeRef: nodeRef,
-                            list: scope.datalistMeta ? scope.datalistMeta.name : '',
-                            containerDiv: container,
-                            scores: scoreData
-                        });
-
-                        if (toolbar && toolbar.msg) {
-                            productNotifications.msg = function(arg1, arg2, arg3, arg4) {
-                                return toolbar.msg(arg1, arg2, arg3, arg4);
-                            }
+                    if (toolbar && toolbar.msg) {
+                        productNotifications.msg = function(arg1, arg2, arg3, arg4) {
+                            return toolbar.msg(arg1, arg2, arg3, arg4);
                         }
                     }
-                }, 10);
-            }
+                }
+            }, 10);
+        }
 
-            return html;
+        return html;
+    };
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:entityScore"],
+        renderer: function(oRecord, data, label, scope, i) {
+            return renderProductNotificationsCell(oRecord, data, scope, i, false);
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["ecm:culEntityScore"],
+        renderer: function(oRecord, data, label, scope, i) {
+            return renderProductNotificationsCell(oRecord, data, scope, i, true);
         }
     });
 

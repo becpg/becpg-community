@@ -809,6 +809,8 @@ public class ECOServiceImpl implements ECOService {
 
 					if (repositoryEntity instanceof ProductData productToFormulateData) {
 
+						ChangeUnitScoreBuilder scoreBuilder = ChangeUnitScoreBuilder.before(productToFormulateData);
+
 						if (isSimulation) {
 							// Before formulate we create simulation
 							// List
@@ -859,7 +861,7 @@ public class ECOServiceImpl implements ECOService {
 						}
 
 						// check req
-						checkRequirements(changeUnitDataItem, productToFormulateData);
+						checkRequirements(changeUnitDataItem, productToFormulateData, scoreBuilder);
 
 						if (!isMergeItem && !isSimulation) {
 							alfrescoRepository.save(productToFormulateData);
@@ -1934,14 +1936,17 @@ public class ECOServiceImpl implements ECOService {
 	 *
 	 * @param changeUnitDataItem a {@link fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem} object
 	 * @param targetData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param scoreBuilder the snapshot of the product taken before the change order
 	 */
-	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
+	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData, ChangeUnitScoreBuilder scoreBuilder) {
 
 		RequirementType reqType = null;
 		MLText reqDetails = new MLText();
+		String entityScore = null;
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
-			for (RequirementListDataItem rcl : targetData.getReqCtrlList()) {
+			entityScore = scoreBuilder.buildFor(targetData);
+			for (RequirementListDataItem rcl : ChangeUnitScoreBuilder.sortBySeverity(targetData.getReqCtrlList())) {
 
 				RequirementType newReqType = rcl.getReqType();
 
@@ -1973,6 +1978,7 @@ public class ECOServiceImpl implements ECOService {
 		
 		changeUnitDataItem.setReqType(reqType);
 		changeUnitDataItem.setReqDetails(reqDetails.isEmpty() ? null : reqDetails);
+		changeUnitDataItem.setEntityScore(entityScore);
 
 	}
 

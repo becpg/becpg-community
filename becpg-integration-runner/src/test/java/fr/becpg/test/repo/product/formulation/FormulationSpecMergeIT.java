@@ -635,16 +635,16 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			int checkMissingFields = 0;
 			int checks = 0;
 			for (RequirementListDataItem r : finishedProduct.getReqCtrlList()) {
-				if(RequirementType.Forbidden.equals(r.getReqType())) {
+				if(RequirementType.Forbidden.equals(r.getReqType()) || RequirementDataType.Completion.equals(r.getReqDataType())) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
 						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)")
 						.equals(r.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, r.getReqType());
+					assertEquals(RequirementType.Tolerated, r.getReqType());
 					checkMissingFields++;
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(r.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, r.getReqType());
+					assertEquals(RequirementType.Tolerated, r.getReqType());
 					checkMissingFields++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN,
 						nodeService.getProperty(allergen2, BeCPGModel.PROP_CHARACT_NAME)).equals(r.getReqMessage())) {
@@ -904,11 +904,11 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 				if (I18NUtil
 						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checkMissingFields++;
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checkMissingFields++;
 				} else if ("Regulation OGM".equals(reqCtrlList.getReqMessage())) {
 					// last spec visited should have gmo to false
