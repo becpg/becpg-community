@@ -21,6 +21,7 @@ package fr.becpg.repo.ecm.impl;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,6 +70,8 @@ public final class ChangeUnitScoreBuilder {
 
 	static final String DEFAULT_LOCALE_KEY = "";
 
+	private static final String KEY_SEPARATOR = "|";
+
 	static final String PROP_PREVIOUS = "previous";
 	static final String PROP_REQUIREMENTS = "requirements";
 	static final String PROP_REQUIREMENTS_COUNT = "requirementsCount";
@@ -82,6 +85,7 @@ public final class ChangeUnitScoreBuilder {
 	static final String PROP_NEW_FORBIDDEN_COUNT = "newForbiddenCount";
 	static final String PROP_RESOLVED_FORBIDDEN_COUNT = "resolvedForbiddenCount";
 	static final String PROP_NEW_CTRL_COUNT = "newCtrlCount";
+	static final String PROP_LESS_SEVERE_COUNT = "lessSevereCount";
 
 	private static final String[] SCORE_PROPS = { "global", "details", "ctrlCount", "totalForbidden", "regulatoryCodeLabels" };
 	private static final String[] PREVIOUS_SCORE_PROPS = { "global", "details", "totalForbidden" };
@@ -91,7 +95,8 @@ public final class ChangeUnitScoreBuilder {
 	/**
 	 * Immutable copy of a requirement of the product.
 	 *
-	 * @param key the identity of the requirement, as computed by {@link RequirementListDataItem#getKey()}
+	 * @param key the identity of the requirement regardless of its level, so that a requirement whose level changes
+	 *            is the same requirement before and after the change order
 	 * @param reqType the level of the requirement
 	 * @param reqDataType the kind of the requirement
 	 * @param message the localized message of the requirement
@@ -103,7 +108,9 @@ public final class ChangeUnitScoreBuilder {
 			if (item.getReqMlMessage() != null) {
 				message.putAll(item.getReqMlMessage());
 			}
-			return new Requirement(item.getKey(), item.getReqType(), item.getReqDataType(), message);
+			String key = String.join(KEY_SEPARATOR, String.valueOf(item.getReqDataType()), String.valueOf(item.getReqMessage()),
+					String.valueOf(item.getRegulatoryCode()), String.valueOf(item.getCharact()));
+			return new Requirement(key, item.getReqType(), item.getReqDataType(), message);
 		}
 	}
 
@@ -165,24 +172,52 @@ public final class ChangeUnitScoreBuilder {
 	}
 
 	private void putRequirements(JSONObject result, List<Requirement> requirements) {
-		Set<String> previousKeys = keysOf(previousRequirements);
+		Map<String, RequirementType> previousLevels = levelsOf(previousRequirements);
 		List<Requirement> sorted = new ArrayList<>(requirements);
-		Comparator<Requirement> newFirst = Comparator.comparing(requirement -> previousKeys.contains(requirement.key()));
+		Comparator<Requirement> newFirst = Comparator.comparing(requirement -> !isNew(requirement, previousLevels));
 		sorted.sort(newFirst.thenComparing(BY_SEVERITY));
 
 		List<Requirement> newRequirements = new ArrayList<>();
+		int lessSevereCount = 0;
 		for (Requirement requirement : sorted) {
-			if (!previousKeys.contains(requirement.key())) {
+			if (isNew(requirement, previousLevels)) {
 				newRequirements.add(requirement);
+			} else if (isMoreSevere(previousLevels.get(requirement.key()), requirement.reqType())) {
+				lessSevereCount++;
 			}
 		}
 
 		result.put(PROP_REQUIREMENTS, toJsonArray(sorted, MAX_REQUIREMENTS_BYTES,
-				requirement -> toJson(requirement).put(PROP_IS_NEW, !previousKeys.contains(requirement.key()))));
+				requirement -> toJson(requirement).put(PROP_IS_NEW, isNew(requirement, previousLevels))));
 		result.put(PROP_REQUIREMENTS_COUNT, sorted.size());
 		result.put(PROP_NEW_COUNT, newRequirements.size());
 		result.put(PROP_NEW_FORBIDDEN_COUNT, countForbidden(newRequirements));
 		result.put(PROP_NEW_CTRL_COUNT, countByDataTypeAndType(newRequirements));
+		result.put(PROP_LESS_SEVERE_COUNT, lessSevereCount);
+	}
+
+	/**
+	 * A requirement is new when the product did not have it before the change order, or had it at a lower level.
+	 */
+	private static boolean isNew(Requirement requirement, Map<String, RequirementType> previousLevels) {
+		return !previousLevels.containsKey(requirement.key()) || isMoreSevere(requirement.reqType(), previousLevels.get(requirement.key()));
+	}
+
+	/**
+	 * Forbidden is the most severe level: the enum is declared from the most to the least severe.
+	 */
+	static boolean isMoreSevere(RequirementType level, RequirementType other) {
+		return (level != null) && ((other == null) || (level.ordinal() < other.ordinal()));
+	}
+
+	private static Map<String, RequirementType> levelsOf(List<Requirement> requirements) {
+		Map<String, RequirementType> levels = new HashMap<>();
+		for (Requirement requirement : requirements) {
+			if (!levels.containsKey(requirement.key()) || isMoreSevere(requirement.reqType(), levels.get(requirement.key()))) {
+				levels.put(requirement.key(), requirement.reqType());
+			}
+		}
+		return levels;
 	}
 
 	private static int countForbidden(List<Requirement> requirements) {

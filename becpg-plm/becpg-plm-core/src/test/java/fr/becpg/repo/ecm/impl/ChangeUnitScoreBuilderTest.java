@@ -157,6 +157,36 @@ public class ChangeUnitScoreBuilderTest {
 	}
 
 	@Test
+	public void alertWhoseLevelDropsIsNeitherNewNorResolved() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Tolerated, RequirementDataType.Completion, MISSING_FIELD));
+
+		JSONObject result = build(before, simulated);
+
+		assertEquals(0, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+		assertEquals(0, result.getInt(ChangeUnitScoreBuilder.PROP_RESOLVED_COUNT));
+		assertEquals(1, result.getInt(ChangeUnitScoreBuilder.PROP_LESS_SEVERE_COUNT));
+	}
+
+	@Test
+	public void alertWhoseLevelRisesIsNew() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Tolerated, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+
+		assertEquals(1, build(before, simulated).getInt(ChangeUnitScoreBuilder.PROP_NEW_FORBIDDEN_COUNT));
+	}
+
+	@Test
+	public void requirementWithoutLevelIsCompared() {
+		ProductData before = product(PREVIOUS_SCORE, RequirementListDataItem.build().ofDataType(RequirementDataType.Completion)
+				.withMessage(new MLText(Locale.ENGLISH, MISSING_FIELD)));
+		ProductData simulated = product(SIMULATED_SCORE, RequirementListDataItem.build().ofDataType(RequirementDataType.Completion)
+				.withMessage(new MLText(Locale.ENGLISH, MISSING_FIELD)));
+
+		assertEquals(0, build(before, simulated).getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+	}
+
+	@Test
 	public void requirementThatDisappearsIsResolved() {
 		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT));
 

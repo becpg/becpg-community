@@ -546,6 +546,10 @@
                                 parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.resolved", scores.resolvedCount))
                                         + '</span>');
                             }
+                            if (scores.lessSevereCount > 0) {
+                                parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.less-severe", scores.lessSevereCount))
+                                        + '</span>');
+                            }
                             if (completionDelta !== 0) {
                                 parts.push('<span class="' + (completionDelta > 0 ? "delta-better" : "delta-worse") + '">' + (completionDelta > 0 ? "+" : "")
                                         + completionDelta + '%</span>');
@@ -584,6 +588,10 @@
                                 html += '<div class="change-unit-section change-unit-resolved-title">'
                                         + $html(this.msg("label.change-unit.resolved", resolvedCount)) + '</div>';
                                 html += '<div class="change-unit-resolved">' + this.renderLocalRequirementList(scores.resolved, resolvedCount) + '</div>';
+                            }
+
+                            if (scores.lessSevereCount > 0) {
+                                html += '<div class="change-unit-none">' + $html(this.msg("label.change-unit.less-severe", scores.lessSevereCount)) + '</div>';
                             }
 
                             if (existingCount > 0) {
