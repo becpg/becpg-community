@@ -359,7 +359,7 @@
 					<!-- <show id="ecm:culTargetItem" /> -->	
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
-					<show id="ecm:culReqDetails" />		
+					<show id="ecm:culEntityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="ecm:culReqError" label="hidden" />
