@@ -1929,6 +1929,7 @@
         <forms>
             <!-- Create item form -->
             <form>
+                <create-form template="tab-edit" />
                 <edit-form template="tab-edit" />
                 <field-visibility>
                     <show id="bcpg:charactName" />
