@@ -201,14 +201,14 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
             assertEquals(RegulatoryResult.PERMITTED, regulatoryElement.getRegulatoryResult());
 
-            // set CITRUS PARADISI FRUIT EXTRACT to 1 - bcpg-regulatory should invalidate product,
-            // as this ingredient is linked with forbidden "furucomarines"
-            IngListDataItem arsenicListItem = product.getIngList().stream().filter(ing ->
-                    alfrescoRepository.findOne(ing.getIng()).getName().equals("CITRUS PARADISI FRUIT EXTRACT")
+            // set CHROMIUM qty to a tiny number - bcpg-regulatory should invalidate product,
+            // as it is not explicitly whitelisted as colorant
+            IngListDataItem chromiumListItem = product.getIngList().stream().filter(ing ->
+                    alfrescoRepository.findOne(ing.getIng()).getName().equals("CHROMIUM")
             ).findFirst().orElse(null);
-            assertNotNull(arsenicListItem);
-            arsenicListItem.setQtyPerc(0.00075);
-            return alfrescoRepository.save(arsenicListItem);
+            assertNotNull(chromiumListItem);
+            chromiumListItem.setQtyPerc(0.00075);
+            return alfrescoRepository.save(chromiumListItem);
         });
 
         inWriteTx(() -> {
@@ -223,7 +223,7 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             assertEquals(1, regulatoryElement.getLimitingIngredients().size());
             IngListDataItem offenderListItem = (IngListDataItem) alfrescoRepository.findOne(regulatoryElement.getLimitingIngredients().getFirst());
             IngItem offender = (IngItem) alfrescoRepository.findOne(offenderListItem.getIng());
-            assertEquals("CITRUS PARADISI FRUIT EXTRACT", offender.getCharactName());
+            assertEquals("CHROMIUM", offender.getCharactName());
             return null;
         });
     }
