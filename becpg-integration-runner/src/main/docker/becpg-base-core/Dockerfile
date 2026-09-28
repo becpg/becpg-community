@@ -29,6 +29,7 @@ COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 
 RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default list above.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\n' >> $TOMCAT_DIR/conf/catalina.properties && \
+    printf '\n// Spring reads this flag on every CGLIB proxy creation. Grant it globally so that\n// calls whose stack holds code outside the AllPermission code bases do not log an\n// AccessControlException under the Tomcat security manager.\ngrant {\n    permission java.util.PropertyPermission "spring.aot.enabled", "read";\n};\n' >> $TOMCAT_DIR/conf/catalina.policy && \
     rm -rf $TOMCAT_DIR/amps/* && \
     mkdir -p ${TOMCAT_DIR}/data && \
     rm -rf $TOMCAT_DIR/alf_data && \
