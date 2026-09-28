@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +37,14 @@ public class ChangeUnitScoreBuilderTest {
 	private static final String ALLERGEN_NOT_VALIDATED = "Allergens not validated";
 
 	private static final String PREVIOUS_SCORE = "{\"global\":60,\"totalForbidden\":36,\"catalogs\":[]}";
+
+	private static final int MAX_PROPERTY_BYTES = 65535;
+
+	private static final Locale[] TRANSLATED_LOCALES = { Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN, new Locale("es"),
+			new Locale("pt"), new Locale("nl"), new Locale("sv"), new Locale("fi"), new Locale("tr"), new Locale("ru"), Locale.JAPANESE,
+			Locale.CHINESE };
+
+	private static final String LONG_TEXT = "Erreur lors de la g\u00e9n\u00e9ration du rapport : \u00e9chec sans d\u00e9tail ".repeat(4);
 
 	private static final String SIMULATED_SCORE = "{\"global\":67,\"totalForbidden\":1,\"catalogs\":[],\"ctrlCount\":[]}";
 
@@ -105,6 +114,79 @@ public class ChangeUnitScoreBuilderTest {
 	}
 
 	@Test
+	public void newToleratedComesBeforeExistingForbidden() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		JSONArray requirements = build(before, simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_REQUIREMENTS);
+
+		assertEquals(ALLERGEN_NOT_VALIDATED, messageOf(requirements.getJSONObject(0)));
+	}
+
+	@Test
+	public void newAlertsAreCountedApartFromExistingOnes() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD),
+				requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		JSONObject result = build(before, simulated);
+
+		assertEquals(2, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+		assertEquals(1, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_FORBIDDEN_COUNT));
+	}
+
+	@Test
+	public void newAlertsAreBrokenDownByKindAndLevel() {
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT + " (lead)"));
+
+		JSONArray newCtrlCount = build(product(PREVIOUS_SCORE), simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_NEW_CTRL_COUNT);
+
+		assertEquals(2, newCtrlCount.getJSONObject(0).getJSONObject(RequirementDataType.Specification.toString())
+				.getInt(RequirementType.Forbidden.toString()));
+	}
+
+	@Test
+	public void resolvedForbiddenAlertsAreCounted() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		assertEquals(1, build(before, product(SIMULATED_SCORE)).getInt(ChangeUnitScoreBuilder.PROP_RESOLVED_FORBIDDEN_COUNT));
+	}
+
+	@Test
+	public void alertWhoseLevelDropsIsNeitherNewNorResolved() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Tolerated, RequirementDataType.Completion, MISSING_FIELD));
+
+		JSONObject result = build(before, simulated);
+
+		assertEquals(0, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+		assertEquals(0, result.getInt(ChangeUnitScoreBuilder.PROP_RESOLVED_COUNT));
+		assertEquals(1, result.getInt(ChangeUnitScoreBuilder.PROP_LESS_SEVERE_COUNT));
+	}
+
+	@Test
+	public void alertWhoseLevelRisesIsNew() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Tolerated, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+
+		assertEquals(1, build(before, simulated).getInt(ChangeUnitScoreBuilder.PROP_NEW_FORBIDDEN_COUNT));
+	}
+
+	@Test
+	public void requirementWithoutLevelIsCompared() {
+		ProductData before = product(PREVIOUS_SCORE, RequirementListDataItem.build().ofDataType(RequirementDataType.Completion)
+				.withMessage(new MLText(Locale.ENGLISH, MISSING_FIELD)));
+		ProductData simulated = product(SIMULATED_SCORE, RequirementListDataItem.build().ofDataType(RequirementDataType.Completion)
+				.withMessage(new MLText(Locale.ENGLISH, MISSING_FIELD)));
+
+		assertEquals(0, build(before, simulated).getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+	}
+
+	@Test
 	public void requirementThatDisappearsIsResolved() {
 		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT));
 
@@ -141,6 +223,40 @@ public class ChangeUnitScoreBuilderTest {
 		assertEquals(ChangeUnitScoreBuilder.MAX_REQUIREMENTS + 1, result.getInt(ChangeUnitScoreBuilder.PROP_REQUIREMENTS_COUNT));
 	}
 
+	@Test
+	public void identicalTranslationsAreStoredOnce() {
+		MLText message = new MLText();
+		for (Locale locale : TRANSLATED_LOCALES) {
+			message.addValue(locale, MISSING_FIELD);
+		}
+		ProductData simulated = product(SIMULATED_SCORE, RequirementListDataItem.build().ofType(RequirementType.Forbidden)
+				.ofDataType(RequirementDataType.Completion).withMessage(message));
+
+		JSONObject storedMessage = build(product(PREVIOUS_SCORE), simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_REQUIREMENTS)
+				.getJSONObject(0).getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE);
+
+		assertEquals(1, storedMessage.length());
+	}
+
+	@Test
+	public void multilingualRequirementsFitInOneProperty() {
+		List<RequirementListDataItem> requirements = new ArrayList<>();
+		for (int i = 0; i < ChangeUnitScoreBuilder.MAX_REQUIREMENTS; i++) {
+			MLText message = new MLText();
+			for (Locale locale : TRANSLATED_LOCALES) {
+				message.addValue(locale, locale + " " + i + " " + LONG_TEXT);
+			}
+			requirements.add(RequirementListDataItem.build().ofType(RequirementType.Tolerated).ofDataType(RequirementDataType.Completion)
+					.withMessage(message));
+		}
+
+		String json = ChangeUnitScoreBuilder.before(product(PREVIOUS_SCORE, requirements.toArray(new RequirementListDataItem[0])))
+				.buildFor(product(SIMULATED_SCORE, requirements.toArray(new RequirementListDataItem[0])));
+
+		assertTrue(json.getBytes(StandardCharsets.UTF_8).length < MAX_PROPERTY_BYTES);
+		assertEquals(ChangeUnitScoreBuilder.MAX_REQUIREMENTS, new JSONObject(json).getInt(ChangeUnitScoreBuilder.PROP_REQUIREMENTS_COUNT));
+	}
+
 	private static JSONObject build(ProductData before, ProductData simulated) {
 		return new JSONObject(ChangeUnitScoreBuilder.before(before).buildFor(simulated));
 	}
@@ -157,6 +273,8 @@ public class ChangeUnitScoreBuilderTest {
 	}
 
 	private static String messageOf(JSONObject requirement) {
-		return requirement.getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE).getString(Locale.ENGLISH.toString());
+		JSONObject message = requirement.getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE);
+		return message.has(Locale.ENGLISH.toString()) ? message.getString(Locale.ENGLISH.toString())
+				: message.getString(ChangeUnitScoreBuilder.DEFAULT_LOCALE_KEY);
 	}
 }

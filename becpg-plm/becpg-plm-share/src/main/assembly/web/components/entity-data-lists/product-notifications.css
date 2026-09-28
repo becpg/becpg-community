@@ -741,7 +741,7 @@ div .div-regulatorycodes ul li span {
 
 .product-notifications-container .change-unit-delta {
 	display: inline-block;
-	margin-left: 6px;
+	margin-left: 10px;
 	font-size: 11px;
 	white-space: nowrap;
 	vertical-align: middle;
@@ -765,28 +765,44 @@ div .div-regulatorycodes ul li span {
 	font-style: italic;
 }
 
-.change-unit-requirements .change-unit-new {
-	display: inline-block;
-	padding: 0 4px;
-	border-radius: 3px;
-	background-color: #f44336;
-	color: #fff;
-	font-size: 10px;
-	text-transform: uppercase;
+.notifications-list.change-unit-requirements {
+	padding: 0 20px 10px;
 }
 
-.change-unit-requirements .change-unit-resolved-title {
+.change-unit-requirements .change-unit-section {
 	clear: both;
 	margin-top: 8px;
 	padding: 4px 0;
-	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 	font-weight: bold;
+}
+
+.change-unit-requirements .change-unit-new-title {
+	margin-top: 0;
+	color: #b71c1c;
+}
+
+.change-unit-requirements .change-unit-resolved-title {
 	color: #2e7d32;
 }
 
-.change-unit-requirements .change-unit-resolved-title ~ .rclReq-details .rclReq-title {
+.change-unit-requirements .change-unit-resolved .rclReq-details {
+	border-left: 3px solid #2e7d32;
+}
+
+.change-unit-requirements .change-unit-none {
+	padding: 4px;
+	color: #2e7d32;
+}
+
+.change-unit-requirements .change-unit-existing summary {
+	cursor: pointer;
 	color: #757575;
-	text-decoration: line-through;
+	font-weight: normal;
+}
+
+.change-unit-requirements .change-unit-existing .rclReq-title {
+	color: #757575;
 }
 
 .change-unit-requirements .change-unit-more {

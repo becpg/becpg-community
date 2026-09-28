@@ -365,7 +365,9 @@
 
                                 var buttonClass = "score-" + spriteIndex;
 
-                                var totalForbidden = scores.totalForbidden;
+                                var isChangeUnit = this.options.localRequirements,
+                                    totalForbidden = isChangeUnit ? scores.newForbiddenCount : scores.totalForbidden,
+                                    ctrlCount = isChangeUnit ? scores.newCtrlCount : scores.ctrlCount;
                                 instance.widgets.showNotificationsButton.removeClass("loading");
 
                                 for (var idx = 1; idx <= 20; idx++) {
@@ -390,8 +392,8 @@
                                 }
 
                                 if (totalForbidden !== undefined && totalForbidden !== null && totalForbidden > 0) {
-                                    instance.widgets.showNotificationsButton.set("title", instance.msg("tooltip.notifications-button",
-                                            totalForbidden));
+                                    instance.widgets.showNotificationsButton.set("title", instance.msg(isChangeUnit
+                                            ? "tooltip.change-unit.new-forbidden" : "tooltip.notifications-button", totalForbidden));
 
                                     var errorSpan = Dom.getFirstChildBy(instance.options.containerDiv, function(el) {
                                         return el.className.indexOf("warning") > -1;
@@ -408,27 +410,27 @@
                                 }
 
                                 // if we have some constraints in res
-                                if (scores.ctrlCount !== undefined && scores.ctrlCount != null
-                                        && scores.ctrlCount.length > 0) {
+                                if (ctrlCount !== undefined && ctrlCount != null
+                                        && ctrlCount.length > 0) {
                                     // Parses each array mapped to dataType
                                     html += "<div class=\"dataTypeList\"><div class=\"title\">"
-                                            + instance.msg("label.constraints.violations")
+                                            + instance.msg(isChangeUnit ? "label.change-unit.new-violations" : "label.constraints.violations")
                                             + "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "
                                             + instance.id +REQFILTER_EVENTCLASS + "\" href=\"#\">" + instance.msg("label.constraints.view-all")
                                             + "</a></span></div>";
 
                                     html += "<div class=\"rclFilterElt\"><div>";
 
-                                    for ( var dataType in scores.ctrlCount) {
+                                    for ( var dataType in ctrlCount) {
                                         var scoreInfo = "";
-                                        var dataTypeName = Object.keys(scores.ctrlCount[dataType])[0];
+                                        var dataTypeName = Object.keys(ctrlCount[dataType])[0];
                                         html += "<div class=\"div-" + dataTypeName.toString().toLowerCase()
                                                 + "\"><span class=\"span-" + dataTypeName.toString().toLowerCase()
                                                 + "\"><a class=\"req-filter " + instance.id + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
                                                 + instance.msg("label.constraints." + dataTypeName.toString().toLowerCase())
                                                 + scoreInfo + "</a></span><ul>";
 
-                                        var types = scores.ctrlCount[dataType];
+                                        var types = ctrlCount[dataType];
                                         
                                     
 
@@ -481,7 +483,7 @@
                             if (scores && scores.previous) {
                                 html = this.renderPreviousScores(scores) + html;
                                 if (isGridContext) {
-                                    this.renderScoreDelta(scores);
+                                    this.renderChangeSummary(scores);
                                 }
                             }
 
@@ -509,58 +511,93 @@
                         },
 
                         /**
-                         * Shows next to the gauge how the change order moves the completion and the
-                         * forbidden alerts of the product.
+                         * Shows next to the gauge what the change order changes: the alerts it
+                         * introduces, the alerts it resolves and the completion it gains or loses.
                          *
-                         * @method renderScoreDelta
+                         * @method renderChangeSummary
                          * @param scores {object} the scores of a change unit
                          */
-                        renderScoreDelta : function ProductNotifications_renderScoreDelta(scores) {
-                            var completionDelta = Math.floor(scores.global || 0) - Math.floor(scores.previous.global || 0),
-                                forbiddenDelta = (scores.totalForbidden || 0) - (scores.previous.totalForbidden || 0),
-                                deltaSpan = Dom.getElementsByClassName("change-unit-delta", "span", this.options.containerDiv)[0];
+                        renderChangeSummary : function ProductNotifications_renderChangeSummary(scores) {
+                            var summarySpan = Dom.getElementsByClassName("change-unit-delta", "span", this.options.containerDiv)[0];
 
-                            if (!deltaSpan) {
-                                deltaSpan = document.createElement("span");
-                                deltaSpan.className = "change-unit-delta";
-                                this.options.containerDiv.appendChild(deltaSpan);
+                            if (!summarySpan) {
+                                summarySpan = document.createElement("span");
+                                summarySpan.className = "change-unit-delta";
+                                this.options.containerDiv.appendChild(summarySpan);
                             }
-                            deltaSpan.title = this.msg("label.change-unit.before", Math.floor(scores.previous.global || 0),
+                            summarySpan.title = this.msg("label.change-unit.before", Math.floor(scores.previous.global || 0),
                                     scores.previous.totalForbidden || 0);
-                            deltaSpan.innerHTML = this.renderDelta(completionDelta, "%", false) + " " + this.renderDelta(forbiddenDelta, "", true);
+                            summarySpan.innerHTML = this.renderChangeSummaryHtml(scores);
                         },
 
                         /**
-                         * @method renderDelta
-                         * @param delta {number} the difference with the product before the change order
-                         * @param unit {string} the unit appended to the value
-                         * @param lowerIsBetter {boolean} true when a decrease is an improvement
-                         * @return {string} the HTML of one difference
+                         * @method renderChangeSummaryHtml
+                         * @param scores {object} the scores of a change unit
+                         * @return {string} the new alerts, the resolved alerts and the completion change
                          */
-                        renderDelta : function ProductNotifications_renderDelta(delta, unit, lowerIsBetter) {
-                            if (delta === 0) {
-                                return '<span class="delta-none">=</span>';
+                        renderChangeSummaryHtml : function ProductNotifications_renderChangeSummaryHtml(scores) {
+                            var parts = [],
+                                completionDelta = Math.floor(scores.global || 0) - Math.floor(scores.previous.global || 0);
+
+                            if (scores.newCount > 0) {
+                                parts.push('<span class="delta-worse">' + $html(this.msg("label.change-unit.summary.new", scores.newCount)) + '</span>');
                             }
-                            var improved = lowerIsBetter ? delta < 0 : delta > 0;
-                            return '<span class="' + (improved ? "delta-better" : "delta-worse") + '">' + (delta > 0 ? "+" : "") + delta + unit
-                                    + '</span>';
+                            if (scores.resolvedCount > 0) {
+                                parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.resolved", scores.resolvedCount))
+                                        + '</span>');
+                            }
+                            if (scores.lessSevereCount > 0) {
+                                parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.less-severe", scores.lessSevereCount))
+                                        + '</span>');
+                            }
+                            if (completionDelta !== 0) {
+                                parts.push('<span class="' + (completionDelta > 0 ? "delta-better" : "delta-worse") + '">' + (completionDelta > 0 ? "+" : "")
+                                        + completionDelta + '%</span>');
+                            }
+                            if (parts.length === 0) {
+                                return '<span class="delta-none">' + $html(this.msg("label.change-unit.summary.none")) + '</span>';
+                            }
+                            return parts.join(" ");
                         },
 
                         /**
-                         * Renders the requirements carried by the scores, filtered like the datatable.
+                         * Renders the requirements carried by the scores: what the change order
+                         * introduces, then what it resolves, then, folded, what the product already had.
                          *
                          * @method renderLocalRequirements
                          */
                         renderLocalRequirements : function ProductNotifications_renderLocalRequirements() {
                             var scores = this.options.scores || {},
+                                requirements = scores.requirements || [],
+                                newRequirements = [],
+                                existingRequirements = [],
+                                newCount = scores.newCount || 0,
+                                resolvedCount = scores.resolvedCount || 0,
+                                existingCount = (scores.requirementsCount || 0) - newCount,
                                 html = '<div class="notifications-list change-unit-requirements">';
 
-                            html += this.renderLocalRequirementList(scores.requirements, scores.requirementsCount, true);
+                            for (var i = 0; i < requirements.length; i++) {
+                                (requirements[i].isNew ? newRequirements : existingRequirements).push(requirements[i]);
+                            }
 
-                            if (scores.resolved && scores.resolved.length > 0) {
-                                html += '<div class="change-unit-resolved-title">'
-                                        + $html(this.msg("label.change-unit.resolved", scores.resolvedCount || scores.resolved.length)) + '</div>';
-                                html += this.renderLocalRequirementList(scores.resolved, scores.resolvedCount, false);
+                            html += '<div class="change-unit-section change-unit-new-title">' + $html(this.msg("label.change-unit.new-alerts", newCount)) + '</div>';
+                            html += newCount > 0 ? this.renderLocalRequirementList(newRequirements, newCount)
+                                    : '<div class="change-unit-none">' + $html(this.msg("label.change-unit.no-new-alert")) + '</div>';
+
+                            if (resolvedCount > 0) {
+                                html += '<div class="change-unit-section change-unit-resolved-title">'
+                                        + $html(this.msg("label.change-unit.resolved", resolvedCount)) + '</div>';
+                                html += '<div class="change-unit-resolved">' + this.renderLocalRequirementList(scores.resolved, resolvedCount) + '</div>';
+                            }
+
+                            if (scores.lessSevereCount > 0) {
+                                html += '<div class="change-unit-none">' + $html(this.msg("label.change-unit.less-severe", scores.lessSevereCount)) + '</div>';
+                            }
+
+                            if (existingCount > 0) {
+                                html += '<details class="change-unit-existing"><summary class="change-unit-section">'
+                                        + $html(this.msg("label.change-unit.existing", existingCount)) + '</summary>'
+                                        + this.renderLocalRequirementList(existingRequirements, existingCount) + '</details>';
                             }
 
                             html += '</div>';
@@ -571,25 +608,20 @@
                          * @method renderLocalRequirementList
                          * @param requirements {array} the requirements to render
                          * @param totalCount {number} the number of requirements before the server capped the list
-                         * @param showNew {boolean} true to flag the requirements introduced by the change order
                          * @return {string} the HTML of the list
                          */
-                        renderLocalRequirementList : function ProductNotifications_renderLocalRequirementList(requirements, totalCount, showNew) {
-                            var html = "", displayed = 0, filter = this.localFilter || {};
+                        renderLocalRequirementList : function ProductNotifications_renderLocalRequirementList(requirements, totalCount) {
+                            var html = "", filter = this.localFilter || {};
 
                             requirements = requirements || [];
                             for (var i = 0; i < requirements.length; i++) {
                                 var requirement = requirements[i];
                                 if ((!filter.reqType || filter.reqType == requirement.reqType)
                                         && (!filter.reqDataType || filter.reqDataType == requirement.reqDataType)) {
-                                    html += this.renderLocalRequirement(requirement, showNew && requirement.isNew);
-                                    displayed++;
+                                    html += this.renderLocalRequirement(requirement);
                                 }
                             }
 
-                            if (displayed === 0 && showNew) {
-                                html += '<div class="empty"><h3>' + $html(this.msg("empty.notifications.title")) + '</h3></div>';
-                            }
                             if (totalCount && totalCount > requirements.length) {
                                 html += '<div class="change-unit-more">' + $html(this.msg("label.change-unit.more", totalCount - requirements.length))
                                         + '</div>';
@@ -600,19 +632,15 @@
                         /**
                          * @method renderLocalRequirement
                          * @param requirement {object} a requirement of the change unit
-                         * @param isNew {boolean} true when the change order introduces it
                          * @return {string} the HTML of the requirement
                          */
-                        renderLocalRequirement : function ProductNotifications_renderLocalRequirement(requirement, isNew) {
+                        renderLocalRequirement : function ProductNotifications_renderLocalRequirement(requirement) {
                             var html = '<div class="rclReq-details">';
                             if (requirement.reqType) {
                                 html += '<div class="icon"><span class="reqType' + requirement.reqType + '" title="'
                                         + $html(this.msg("data.reqtype." + requirement.reqType.toLowerCase())) + '">&nbsp;</span></div>';
                             }
                             html += '<div class="rclReq-title">';
-                            if (isNew) {
-                                html += '<span class="change-unit-new">' + $html(this.msg("label.change-unit.new")) + '</span> ';
-                            }
                             html += $html(this.getLocalizedMessage(requirement.message)) + '</div>';
                             html += '<div class="clear"></div></div>';
                             return html;

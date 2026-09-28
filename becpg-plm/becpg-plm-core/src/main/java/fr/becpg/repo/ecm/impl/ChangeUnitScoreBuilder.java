@@ -18,9 +18,12 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -47,14 +51,26 @@ import fr.becpg.repo.regulatory.RequirementType;
  * <p>The snapshot of the product is taken before formulation: the formulation rebuilds the requirement
  * list of the product and may reuse its items, so the previous requirements are copied at once.</p>
  *
- * <p>Requirements are sorted by severity, specification and regulatory non-conformities first, so the
- * blocking alerts come before the incomplete fields.</p>
+ * <p>What matters in a change order is what the change introduces or resolves: requirements the product
+ * already had are kept, but listed after the new ones, and counted apart. Within each group they are sorted by
+ * severity, specification and regulatory non-conformities first.</p>
  */
 public final class ChangeUnitScoreBuilder {
 
 	private static final Log logger = LogFactory.getLog(ChangeUnitScoreBuilder.class);
 
 	static final int MAX_REQUIREMENTS = 50;
+
+	/**
+	 * Size budgets of the two lists: the whole JSON is stored in one d:text property, whose database
+	 * column holds 64 KB, and every message comes in all the supported locales.
+	 */
+	static final int MAX_REQUIREMENTS_BYTES = 30000;
+	static final int MAX_RESOLVED_BYTES = 15000;
+
+	static final String DEFAULT_LOCALE_KEY = "";
+
+	private static final String KEY_SEPARATOR = "|";
 
 	static final String PROP_PREVIOUS = "previous";
 	static final String PROP_REQUIREMENTS = "requirements";
@@ -65,6 +81,11 @@ public final class ChangeUnitScoreBuilder {
 	static final String PROP_REQ_DATA_TYPE = "reqDataType";
 	static final String PROP_MESSAGE = "message";
 	static final String PROP_IS_NEW = "isNew";
+	static final String PROP_NEW_COUNT = "newCount";
+	static final String PROP_NEW_FORBIDDEN_COUNT = "newForbiddenCount";
+	static final String PROP_RESOLVED_FORBIDDEN_COUNT = "resolvedForbiddenCount";
+	static final String PROP_NEW_CTRL_COUNT = "newCtrlCount";
+	static final String PROP_LESS_SEVERE_COUNT = "lessSevereCount";
 
 	private static final String[] SCORE_PROPS = { "global", "details", "ctrlCount", "totalForbidden", "regulatoryCodeLabels" };
 	private static final String[] PREVIOUS_SCORE_PROPS = { "global", "details", "totalForbidden" };
@@ -74,7 +95,8 @@ public final class ChangeUnitScoreBuilder {
 	/**
 	 * Immutable copy of a requirement of the product.
 	 *
-	 * @param key the identity of the requirement, as computed by {@link RequirementListDataItem#getKey()}
+	 * @param key the identity of the requirement regardless of its level, so that a requirement whose level changes
+	 *            is the same requirement before and after the change order
 	 * @param reqType the level of the requirement
 	 * @param reqDataType the kind of the requirement
 	 * @param message the localized message of the requirement
@@ -86,7 +108,9 @@ public final class ChangeUnitScoreBuilder {
 			if (item.getReqMlMessage() != null) {
 				message.putAll(item.getReqMlMessage());
 			}
-			return new Requirement(item.getKey(), item.getReqType(), item.getReqDataType(), message);
+			String key = String.join(KEY_SEPARATOR, String.valueOf(item.getReqDataType()), String.valueOf(item.getReqMessage()),
+					String.valueOf(item.getRegulatoryCode()), String.valueOf(item.getCharact()));
+			return new Requirement(key, item.getReqType(), item.getReqDataType(), message);
 		}
 	}
 
@@ -148,16 +172,81 @@ public final class ChangeUnitScoreBuilder {
 	}
 
 	private void putRequirements(JSONObject result, List<Requirement> requirements) {
-		Set<String> previousKeys = keysOf(previousRequirements);
+		Map<String, RequirementType> previousLevels = levelsOf(previousRequirements);
 		List<Requirement> sorted = new ArrayList<>(requirements);
-		sorted.sort(BY_SEVERITY.thenComparing(requirement -> previousKeys.contains(requirement.key())));
+		Comparator<Requirement> newFirst = Comparator.comparing(requirement -> !isNew(requirement, previousLevels));
+		sorted.sort(newFirst.thenComparing(BY_SEVERITY));
 
-		JSONArray requirementsJson = new JSONArray();
-		for (Requirement requirement : limit(sorted)) {
-			requirementsJson.put(toJson(requirement).put(PROP_IS_NEW, !previousKeys.contains(requirement.key())));
+		List<Requirement> newRequirements = new ArrayList<>();
+		int lessSevereCount = 0;
+		for (Requirement requirement : sorted) {
+			if (isNew(requirement, previousLevels)) {
+				newRequirements.add(requirement);
+			} else if (isMoreSevere(previousLevels.get(requirement.key()), requirement.reqType())) {
+				lessSevereCount++;
+			}
 		}
-		result.put(PROP_REQUIREMENTS, requirementsJson);
+
+		result.put(PROP_REQUIREMENTS, toJsonArray(sorted, MAX_REQUIREMENTS_BYTES,
+				requirement -> toJson(requirement).put(PROP_IS_NEW, isNew(requirement, previousLevels))));
 		result.put(PROP_REQUIREMENTS_COUNT, sorted.size());
+		result.put(PROP_NEW_COUNT, newRequirements.size());
+		result.put(PROP_NEW_FORBIDDEN_COUNT, countForbidden(newRequirements));
+		result.put(PROP_NEW_CTRL_COUNT, countByDataTypeAndType(newRequirements));
+		result.put(PROP_LESS_SEVERE_COUNT, lessSevereCount);
+	}
+
+	/**
+	 * A requirement is new when the product did not have it before the change order, or had it at a lower level.
+	 */
+	private static boolean isNew(Requirement requirement, Map<String, RequirementType> previousLevels) {
+		return !previousLevels.containsKey(requirement.key()) || isMoreSevere(requirement.reqType(), previousLevels.get(requirement.key()));
+	}
+
+	/**
+	 * Forbidden is the most severe level: the enum is declared from the most to the least severe.
+	 */
+	static boolean isMoreSevere(RequirementType level, RequirementType other) {
+		return (level != null) && ((other == null) || (level.ordinal() < other.ordinal()));
+	}
+
+	private static Map<String, RequirementType> levelsOf(List<Requirement> requirements) {
+		Map<String, RequirementType> levels = new HashMap<>();
+		for (Requirement requirement : requirements) {
+			if (!levels.containsKey(requirement.key()) || isMoreSevere(requirement.reqType(), levels.get(requirement.key()))) {
+				levels.put(requirement.key(), requirement.reqType());
+			}
+		}
+		return levels;
+	}
+
+	private static int countForbidden(List<Requirement> requirements) {
+		int count = 0;
+		for (Requirement requirement : requirements) {
+			if (RequirementType.Forbidden.equals(requirement.reqType())) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Counts requirements by kind then level, in the {@code ctrlCount} format of the entity score so the
+	 * notifications widget can render and filter it: {@code [{"Specification":{"Forbidden":2}}, ...]}.
+	 */
+	private static JSONArray countByDataTypeAndType(List<Requirement> requirements) {
+		Map<String, JSONObject> countsByDataType = new LinkedHashMap<>();
+		for (Requirement requirement : requirements) {
+			if ((requirement.reqDataType() != null) && (requirement.reqType() != null)) {
+				JSONObject counts = countsByDataType.computeIfAbsent(requirement.reqDataType().toString(), dataType -> new JSONObject());
+				counts.put(requirement.reqType().toString(), counts.optInt(requirement.reqType().toString()) + 1);
+			}
+		}
+		JSONArray ctrlCount = new JSONArray();
+		for (Map.Entry<String, JSONObject> entry : countsByDataType.entrySet()) {
+			ctrlCount.put(new JSONObject().put(entry.getKey(), entry.getValue()));
+		}
+		return ctrlCount;
 	}
 
 	private void putResolvedRequirements(JSONObject result, List<Requirement> requirements) {
@@ -170,12 +259,9 @@ public final class ChangeUnitScoreBuilder {
 		}
 		resolved.sort(BY_SEVERITY);
 
-		JSONArray resolvedJson = new JSONArray();
-		for (Requirement requirement : limit(resolved)) {
-			resolvedJson.put(toJson(requirement));
-		}
-		result.put(PROP_RESOLVED, resolvedJson);
+		result.put(PROP_RESOLVED, toJsonArray(resolved, MAX_RESOLVED_BYTES, ChangeUnitScoreBuilder::toJson));
 		result.put(PROP_RESOLVED_COUNT, resolved.size());
+		result.put(PROP_RESOLVED_FORBIDDEN_COUNT, countForbidden(resolved));
 	}
 
 	private static JSONObject toJson(Requirement requirement) {
@@ -186,14 +272,43 @@ public final class ChangeUnitScoreBuilder {
 		if (requirement.reqDataType() != null) {
 			json.put(PROP_REQ_DATA_TYPE, requirement.reqDataType().toString());
 		}
+		json.put(PROP_MESSAGE, toCompactMessage(requirement.message()));
+		return json;
+	}
+
+	/**
+	 * Keeps the message once under the default key, then only the locales whose text differs:
+	 * most locales share the same fallback text, and the change unit must fit in one property.
+	 */
+	private static JSONObject toCompactMessage(MLText mlText) {
 		JSONObject message = new JSONObject();
-		for (Map.Entry<Locale, String> entry : requirement.message().entrySet()) {
-			if (entry.getValue() != null) {
+		String defaultMessage = MLTextHelper.getClosestValue(mlText, Locale.getDefault());
+		if (defaultMessage != null) {
+			message.put(DEFAULT_LOCALE_KEY, defaultMessage);
+		}
+		for (Map.Entry<Locale, String> entry : mlText.entrySet()) {
+			if ((entry.getValue() != null) && !entry.getValue().equals(defaultMessage)) {
 				message.put(entry.getKey().toString(), entry.getValue());
 			}
 		}
-		json.put(PROP_MESSAGE, message);
-		return json;
+		return message;
+	}
+
+	/**
+	 * Converts the requirements, most severe first, until the item cap or the size budget is reached.
+	 */
+	private static JSONArray toJsonArray(List<Requirement> requirements, int maxBytes, Function<Requirement, JSONObject> converter) {
+		JSONArray array = new JSONArray();
+		int usedBytes = 0;
+		for (Requirement requirement : requirements) {
+			JSONObject json = converter.apply(requirement);
+			usedBytes += json.toString().getBytes(StandardCharsets.UTF_8).length;
+			if ((array.length() >= MAX_REQUIREMENTS) || (usedBytes > maxBytes)) {
+				break;
+			}
+			array.put(json);
+		}
+		return array;
 	}
 
 	private static JSONObject copyScores(String entityScore, String[] props) {
@@ -230,9 +345,5 @@ public final class ChangeUnitScoreBuilder {
 			keys.add(requirement.key());
 		}
 		return keys;
-	}
-
-	private static List<Requirement> limit(List<Requirement> requirements) {
-		return requirements.size() > MAX_REQUIREMENTS ? requirements.subList(0, MAX_REQUIREMENTS) : requirements;
 	}
 }

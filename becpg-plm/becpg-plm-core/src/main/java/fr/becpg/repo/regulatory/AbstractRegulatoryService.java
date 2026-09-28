@@ -41,11 +41,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractRegulatoryService {
+
+    private static final String SECRET_MASK = "***";
+    private static final Pattern BEARER_VALUE = Pattern.compile("(?i)(bearer\\s+)\\S+");
+    private static final Pattern HEADER_VALUE = Pattern.compile("(?is)(header value:\\s*).*");
+    private static final int MAX_MASKED_CAUSES = 5;
     /** Constant <code>UNKNOWN="unknown"</code> */
     public static final String UNKNOWN = "unknown";
 
@@ -571,12 +577,45 @@ public abstract class AbstractRegulatoryService {
      * @return a {@link java.lang.String} object
      */
     protected String cleanError(String error) {
-        if (error != null) {
-            Optional<String> errorWithHiddenToken = getToken().map(token -> error.replace(token, "XXX"));
-            if (errorWithHiddenToken.isPresent())
-                return errorWithHiddenToken.get();
+        return maskSecrets(error, getToken());
+    }
+
+    /**
+     * Hides the credentials an error message may carry. Replacing the configured token is not enough: when the
+     * token holds an illegal character, the HTTP client prints the header value cut at that character, so the
+     * printed value never matches the token. Any Bearer value and any printed header value are masked as well.
+     *
+     * @param error the message of an exception raised while calling the regulatory service
+     * @param token the configured token, when there is one
+     * @return the message without any credential, or null when there is no message
+     */
+    static String maskSecrets(String error, Optional<String> token) {
+        if (error == null) {
+            return null;
         }
-        return error;
+        String masked = token.filter(value -> !value.isBlank()).map(value -> error.replace(value, SECRET_MASK)).orElse(error);
+        masked = HEADER_VALUE.matcher(masked).replaceAll("$1" + SECRET_MASK);
+        return BEARER_VALUE.matcher(masked).replaceAll("$1" + SECRET_MASK);
+    }
+
+    /**
+     * Copies an exception for the logs with its messages masked, keeping its stack trace and its causes.
+     *
+     * @param error the exception raised while calling the regulatory service
+     * @return an exception that can be logged without leaking the token
+     */
+    protected Throwable maskedCause(Throwable error) {
+        return maskedCopy(error, getToken(), 0);
+    }
+
+    private static Throwable maskedCopy(Throwable error, Optional<String> token, int depth) {
+        if ((error == null) || (depth > MAX_MASKED_CAUSES)) {
+            return null;
+        }
+        Throwable copy = new Exception(error.getClass().getName() + ": " + maskSecrets(error.getMessage(), token),
+                maskedCopy(error.getCause(), token, depth + 1));
+        copy.setStackTrace(error.getStackTrace());
+        return copy;
     }
 
     protected abstract Log logger();

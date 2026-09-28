@@ -150,7 +150,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     private List<RequirementListDataItem> generateErrorsForAllRegulatoryPairs(RegulatoryContext context, Exception e) {
-        logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), e);
+        logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), maskedCause(e));
         Map<NodeRef, String> nodeRefRegCodeMap = productDataEntityJsonService.fillNodeRefDictionary(context.getProduct().getRegulatoryList());
 
         return context.getProduct().getRegulatoryList().stream().flatMap(regElement -> generateReqCtrlErrors(
