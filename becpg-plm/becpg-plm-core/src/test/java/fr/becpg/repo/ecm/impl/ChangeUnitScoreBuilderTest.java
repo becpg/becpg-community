@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +37,14 @@ public class ChangeUnitScoreBuilderTest {
 	private static final String ALLERGEN_NOT_VALIDATED = "Allergens not validated";
 
 	private static final String PREVIOUS_SCORE = "{\"global\":60,\"totalForbidden\":36,\"catalogs\":[]}";
+
+	private static final int MAX_PROPERTY_BYTES = 65535;
+
+	private static final Locale[] TRANSLATED_LOCALES = { Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN, Locale.ITALIAN, new Locale("es"),
+			new Locale("pt"), new Locale("nl"), new Locale("sv"), new Locale("fi"), new Locale("tr"), new Locale("ru"), Locale.JAPANESE,
+			Locale.CHINESE };
+
+	private static final String LONG_TEXT = "Erreur lors de la g\u00e9n\u00e9ration du rapport : \u00e9chec sans d\u00e9tail ".repeat(4);
 
 	private static final String SIMULATED_SCORE = "{\"global\":67,\"totalForbidden\":1,\"catalogs\":[],\"ctrlCount\":[]}";
 
@@ -141,6 +150,40 @@ public class ChangeUnitScoreBuilderTest {
 		assertEquals(ChangeUnitScoreBuilder.MAX_REQUIREMENTS + 1, result.getInt(ChangeUnitScoreBuilder.PROP_REQUIREMENTS_COUNT));
 	}
 
+	@Test
+	public void identicalTranslationsAreStoredOnce() {
+		MLText message = new MLText();
+		for (Locale locale : TRANSLATED_LOCALES) {
+			message.addValue(locale, MISSING_FIELD);
+		}
+		ProductData simulated = product(SIMULATED_SCORE, RequirementListDataItem.build().ofType(RequirementType.Forbidden)
+				.ofDataType(RequirementDataType.Completion).withMessage(message));
+
+		JSONObject storedMessage = build(product(PREVIOUS_SCORE), simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_REQUIREMENTS)
+				.getJSONObject(0).getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE);
+
+		assertEquals(1, storedMessage.length());
+	}
+
+	@Test
+	public void multilingualRequirementsFitInOneProperty() {
+		List<RequirementListDataItem> requirements = new ArrayList<>();
+		for (int i = 0; i < ChangeUnitScoreBuilder.MAX_REQUIREMENTS; i++) {
+			MLText message = new MLText();
+			for (Locale locale : TRANSLATED_LOCALES) {
+				message.addValue(locale, locale + " " + i + " " + LONG_TEXT);
+			}
+			requirements.add(RequirementListDataItem.build().ofType(RequirementType.Tolerated).ofDataType(RequirementDataType.Completion)
+					.withMessage(message));
+		}
+
+		String json = ChangeUnitScoreBuilder.before(product(PREVIOUS_SCORE, requirements.toArray(new RequirementListDataItem[0])))
+				.buildFor(product(SIMULATED_SCORE, requirements.toArray(new RequirementListDataItem[0])));
+
+		assertTrue(json.getBytes(StandardCharsets.UTF_8).length < MAX_PROPERTY_BYTES);
+		assertEquals(ChangeUnitScoreBuilder.MAX_REQUIREMENTS, new JSONObject(json).getInt(ChangeUnitScoreBuilder.PROP_REQUIREMENTS_COUNT));
+	}
+
 	private static JSONObject build(ProductData before, ProductData simulated) {
 		return new JSONObject(ChangeUnitScoreBuilder.before(before).buildFor(simulated));
 	}
@@ -157,6 +200,8 @@ public class ChangeUnitScoreBuilderTest {
 	}
 
 	private static String messageOf(JSONObject requirement) {
-		return requirement.getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE).getString(Locale.ENGLISH.toString());
+		JSONObject message = requirement.getJSONObject(ChangeUnitScoreBuilder.PROP_MESSAGE);
+		return message.has(Locale.ENGLISH.toString()) ? message.getString(Locale.ENGLISH.toString())
+				: message.getString(ChangeUnitScoreBuilder.DEFAULT_LOCALE_KEY);
 	}
 }

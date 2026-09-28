@@ -18,6 +18,7 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -55,6 +57,15 @@ public final class ChangeUnitScoreBuilder {
 	private static final Log logger = LogFactory.getLog(ChangeUnitScoreBuilder.class);
 
 	static final int MAX_REQUIREMENTS = 50;
+
+	/**
+	 * Size budgets of the two lists: the whole JSON is stored in one d:text property, whose database
+	 * column holds 64 KB, and every message comes in all the supported locales.
+	 */
+	static final int MAX_REQUIREMENTS_BYTES = 30000;
+	static final int MAX_RESOLVED_BYTES = 15000;
+
+	static final String DEFAULT_LOCALE_KEY = "";
 
 	static final String PROP_PREVIOUS = "previous";
 	static final String PROP_REQUIREMENTS = "requirements";
@@ -152,11 +163,8 @@ public final class ChangeUnitScoreBuilder {
 		List<Requirement> sorted = new ArrayList<>(requirements);
 		sorted.sort(BY_SEVERITY.thenComparing(requirement -> previousKeys.contains(requirement.key())));
 
-		JSONArray requirementsJson = new JSONArray();
-		for (Requirement requirement : limit(sorted)) {
-			requirementsJson.put(toJson(requirement).put(PROP_IS_NEW, !previousKeys.contains(requirement.key())));
-		}
-		result.put(PROP_REQUIREMENTS, requirementsJson);
+		result.put(PROP_REQUIREMENTS, toJsonArray(sorted, MAX_REQUIREMENTS_BYTES,
+				requirement -> toJson(requirement).put(PROP_IS_NEW, !previousKeys.contains(requirement.key()))));
 		result.put(PROP_REQUIREMENTS_COUNT, sorted.size());
 	}
 
@@ -170,11 +178,7 @@ public final class ChangeUnitScoreBuilder {
 		}
 		resolved.sort(BY_SEVERITY);
 
-		JSONArray resolvedJson = new JSONArray();
-		for (Requirement requirement : limit(resolved)) {
-			resolvedJson.put(toJson(requirement));
-		}
-		result.put(PROP_RESOLVED, resolvedJson);
+		result.put(PROP_RESOLVED, toJsonArray(resolved, MAX_RESOLVED_BYTES, ChangeUnitScoreBuilder::toJson));
 		result.put(PROP_RESOLVED_COUNT, resolved.size());
 	}
 
@@ -186,14 +190,43 @@ public final class ChangeUnitScoreBuilder {
 		if (requirement.reqDataType() != null) {
 			json.put(PROP_REQ_DATA_TYPE, requirement.reqDataType().toString());
 		}
+		json.put(PROP_MESSAGE, toCompactMessage(requirement.message()));
+		return json;
+	}
+
+	/**
+	 * Keeps the message once under the default key, then only the locales whose text differs:
+	 * most locales share the same fallback text, and the change unit must fit in one property.
+	 */
+	private static JSONObject toCompactMessage(MLText mlText) {
 		JSONObject message = new JSONObject();
-		for (Map.Entry<Locale, String> entry : requirement.message().entrySet()) {
-			if (entry.getValue() != null) {
+		String defaultMessage = MLTextHelper.getClosestValue(mlText, Locale.getDefault());
+		if (defaultMessage != null) {
+			message.put(DEFAULT_LOCALE_KEY, defaultMessage);
+		}
+		for (Map.Entry<Locale, String> entry : mlText.entrySet()) {
+			if ((entry.getValue() != null) && !entry.getValue().equals(defaultMessage)) {
 				message.put(entry.getKey().toString(), entry.getValue());
 			}
 		}
-		json.put(PROP_MESSAGE, message);
-		return json;
+		return message;
+	}
+
+	/**
+	 * Converts the requirements, most severe first, until the item cap or the size budget is reached.
+	 */
+	private static JSONArray toJsonArray(List<Requirement> requirements, int maxBytes, Function<Requirement, JSONObject> converter) {
+		JSONArray array = new JSONArray();
+		int usedBytes = 0;
+		for (Requirement requirement : requirements) {
+			JSONObject json = converter.apply(requirement);
+			usedBytes += json.toString().getBytes(StandardCharsets.UTF_8).length;
+			if ((array.length() >= MAX_REQUIREMENTS) || (usedBytes > maxBytes)) {
+				break;
+			}
+			array.put(json);
+		}
+		return array;
 	}
 
 	private static JSONObject copyScores(String entityScore, String[] props) {
@@ -230,9 +263,5 @@ public final class ChangeUnitScoreBuilder {
 			keys.add(requirement.key());
 		}
 		return keys;
-	}
-
-	private static List<Requirement> limit(List<Requirement> requirements) {
-		return requirements.size() > MAX_REQUIREMENTS ? requirements.subList(0, MAX_REQUIREMENTS) : requirements;
 	}
 }
