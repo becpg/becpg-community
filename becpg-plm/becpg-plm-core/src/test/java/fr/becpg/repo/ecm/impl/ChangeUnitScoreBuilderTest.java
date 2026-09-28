@@ -114,6 +114,49 @@ public class ChangeUnitScoreBuilderTest {
 	}
 
 	@Test
+	public void newToleratedComesBeforeExistingForbidden() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		JSONArray requirements = build(before, simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_REQUIREMENTS);
+
+		assertEquals(ALLERGEN_NOT_VALIDATED, messageOf(requirements.getJSONObject(0)));
+	}
+
+	@Test
+	public void newAlertsAreCountedApartFromExistingOnes() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD));
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Completion, MISSING_FIELD),
+				requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		JSONObject result = build(before, simulated);
+
+		assertEquals(2, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_COUNT));
+		assertEquals(1, result.getInt(ChangeUnitScoreBuilder.PROP_NEW_FORBIDDEN_COUNT));
+	}
+
+	@Test
+	public void newAlertsAreBrokenDownByKindAndLevel() {
+		ProductData simulated = product(SIMULATED_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT + " (lead)"));
+
+		JSONArray newCtrlCount = build(product(PREVIOUS_SCORE), simulated).getJSONArray(ChangeUnitScoreBuilder.PROP_NEW_CTRL_COUNT);
+
+		assertEquals(2, newCtrlCount.getJSONObject(0).getJSONObject(RequirementDataType.Specification.toString())
+				.getInt(RequirementType.Forbidden.toString()));
+	}
+
+	@Test
+	public void resolvedForbiddenAlertsAreCounted() {
+		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT),
+				requirement(RequirementType.Tolerated, RequirementDataType.Allergen, ALLERGEN_NOT_VALIDATED));
+
+		assertEquals(1, build(before, product(SIMULATED_SCORE)).getInt(ChangeUnitScoreBuilder.PROP_RESOLVED_FORBIDDEN_COUNT));
+	}
+
+	@Test
 	public void requirementThatDisappearsIsResolved() {
 		ProductData before = product(PREVIOUS_SCORE, requirement(RequirementType.Forbidden, RequirementDataType.Specification, CADMIUM_ABOVE_LIMIT));
 

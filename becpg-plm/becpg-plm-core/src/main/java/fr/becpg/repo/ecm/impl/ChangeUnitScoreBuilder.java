@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,8 +50,9 @@ import fr.becpg.repo.regulatory.RequirementType;
  * <p>The snapshot of the product is taken before formulation: the formulation rebuilds the requirement
  * list of the product and may reuse its items, so the previous requirements are copied at once.</p>
  *
- * <p>Requirements are sorted by severity, specification and regulatory non-conformities first, so the
- * blocking alerts come before the incomplete fields.</p>
+ * <p>What matters in a change order is what the change introduces or resolves: requirements the product
+ * already had are kept, but listed after the new ones, and counted apart. Within each group they are sorted by
+ * severity, specification and regulatory non-conformities first.</p>
  */
 public final class ChangeUnitScoreBuilder {
 
@@ -76,6 +78,10 @@ public final class ChangeUnitScoreBuilder {
 	static final String PROP_REQ_DATA_TYPE = "reqDataType";
 	static final String PROP_MESSAGE = "message";
 	static final String PROP_IS_NEW = "isNew";
+	static final String PROP_NEW_COUNT = "newCount";
+	static final String PROP_NEW_FORBIDDEN_COUNT = "newForbiddenCount";
+	static final String PROP_RESOLVED_FORBIDDEN_COUNT = "resolvedForbiddenCount";
+	static final String PROP_NEW_CTRL_COUNT = "newCtrlCount";
 
 	private static final String[] SCORE_PROPS = { "global", "details", "ctrlCount", "totalForbidden", "regulatoryCodeLabels" };
 	private static final String[] PREVIOUS_SCORE_PROPS = { "global", "details", "totalForbidden" };
@@ -161,11 +167,51 @@ public final class ChangeUnitScoreBuilder {
 	private void putRequirements(JSONObject result, List<Requirement> requirements) {
 		Set<String> previousKeys = keysOf(previousRequirements);
 		List<Requirement> sorted = new ArrayList<>(requirements);
-		sorted.sort(BY_SEVERITY.thenComparing(requirement -> previousKeys.contains(requirement.key())));
+		Comparator<Requirement> newFirst = Comparator.comparing(requirement -> previousKeys.contains(requirement.key()));
+		sorted.sort(newFirst.thenComparing(BY_SEVERITY));
+
+		List<Requirement> newRequirements = new ArrayList<>();
+		for (Requirement requirement : sorted) {
+			if (!previousKeys.contains(requirement.key())) {
+				newRequirements.add(requirement);
+			}
+		}
 
 		result.put(PROP_REQUIREMENTS, toJsonArray(sorted, MAX_REQUIREMENTS_BYTES,
 				requirement -> toJson(requirement).put(PROP_IS_NEW, !previousKeys.contains(requirement.key()))));
 		result.put(PROP_REQUIREMENTS_COUNT, sorted.size());
+		result.put(PROP_NEW_COUNT, newRequirements.size());
+		result.put(PROP_NEW_FORBIDDEN_COUNT, countForbidden(newRequirements));
+		result.put(PROP_NEW_CTRL_COUNT, countByDataTypeAndType(newRequirements));
+	}
+
+	private static int countForbidden(List<Requirement> requirements) {
+		int count = 0;
+		for (Requirement requirement : requirements) {
+			if (RequirementType.Forbidden.equals(requirement.reqType())) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Counts requirements by kind then level, in the {@code ctrlCount} format of the entity score so the
+	 * notifications widget can render and filter it: {@code [{"Specification":{"Forbidden":2}}, ...]}.
+	 */
+	private static JSONArray countByDataTypeAndType(List<Requirement> requirements) {
+		Map<String, JSONObject> countsByDataType = new LinkedHashMap<>();
+		for (Requirement requirement : requirements) {
+			if ((requirement.reqDataType() != null) && (requirement.reqType() != null)) {
+				JSONObject counts = countsByDataType.computeIfAbsent(requirement.reqDataType().toString(), dataType -> new JSONObject());
+				counts.put(requirement.reqType().toString(), counts.optInt(requirement.reqType().toString()) + 1);
+			}
+		}
+		JSONArray ctrlCount = new JSONArray();
+		for (Map.Entry<String, JSONObject> entry : countsByDataType.entrySet()) {
+			ctrlCount.put(new JSONObject().put(entry.getKey(), entry.getValue()));
+		}
+		return ctrlCount;
 	}
 
 	private void putResolvedRequirements(JSONObject result, List<Requirement> requirements) {
@@ -180,6 +226,7 @@ public final class ChangeUnitScoreBuilder {
 
 		result.put(PROP_RESOLVED, toJsonArray(resolved, MAX_RESOLVED_BYTES, ChangeUnitScoreBuilder::toJson));
 		result.put(PROP_RESOLVED_COUNT, resolved.size());
+		result.put(PROP_RESOLVED_FORBIDDEN_COUNT, countForbidden(resolved));
 	}
 
 	private static JSONObject toJson(Requirement requirement) {

@@ -363,6 +363,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="ecm:culReqError" label="hidden" />
+					<field id="ecm:culEntityScore" read-only="true" />
 				</appearance>				
 			</form>
 		</forms>
