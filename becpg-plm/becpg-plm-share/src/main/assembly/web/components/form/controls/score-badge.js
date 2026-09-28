@@ -86,15 +86,18 @@
         } else if (!isBlank(details.value)) {
             header += " : " + formatNumber(details.value) + (isBlank(details.unit) ? "" : " " + details.unit);
         }
+        if (details.manual) {
+            header += " (" + manualVerdictLabel(details, scope) + ")";
+        }
         if (header) {
             lines.push(header);
         }
 
-        appendTooltipParts(lines, details.parts, scope);
+        appendTooltipParts(lines, details.parts, scope, false);
 
         // a score built by successive steps, the Green-Score being the case, carries its
         // breakdown in steps rather than in parts: the hover must show them just the same
-        appendTooltipParts(lines, details.steps, scope);
+        appendTooltipParts(lines, details.steps, scope, true);
 
         return lines.join("\n");
     }
@@ -105,11 +108,12 @@
      * @param lines the lines gathered so far
      * @param parts the parts or the steps of a score
      * @param scope the datagrid, for the wording of the parts
+     * @param isStep whether the parts are the steps of the score
      */
-    function appendTooltipParts(lines, parts, scope) {
+    function appendTooltipParts(lines, parts, scope, isStep) {
         for (var i = 0; i < (parts || []).length; i++) {
             var part = parts[i];
-            var line = partLabel(scope, part);
+            var line = isStep ? stepLabel(scope, part) : partLabel(scope, part);
 
             // the marks whose axes are graded on their own scale carry no value, only a class
             if (!isBlank(part["class"])) {
@@ -730,20 +734,47 @@
         return '<span class="score-badge" title="' + beCPG.util.encodeAttr(buildTooltip(details, scope)) + '">' + body + "</span>";
     };
 
+    /**
+     * Wording of a key, null when the scope has no translation for it.
+     */
+    function translate(scope, key) {
+        var translated = (scope && scope.msg) ? scope.msg(key) : key;
+        return translated === key ? null : translated;
+    }
+
     function partLabel(scope, part) {
         if (part.label) {
             return part.label;
         }
 
-        var key = "score.part." + part.code;
-        var translated = (scope && scope.msg) ? scope.msg(key) : key;
+        return translate(scope, "score.part." + part.code) || part.code;
+    }
 
-        return translated === key ? part.code : translated;
+    /**
+     * A step may name both what it belongs to, by its code, and what it is, by its label:
+     * the PPWR states each material under the packaging level it weighs in.
+     */
+    function stepLabel(scope, part) {
+        var group = part.label ? translate(scope, "score.part." + part.code) : null;
+        return group ? group + " \u00b7 " + part.label : partLabel(scope, part);
+    }
+
+    /**
+     * States that the verdict was entered by hand, and the verdict the formulation reached.
+     */
+    function manualVerdictLabel(details, scope) {
+        var label = translate(scope, "score.details.manual") || "Entered by hand";
+        var computed = !isBlank(details.computedClass) ? details.computedClass : formatNumber(details.computedValue);
+
+        if (!isBlank(computed)) {
+            label += ", " + (translate(scope, "score.details.computed") || "computed") + " : " + computed;
+        }
+        return label;
     }
 
     function renderDetailRow(scope, part, isStep) {
         var html = '<tr' + (isStep ? ' class="score-details-step"' : "") + ">";
-        html += "<td>" + Alfresco.util.encodeHTML(partLabel(scope, part))
+        html += "<td>" + Alfresco.util.encodeHTML(isStep ? stepLabel(scope, part) : partLabel(scope, part))
             + (isBlank(part["class"]) ? "" : ' <span class="score-details-class">'
                 + Alfresco.util.encodeHTML(part["class"]) + "</span>") + "</td>";
         html += '<td class="score-details-number">' + formatNumber(part.value)
@@ -773,11 +804,15 @@
         var parts = (details.parts || []).slice(0).sort(byContributionDesc);
         var steps = details.steps || [];
 
+        var html = details.manual
+            ? '<div class="score-details-manual">' + Alfresco.util.encodeHTML(manualVerdictLabel(details, scope)) + "</div>"
+            : "";
+
         if (parts.length === 0 && steps.length === 0) {
-            return "";
+            return html;
         }
 
-        var html = '<table class="score-details"><thead><tr>';
+        html += '<table class="score-details"><thead><tr>';
         html += "<th>" + scope.msg("score.details.part") + "</th>";
         html += "<th>" + scope.msg("score.details.value") + "</th>";
         html += "<th>" + scope.msg("score.details.weight") + "</th>";

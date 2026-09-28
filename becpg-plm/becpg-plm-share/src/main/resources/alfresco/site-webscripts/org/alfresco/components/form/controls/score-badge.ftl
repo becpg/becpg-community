@@ -39,7 +39,7 @@
                }
             };
 
-            container.innerHTML = beCPG.util.score.renderBadge(details)
+            container.innerHTML = beCPG.util.score.renderBadge(details, scope)
                + beCPG.util.score.renderDetails(scope, details);
          })();
          //]]></script>

@@ -180,3 +180,20 @@
 .score-details {
     min-width: 420px;
 }
+
+/* On a step the chip names the key of the reference data the rate was read under, not a
+   class: it is lighter, and wide enough for a material code. */
+
+.score-details tr.score-details-step .score-details-class {
+    background: #8a8a8a;
+    font-style: normal;
+    padding: 0 3px;
+}
+
+/* A verdict entered by hand is stated above the breakdown, which still shows the computed one. */
+
+.score-details-manual {
+    color: #666;
+    font-style: italic;
+    margin-top: 4px;
+}
