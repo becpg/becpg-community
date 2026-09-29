@@ -41,6 +41,7 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -303,6 +304,37 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+	}
+
+	/**
+	 * A d:noderef property left pointing to a deleted node is dropped from the export instead of failing it: the
+	 * regulatory check reads bcpg:parentLevel, and one dead parent line must not block the whole recipe.
+	 */
+	@Test
+	public void testRemoteJSONEntitySkipsADanglingNodeRefProperty() {
+		NodeRef productNodeRef = createFinishedProduct();
+		NodeRef compoListItemNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef deletedTarget = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP deleted parent");
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef itemNodeRef = product.getCompoListView().getCompoList().get(0).getNodeRef();
+			nodeService.setProperty(itemNodeRef, BeCPGModel.PROP_PARENT_LEVEL, deletedTarget);
+			nodeService.deleteNode(deletedTarget);
+			return itemNodeRef;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+			params.setFilteredLists(Set.of("compoList"));
+			params.setFilteredFields(Set.of("bcpg:compoListQty", "bcpg:parentLevel"), namespaceService);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			remoteEntityService.getEntity(productNodeRef, out, params);
+
+			String json = out.toString(StandardCharsets.UTF_8);
+			assertTrue(json.contains(compoListItemNodeRef.getId()));
+			assertFalse(json.contains("bcpg:parentLevel"));
+			return null;
+		}, false, true);
 	}
 
 	private NodeRef createFinishedProduct() {
