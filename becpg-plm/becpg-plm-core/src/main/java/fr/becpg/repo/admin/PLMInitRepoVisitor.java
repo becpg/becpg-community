@@ -330,21 +330,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>NUTRITION_FACTS_TEMPLATES_RESOURCES="classpath*:beCPG/templates/nutritionFacts-*.ftlx"</code> */
 	private static final String NUTRITION_FACTS_TEMPLATES_RESOURCES = "classpath*:beCPG/templates/nutritionFacts-*.ftlx";
 
+	private static final String SCORE_MARKING_TEMPLATES_RESOURCES = "classpath*:beCPG/templates/score-*.ftlx";
+
 	private static final String PRODUCT_REPORT_LOGO_RESOURCE = "beCPG/birt/document/product/default/logo.png";
 	/** Constant <code>PRODUCT_REPORT_CSS_RESOURCE="beCPG/birt/document/product/default/bec"{trunked}</code> */
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
-	/** Constant <code>PRODUCT_REPORT_IMG_CCCCCC="beCPG/birt/document/product/default/ccc"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_CCCCCC = "beCPG/birt/document/product/default/cccccc-200X30.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY = "beCPG/birt/document/product/default/images/trafficLights_Energy.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN = "beCPG/birt/document/product/default/images/trafficLights_Green.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE = "beCPG/birt/document/product/default/images/trafficLights_Orange.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
 	/** Constant <code>CLASSIFY_RULE_TITLE="classifyEntityRule"</code> */
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
@@ -1946,6 +1936,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private void visitTemplates(NodeRef systemNodeRef) {
 		NodeRef templatesNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_TEMPLATES);
 		contentHelper.addFilesResources(templatesNodeRef, NUTRITION_FACTS_TEMPLATES_RESOURCES);
+		contentHelper.addFilesResources(templatesNodeRef, SCORE_MARKING_TEMPLATES_RESOURCES);
 	}
 
 	private void visitReports(NodeRef systemNodeRef) {
@@ -1978,9 +1969,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
-					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
-					PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN,
-					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
+					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE };
 
 			String[] commonReportResource = { PRODUCT_REPORT_LOGO_RESOURCE, PRODUCT_REPORT_SETTINGS_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 

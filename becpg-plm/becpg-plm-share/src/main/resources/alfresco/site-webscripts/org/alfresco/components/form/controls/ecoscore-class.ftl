@@ -1,3 +1,8 @@
+<#--
+  Deprecated since #36086: the standard forms no longer use this control, the score is shown by the
+  score list and its score-badge control. It is kept for the customer forms still referring to it
+  and will be removed in a later version.
+-->
 <#assign fieldValue = (field.value)!"">
 <div class="form-field">
    <div class="viewmode-field">

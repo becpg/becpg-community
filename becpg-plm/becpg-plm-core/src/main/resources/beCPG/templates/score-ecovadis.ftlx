@@ -1,0 +1,69 @@
+<#--
+  EcoVadis sustainability rating medal: a round medal in the metal of the level reached, the
+  EcoVadis wordmark, the level, the year of the rating and the ribbon stating the percentile the
+  level stands for, as EcoVadis publishes them.
+
+  This is a faithful drawing, not the official artwork: a customer holding the medal files can
+  upload them as badges of the score definition, which Share then shows instead.
+
+  The model is a ScoreMarking under "score": its class is the level, its version the year.
+-->
+<#import "svg-lib.ftlx" as svg>
+
+<#assign W = 120>
+<#assign H = 132>
+<#assign CX = W / 2>
+<#assign CY = 58>
+<#assign OUTER_R = 55>
+<#assign INNER_R = 45>
+<#assign INK = "#2b2f33">
+<#assign WHITE = "#ffffff">
+
+<#--
+  Metal of each level: the light and the dark end of its gradient, and the ink its wording is
+  set in. The percentile is the share of rated companies the level stands for.
+-->
+<#assign METALS = {
+	"PLATINUM": {"light": "#eef2f4", "dark": "#7c8f99", "ink": "#4f616b", "top": "1%"},
+	"GOLD": {"light": "#f7e19a", "dark": "#b4862a", "ink": "#8a6417", "top": "5%"},
+	"SILVER": {"light": "#f1f3f5", "dark": "#98a1a8", "ink": "#5f676c", "top": "15%"},
+	"BRONZE": {"light": "#eab98f", "dark": "#9a5a2d", "ink": "#74401c", "top": "35%"}
+}>
+<#assign NEUTRAL = {"light": "#eeeeee", "dark": "#9e9e9e", "ink": "#555555", "top": ""}>
+
+<#assign level = (score.scoreClass()!"")?upper_case>
+<#assign metal = METALS[level]!NEUTRAL>
+
+<@svg.document width=W height=H>
+	<defs>
+		<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="${metal.light}"/>
+			<stop offset="0.55" stop-color="${metal.dark}"/>
+			<stop offset="1" stop-color="${metal.light}"/>
+		</linearGradient>
+	</defs>
+
+	<#-- the two tails of the ribbon hang behind the medal -->
+	<polygon points="${CX - 30},${CY + 30} ${CX - 12},${CY + 36} ${CX - 22},${H - 2} ${CX - 30},${H - 12} ${CX - 40},${H - 6}" fill="${metal.dark}"/>
+	<polygon points="${CX + 30},${CY + 30} ${CX + 12},${CY + 36} ${CX + 22},${H - 2} ${CX + 30},${H - 12} ${CX + 40},${H - 6}" fill="${metal.dark}"/>
+
+	<circle cx="${CX}" cy="${CY}" r="${OUTER_R}" fill="url(#metal)"/>
+	<circle cx="${CX}" cy="${CY}" r="${INNER_R + 2}" fill="${metal.dark}"/>
+	<circle cx="${CX}" cy="${CY}" r="${INNER_R}" fill="${WHITE}"/>
+
+	<#-- the EcoVadis wordmark and its leaf -->
+	<path d="M${CX - 6},${CY - 25} Q${CX - 6},${CY - 35} ${CX + 5},${CY - 36} Q${CX + 6},${CY - 26} ${CX - 6},${CY - 25} Z" fill="${metal.ink}"/>
+	<@svg.centredText x=CX middle=CY - 15 text="ecovadis" size=13 fill=INK/>
+	<@svg.centredText x=CX middle=CY - 3 text="Sustainability Rating" size=6 fill=INK weight="normal"/>
+
+	<@svg.centredText x=CX middle=CY + 11 text=level?has_content?then(level, "-") size=[12, 96 / ([level?length, 1]?max * 0.62)]?min fill=metal.ink/>
+	<#if score.version()??>
+	<@svg.centredText x=CX middle=CY + 25 text=score.version() size=9 fill=INK/>
+	</#if>
+
+	<#if metal.top?has_content>
+	<#-- the ribbon across the foot of the medal -->
+	<polygon points="${CX - 38},${CY + 33} ${CX + 38},${CY + 33} ${CX + 33},${CY + 41} ${CX + 38},${CY + 49} ${CX - 38},${CY + 49} ${CX - 33},${CY + 41}" fill="${metal.ink}"/>
+	<@svg.centredText x=CX middle=CY + 41 text="TOP " + metal.top size=8 fill=WHITE/>
+	</#if>
+</@svg.document>

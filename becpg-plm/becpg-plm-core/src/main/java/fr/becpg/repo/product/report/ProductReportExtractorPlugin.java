@@ -77,6 +77,7 @@ import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelRenderer;
 import fr.becpg.repo.product.helper.AllocationHelper;
 import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
@@ -85,9 +86,11 @@ import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
+import fr.becpg.repo.report.svg.SvgDimensions;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.score.marking.ScoreMarkingReportWriter;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.model.VariantData;
@@ -117,6 +120,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String NUTRITION_FACTS_IMAGE_PREFIX = "nutritionFacts_";
 
 	private static final String DEFAULT_PANEL_CODE = "default";
+
+	/** Code of the panel rendered for the technical sheet itself, when no Render rule gives one. */
+	private static final String REPORT_PANEL_CODE = "report";
 
 	private static final String SVG_ROOT_ELEMENT = "<svg";
 
@@ -293,6 +299,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected final PackagingHelper packagingHelper;
 
+	private ScoreMarkingReportWriter scoreMarkingReportWriter;
+
+	private NutritionFactsPanelRenderer nutritionFactsPanelRenderer;
+
 	@Autowired
 	/**
 	 * <p>Constructor for ProductReportExtractorPlugin.</p>
@@ -310,6 +320,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		this.packagingHelper = packagingHelper;
 		this.wUsedListService = wUsedListService;
 		this.wUsedAssociationResolver = wUsedAssociationResolver;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreMarkingReportWriter</code>, injected by setter so that the
+	 * extractors deriving from this one keep their constructor.</p>
+	 *
+	 * @param scoreMarkingReportWriter a {@link fr.becpg.repo.score.marking.ScoreMarkingReportWriter} object
+	 */
+	@Autowired
+	public void setScoreMarkingReportWriter(ScoreMarkingReportWriter scoreMarkingReportWriter) {
+		this.scoreMarkingReportWriter = scoreMarkingReportWriter;
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsPanelRenderer</code>.</p>
+	 *
+	 * @param nutritionFactsPanelRenderer a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelRenderer} object
+	 */
+	@Autowired
+	public void setNutritionFactsPanelRenderer(NutritionFactsPanelRenderer nutritionFactsPanelRenderer) {
+		this.nutritionFactsPanelRenderer = nutritionFactsPanelRenderer;
 	}
 
 	static {
@@ -422,6 +453,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 
+		// the markings and the report panel are drawn for the entity the report is about, never for
+		// the entities its associations extract with their lists
+		boolean isReportEntity = isExtractedProduct && entityNodeRef.equals(context.getRootNodeRef());
+
 		if (productData != null) {
 			// lists extracted on entity and raw materials
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_ORGANOLIST)) {
@@ -445,8 +480,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
 				StopWatchSupport.addCheckpoint("start_datalist_nut");
 				loadNutLists(productData, dataListsElt, context);
-				loadNutritionFactsPanels(productData, dataListsElt, context);
+				loadNutritionFactsPanels(productData, dataListsElt, context, isReportEntity);
 				logDatalistStats(dataListsElt, PLMModel.TYPE_NUTLIST.getLocalName() + "s", "nut");
+			}
+
+			// The markings are images drawn from the score list, not the list itself: a sheet that
+			// narrows the lists it extracts, which most do, must still print its traffic lights.
+			if (isReportEntity) {
+				StopWatchSupport.addCheckpoint("start_score_markings");
+				scoreMarkingReportWriter.write(productData, dataListsElt.getParent(), context.getReportData().getImages(), I18NUtil.getLocale());
 			}
 			
 			if (!isExtractedProduct && shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_DYNAMICCHARACTLIST)) {
@@ -1275,19 +1317,43 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * image rather than written to the repository first. BIRT embeds it as vector graphics, which
 	 * is what keeps the typography and the rules of a regulated panel exact in the PDF.</p>
 	 */
-	private void loadNutritionFactsPanels(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
-
-		if (productData.getLabelingListView().getIngLabelingList() == null) {
-			return;
-		}
+	private void loadNutritionFactsPanels(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isReportEntity) {
 
 		Element panelsElt = dataListsElt.getParent().addElement(TAG_NUTRITION_FACTS);
+		String reportLocale = MLTextHelper.localeKey(I18NUtil.getLocale());
+		boolean hasReportLocalePanel = false;
 
-		for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
+		for (IngLabelingListDataItem dataItem : labelingList(productData)) {
 			for (Locale locale : panelLocales(dataItem)) {
-				addNutritionFactsPanel(dataItem, locale, panelsElt, context);
+				String panel = panelValue(dataItem, locale);
+				if (isSvgPanel(panel)) {
+					addNutritionFactsPanel(panelCode(dataItem), MLTextHelper.localeKey(locale), panel, panelsElt, context);
+					hasReportLocalePanel = hasReportLocalePanel || reportLocale.equals(MLTextHelper.localeKey(locale));
+				}
 			}
 		}
+
+		if (isReportEntity && !hasReportLocalePanel) {
+			addReportPanel(productData, panelsElt, context);
+		}
+	}
+
+	private static List<IngLabelingListDataItem> labelingList(ProductData productData) {
+		List<IngLabelingListDataItem> labelingList = productData.getLabelingListView().getIngLabelingList();
+		return labelingList != null ? labelingList : List.of();
+	}
+
+	/**
+	 * Without a Render rule for the locale of the report, the sheet still gets the panel its
+	 * regulation asks for: the sheet used to draw it, it must not need a labeling rule to show it.
+	 */
+	private void addReportPanel(ProductData productData, Element panelsElt, DefaultExtractorContext context) {
+		if (nutritionFactsPanelRenderer == null) {
+			return;
+		}
+		Locale locale = I18NUtil.getLocale();
+		nutritionFactsPanelRenderer.render(productData, locale)
+				.ifPresent(panel -> addNutritionFactsPanel(REPORT_PANEL_CODE, MLTextHelper.localeKey(locale), panel, panelsElt, context));
 	}
 
 	private Set<Locale> panelLocales(IngLabelingListDataItem dataItem) {
@@ -1301,19 +1367,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return locales;
 	}
 
-	private void addNutritionFactsPanel(IngLabelingListDataItem dataItem, Locale locale, Element panelsElt, DefaultExtractorContext context) {
+	private static boolean isSvgPanel(String panel) {
+		return (panel != null) && panel.stripLeading().startsWith(SVG_ROOT_ELEMENT);
+	}
 
-		String panel = panelValue(dataItem, locale);
-		if ((panel == null) || !panel.stripLeading().startsWith(SVG_ROOT_ELEMENT)) {
-			return;
-		}
+	private void addNutritionFactsPanel(String code, String localeKey, String panel, Element panelsElt, DefaultExtractorContext context) {
 
-		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + toImageIdPart(panelCode(dataItem)) + "_" + MLTextHelper.localeKey(locale);
+		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + toImageIdPart(code) + "_" + localeKey;
 
 		Element panelElt = panelsElt.addElement(TAG_NUTRITION_FACT);
 		panelElt.addAttribute(ATTR_IMAGE_ID, imageId);
-		panelElt.addAttribute(ATTR_CODE, panelCode(dataItem));
-		panelElt.addAttribute(ATTR_LOCALE, MLTextHelper.localeKey(locale));
+		panelElt.addAttribute(ATTR_CODE, code);
+		panelElt.addAttribute(ATTR_LOCALE, localeKey);
+		SvgDimensions.of(panel).ifPresent(dimensions -> dimensions.writeTo(panelElt));
 
 		context.getReportData().getImages().add(new EntityImageInfo(imageId, panel.getBytes(StandardCharsets.UTF_8), SVG_MIME_TYPE));
 	}

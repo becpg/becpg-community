@@ -1,3 +1,7 @@
+/*
+ * Deprecated since #36086: only the deprecated nutrient-class.ftl control uses these rules, kept for the
+ * customer forms still referring to it.
+ */
 
 span.nutrient-class {
   display: table; 

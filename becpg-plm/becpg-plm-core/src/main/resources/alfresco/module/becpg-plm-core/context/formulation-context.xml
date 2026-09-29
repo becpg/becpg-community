@@ -203,6 +203,8 @@
 					<property name="formulaService" ref="formulaService" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
 					<property name="templateRenderService" ref="beCPGTemplateRenderService" />
+					<property name="scoreMarkingRenderer" ref="scoreMarkingRenderer" />
+					<property name="frontOfPackMarkingService" ref="frontOfPackMarkingService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
@@ -303,6 +305,7 @@
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
+							<ref bean="manualScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
 							<ref bean="healthStarRating"/>
 							<ref bean="lcaAggregatedScore"/>
@@ -361,6 +364,7 @@
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
+							<ref bean="manualScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
 							<ref bean="healthStarRating"/>
 							<ref bean="lcaAggregatedScore"/>

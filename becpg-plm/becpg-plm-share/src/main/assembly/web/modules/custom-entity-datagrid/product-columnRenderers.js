@@ -595,7 +595,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                 return "";
             }
 
-            var badge = beCPG.util.score.renderBadge(details, scope);
+            var badge = beCPG.util.score.renderBadge(details, scope, oRecord.getData("nodeRef"));
 
             // the error log has no column of its own, it shows as the warning pictogram
             var error = scoreRowProp(oRecord, "prop_bcpg_rslErrorLog");

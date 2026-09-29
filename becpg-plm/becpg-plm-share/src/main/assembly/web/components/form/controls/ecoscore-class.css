@@ -1,3 +1,7 @@
+/*
+ * Deprecated since #36086: only the deprecated ecoscore-class.ftl control uses these rules, kept for the
+ * customer forms still referring to it.
+ */
 
 
 .ecoscore-class-a,
