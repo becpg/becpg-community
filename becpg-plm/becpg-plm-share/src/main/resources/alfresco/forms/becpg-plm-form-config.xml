@@ -1841,13 +1841,10 @@
                     <show id="bcpg:scoreDefCode" />
                     <show id="bcpg:scoreDefVersion" />
                     <show id="bcpg:scoreDefEngine" />
-                    <show id="bcpg:scoreDefPluginId" />
                     <show id="bcpg:scoreDefScale" />
                     <show id="bcpg:scoreDefUnit" />
                     <show id="bcpg:scoreDefBasis" />
                     <show id="bcpg:scoreDefScaleFactor" />
-                    <show id="bcpg:scoreDefIsOfficial" />
-                    <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
                     <show id="bcpg:regulatoryCountries" />
@@ -1859,9 +1856,6 @@
                     <show id="bcpg:scoreDefRange" />
                     <show id="bcpg:scoreDefCategoryProperty" />
                     <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:scoreDefFormula" />
-                    <show id="bcpg:scoreDefDetailFormula" />
-                    <show id="bcpg:scoreDefRangeFormula" />
                 </field-visibility>
                 <appearance>
                     <!-- Each root set is a tab. Share renders the fields of a set before its child
@@ -1869,57 +1863,38 @@
                     <set id="scoreDefinition" label-id="becpg.forms.set.score-definition.label" />
                     <set id="scoreDefinition2Col" parent="scoreDefinition" template="/org/alfresco/components/form/2-column-set.ftl" />
                     <set id="scoreDefinitionFields" parent="scoreDefinition" />
-                    <set id="scoreFormula" label-id="becpg.forms.set.score-formula.label" />
 
-                    <field id="bcpg:charactName" set="scoreDefinition2Col">
+                    <field id="bcpg:charactName" help-id="becpg.forms.help.scoreDef.name" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
-                    <field id="bcpg:scoreDefCode" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefVersion" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefEngine" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefPluginId" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefScale" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefUnit" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefBasis" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefScaleFactor" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefIsOfficial" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefValidityPeriod" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefStartEffectivity" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefEndEffectivity" set="scoreDefinition2Col" />
-                    <field id="bcpg:regulatoryCountries" set="scoreDefinition2Col">
+                    <field id="bcpg:scoreDefCode" help-id="becpg.forms.help.scoreDef.code" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefVersion" help-id="becpg.forms.help.scoreDef.version" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefEngine" help-id="becpg.forms.help.scoreDef.engine" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefScale" help-id="becpg.forms.help.scoreDef.scale" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefUnit" help-id="becpg.forms.help.scoreDef.unit" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefBasis" help-id="becpg.forms.help.scoreDef.basis" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefScaleFactor" help-id="becpg.forms.help.scoreDef.scaleFactor" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefStartEffectivity" help-id="becpg.forms.help.scoreDef.startEffectivity" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefEndEffectivity" help-id="becpg.forms.help.scoreDef.endEffectivity" set="scoreDefinition2Col" />
+                    <field id="bcpg:regulatoryCountries" help-id="becpg.forms.help.scoreDef.countries" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsageRef" set="scoreDefinition2Col">
+                    <field id="bcpg:regulatoryUsageRef" help-id="becpg.forms.help.scoreDef.usages" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:scoreDefAggregation" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefClassOrder" set="scoreDefinition2Col" />
-                    <field id="bcpg:isDeleted" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefAggregation" help-id="becpg.forms.help.scoreDef.aggregation" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefClassOrder" help-id="becpg.forms.help.scoreDef.classOrder" set="scoreDefinition2Col" />
+                    <field id="bcpg:isDeleted" help-id="becpg.forms.help.scoreDef.isDeleted" set="scoreDefinition2Col" />
 
                     <field id="cm:description" set="scoreDefinitionFields">
                         <control>
                             <control-param name="activateLinks">true</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:scoreDefRange" set="scoreDefinitionFields" />
-                    <field id="bcpg:scoreDefCategoryProperty" set="scoreDefinitionFields" />
+                    <field id="bcpg:scoreDefRange" help-id="becpg.forms.help.scoreDef.range" set="scoreDefinitionFields" />
+                    <field id="bcpg:scoreDefCategoryProperty" help-id="becpg.forms.help.scoreDef.categoryProperty" set="scoreDefinitionFields" />
                     <field id="sec:readGroups" set="scoreDefinitionFields" />
 
-                    <field id="bcpg:scoreDefFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">10</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:scoreDefDetailFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">5</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:scoreDefRangeFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">5</control-param>
-                        </control>
-                    </field>
                 </appearance>
             </form>
         </forms>
@@ -1936,13 +1911,10 @@
                     <show id="bcpg:scoreDefCode" />
                     <show id="bcpg:scoreDefVersion" />
                     <show id="bcpg:scoreDefEngine" />
-                    <show id="bcpg:scoreDefPluginId" />
                     <show id="bcpg:scoreDefScale" />
                     <show id="bcpg:scoreDefUnit" />
                     <show id="bcpg:scoreDefBasis" />
                     <show id="bcpg:scoreDefScaleFactor" />
-                    <show id="bcpg:scoreDefIsOfficial" />
-                    <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
                     <show id="bcpg:regulatoryCountries" />
@@ -1953,9 +1925,6 @@
                     <show id="cm:description" force="true" />
                     <show id="bcpg:scoreDefRange" />
                     <show id="bcpg:scoreDefCategoryProperty" />
-                    <show id="bcpg:scoreDefFormula" />
-                    <show id="bcpg:scoreDefDetailFormula" />
-                    <show id="bcpg:scoreDefRangeFormula" />
                 </field-visibility>
                 <appearance>
                     <!-- Each root set is a tab. Share renders the fields of a set before its child
@@ -1963,56 +1932,37 @@
                     <set id="scoreDefinition" label-id="becpg.forms.set.score-definition.label" />
                     <set id="scoreDefinition2Col" parent="scoreDefinition" template="/org/alfresco/components/form/2-column-set.ftl" />
                     <set id="scoreDefinitionFields" parent="scoreDefinition" />
-                    <set id="scoreFormula" label-id="becpg.forms.set.score-formula.label" />
 
-                    <field id="bcpg:charactName" set="scoreDefinition2Col">
+                    <field id="bcpg:charactName" help-id="becpg.forms.help.scoreDef.name" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
-                    <field id="bcpg:scoreDefCode" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefVersion" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefEngine" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefPluginId" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefScale" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefUnit" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefBasis" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefScaleFactor" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefIsOfficial" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefValidityPeriod" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefStartEffectivity" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefEndEffectivity" set="scoreDefinition2Col" />
-                    <field id="bcpg:regulatoryCountries" set="scoreDefinition2Col">
+                    <field id="bcpg:scoreDefCode" help-id="becpg.forms.help.scoreDef.code" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefVersion" help-id="becpg.forms.help.scoreDef.version" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefEngine" help-id="becpg.forms.help.scoreDef.engine" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefScale" help-id="becpg.forms.help.scoreDef.scale" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefUnit" help-id="becpg.forms.help.scoreDef.unit" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefBasis" help-id="becpg.forms.help.scoreDef.basis" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefScaleFactor" help-id="becpg.forms.help.scoreDef.scaleFactor" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefStartEffectivity" help-id="becpg.forms.help.scoreDef.startEffectivity" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefEndEffectivity" help-id="becpg.forms.help.scoreDef.endEffectivity" set="scoreDefinition2Col" />
+                    <field id="bcpg:regulatoryCountries" help-id="becpg.forms.help.scoreDef.countries" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsageRef" set="scoreDefinition2Col">
+                    <field id="bcpg:regulatoryUsageRef" help-id="becpg.forms.help.scoreDef.usages" set="scoreDefinition2Col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:scoreDefAggregation" set="scoreDefinition2Col" />
-                    <field id="bcpg:scoreDefClassOrder" set="scoreDefinition2Col" />
-                    <field id="bcpg:isDeleted" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefAggregation" help-id="becpg.forms.help.scoreDef.aggregation" set="scoreDefinition2Col" />
+                    <field id="bcpg:scoreDefClassOrder" help-id="becpg.forms.help.scoreDef.classOrder" set="scoreDefinition2Col" />
+                    <field id="bcpg:isDeleted" help-id="becpg.forms.help.scoreDef.isDeleted" set="scoreDefinition2Col" />
 
                     <field id="cm:description" set="scoreDefinitionFields">
                         <control>
                             <control-param name="activateLinks">true</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:scoreDefRange" set="scoreDefinitionFields" />
-                    <field id="bcpg:scoreDefCategoryProperty" set="scoreDefinitionFields" />
+                    <field id="bcpg:scoreDefRange" help-id="becpg.forms.help.scoreDef.range" set="scoreDefinitionFields" />
+                    <field id="bcpg:scoreDefCategoryProperty" help-id="becpg.forms.help.scoreDef.categoryProperty" set="scoreDefinitionFields" />
 
-                    <field id="bcpg:scoreDefFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">10</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:scoreDefDetailFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">5</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:scoreDefRangeFormula" set="scoreFormula">
-                        <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
-                            <control-param name="rows">5</control-param>
-                        </control>
-                    </field>
                 </appearance>
             </form>
             <!-- Data Grid view -->
@@ -2025,7 +1975,6 @@
                     <show id="bcpg:scoreDefScale" />
                     <show id="bcpg:scoreDefUnit" />
                     <show id="bcpg:scoreDefCategoryProperty" />
-                    <show id="bcpg:scoreDefIsOfficial" />
                 </field-visibility>
             </form>
         </forms>
