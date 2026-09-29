@@ -16,10 +16,12 @@ import fr.becpg.repo.score.ScoreContext;
  * @param perHundredValues the nutrients per 100 g, by nutrient code
  * @param referenceIntakes the reference intakes, by nutrient code
  * @param servingSize the serving size in grams, null when the product declares none
- * @param beverage whether the product is a drink, whose portion rule starts at 150 ml
+ * @param beverage whether the product is graded as a drink, whose portion rule starts at 150 ml
+ * @param servedInVolume whether the serving size is declared in a volume unit, which the caption states
+ * @param nutrientsPerVolume whether the nutrients are declared per 100 ml, which the typical values state
  * @author matthieu
  */
 public record FrontOfPackFacts(ScoreContext perHundred, ScoreContext perPortion, Map<String, Double> perServing, Map<String, Double> perHundredValues,
-		Map<String, Double> referenceIntakes, Double servingSize, boolean beverage) {
+		Map<String, Double> referenceIntakes, Double servingSize, boolean beverage, boolean servedInVolume, boolean nutrientsPerVolume) {
 
 }

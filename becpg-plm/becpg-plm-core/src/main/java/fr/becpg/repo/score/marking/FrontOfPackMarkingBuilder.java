@@ -18,7 +18,8 @@ import fr.becpg.repo.score.ScoreScale;
  * colours graded per 100 g.</p>
  *
  * <p>A colour is turned red by the portion as well, but only above 100 g, or 150 ml for a drink:
- * the per portion thresholds do not apply below. The verdicts come from the Multiple Traffic
+ * the per portion thresholds do not apply below. Whether the product is a drink is its grading,
+ * the units stated are the ones the product declares, which a drink graded as such may not. The verdicts come from the Multiple Traffic
  * Lights scores, so the thresholds are those of the score repository and nowhere else.</p>
  *
  * @author matthieu
@@ -169,7 +170,7 @@ public class FrontOfPackMarkingBuilder {
 	}
 
 	private String caption(FrontOfPackFacts facts) {
-		return labels.format(CAPTION_KEY, CAPTION_FALLBACK, formatter.amount(facts.servingSize(), facts.beverage() ? MILLILITRES : ScoreMarkingBuilder.DEFAULT_MASS_UNIT));
+		return labels.format(CAPTION_KEY, CAPTION_FALLBACK, formatter.amount(facts.servingSize(), facts.servedInVolume() ? MILLILITRES : ScoreMarkingBuilder.DEFAULT_MASS_UNIT));
 	}
 
 	private List<String> footnotes(FrontOfPackFacts facts) {
@@ -177,7 +178,7 @@ public class FrontOfPackMarkingBuilder {
 		footnotes.add(labels.format(INTAKE_NOTE_KEY, INTAKE_NOTE_FALLBACK));
 		String energy = typicalEnergy(facts);
 		if (energy != null) {
-			footnotes.add(labels.format(TYPICAL_VALUES_KEY, TYPICAL_VALUES_FALLBACK, facts.beverage() ? HUNDRED_MILLILITRES : HUNDRED_GRAMS, energy));
+			footnotes.add(labels.format(TYPICAL_VALUES_KEY, TYPICAL_VALUES_FALLBACK, facts.nutrientsPerVolume() ? HUNDRED_MILLILITRES : HUNDRED_GRAMS, energy));
 		}
 		return footnotes;
 	}

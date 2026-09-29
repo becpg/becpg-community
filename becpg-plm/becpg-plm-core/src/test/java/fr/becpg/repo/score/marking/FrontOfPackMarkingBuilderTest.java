@@ -46,7 +46,11 @@ public class FrontOfPackMarkingBuilderTest {
 
 	private static FrontOfPackFacts facts(Double servingSize, boolean beverage, String perPortion) {
 		return new FrontOfPackFacts(ScoreContext.parse(PER_HUNDRED), perPortion != null ? ScoreContext.parse(perPortion) : null, PER_SERVING,
-				PER_100G, INTAKES, servingSize, beverage);
+				PER_100G, INTAKES, servingSize, beverage, beverage, beverage);
+	}
+
+	private static FrontOfPackFacts drinkDeclaredInGrams(Double servingSize) {
+		return new FrontOfPackFacts(ScoreContext.parse(PER_HUNDRED), null, PER_SERVING, PER_100G, INTAKES, servingSize, true, false, false);
 	}
 
 	private static ScoreMarking build(FrontOfPackFacts facts) {
@@ -131,6 +135,14 @@ public class FrontOfPackMarkingBuilderTest {
 	}
 
 	@Test
+	public void testUnitsFollowWhatTheProductDeclaresNotItsGrading() {
+		ScoreMarking marking = build(drinkDeclaredInGrams(30d));
+
+		assertEquals("Each serving (30g) contains", marking.caption());
+		assertEquals("Typical values per 100g: Energy 1046kJ/250kcal", marking.footnotes().get(1));
+	}
+
+	@Test
 	public void testFootnotesStateTheIntakeAndTheTypicalEnergy() {
 		assertEquals(List.of("% of an adult's reference intake", "Typical values per 100g: Energy 1046kJ/250kcal"), build(facts(30d, false, null)).footnotes());
 	}
@@ -151,7 +163,7 @@ public class FrontOfPackMarkingBuilderTest {
 
 	@Test
 	public void testEnergyIsLeftOutWhenTheProductStatesNone() {
-		FrontOfPackFacts facts = new FrontOfPackFacts(ScoreContext.parse(PER_HUNDRED), null, Map.of("FAT", 5d), Map.of(), Map.of(), 30d, false);
+		FrontOfPackFacts facts = new FrontOfPackFacts(ScoreContext.parse(PER_HUNDRED), null, Map.of("FAT", 5d), Map.of(), Map.of(), 30d, false, false, false);
 
 		ScoreMarking marking = build(facts);
 
