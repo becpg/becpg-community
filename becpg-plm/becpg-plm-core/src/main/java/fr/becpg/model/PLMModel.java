@@ -177,6 +177,8 @@ public interface PLMModel {
 	QName PROP_INGLIST_IS_IONIZED = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsIonized");
 	/** Constant <code>PROP_INGLIST_IS_PROCESSING_AID</code> */
 	QName PROP_INGLIST_IS_PROCESSING_AID = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsProcessingAid");
+	/** Constant <code>PROP_INGLIST_IS_SUPPORT</code>: the line is an impurity or a carrier brought by its parent ingredient */
+	QName PROP_INGLIST_IS_SUPPORT = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsSupport");
 	/** Constant <code>PROP_INGLIST_DECL_TYPE</code> */
 	QName PROP_INGLIST_DECL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingListDeclType");
 	/** Constant <code>PROP_INGLIST_ING_TYPES</code> */
