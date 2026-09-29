@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.labeling;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -27,7 +26,6 @@ import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -82,11 +80,15 @@ import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsData;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelFormats;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.score.marking.FrontOfPackMarkingService;
+import fr.becpg.repo.score.marking.RenderedScoreMarking;
+import fr.becpg.repo.score.marking.ScoreMarkingRenderer;
 import fr.becpg.repo.template.BeCPGTemplateRenderService;
 
 /**
@@ -152,28 +154,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	/** Name under which the formulated product is exposed to a template. */
 	private static final String MODEL_ENTITY = "entity";
 
-	/** Name under which the nutrition facts model is exposed to a template. */
-	private static final String MODEL_NUTRITION_FACTS = "nf_data";
-
-	private static final String NUTRITION_FACTS_TEMPLATE_PREFIX = "nutritionFacts-";
-
-	private static final String NUTRITION_FACTS_TEMPLATE_SUFFIX = ".ftlx";
-
 	private static final String DEFAULT_NUTRITION_FACTS_FORMAT = "vertical";
-
-	/**
-	 * What a format code ends with when the panel has to state everything in both official
-	 * languages: "canadaBilingual" is the Canadian standard panel of "canada", written twice. The
-	 * two share the same template, only the model they are given differs.
-	 */
-	private static final String BILINGUAL_FORMAT_SUFFIX = "Bilingual";
-
-	/**
-	 * Code of the report parameter that declares the nutrients the regulation authorises without
-	 * requiring them. The technical sheet reads it by this code, and a panel of the same product
-	 * has to declare the same nutrients, so it reads the very same parameter.
-	 */
-	private static final String SHOW_OPTIONAL_NUTRIENTS_PARAMETER = "showOptionalNutrients";
 
 	private final BeCPGTemplateRenderService templateRenderService;
 
@@ -188,6 +169,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String nutritionFactsFormat = DEFAULT_NUTRITION_FACTS_FORMAT;
 
 	private boolean nutritionFactsShowOptional = false;
+
+	private ScoreMarkingRenderer scoreMarkingRenderer;
+
+	private FrontOfPackMarkingService frontOfPackMarkingService;
 
 	// Spel variable
 	private Locale locale;
@@ -546,7 +531,47 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		NutritionFactsData nutritionFacts = nutritionFactsCache.computeIfAbsent(nutritionFactsCacheKey(panelFormat, regulationKey, locale),
 				key -> buildNutritionFacts(panelFormat, regulationKey, locale));
 
-		return renderTemplate(nutritionFactsTemplateName(panelFormat), Map.of(MODEL_NUTRITION_FACTS, nutritionFacts));
+		return renderTemplate(NutritionFactsPanelFormats.templateName(panelFormat), Map.of(NutritionFactsPanelFormats.MODEL_NUTRITION_FACTS, nutritionFacts));
+	}
+
+	/**
+	 * <p>Renders the regulatory marking of a score of the product as inline SVG, "MTL" giving the
+	 * traffic lights. The marking is drawn from the score list, as the previous formulation left
+	 * it: a score computed after the labeling shows on the next formulation.</p>
+	 *
+	 * @param code a {@link java.lang.String} object, the score code
+	 * @return a {@link java.lang.String} object, empty when the product has no such score or no template draws it
+	 */
+	public String renderScore(String code) {
+		if (scoreMarkingRenderer == null) {
+			return "";
+		}
+		return scoreMarkingRenderer.renderScore(getEntity().getRegulatoryScoreList(), code, I18NUtil.getLocale()).map(RenderedScoreMarking::svg).orElse("");
+	}
+
+	/**
+	 * <p>Renders the UK front of pack marking of the product as inline SVG, as the technical sheet
+	 * prints it: amounts per serving, colours of the Multiple Traffic Lights score.</p>
+	 *
+	 * @return a {@link java.lang.String} object, empty without a Multiple Traffic Lights score or a serving size
+	 */
+	public String renderFrontOfPack() {
+		if (frontOfPackMarkingService == null) {
+			return "";
+		}
+		return frontOfPackMarkingService.render(getEntity(), I18NUtil.getLocale()).map(RenderedScoreMarking::svg).orElse("");
+	}
+
+	/**
+	 * <p>Setter for the services drawing the score markings, which a context built outside the
+	 * labeling formulation can do without.</p>
+	 *
+	 * @param scoreMarkingRenderer a {@link fr.becpg.repo.score.marking.ScoreMarkingRenderer} object
+	 * @param frontOfPackMarkingService a {@link fr.becpg.repo.score.marking.FrontOfPackMarkingService} object
+	 */
+	public void setScoreMarkingServices(ScoreMarkingRenderer scoreMarkingRenderer, FrontOfPackMarkingService frontOfPackMarkingService) {
+		this.scoreMarkingRenderer = scoreMarkingRenderer;
+		this.frontOfPackMarkingService = frontOfPackMarkingService;
 	}
 
 	/**
@@ -573,40 +598,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private NutritionFactsData buildNutritionFacts(String format, String regulationKey, Locale locale) {
 		String regulation = (regulationKey != null) && !regulationKey.isBlank() ? regulationKey
 				: RegulationFormulationHelper.getLocalKey(locale);
-		NutritionFactsOptions options = NutritionFactsOptions.forRegulation(regulation);
-		if (nutritionFactsShowOptional || showsOptionalNutrients()) {
-			options = options.withOptionalNutrients();
-		}
-		if (isBilingualFormat(format)) {
-			options = options.withBothOfficialLanguages();
-		}
+		NutritionFactsOptions options = NutritionFactsPanelFormats.options(regulation, format, nutritionFactsShowOptional || showsOptionalNutrients());
 		return nutritionFactsDataBuilder.build(getEntity(), locale, format, options);
 	}
 
-	private boolean isBilingualFormat(String format) {
-		return format.endsWith(BILINGUAL_FORMAT_SUFFIX);
-	}
-
-	/**
-	 * Tells whether the product asks its reports for the nutrients the regulation merely authorises.
-	 * A single value is accepted as well as a list: a property declared multiple still comes back as
-	 * a bare string when only one value was ever written to it.
-	 */
+	/** Tells whether the product asks its reports for the nutrients the regulation merely authorises. */
 	private boolean showsOptionalNutrients() {
 		NodeRef entityNodeRef = getEntity().getNodeRef();
 		if ((entityNodeRef == null) || !mlNodeService.exists(entityNodeRef)) {
 			return false;
 		}
-		Serializable parameters = mlNodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_PARAMETERS);
-		if (parameters instanceof Collection<?> values) {
-			return values.contains(SHOW_OPTIONAL_NUTRIENTS_PARAMETER);
-		}
-		return SHOW_OPTIONAL_NUTRIENTS_PARAMETER.equals(parameters);
-	}
-
-	private String nutritionFactsTemplateName(String format) {
-		String template = isBilingualFormat(format) ? format.substring(0, format.length() - BILINGUAL_FORMAT_SUFFIX.length()) : format;
-		return NUTRITION_FACTS_TEMPLATE_PREFIX + template + NUTRITION_FACTS_TEMPLATE_SUFFIX;
+		return NutritionFactsPanelFormats.hasReportParameter(mlNodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_PARAMETERS),
+				NutritionFactsPanelFormats.SHOW_OPTIONAL_NUTRIENTS_PARAMETER);
 	}
 
 	private String nutritionFactsCacheKey(String format, String regulationKey, Locale locale) {

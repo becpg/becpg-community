@@ -39,7 +39,10 @@
                }
             };
 
-            container.innerHTML = beCPG.util.score.renderBadge(details, scope)
+            // the line itself, for the server to draw the scales it has a marking template for
+            var nodeRef = <#if (args.itemKind!"") == "node" && args.itemId??>"${args.itemId?js_string}"<#else>null</#if>;
+
+            container.innerHTML = beCPG.util.score.renderBadge(details, scope, nodeRef)
                + beCPG.util.score.renderDetails(scope, details);
          })();
          //]]></script>

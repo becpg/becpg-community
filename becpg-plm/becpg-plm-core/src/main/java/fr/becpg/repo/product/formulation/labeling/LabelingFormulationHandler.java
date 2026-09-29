@@ -75,6 +75,8 @@ import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.score.marking.FrontOfPackMarkingService;
+import fr.becpg.repo.score.marking.ScoreMarkingRenderer;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.template.BeCPGTemplateRenderService;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -111,6 +113,28 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private SystemConfigurationService systemConfigurationService;
 
 	private BeCPGTemplateRenderService templateRenderService;
+
+	private ScoreMarkingRenderer scoreMarkingRenderer;
+
+	private FrontOfPackMarkingService frontOfPackMarkingService;
+
+	/**
+	 * <p>Setter for the field <code>scoreMarkingRenderer</code>.</p>
+	 *
+	 * @param scoreMarkingRenderer a {@link fr.becpg.repo.score.marking.ScoreMarkingRenderer} object
+	 */
+	public void setScoreMarkingRenderer(ScoreMarkingRenderer scoreMarkingRenderer) {
+		this.scoreMarkingRenderer = scoreMarkingRenderer;
+	}
+
+	/**
+	 * <p>Setter for the field <code>frontOfPackMarkingService</code>.</p>
+	 *
+	 * @param frontOfPackMarkingService a {@link fr.becpg.repo.score.marking.FrontOfPackMarkingService} object
+	 */
+	public void setFrontOfPackMarkingService(FrontOfPackMarkingService frontOfPackMarkingService) {
+		this.frontOfPackMarkingService = frontOfPackMarkingService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>templateRenderService</code>.</p>
@@ -265,6 +289,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					formulaService, templateRenderService, new NutritionFactsDataBuilder(mlNodeService, alfrescoRepository));
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
+			labelingFormulaContext.setScoreMarkingServices(scoreMarkingRenderer, frontOfPackMarkingService);
 
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 

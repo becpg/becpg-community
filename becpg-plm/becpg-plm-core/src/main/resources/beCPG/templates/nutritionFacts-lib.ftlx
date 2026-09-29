@@ -11,7 +11,12 @@
   Model access uses the method form (line.label(), not line.label): the model is made of Java
   records, and record accessors are not JavaBean getters, so FreeMarker only sees them as
   methods.
+
+  The primitives that do not depend on a panel, rules, frame, envelope, baselines and wrap, live
+  in svg-lib.ftlx and are shared with the score markings; the macros below keep their signatures
+  and only lay them out on the panel geometry.
 -->
+<#import "svg-lib.ftlx" as svg>
 
 <#-- Panel box -->
 <#assign PANEL_W = 144>
@@ -46,7 +51,7 @@
   face: the regulation names no typeface, Arial is installed wherever reports are rendered, and
   Liberation Sans stands in for it glyph for glyph where it is missing.
 -->
-<#assign FONT_FAMILY = "Arial, 'Liberation Sans', Helvetica, sans-serif">
+<#assign FONT_FAMILY = svg.FONT_FAMILY>
 <#assign HEAVY_WEIGHT = "bold">
 <#assign TITLE_SIZE = 27>
 <#assign SERVING_SIZE = 10>
@@ -83,7 +88,7 @@
 <#assign CAPTION_LEAD = 3>
 
 <#-- Ratio of the Arial cap height to the font size, to place a baseline from the top of a line -->
-<#assign ASCENT_RATIO = 0.716>
+<#assign ASCENT_RATIO = svg.ASCENT_RATIO>
 
 <#--
   Average width of a glyph, as a ratio of the font size, used to wrap free text. Measured on
@@ -91,7 +96,7 @@
   a sentence stating figures, digits and parentheses being wider than letters, and the bold weight
   runs wider than both, so the wrap counts a line with the ratio matching what it holds.
 -->
-<#assign GLYPH_RATIO = 0.45>
+<#assign GLYPH_RATIO = svg.GLYPH_RATIO>
 <#assign FIGURE_GLYPH_RATIO = 0.53>
 <#assign HEAVY_GLYPH_RATIO = 0.55>
 
@@ -100,17 +105,17 @@
   baseline, and dominant-baseline is not reliable enough in Batik to be used instead.
 -->
 <#function baseline top size>
-	<#return top + size * ASCENT_RATIO>
+	<#return svg.baseline(top, size)>
 </#function>
 
 <#-- Height a text of that size takes, its descender included. -->
 <#function lineHeight size>
-	<#return size * ASCENT_RATIO + 3>
+	<#return svg.lineHeight(size)>
 </#function>
 
 <#-- How many glyphs of that size fit in a width, which is what the free text wrap counts in. -->
 <#function charsPerWidth width size ratio=GLYPH_RATIO>
-	<#return (width / (size * ratio))?floor>
+	<#return svg.charsPerWidth(width, size, ratio)>
 </#function>
 
 <#--
@@ -123,17 +128,17 @@
 -->
 <#macro rule y height=HAIRLINE fromX=PAD toX=-1>
 	<#local end = (toX gte 0)?then(toX, W - PAD)>
-	<rect x="${fromX}" y="${y}" width="${end - fromX}" height="${height}"/>
+	<@svg.band x=fromX y=y width=end - fromX height=height/>
 </#macro>
 
 <#-- Horizontal rule spanning a single band of a panel laid out across its width. -->
 <#macro bandRule x y width height=HAIRLINE>
-	<rect x="${x}" y="${y}" width="${width}" height="${height}"/>
+	<@svg.band x=x y=y width=width height=height/>
 </#macro>
 
 <#-- Vertical rule, separating two columns of figures. -->
 <#macro columnRule x fromY toY>
-	<rect x="${x}" y="${fromY}" width="${HAIRLINE}" height="${toY - fromY}"/>
+	<@svg.verticalRule x=x fromY=fromY toY=toY width=HAIRLINE/>
 </#macro>
 
 <#-- Abscissa a rule starts at, given the line it sits above. -->
@@ -143,10 +148,7 @@
 
 <#-- Panel border. Drawn as four rects so that its thickness is exact on every side. -->
 <#macro border height>
-	<rect x="0" y="0" width="${W}" height="${BORDER}"/>
-	<rect x="0" y="${height - BORDER}" width="${W}" height="${BORDER}"/>
-	<rect x="0" y="0" width="${BORDER}" height="${height}"/>
-	<rect x="${W - BORDER}" y="0" width="${BORDER}" height="${height}"/>
+	<@svg.frame width=W height=height thickness=BORDER/>
 </#macro>
 
 <#--
@@ -970,12 +972,10 @@
 
 <#-- The svg envelope, identical for every format: white ground, border, then the drawn body. -->
 <#macro panel height>
-<svg xmlns="http://www.w3.org/2000/svg" width="${W}pt" height="${height}pt" viewBox="0 0 ${W} ${height}"
-	preserveAspectRatio="xMinYMin meet" font-family="${FONT_FAMILY}" fill="#000000">
-	<rect x="0" y="0" width="${W}" height="${height}" fill="#ffffff"/>
+<@svg.document width=W height=height ground="#ffffff" fontFamily=FONT_FAMILY>
 	<@border height=height/>
 	<#nested>
-</svg>
+</@svg.document>
 </#macro>
 
 <#--
@@ -991,26 +991,7 @@
 	</#if>
 </#macro>
 
-<#--
-  Greedy word wrap, by character count. The footnote is the only free text of a panel and it
-  never has to align with anything, so an approximate measure is enough here; a glyph accurate
-  wrap would need the font metrics.
--->
+<#-- Greedy word wrap, by character count, the footnote being the only free text of a panel. -->
 <#function wrap text charsPerLine>
-	<#local lines = []>
-	<#local current = "">
-	<#list text?trim?split(r"\s+", "r") as word>
-		<#if current?length == 0>
-			<#local current = word>
-		<#elseif (current?length + 1 + word?length) lte charsPerLine>
-			<#local current = current + " " + word>
-		<#else>
-			<#local lines = lines + [current]>
-			<#local current = word>
-		</#if>
-	</#list>
-	<#if (current?length gt 0)>
-		<#local lines = lines + [current]>
-	</#if>
-	<#return lines>
+	<#return svg.wrap(text, charsPerLine)>
 </#function>

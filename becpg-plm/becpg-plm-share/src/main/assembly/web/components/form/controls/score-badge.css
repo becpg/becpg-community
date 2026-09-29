@@ -22,6 +22,13 @@
     vertical-align: middle;
 }
 
+/* The server marking is sized in points; it is shown at the height of the browser drawing. */
+.score-badge .score-badge-marking {
+    height: 78px;
+    width: auto;
+    vertical-align: middle;
+}
+
 .score-badge .score-badge-value,
 .datagrid .score-badge .score-badge-value {
     font-weight: bold;

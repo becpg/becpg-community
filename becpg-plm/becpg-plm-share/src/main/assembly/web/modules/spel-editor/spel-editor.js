@@ -108,7 +108,13 @@
       'renderNutritionFacts("simplified")',
       'renderNutritionFacts("dualColumn")',
       'renderNutritionFacts("canada")',
+      'renderNutritionFacts("canadaLinear")',
+      'renderNutritionFacts("canadaHorizontal")',
+      'renderNutritionFacts("canadaSupplemented")',
       'renderNutritionFacts($format,$regulationKey)',
+      'renderScore("MTL")',
+      'renderScore($scoreCode)',
+      'renderFrontOfPack()',
       'renderTemplate($templateName)',
       'renderTemplate($templateName,$model)' ];
 

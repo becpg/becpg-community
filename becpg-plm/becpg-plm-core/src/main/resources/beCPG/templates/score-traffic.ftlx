@@ -1,0 +1,132 @@
+<#--
+  Front of pack traffic lights, as the UK Food Standards Agency lays them out: one light per
+  nutrient, side by side, stating the nutrient, the amount it holds and the verdict on a coloured
+  body, then the share of the reference intake on a white foot. Energy carries no verdict and is
+  stated on a plain panel.
+
+  Every score graded on the Traffic scale is drawn by this template, the Multiple Traffic Lights
+  per 100 g and per portion alike. A template named after the score code, score-mtl.ftlx, would
+  take precedence for that score alone.
+
+  The model is a ScoreMarking under "score", fully formatted: the template only places it. The
+  marking a technical sheet prints adds a caption above the lights, "Each serving (30 g)
+  contains", and footnotes under them; the marking of a score has neither.
+-->
+<#import "svg-lib.ftlx" as svg>
+
+<#assign LIGHT_W = 64>
+<#assign LIGHT_H = 78>
+<#assign FOOT_H = 18>
+<#assign GAP = 4>
+<#assign RADIUS = 8>
+<#assign OUTLINE = 1>
+
+<#assign NAME_SIZE = 11>
+<#assign NAME_WRAPPED_SIZE = 8.5>
+<#assign NAME_LINE_GAP = 9.5>
+<#assign NAME_MIDDLE = 15>
+<#assign INSET = 4>
+<#assign AMOUNT_SIZE = 15>
+<#assign ENERGY_AMOUNT_SIZE = 14>
+<#assign VERDICT_SIZE = 11>
+<#assign SHARE_SIZE = 10>
+<#assign SECONDARY_AMOUNT_SIZE = 11>
+<#assign CAPTION_SIZE = 10>
+<#assign CAPTION_H = 15>
+<#assign FOOTNOTE_SIZE = 8>
+<#assign FOOTNOTE_H = 11>
+
+<#assign INK_DARK = "#222222">
+<#assign INK_LIGHT = "#ffffff">
+<#assign GROUND = "#ffffff">
+<#assign LEVEL_COLOURS = {"low": "#008a3e", "medium": "#f0a30a", "high": "#d0021b"}>
+
+<#-- Amber is too light for white wording, the FSA prints it in black. -->
+<#function inkOf level>
+	<#return (level == "medium")?then(INK_DARK, INK_LIGHT)>
+</#function>
+
+<#--
+  Name of the nutrient. The FSA wording holds on one line, a translated one may not: it is then
+  wrapped on two lines at a smaller size, and a word too wide for the light is shrunk to fit.
+-->
+<#macro nutrientName text middle ink>
+	<#local width = LIGHT_W - 2 * INSET>
+	<#if (svg.fittedSize(text, width, NAME_SIZE) gte NAME_SIZE)>
+	<@svg.centredText x=LIGHT_W / 2 middle=middle text=text size=NAME_SIZE fill=ink/>
+	<#else>
+	<#local lines = svg.wrap(text, svg.charsPerWidth(width, NAME_WRAPPED_SIZE, svg.HEAVY_GLYPH_RATIO))>
+	<#local lines = lines[0..<[lines?size, 2]?min]>
+	<#local top = middle - (lines?size - 1) * NAME_LINE_GAP / 2>
+	<#list lines as line>
+	<@svg.centredText x=LIGHT_W / 2 middle=top + line?index * NAME_LINE_GAP text=line size=svg.fittedSize(line, width, NAME_WRAPPED_SIZE) fill=ink/>
+	</#list>
+	</#if>
+</#macro>
+
+<#--
+  One light. The foot is clipped by the pill itself, so both share the very same rounded
+  corners, and the outline keeps the white foot from melting into a white page.
+-->
+<#macro light part index>
+	<#local colour = LEVEL_COLOURS[part.level()]>
+	<#local ink = inkOf(part.level())>
+	<#local clipId = "light" + index>
+	<defs><clipPath id="${clipId}"><rect x="0" y="0" width="${LIGHT_W}" height="${LIGHT_H}" rx="${RADIUS}"/></clipPath></defs>
+	<g clip-path="url(#${clipId})">
+		<@svg.band x=0 y=0 width=LIGHT_W height=LIGHT_H fill=colour/>
+		<@svg.band x=0 y=LIGHT_H - FOOT_H width=LIGHT_W height=FOOT_H fill=GROUND/>
+	</g>
+	<rect x="${OUTLINE / 2}" y="${OUTLINE / 2}" width="${LIGHT_W - OUTLINE}" height="${LIGHT_H - OUTLINE}" rx="${RADIUS}"
+		fill="none" stroke="${colour}" stroke-width="${OUTLINE}"/>
+	<@nutrientName text=part.name() middle=NAME_MIDDLE ink=ink/>
+	<@svg.centredText x=LIGHT_W / 2 middle=34 text=part.amount() size=AMOUNT_SIZE fill=ink/>
+	<@svg.centredText x=LIGHT_W / 2 middle=51 text=part.verdict() size=VERDICT_SIZE fill=ink/>
+	<#if part.share()??>
+	<@svg.centredText x=LIGHT_W / 2 middle=LIGHT_H - FOOT_H / 2 text=part.share() size=SHARE_SIZE fill=INK_DARK/>
+	</#if>
+</#macro>
+
+<#--
+  The energy panel, without a colour: energy is informative. It states the energy twice when
+  the marking gives it in kJ and in kcal, the way the FSA prints it.
+-->
+<#macro energyPanel part>
+	<rect x="${OUTLINE}" y="${OUTLINE}" width="${LIGHT_W - 2 * OUTLINE}" height="${LIGHT_H - 2 * OUTLINE}" rx="${RADIUS}"
+		fill="${GROUND}" stroke="${INK_DARK}" stroke-width="1.5"/>
+	<#if part.secondaryAmount()??>
+	<@nutrientName text=part.name() middle=NAME_MIDDLE ink=INK_DARK/>
+	<@svg.centredText x=LIGHT_W / 2 middle=32 text=part.amount() size=ENERGY_AMOUNT_SIZE - 1 fill=INK_DARK/>
+	<@svg.centredText x=LIGHT_W / 2 middle=47 text=part.secondaryAmount() size=SECONDARY_AMOUNT_SIZE fill=INK_DARK/>
+	<#else>
+	<@nutrientName text=part.name() middle=20 ink=INK_DARK/>
+	<@svg.centredText x=LIGHT_W / 2 middle=42 text=part.amount() size=ENERGY_AMOUNT_SIZE fill=INK_DARK/>
+	</#if>
+	<#if part.share()??>
+	<@svg.centredText x=LIGHT_W / 2 middle=LIGHT_H - FOOT_H / 2 text=part.share() size=SHARE_SIZE fill=INK_DARK/>
+	</#if>
+</#macro>
+
+<#assign parts = score.parts()>
+<#assign footnotes = score.footnotes()>
+<#assign top = score.caption()???then(CAPTION_H, 0)>
+<#assign lightsBottom = top + LIGHT_H>
+<#assign width = [parts?size * LIGHT_W + (parts?size - 1) * GAP, LIGHT_W]?max>
+<#assign height = lightsBottom + footnotes?size * FOOTNOTE_H + (footnotes?has_content)?then(2, 0)>
+<@svg.document width=width height=height>
+<#if score.caption()??>
+	<text x="0" y="${svg.baseline(1, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-weight="bold" fill="${INK_DARK}">${score.caption()}</text>
+</#if>
+<#list parts as part>
+	<g transform="translate(${part?index * (LIGHT_W + GAP)},${top})">
+	<#if part.energy()>
+		<@energyPanel part=part/>
+	<#else>
+		<@light part=part index=part?index/>
+	</#if>
+	</g>
+</#list>
+<#list footnotes as footnote>
+	<text x="0" y="${svg.baseline(lightsBottom + 3 + footnote?index * FOOTNOTE_H, FOOTNOTE_SIZE)}" font-size="${FOOTNOTE_SIZE}" font-weight="normal" fill="${INK_DARK}">${footnote}</text>
+</#list>
+</@svg.document>

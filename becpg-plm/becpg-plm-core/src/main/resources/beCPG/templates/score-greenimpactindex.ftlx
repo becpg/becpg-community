@@ -1,0 +1,56 @@
+<#--
+  Green Impact Index of cosmetics, AFNOR SPEC 2215: the name of the index over its A to E scale,
+  the grade reached stamped on a leaf, the others as pips of their colour, as the consortium
+  prints it.
+
+  This is a faithful drawing, not the official artwork: a customer holding the label files can
+  upload them as badges of the score definition, which Share then shows instead.
+
+  The model is a ScoreMarking under "score": its class is the grade reached.
+-->
+<#import "svg-lib.ftlx" as svg>
+
+<#assign GRADES = ["A", "B", "C", "D", "E"]>
+<#assign COLOURS = {"A": "#0b7a3b", "B": "#4aa246", "C": "#a9c937", "D": "#f2ad00", "E": "#e2541b"}>
+<#assign INK = "#0f4d2c">
+<#assign WHITE = "#ffffff">
+
+<#assign STEP = 26>
+<#assign PIP_R = 9>
+<#assign LEAF = 17>
+<#assign PAD = 9>
+<#assign TITLE_H = 16>
+<#assign CAPTION_H = score.caption()???then(11, 0)>
+<#assign W = GRADES?size * STEP + 2 * PAD>
+<#assign ROW = PAD + TITLE_H + LEAF + 2>
+<#assign H = ROW + LEAF + 4 + CAPTION_H + PAD>
+<#assign reached = (score.scoreClass()!"")?upper_case>
+
+<#--
+  A leaf whose tips point to the bottom left and the top right, the shape the index stamps its
+  grade on.
+-->
+<#macro leaf cx cy size fill>
+	<path d="M${cx - size},${cy + size} Q${cx - size},${cy - size} ${cx + size},${cy - size} Q${cx + size},${cy + size} ${cx - size},${cy + size} Z" fill="${fill}"/>
+</#macro>
+
+<@svg.document width=W height=H>
+	<rect x="0.75" y="0.75" width="${W - 1.5}" height="${H - 1.5}" rx="10" fill="${WHITE}" stroke="${INK}" stroke-width="1.2"/>
+
+	<@svg.centredText x=W / 2 middle=PAD + TITLE_H / 2 text="GREEN IMPACT INDEX" size=9 fill=INK/>
+
+	<#list GRADES as grade>
+		<#assign cx = PAD + STEP / 2 + grade?index * STEP>
+		<#if grade == reached>
+		<@leaf cx=cx cy=ROW size=LEAF - 3 fill=COLOURS[grade]/>
+		<@svg.centredText x=cx middle=ROW text=grade size=17 fill=WHITE/>
+		<#else>
+		<circle cx="${cx}" cy="${ROW}" r="${PIP_R}" fill="${COLOURS[grade]}" opacity="0.5"/>
+		<@svg.centredText x=cx middle=ROW text=grade size=10 fill=WHITE/>
+		</#if>
+	</#list>
+
+	<#if score.caption()??>
+	<@svg.centredText x=W / 2 middle=ROW + LEAF + 4 + CAPTION_H / 2 text=score.caption() size=6.5 fill=INK weight="normal"/>
+	</#if>
+</@svg.document>

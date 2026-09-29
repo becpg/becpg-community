@@ -1,0 +1,117 @@
+<#--
+  Drawing primitives shared by every regulatory marking rendered as SVG on the server: the
+  nutrition facts panels and the score markings alike.
+
+  Units: 1 SVG user unit = 1 point. A marking is embedded as vector graphics in the PDF, so the
+  figures below are directly the measurements printed.
+
+  Nothing here depends on the marking being drawn: every macro receives its geometry as
+  arguments. A marking library keeps its own layout constants and calls these with them.
+
+  Rules are drawn as <rect> and never as <line>: a line of width 0.25 straddles its coordinate
+  and ends up anti-aliased over two device pixels, which is what makes a marking look off by a
+  hair once printed. A rect has exact edges.
+-->
+
+<#-- Ratio of the Arial cap height to the font size, to place a baseline from the top of a line -->
+<#assign ASCENT_RATIO = 0.716>
+
+<#--
+  Average width of a glyph, as a ratio of the font size, used to wrap free text. Measured on
+  Arial and on the metrically compatible faces a marking falls back to.
+-->
+<#assign GLYPH_RATIO = 0.45>
+
+<#-- The same ratio for the bold weight, which runs wider. -->
+<#assign HEAVY_GLYPH_RATIO = 0.55>
+
+<#-- A single face, emphasis being carried by its bold weight. -->
+<#assign FONT_FAMILY = "Arial, 'Liberation Sans', Helvetica, sans-serif">
+
+<#--
+  Baseline of a text whose top edge sits at "top". The y attribute of an SVG text is its
+  baseline, and dominant-baseline is not reliable enough in Batik to be used instead.
+-->
+<#function baseline top size>
+	<#return top + size * ASCENT_RATIO>
+</#function>
+
+<#-- Baseline of a text whose capitals are centred on "middle", the way a mark centres its wording. -->
+<#function centredBaseline middle size>
+	<#return middle + size * ASCENT_RATIO / 2>
+</#function>
+
+<#-- Height a text of that size takes, its descender included. -->
+<#function lineHeight size>
+	<#return size * ASCENT_RATIO + 3>
+</#function>
+
+<#-- How many glyphs of that size fit in a width, which is what the free text wrap counts in. -->
+<#function charsPerWidth width size ratio=GLYPH_RATIO>
+	<#return (width / (size * ratio))?floor>
+</#function>
+
+<#-- Largest size, up to "size", at which a text holds in a width. -->
+<#function fittedSize text width size ratio=HEAVY_GLYPH_RATIO>
+	<#return [size, width / ([text?length, 1]?max * ratio)]?min>
+</#function>
+
+<#--
+  Greedy word wrap, by character count. Free text never has to align with anything, so an
+  approximate measure is enough here; a glyph accurate wrap would need the font metrics.
+-->
+<#function wrap text charsPerLine>
+	<#local lines = []>
+	<#local current = "">
+	<#list text?trim?split(r"\s+", "r") as word>
+		<#if current?length == 0>
+			<#local current = word>
+		<#elseif (current?length + 1 + word?length) lte charsPerLine>
+			<#local current = current + " " + word>
+		<#else>
+			<#local lines = lines + [current]>
+			<#local current = word>
+		</#if>
+	</#list>
+	<#if (current?length gt 0)>
+		<#local lines = lines + [current]>
+	</#if>
+	<#return lines>
+</#function>
+
+<#-- Horizontal band or rule, the fill inherited from the document unless one is given. -->
+<#macro band x y width height fill="">
+	<rect x="${x}" y="${y}" width="${width}" height="${height}"<#if fill?has_content> fill="${fill}"</#if>/>
+</#macro>
+
+<#-- Vertical rule, separating two columns. -->
+<#macro verticalRule x fromY toY width>
+	<rect x="${x}" y="${fromY}" width="${width}" height="${toY - fromY}"/>
+</#macro>
+
+<#-- Frame of a box. Drawn as four rects so that its thickness is exact on every side. -->
+<#macro frame width height thickness>
+	<rect x="0" y="0" width="${width}" height="${thickness}"/>
+	<rect x="0" y="${height - thickness}" width="${width}" height="${thickness}"/>
+	<rect x="0" y="0" width="${thickness}" height="${height}"/>
+	<rect x="${width - thickness}" y="0" width="${thickness}" height="${height}"/>
+</#macro>
+
+<#-- A line of wording centred on a point, capitals included. -->
+<#macro centredText x middle text size fill="#000000" weight="bold">
+	<text x="${x}" y="${centredBaseline(middle, size)}" text-anchor="middle" font-size="${size}" font-weight="${weight}" fill="${fill}">${text}</text>
+</#macro>
+
+<#--
+  The svg envelope: the size in points, a viewBox matching it so that the report scales the
+  marking without distorting it, the face, and a ground when the marking needs an opaque one.
+-->
+<#macro document width height ground="" fontFamily=FONT_FAMILY>
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}"
+	preserveAspectRatio="xMinYMin meet" font-family="${fontFamily}" fill="#000000">
+	<#if ground?has_content>
+	<rect x="0" y="0" width="${width}" height="${height}" fill="${ground}"/>
+	</#if>
+	<#nested>
+</svg>
+</#macro>

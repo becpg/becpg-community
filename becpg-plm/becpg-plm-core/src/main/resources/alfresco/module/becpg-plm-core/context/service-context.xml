@@ -40,6 +40,7 @@
 				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
 				<value>alfresco/module/${pom.artifactId}/messages/system-configuration</value>
 				<value>alfresco/module/${pom.artifactId}/messages/nutrition-facts</value>
+				<value>alfresco/module/${pom.artifactId}/messages/score-marking</value>
 				<!-- Fix #9672 This is copied for ADF becpg form service it doesn't copy i18n translated 
 				   <value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value> -->				
 			</list>
@@ -131,6 +132,13 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="mimetypeService" ref="MimetypeService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.score.scoreMarking.get" class="fr.becpg.repo.web.scripts.score.ScoreMarkingWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="permissionService" ref="PermissionService" />
+		<property name="scoreMarkingRenderer" ref="scoreMarkingRenderer" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.product.nutDatabaseCompare.get" class="fr.becpg.repo.web.scripts.product.NutDatabaseCompareWebScript" parent="webscript">

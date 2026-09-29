@@ -25,6 +25,9 @@
  *
  * The badge comes from the repository when the customer uploaded one under
  * /System/ScoreBadges/<code>/, and falls back on the shipped CSS classes otherwise.
+ *
+ * A scale drawn on the server by a marking template is asked to the repository instead, so
+ * that the screen shows the very SVG the report prints; the drawing below is its fallback.
  */
 (function() {
 
@@ -41,6 +44,15 @@
         "PRO-": "Protein", "FIBTG": "Fibre"
     };
     var MAX_STARS = 5;
+
+    /** Scales a marking template draws on the server, see ScoreMarkingRenderer. */
+    var SERVER_MARKING_SCALES = { Traffic: true };
+
+    /**
+     * Scores a marking template draws on the server, after the official artwork a customer may
+     * have uploaded as a badge of the definition: the drawing only stands in for missing artwork.
+     */
+    var SERVER_MARKING_CODES = { ECOVADIS: true, ECOBEAUTYSCORE: true, GREENIMPACTINDEX: true };
 
     beCPG.util.score = beCPG.util.score || {};
 
@@ -137,22 +149,44 @@
         return url;
     }
 
-    /**
-     * Emits the repository badge with an inline fallback: when the image errors out, it is
-     * replaced by the sibling span carrying the shipped CSS classes.
-     */
-    function renderRepositoryBadge(code, scoreClass, fallbackHtml) {
-        if (isBlank(code)) {
-            return fallbackHtml;
-        }
+    function markingUrl(nodeRef) {
+        return Alfresco.constants.PROXY_URI + "becpg/score/marking/" + new Alfresco.util.NodeRef(nodeRef).uri;
+    }
 
+    /**
+     * Emits an image with an inline fallback: when the image errors out, it is replaced by the
+     * sibling span carrying the drawing of the browser.
+     */
+    function renderImageWithFallback(url, alt, cssClass, fallbackHtml) {
         var fallbackId = Alfresco.util.generateDomId(null, "scoreBadgeFallback");
         var onError = "this.style.display='none';"
             + "var f=document.getElementById('" + fallbackId + "');if(f){f.style.display='inline-block';}";
 
-        return '<img class="score-badge-img" src="' + badgeUrl(code, scoreClass) + '" alt="'
-            + beCPG.util.encodeAttr(isBlank(scoreClass) ? code : scoreClass) + '" onerror="' + onError + '" />'
+        return '<img class="' + cssClass + '" src="' + url + '" alt="' + beCPG.util.encodeAttr(alt) + '" onerror="' + onError + '" />'
             + '<span id="' + fallbackId + '" style="display:none;">' + fallbackHtml + '</span>';
+    }
+
+    function renderRepositoryBadge(code, scoreClass, fallbackHtml) {
+        if (isBlank(code)) {
+            return fallbackHtml;
+        }
+        return renderImageWithFallback(badgeUrl(code, scoreClass), isBlank(scoreClass) ? code : scoreClass, "score-badge-img", fallbackHtml);
+    }
+
+    /**
+     * The marking the server draws for a score line, the report printing the same SVG. It needs
+     * the node of the line, which a caller rendering a bare detail does not have.
+     */
+    function renderServerMarking(details, nodeRef, fallbackHtml) {
+        return renderImageWithFallback(markingUrl(nodeRef), details.code || "", "score-badge-marking", fallbackHtml);
+    }
+
+    function isServerDrawn(details, nodeRef) {
+        return !isBlank(nodeRef) && SERVER_MARKING_SCALES[details.scale] === true;
+    }
+
+    function isServerDrawnAfterArtwork(details, nodeRef) {
+        return !isBlank(nodeRef) && SERVER_MARKING_CODES[details.code] === true;
     }
 
     /**
@@ -701,8 +735,13 @@
 
     /**
      * Renders the badge of a score, without its detail.
+     *
+     * @param details the parsed score detail
+     * @param scope the datagrid or the form, for the wording
+     * @param nodeRef the score line, optional; with it the server draws the scales it has a
+     *            marking template for
      */
-    beCPG.util.score.renderBadge = function(details, scope) {
+    beCPG.util.score.renderBadge = function(details, scope, nodeRef) {
         if (!details) {
             return "";
         }
@@ -729,7 +768,14 @@
         }
 
         // any score may carry its official artwork, the shipped CSS is only the fallback
-        var body = renderRepositoryBadge(details.code, details["class"], fallback);
+        var body;
+        if (isServerDrawn(details, nodeRef)) {
+            body = renderServerMarking(details, nodeRef, fallback);
+        } else if (isServerDrawnAfterArtwork(details, nodeRef)) {
+            body = renderRepositoryBadge(details.code, details["class"], renderServerMarking(details, nodeRef, fallback));
+        } else {
+            body = renderRepositoryBadge(details.code, details["class"], fallback);
+        }
 
         return '<span class="score-badge" title="' + beCPG.util.encodeAttr(buildTooltip(details, scope)) + '">' + body + "</span>";
     };
