@@ -4,6 +4,7 @@
 package fr.becpg.repo.score.marking;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,6 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.score.NutrientValueProvider;
 import fr.becpg.repo.score.ScoreBasis;
 import fr.becpg.repo.score.ScoreContext;
@@ -127,6 +129,29 @@ public class FrontOfPackMarkingServiceTest {
 	@Test
 	public void testUnreadableScoreLineIsSkipped() {
 		assertTrue(service.render(product(30d, "{broken", MTL_DETAILS), Locale.ENGLISH).isPresent());
+	}
+
+	private static ProductData productWithNutrientUnits(String... units) {
+		FinishedProductData product = new FinishedProductData();
+		List<NutListDataItem> nutList = new ArrayList<>();
+		for (String unit : units) {
+			NutListDataItem nut = new NutListDataItem();
+			nut.setUnit(unit);
+			nutList.add(nut);
+		}
+		product.setNutList(nutList);
+		return product;
+	}
+
+	@Test
+	public void testNutrientsDeclaredPer100MillilitresAreStatedSo() {
+		assertTrue(FrontOfPackMarkingService.hasNutrientsPerVolume(productWithNutrientUnits("kJ/100mL", "g/100mL")));
+	}
+
+	@Test
+	public void testNutrientsDeclaredPer100GramsAreStatedSo() {
+		assertFalse(FrontOfPackMarkingService.hasNutrientsPerVolume(productWithNutrientUnits("kJ/100g", "g/100g")));
+		assertFalse(FrontOfPackMarkingService.hasNutrientsPerVolume(new FinishedProductData()));
 	}
 
 }

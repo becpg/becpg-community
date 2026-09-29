@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.score.NutrientValueProvider;
 import fr.becpg.repo.score.ScoreBasis;
 import fr.becpg.repo.score.ScoreContext;
@@ -44,6 +45,8 @@ public class FrontOfPackMarkingService {
 
 	/** Constant <code>MTL_PORTION_CODE="MTL_PORTION"</code> */
 	public static final String MTL_PORTION_CODE = "MTL_PORTION";
+
+	private static final String PER_HUNDRED_MILLILITRES = "/100ml";
 
 	private final NutrientValueProvider nutrientValueProvider;
 
@@ -90,7 +93,25 @@ public class FrontOfPackMarkingService {
 	private FrontOfPackFacts facts(ProductData product, ScoreContext perHundred) {
 		return new FrontOfPackFacts(perHundred, scoreOf(product, MTL_PORTION_CODE).orElse(null),
 				nutrientValueProvider.extractNutrients(product, ScoreBasis.PerServing), nutrientValueProvider.extractNutrients(product, ScoreBasis.Per100g),
-				nutrientValueProvider.extractReferenceIntakes(product), product.getServingSize(), isBeverage(product));
+				nutrientValueProvider.extractReferenceIntakes(product), product.getServingSize(), isBeverage(product), isServedInVolume(product),
+				hasNutrientsPerVolume(product));
+	}
+
+	private static boolean isServedInVolume(ProductData product) {
+		return (product.getServingSizeUnit() != null) && product.getServingSizeUnit().isVolume();
+	}
+
+	/** The unit of a nutrition line states its basis, "g/100mL" for a liquid declared per 100 ml. */
+	static boolean hasNutrientsPerVolume(ProductData product) {
+		if (product.getNutList() == null) {
+			return false;
+		}
+		for (NutListDataItem nut : product.getNutList()) {
+			if ((nut.getUnit() != null) && nut.getUnit().toLowerCase(Locale.ROOT).endsWith(PER_HUNDRED_MILLILITRES)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isBeverage(ProductData product) {
