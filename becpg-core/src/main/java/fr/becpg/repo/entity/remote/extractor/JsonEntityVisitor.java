@@ -1509,7 +1509,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			tmpArray.put(node);
 			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
 		} else {
-			throw new RemoteException("node does not exist: " + nodeRef + ", for prop: " + propType);
+			logDanglingReference(propType, nodeRef);
 		}
 	}
 
@@ -1531,8 +1531,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			entity.put(entityDictionaryService.toPrefixString(propType), node);
 			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
 		} else {
-			throw new RemoteException("node does not exist: " + nodeRef + ", for prop: " + propType);
+			logDanglingReference(propType, nodeRef);
 		}
+	}
+
+	/**
+	 * A d:noderef property whose target was deleted is left out of the payload: one dead reference must not fail
+	 * the export of the whole entity (a regulatory check, a formulation copy), only lose that value.
+	 *
+	 * @param propType the property holding the reference
+	 * @param nodeRef the missing target
+	 */
+	private static void logDanglingReference(QName propType, NodeRef nodeRef) {
+		logger.warn("Skipping " + propType + ": its target node does not exist (" + nodeRef + ")");
 	}
 
 	private void visitPropValueScalar(QName propType, JSONObject entity, Serializable value) throws JSONException {

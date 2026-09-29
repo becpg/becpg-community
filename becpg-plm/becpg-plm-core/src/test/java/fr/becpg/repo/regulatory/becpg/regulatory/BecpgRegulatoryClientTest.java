@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -101,5 +102,14 @@ public class BecpgRegulatoryClientTest {
 		assertTrue(params.getFilteredProperties().contains(PLMModel.ASSOC_REGULATORY_COUNTRIES));
 		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_INGLIST_ING).contains(PLMModel.PROP_CAS_NUMBER));
 		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_REGULATORY_COUNTRIES).contains(PLMModel.PROP_GEO_ORIGIN_ISOCODE));
+	}
+
+	@Test
+	public void projectionTellsAnImpurityFromTheIngredientThatCarriesIt() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_INGLIST_IS_SUPPORT));
+		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_DEPTH_LEVEL));
+		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_PARENT_LEVEL));
 	}
 }
