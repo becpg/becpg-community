@@ -1027,6 +1027,74 @@
 				<list>
 					<value>FOOD_ADDITIVES</value>
 					<value>COSMETICS</value>
+					<value>IFRA</value>
+					<value>FOOD</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryUseModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>RINSE_OFF</value>
+					<value>LEAVE_ON</value>
+					<value>BRIEF_CONTACT</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryApplicationZones" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>HAIR</value>
+					<value>SCALP</value>
+					<value>EYELASHES_EYEBROWS</value>
+					<value>FACE</value>
+					<value>EYE_CONTOUR</value>
+					<value>LIPS</value>
+					<value>ORAL_CAVITY</value>
+					<value>NAILS</value>
+					<value>HANDS</value>
+					<value>BODY</value>
+					<value>ANOGENITAL</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryExposureRoutes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>AEROSOL</value>
+					<value>PUMP_SPRAY</value>
+					<value>POWDER</value>
+					<value>INHALABLE</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryTargetPopulations" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>INFANT_6_12M</value>
+					<value>UNDER_3Y</value>
+					<value>UNDER_6Y</value>
+					<value>UNDER_12Y</value>
+					<value>UNDER_14Y</value>
+					<value>UNDER_16Y</value>
+					<value>PREGNANT</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryLegalStatuses" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>COSMETIC</value>
+					<value>OTC_DRUG</value>
+					<value>QUASI_DRUG</value>
+					<value>NHP</value>
+					<value>THERAPEUTIC_GOOD</value>
+					<value>SPECIAL_COSMETIC</value>
+					<value>FUNCTIONAL_COSMETIC</value>
+					<value>FOOD</value>
+					<value>FOOD_SUPPLEMENT</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -1765,6 +1833,12 @@
 					<constraints>
 						<constraint ref="bcpg:toxAbsorptionTypes" />
 					</constraints>
+				</property>
+				<property name="bcpg:toxBodyWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<default>60</default>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</type>
@@ -3398,6 +3472,24 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="bcpg:ingListIsImpurity">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:ingListIsNano">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="bcpg:ingListDeclType">
 					<type>d:text</type>
 					<default>Detail</default>
@@ -4615,6 +4707,17 @@
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
+				</property>
+				<property name="bcpg:regulatoryLegalStatus">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryLegalStatuses" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -7365,6 +7468,76 @@
 					</target>
 				</association>
 			</associations>
+		</aspect>
+
+		<aspect name="bcpg:regulatoryProductAspect">
+			<properties>
+				<property name="bcpg:regulatoryUseMode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryUseModes" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryApplicationZones">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryApplicationZones" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryMucousContact">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:regulatoryExposureRoutes">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryExposureRoutes" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryTargetPopulations">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryTargetPopulations" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryProfessionalUse">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
 		</aspect>
 
 		<aspect name="bcpg:ingToxAspect">

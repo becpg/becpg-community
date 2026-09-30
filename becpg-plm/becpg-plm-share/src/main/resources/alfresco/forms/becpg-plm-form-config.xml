@@ -2208,6 +2208,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2222,6 +2223,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2264,6 +2266,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2282,6 +2285,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -10163,6 +10167,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10232,6 +10238,8 @@
                     <field id="bcpg:ingListIsGMO" set="2-col-1" />
                     <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
                     <field id="bcpg:ingListIsSupport" set="2-col-1" />
+                    <field id="bcpg:ingListIsImpurity" set="2-col-1" />
+                    <field id="bcpg:ingListIsNano" set="2-col-1" />
 
 
                     <field id="bcpg:parentLevel" set="1-col-2">
@@ -10277,6 +10285,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10346,6 +10356,8 @@
                     <field id="bcpg:ingListIsGMO" set="2-col-1" />
                     <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
                     <field id="bcpg:ingListIsSupport" set="2-col-1" />
+                    <field id="bcpg:ingListIsImpurity" set="2-col-1" />
+                    <field id="bcpg:ingListIsNano" set="2-col-1" />
 
 
                     <field id="bcpg:parentLevel" set="1-col-2">
@@ -10393,6 +10405,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10443,6 +10457,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10492,6 +10508,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10529,6 +10547,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10574,6 +10594,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10637,6 +10659,16 @@
                             <control-param name="isSearch">true</control-param>
                         </control>
                     </field>
+                    <field id="bcpg:ingListIsImpurity" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingListIsNano" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                            <control-param name="isSearch">true</control-param>
+                        </control>
+                    </field>
 
                     <field id="bcpg:ingListGeoOrigin" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -10673,6 +10705,8 @@
                     <show id="bcpg:ingListIsIonized" />
                     <show id="bcpg:ingListIsProcessingAid" />
                     <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListIsImpurity" />
+                    <show id="bcpg:ingListIsNano" />
 
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
@@ -10748,6 +10782,8 @@
 
                     <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
                     <field id="bcpg:ingListIsSupport" set="2-col-1" />
+                    <field id="bcpg:ingListIsImpurity" set="2-col-1" />
+                    <field id="bcpg:ingListIsNano" set="2-col-1" />
                     <field id="bcpg:ingListIsGMO" set="2-col-1" />
                     <field id="bcpg:ingListIsIonized" set="2-col-1" />
 
