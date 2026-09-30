@@ -678,15 +678,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 		final NodeRef rawMaterialNodeRef = inWriteTx(this::createRawMaterialWithTwoCosts);
 
-		final NodeRef finishedProductNodeRef = inWriteTx(() -> createFinishedProductUsing(rawMaterialNodeRef));
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> createFinishedProductUsing(rawMaterialNodeRef, new ArrayList<>()));
 
-		inWriteTx(() -> {
-			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-			NodeRef compoListItemNodeRef = finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef();
-			nodeService.addAspect(compoListItemNodeRef, PLMModel.ASPECT_PROPAGATE_UP, null);
-			associationService.update(compoListItemNodeRef, PLMModel.ASSOC_PROPAGATED_CHARACTS, List.of(cost1));
-			return null;
-		});
+		inWriteTx(() -> propagateOnlyCost1(finishedProductNodeRef));
 
 		inWriteTx(() -> {
 			productService.formulate(finishedProductNodeRef);
@@ -696,6 +690,41 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			assertNull("cost2 is not listed in the propagated characteristics", findCost(formulatedProduct, cost2));
 			return null;
 		});
+	}
+
+	/**
+	 * A composition line carrying the propagate up aspect does not contribute to a cost it does not list, even when the
+	 * finished product already has that cost (#37114).
+	 */
+	@Test
+	public void testFormulationCostsWithPropagateUpAspectOmitsUnlistedCost() {
+
+		final NodeRef rawMaterialNodeRef = inWriteTx(this::createRawMaterialWithTwoCosts);
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			List<CostListDataItem> costList = new ArrayList<>();
+			costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+			return createFinishedProductUsing(rawMaterialNodeRef, costList);
+		});
+
+		inWriteTx(() -> propagateOnlyCost1(finishedProductNodeRef));
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertEquals(20d, findCost(formulatedProduct, cost1).getValue());
+			assertNull("cost2 must not get the contribution of the raw material", findCost(formulatedProduct, cost2).getValue());
+			return null;
+		});
+	}
+
+	private Void propagateOnlyCost1(NodeRef finishedProductNodeRef) {
+		ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+		NodeRef compoListItemNodeRef = finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef();
+		nodeService.addAspect(compoListItemNodeRef, PLMModel.ASPECT_PROPAGATE_UP, null);
+		associationService.update(compoListItemNodeRef, PLMModel.ASSOC_PROPAGATED_CHARACTS, List.of(cost1));
+		return null;
 	}
 
 	private NodeRef createRawMaterialWithTwoCosts() {
@@ -709,7 +738,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 	}
 
-	private NodeRef createFinishedProductUsing(NodeRef rawMaterialNodeRef) {
+	private NodeRef createFinishedProductUsing(NodeRef rawMaterialNodeRef, List<CostListDataItem> costList) {
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName("Finished product propagate up cost");
 		finishedProduct.setUnit(ProductUnit.kg);
@@ -718,6 +747,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
 				.withProduct(rawMaterialNodeRef));
 		finishedProduct.getCompoListView().setCompoList(compoList);
+		finishedProduct.setCostList(costList);
 		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 	}
 
