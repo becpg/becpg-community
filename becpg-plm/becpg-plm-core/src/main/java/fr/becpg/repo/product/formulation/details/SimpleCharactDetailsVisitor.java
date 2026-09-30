@@ -138,9 +138,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			maxLevel = 0;
 		}
 
-		Double netQty = applyYield() ? FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) :
-			FormulationHelper.getQtyInKgFromComposition(productData, null,
-				FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = provideNetQty(productData);
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
@@ -159,6 +157,40 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 */
 	protected boolean applyYield() {
 		return true;
+	}
+
+	/**
+	 * Provides the quantity every detail value is related to: the net quantity when the yield applies,
+	 * the recipe quantity used otherwise.
+	 *
+	 * @param productData the product whose characteristic is detailed
+	 * @return the quantity basis of the detail values
+	 */
+	protected Double provideNetQty(ProductData productData) {
+		return applyYield() ? FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT)
+				: FormulationHelper.getQtyInKgFromComposition(productData, null, FormulationHelper.DEFAULT_NET_WEIGHT);
+	}
+
+	/**
+	 * Tells whether a composition line contributes to the detailed characteristic. Omitted lines, and
+	 * lines under an omitted parent, never contribute.
+	 *
+	 * @param compoListDataItem the composition line
+	 * @return true when the line must be visited
+	 */
+	protected boolean shouldVisitCompoListItem(CompoListDataItem compoListDataItem) {
+		return !omitItem(compoListDataItem);
+	}
+
+	/**
+	 * Provides the factor applied to the quantity basis when visiting the composition of a component, on
+	 * top of the component yield. Defaults to 1 (no adjustment).
+	 *
+	 * @param componentProduct the component whose composition is about to be visited
+	 * @return the factor applied to the cumulated yield factor
+	 */
+	protected double provideComponentBasisFactor(ProductData componentProduct) {
+		return 1d;
 	}
 
 	/**
@@ -191,7 +223,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				for (CompoListDataItem compoListDataItem : subProductData
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					
-					if (compoListDataItem != null && !omitItem(compoListDataItem)) {
+					if (compoListDataItem != null && shouldVisitCompoListItem(compoListDataItem)) {
 						
 						Double compoListWeight = computeCompoListWeight(subProductData, parentNetWeight, compoListDataItem);
 						Double compoListVol = computeCompoListVol(subProductData, parentVoume, compoListDataItem);
@@ -202,10 +234,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						
 						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
 							double previousYieldFactor = context.getCumulatedYieldFactor();
+							double componentYieldFactor = previousYieldFactor * provideComponentBasisFactor(compoListProduct);
 							Double componentYield = compoListProduct.getYield();
 							if ((componentYield != null) && (componentYield != 0d)) {
-								context.setCumulatedYieldFactor(previousYieldFactor * (componentYield / 100d));
+								componentYieldFactor *= componentYield / 100d;
 							}
+							context.setCumulatedYieldFactor(componentYieldFactor);
 							visitRecur(context, compoListProduct, currLevel + 1, compoListWeight, compoListVol, parentQuantity);
 							context.setCumulatedYieldFactor(previousYieldFactor);
 						}
