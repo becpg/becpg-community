@@ -670,4 +670,64 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 		}
 	}
 
+	/**
+	 * A composition line carrying the propagate up aspect only brings up the costs it lists (#37114).
+	 */
+	@Test
+	public void testFormulationCostsWithPropagateUpAspect() {
+
+		final NodeRef rawMaterialNodeRef = inWriteTx(this::createRawMaterialWithTwoCosts);
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> createFinishedProductUsing(rawMaterialNodeRef));
+
+		inWriteTx(() -> {
+			ProductData finishedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			NodeRef compoListItemNodeRef = finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef();
+			nodeService.addAspect(compoListItemNodeRef, PLMModel.ASPECT_PROPAGATE_UP, null);
+			associationService.update(compoListItemNodeRef, PLMModel.ASSOC_PROPAGATED_CHARACTS, List.of(cost1));
+			return null;
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertEquals(20d, findCost(formulatedProduct, cost1).getValue());
+			assertNull("cost2 is not listed in the propagated characteristics", findCost(formulatedProduct, cost2));
+			return null;
+		});
+	}
+
+	private NodeRef createRawMaterialWithTwoCosts() {
+		RawMaterialData rawMaterial = new RawMaterialData();
+		rawMaterial.setName("Raw material propagate up cost");
+		rawMaterial.setUnit(ProductUnit.kg);
+		List<CostListDataItem> costList = new ArrayList<>();
+		costList.add(new CostListDataItem(null, 20d, "€/kg", null, cost1, false));
+		costList.add(new CostListDataItem(null, 30d, "€/kg", null, cost2, false));
+		rawMaterial.setCostList(costList);
+		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+	}
+
+	private NodeRef createFinishedProductUsing(NodeRef rawMaterialNodeRef) {
+		FinishedProductData finishedProduct = new FinishedProductData();
+		finishedProduct.setName("Finished product propagate up cost");
+		finishedProduct.setUnit(ProductUnit.kg);
+		finishedProduct.setQty(1d);
+		List<CompoListDataItem> compoList = new ArrayList<>();
+		compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+				.withProduct(rawMaterialNodeRef));
+		finishedProduct.getCompoListView().setCompoList(compoList);
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
+	private CostListDataItem findCost(ProductData product, NodeRef costNodeRef) {
+		for (CostListDataItem costListDataItem : product.getCostList()) {
+			if (costNodeRef.equals(costListDataItem.getCost()) && (costListDataItem.getComponentNodeRef() == null)) {
+				return costListDataItem;
+			}
+		}
+		return null;
+	}
+
 }
