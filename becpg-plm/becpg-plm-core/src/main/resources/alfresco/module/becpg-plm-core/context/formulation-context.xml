@@ -109,6 +109,7 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
 		<property name="entityTplService" ref="entityTplService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 
@@ -166,7 +167,6 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
-					<property name="associationService" ref="associationService" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
