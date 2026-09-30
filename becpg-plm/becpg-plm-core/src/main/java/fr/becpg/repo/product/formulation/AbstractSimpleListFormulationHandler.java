@@ -713,6 +713,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							toRemove.remove(newSimpleListDataItem);
 						}
 
+						if (isOmittedByCompositionLine(compositionDataItem, newSimpleListDataItem.getCharactNodeRef())) {
+							return;
+						}
+
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
 								.filter(s -> newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
@@ -1168,15 +1172,34 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected boolean shouldPropagate(CompositionDataItem compositionDataItem, NodeRef charactNodeRef, boolean defaultValue) {
 
-		if (compositionDataItem.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP) && (compositionDataItem.getNodeRef() != null)
-				&& (charactNodeRef != null)) {
-			List<NodeRef> propagatedCharacts = associationService.getTargetAssocs(compositionDataItem.getNodeRef(),
-					PLMModel.ASSOC_PROPAGATED_CHARACTS);
-			return propagatedCharacts.isEmpty() || propagatedCharacts.contains(charactNodeRef);
+		if (hasPropagateUpAspect(compositionDataItem) && (charactNodeRef != null)) {
+			return !isOmittedByCompositionLine(compositionDataItem, charactNodeRef);
 		} else if (charactNodeRef != null && Boolean.TRUE.equals(nodeService.getProperty(charactNodeRef, PLMModel.PROP_IS_CHARACT_PROPAGATE_UP))) {
 			return true;
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * Tells whether a composition line leaves a characteristic out of the formulation. A line carrying the
+	 * propagate up aspect only contributes to the characteristics listed in its propagated characteristics,
+	 * or to all of them when it lists none.
+	 *
+	 * @param compositionDataItem the composition line
+	 * @param charactNodeRef the characteristic being formulated
+	 * @return true if the line must not contribute to this characteristic
+	 */
+	protected boolean isOmittedByCompositionLine(CompositionDataItem compositionDataItem, NodeRef charactNodeRef) {
+		if (!hasPropagateUpAspect(compositionDataItem)) {
+			return false;
+		}
+		List<NodeRef> propagatedCharacts = associationService.getTargetAssocs(compositionDataItem.getNodeRef(),
+				PLMModel.ASSOC_PROPAGATED_CHARACTS);
+		return !propagatedCharacts.isEmpty() && !propagatedCharacts.contains(charactNodeRef);
+	}
+
+	private boolean hasPropagateUpAspect(CompositionDataItem compositionDataItem) {
+		return compositionDataItem.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP) && (compositionDataItem.getNodeRef() != null);
 	}
 
 	/**
