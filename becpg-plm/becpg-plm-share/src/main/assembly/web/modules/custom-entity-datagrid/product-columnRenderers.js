@@ -234,6 +234,21 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:ingListFlags"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            if (data.value == null || data.value === "") {
+                return "";
+            }
+            YAHOO.util.Dom.addClass(elCell, "ing-list-flags-cell");
+            var flagClass = "ing-list-flag-" + String(data.value).toLowerCase().replace(/_/g, "-");
+            var flagLabel = Alfresco.util.encodeHTML(data.displayValue != null ? data.displayValue : data.value);
+            return '<span class="ing-list-flag ' + flagClass + '" title="' + flagLabel + '">' + flagLabel + '</span>';
+        }
+
+    });
+
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:lclClaimValue"],
         renderer: function(oRecord, data, label, scope) {
             if ("true" === data.value) {

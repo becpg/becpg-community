@@ -1527,13 +1527,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 32.4675324675325,
             "cm:created": "2026-01-26T15:09:24.892Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 1,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1543,7 +1540,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "bc2b7b640a259b671d47f6e0b8be5931",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 0,
             "cm:modified": "2026-01-26T15:09:24.892Z",
@@ -1558,13 +1554,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 19.2207792207792,
             "cm:created": "2026-01-26T15:09:24.898Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 2,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1574,7 +1567,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "f88dd5e63e3ed64a998120443999a263",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 54.0495867768595,
             "cm:modified": "2026-01-26T15:09:24.898Z",
@@ -1589,13 +1581,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 14.5454545454545,
             "cm:created": "2026-01-26T15:09:24.905Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 3,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1605,7 +1594,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "975c1042c503710f81882e001e040f50",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 14.5454545454545,
             "cm:modified": "2026-01-26T15:09:24.905Z",
@@ -1620,13 +1608,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 14.5454545454545,
             "cm:created": "2026-01-26T15:09:24.910Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 4,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1636,7 +1621,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "894ce0806c6da9ef115e35428c1ad973",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 14.5454545454545,
             "cm:modified": "2026-01-26T15:09:24.910Z",
@@ -1651,13 +1635,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 13.7662337662338,
             "cm:created": "2026-01-26T15:09:24.917Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 5,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1667,7 +1648,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "9a139167cefb16b06bd8101c686dd0d6",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 11.404958677686,
             "cm:modified": "2026-01-26T15:09:24.917Z",
@@ -1682,13 +1662,10 @@
           "attributes": {
             "cm:creator": "admin",
             "cm:modifier": "admin",
-            "bcpg:ingListIsProcessingAid": false,
             "bcpg:ingListQtyPerc": 5.45454545454545,
             "cm:created": "2026-01-26T15:09:24.923Z",
-            "bcpg:ingListIsIonized": false,
             "bcpg:ingListDeclType": "Detail",
             "bcpg:sort": 6,
-            "bcpg:ingListIsGMO": false,
             "bcpg:ingListIng": {
               "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
               "metadata": "ing",
@@ -1698,7 +1675,6 @@
               "type": "bcpg:ing"
             },
             "cm:name": "577b3d3831761a58ad755e09a6da0612",
-            "bcpg:ingListIsSupport": false,
             "bcpg:isManualListItem": false,
             "bcpg:ingListQtyPercWithYield": 5.45454545454545,
             "cm:modified": "2026-01-26T15:09:24.923Z",

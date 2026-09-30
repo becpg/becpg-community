@@ -10,6 +10,65 @@
 	color: green;
 }
 
+.datagrid .ing-list-flags-cell ul {
+	margin: 0;
+	padding: 0;
+}
+
+.datagrid .ing-list-flags-cell li {
+	display: inline-block;
+	margin: 0 2px 2px 0;
+	list-style-type: none;
+}
+
+.datagrid .ing-list-flag {
+	display: inline-block;
+	padding: 1px 6px;
+	border: 1px solid #cfd8dc;
+	border-radius: 8px;
+	background-color: #eceff1;
+	color: #37474f;
+	font-size: 11px;
+	line-height: 14px;
+	white-space: nowrap;
+}
+
+.datagrid .ing-list-flag-processing-aid {
+	border-color: #b0bec5;
+	background-color: #eceff1;
+	color: #37474f;
+}
+
+.datagrid .ing-list-flag-support {
+	border-color: #80cbc4;
+	background-color: #e0f2f1;
+	color: #00695c;
+}
+
+.datagrid .ing-list-flag-impurity {
+	border-color: #ffcc80;
+	background-color: #fff3e0;
+	color: #e65100;
+}
+
+.datagrid .ing-list-flag-nano {
+	border-color: #ce93d8;
+	background-color: #f3e5f5;
+	color: #6a1b9a;
+}
+
+.datagrid .ing-list-flag-gmo {
+	border-color: #ef9a9a;
+	background-color: #ffebee;
+	color: #c62828;
+}
+
+.datagrid .ing-list-flag-ionized {
+	border-color: #ffe082;
+	background-color: #fff8e1;
+	color: #8d6e00;
+}
+
 .datagrid-bar .onActionShowDetails,.datagrid .onActionShowDetails a {
 	background-image: url("../../components/images/show-details-16.png");
 }

@@ -153,12 +153,12 @@ public class BecpgRegulatoryClient {
 	/**
 	 * @return the filtered projection sent to the regulatory service: recipe quantities,
 	 *         ingredient identifiers, the jurisdictions / usages to check, and the ingredient
-	 *         hierarchy: a line ticked as support is an impurity of the parent line it sits under
+	 *         hierarchy: a line flagged as impurity or support belongs to the parent line it sits under
 	 */
 	static RemoteParams recipeParams() {
 		RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
 		params.setFilteredProperties(Set.of(ContentModel.PROP_SYS_NAME, PLMModel.PROP_INGLIST_QTY_PERC, PLMModel.ASSOC_INGLIST_ING,
-				PLMModel.PROP_INGLIST_IS_SUPPORT, BeCPGModel.PROP_DEPTH_LEVEL, BeCPGModel.PROP_PARENT_LEVEL,
+				PLMModel.PROP_INGLIST_FLAGS, BeCPGModel.PROP_DEPTH_LEVEL, BeCPGModel.PROP_PARENT_LEVEL,
 				PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES, PLMModel.PROP_REGULATORY_CODE));
 		params.setFilteredAssocProperties(Map.of(
 				PLMModel.ASSOC_INGLIST_ING,

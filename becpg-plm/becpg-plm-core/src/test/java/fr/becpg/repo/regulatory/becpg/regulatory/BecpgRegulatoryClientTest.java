@@ -108,7 +108,7 @@ public class BecpgRegulatoryClientTest {
 	public void projectionTellsAnImpurityFromTheIngredientThatCarriesIt() {
 		RemoteParams params = BecpgRegulatoryClient.recipeParams();
 
-		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_INGLIST_IS_SUPPORT));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_INGLIST_FLAGS));
 		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_DEPTH_LEVEL));
 		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_PARENT_LEVEL));
 	}

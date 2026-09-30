@@ -1032,6 +1032,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:ingListFlags" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>PROCESSING_AID</value>
+					<value>SUPPORT</value>
+					<value>IMPURITY</value>
+					<value>NANO</value>
+					<value>GMO</value>
+					<value>IONIZED</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:regulatoryUseModes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -3454,10 +3466,22 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListFlags">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:ingListFlags" />
+					</constraints>
+				</property>
+				<!-- Deprecated: replaced by bcpg:ingListFlags, kept to read the values written by imports and remote clients -->
 				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
+					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -3465,26 +3489,7 @@
 				</property>
 				<property name="bcpg:ingListIsSupport">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
-				</property>
-				<property name="bcpg:ingListIsImpurity">
-					<type>d:boolean</type>
 					<mandatory>false</mandatory>
-					<default>false</default>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					</index>
-				</property>
-				<property name="bcpg:ingListIsNano">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<default>false</default>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -3516,8 +3521,7 @@
                 <!-- Deprecated -->
 				<property name="bcpg:ingListIsGMO">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
+					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -3525,8 +3529,7 @@
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
+					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>

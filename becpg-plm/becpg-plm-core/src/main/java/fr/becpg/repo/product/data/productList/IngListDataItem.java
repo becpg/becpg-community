@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.IngListFlag;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -84,15 +85,9 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private List<NodeRef> ingTypes = new ArrayList<>();
 
-	private Boolean isGMO = false;
-
-	private Boolean isIonized = false;
+	private List<String> flags = new ArrayList<>();
 
 	private NodeRef ing;
-
-	private Boolean isProcessingAid = false;
-
-	private Boolean isSupport = false;
 
 	private Integer depthLevel;
 
@@ -437,83 +432,156 @@ public class IngListDataItem extends AbstractManualDataItem
 	}
 
 	/**
-	 * <p>Getter for the field <code>isGMO</code>.</p>
+	 * <p>Getter for the field <code>flags</code>.</p>
 	 *
-	 * @return a {@link java.lang.Boolean} object.
+	 * @return the flag codes of the line, see {@link IngListFlag}
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:ingListIsGMO")
-	public Boolean getIsGMO() {
-		return isGMO;
+	@AlfQname(qname = "bcpg:ingListFlags")
+	public List<String> getFlags() {
+		return flags;
 	}
 
 	/**
-	 * <p>Setter for the field <code>isGMO</code>.</p>
+	 * <p>Setter for the field <code>flags</code>, stored without duplicates in a stable order.</p>
 	 *
-	 * @param isGMO a {@link java.lang.Boolean} object.
+	 * @param flags the flag codes of the line, see {@link IngListFlag}
+	 */
+	public void setFlags(List<String> flags) {
+		this.flags = IngListFlag.normalize(flags);
+	}
+
+	/**
+	 * <p>Tells whether the line carries a flag.</p>
+	 *
+	 * @param flag the flag to look for
+	 * @return true when the line carries the flag
+	 */
+	public boolean hasFlag(IngListFlag flag) {
+		return flags.contains(flag.name());
+	}
+
+	/**
+	 * <p>Adds or removes a flag.</p>
+	 *
+	 * @param flag the flag to change
+	 * @param enabled true to add the flag, false to remove it
+	 */
+	public void setFlag(IngListFlag flag, boolean enabled) {
+		List<String> updatedFlags = new ArrayList<>(flags);
+		updatedFlags.remove(flag.name());
+		if (enabled) {
+			updatedFlags.add(flag.name());
+		}
+		setFlags(updatedFlags);
+	}
+
+	/**
+	 * <p>Tells whether the line carries the GMO flag.</p>
+	 *
+	 * @return true when the line is made from genetically modified organisms
+	 */
+	public Boolean getIsGMO() {
+		return hasFlag(IngListFlag.GMO);
+	}
+
+	/**
+	 * <p>Adds or removes the GMO flag.</p>
+	 *
+	 * @param isGMO true to mark the line as made from genetically modified organisms
 	 */
 	public void setIsGMO(Boolean isGMO) {
-		this.isGMO = isGMO;
+		setFlag(IngListFlag.GMO, Boolean.TRUE.equals(isGMO));
 	}
 
 	/**
-	 * <p>Getter for the field <code>isProcessingAid</code>.</p>
+	 * <p>Tells whether the line carries the PROCESSING_AID flag.</p>
 	 *
-	 * @return a {@link java.lang.Boolean} object.
+	 * @return true when the line is a processing aid
 	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:ingListIsProcessingAid")
 	public Boolean getIsProcessingAid() {
-		return isProcessingAid;
+		return hasFlag(IngListFlag.PROCESSING_AID);
 	}
 
 	/**
-	 * <p>Setter for the field <code>isProcessingAid</code>.</p>
+	 * <p>Adds or removes the PROCESSING_AID flag.</p>
 	 *
-	 * @param isProcessingAid a {@link java.lang.Boolean} object.
+	 * @param isProcessingAid true to mark the line as a processing aid
 	 */
 	public void setIsProcessingAid(Boolean isProcessingAid) {
-		this.isProcessingAid = isProcessingAid;
+		setFlag(IngListFlag.PROCESSING_AID, Boolean.TRUE.equals(isProcessingAid));
 	}
 
 	/**
-	 * <p>Getter for the field <code>isSupport</code>.</p>
+	 * <p>Tells whether the line carries the SUPPORT flag.</p>
 	 *
-	 * @return a {@link java.lang.Boolean} object.
+	 * @return true when the line is a carrier brought by its parent ingredient
 	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:ingListIsSupport")
 	public Boolean getIsSupport() {
-		return isSupport;
+		return hasFlag(IngListFlag.SUPPORT);
 	}
 
 	/**
-	 * <p>Setter for the field <code>isSupport</code>.</p>
+	 * <p>Adds or removes the SUPPORT flag.</p>
 	 *
-	 * @param isSupport a {@link java.lang.Boolean} object.
+	 * @param isSupport true to mark the line as a carrier brought by its parent ingredient
 	 */
 	public void setIsSupport(Boolean isSupport) {
-		this.isSupport = isSupport;
+		setFlag(IngListFlag.SUPPORT, Boolean.TRUE.equals(isSupport));
 	}
 
 	/**
-	 * <p>Getter for the field <code>isIonized</code>.</p>
+	 * <p>Tells whether the line carries the IMPURITY flag.</p>
 	 *
-	 * @return a {@link java.lang.Boolean} object.
+	 * @return true when the line is an impurity brought by its parent ingredient
 	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:ingListIsIonized")
-	public Boolean getIsIonized() {
-		return isIonized;
+	public Boolean getIsImpurity() {
+		return hasFlag(IngListFlag.IMPURITY);
 	}
 
 	/**
-	 * <p>Setter for the field <code>isIonized</code>.</p>
+	 * <p>Adds or removes the IMPURITY flag.</p>
 	 *
-	 * @param isIonized a {@link java.lang.Boolean} object.
+	 * @param isImpurity true to mark the line as an impurity brought by its parent ingredient
+	 */
+	public void setIsImpurity(Boolean isImpurity) {
+		setFlag(IngListFlag.IMPURITY, Boolean.TRUE.equals(isImpurity));
+	}
+
+	/**
+	 * <p>Tells whether the line carries the NANO flag.</p>
+	 *
+	 * @return true when the line is used in nanomaterial form
+	 */
+	public Boolean getIsNano() {
+		return hasFlag(IngListFlag.NANO);
+	}
+
+	/**
+	 * <p>Adds or removes the NANO flag.</p>
+	 *
+	 * @param isNano true to mark the line as used in nanomaterial form
+	 */
+	public void setIsNano(Boolean isNano) {
+		setFlag(IngListFlag.NANO, Boolean.TRUE.equals(isNano));
+	}
+
+	/**
+	 * <p>Tells whether the line carries the IONIZED flag.</p>
+	 *
+	 * @return true when the line is ionized
+	 */
+	public Boolean getIsIonized() {
+		return hasFlag(IngListFlag.IONIZED);
+	}
+
+	/**
+	 * <p>Adds or removes the IONIZED flag.</p>
+	 *
+	 * @param isIonized true to mark the line as ionized
 	 */
 	public void setIsIonized(Boolean isIonized) {
-		this.isIonized = isIonized;
+		setFlag(IngListFlag.IONIZED, Boolean.TRUE.equals(isIonized));
 	}
 
 	/**
@@ -830,7 +898,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @since 23.4.2.22
 	 */
 	public IngListDataItem withIsGMO(Boolean isGMO) {
-		this.isGMO = isGMO;
+		setIsGMO(isGMO);
 		return this;
 	}
 	
@@ -842,7 +910,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @since 23.4.2.22
 	 */
 	public IngListDataItem withIsIonized(Boolean isIonized) {
-		this.isIonized = isIonized;
+		setIsIonized(isIonized);
 		return this;
 	}
 	
@@ -854,7 +922,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @since 23.4.2.22
 	 */
 	public IngListDataItem withIsProcessingAid(Boolean isProcessingAid) {
-		this.isProcessingAid = isProcessingAid;
+		setIsProcessingAid(isProcessingAid);
 		return this;
 	}
 	
@@ -928,11 +996,8 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.bioOrigin = i.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
 		this.claims = i.claims != null ? new ArrayList<>(i.claims) : null;
 		this.ingTypes = i.ingTypes != null ? new ArrayList<>(i.ingTypes) : null;
-		this.isGMO = i.isGMO;
-		this.isIonized = i.isIonized;
+		this.flags = new ArrayList<>(i.flags);
 		this.ing = i.ing;
-		this.isProcessingAid = i.isProcessingAid;
-		this.isSupport = i.isSupport;
 		this.depthLevel = i.depthLevel;
 		this.parent = i.parent;
 		this.mini = i.mini;
@@ -960,8 +1025,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, ingTypes, isGMO, isIonized, isProcessingAid,
-				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPerc5, qtyPercWithSecondaryYield, qtyPercWithYield,
+		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, ingTypes, flags, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPerc5, qtyPercWithSecondaryYield, qtyPercWithYield,
 				volumeQtyPerc, reconstitutionRate, reconstitutionPriority, diluentRef, targetReconstitutionRef);
 		return result;
 	}
@@ -979,9 +1043,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(claims, other.claims) && declType == other.declType
 				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(geoOrigin, other.geoOrigin)
 				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing) && Objects.equals(ingTypes, other.ingTypes)
-				&& Objects.equals(isGMO, other.isGMO)
-				&& Objects.equals(isIonized, other.isIonized) && Objects.equals(isProcessingAid, other.isProcessingAid)
-				&& Objects.equals(isSupport, other.isSupport) && Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
+				&& Objects.equals(flags, other.flags) && Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
 				&& Objects.equals(parent, other.parent) && Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPerc1, other.qtyPerc1)
 				&& Objects.equals(qtyPerc2, other.qtyPerc2) && Objects.equals(qtyPerc3, other.qtyPerc3) && Objects.equals(qtyPerc4, other.qtyPerc4)
 				&& Objects.equals(qtyPerc5, other.qtyPerc5)
@@ -1000,8 +1062,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPerc1=" + qtyPerc1 + ", qtyPerc2=" + qtyPerc2 + ", qtyPerc3=" + qtyPerc3 + ", qtyPerc4="
 				+ qtyPerc4 + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield=" + qtyPercWithSecondaryYield
 				+ ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin
-				+ ", claims=" + claims + ", ingTypes=" + ingTypes + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid=" + isProcessingAid
-				+ ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi
+				+ ", claims=" + claims + ", ingTypes=" + ingTypes + ", flags=" + flags + ", ing=" + ing + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi
 				+ ", declType=" + declType + "]";
 	}
 
