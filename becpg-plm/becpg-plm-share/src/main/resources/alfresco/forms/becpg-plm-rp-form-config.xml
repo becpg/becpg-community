@@ -427,10 +427,16 @@
 				<field-visibility>
 					<show force="false" id="cm:name" />
 					<show force="false" id="cm:description" />
+					<show force="false" id="bcpg:productUnit" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" mandatory="false" read-only="false" />
 					<field id="cm:description" mandatory="false" read-only="false" />
+					<field id="bcpg:productUnit" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">h,P</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
