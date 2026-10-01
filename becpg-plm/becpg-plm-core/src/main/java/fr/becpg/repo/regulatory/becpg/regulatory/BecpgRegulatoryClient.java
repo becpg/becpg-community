@@ -73,9 +73,14 @@ public class BecpgRegulatoryClient {
 	private static final Set<QName> REGULATORY_LINE_PROPERTIES = Set.of(PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES,
 			PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_REGULATORY_LEGAL_STATUS);
 
-	/** Ingredient lines: quantities, hierarchy and flags; an impurity or a carrier belongs to the parent line it sits under. */
+	/**
+	 * Ingredient lines: quantities, hierarchy and flags; an impurity or a carrier belongs to the parent line it
+	 * sits under. The support boolean, kept in sync with the flags, is still read by the regulatory service.
+	 */
+	@SuppressWarnings("deprecation")
 	private static final Set<QName> INGREDIENT_LINE_PROPERTIES = Set.of(PLMModel.PROP_INGLIST_QTY_PERC, PLMModel.PROP_INGLIST_QTY_MAXI,
-			PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_FLAGS, BeCPGModel.PROP_DEPTH_LEVEL, BeCPGModel.PROP_PARENT_LEVEL);
+			PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_FLAGS, PLMModel.PROP_INGLIST_IS_SUPPORT, BeCPGModel.PROP_DEPTH_LEVEL,
+			BeCPGModel.PROP_PARENT_LEVEL);
 
 	/** Product characteristics a limit can depend on: physico-chemical values, declared allergens, claims such as halal. */
 	private static final Set<QName> CHARACTERISTIC_LINE_PROPERTIES = Set.of(PLMModel.PROP_PHYSICOCHEMLIST_VALUE,

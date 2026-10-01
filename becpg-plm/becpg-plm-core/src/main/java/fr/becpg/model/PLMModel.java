@@ -180,28 +180,28 @@ public interface PLMModel {
 	/**
 	 * Constant <code>PROP_INGLIST_IS_GMO</code>
 	 *
-	 * @deprecated replaced by the GMO value of {@link #PROP_INGLIST_FLAGS}
+	 * @deprecated replaced by the GMO value of {@link #PROP_INGLIST_FLAGS}, kept in sync with it
 	 */
 	@Deprecated
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
 	/**
 	 * Constant <code>PROP_INGLIST_IS_IONIZED</code>
 	 *
-	 * @deprecated replaced by the IONIZED value of {@link #PROP_INGLIST_FLAGS}
+	 * @deprecated replaced by the IONIZED value of {@link #PROP_INGLIST_FLAGS}, kept in sync with it
 	 */
 	@Deprecated
 	QName PROP_INGLIST_IS_IONIZED = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsIonized");
 	/**
 	 * Constant <code>PROP_INGLIST_IS_PROCESSING_AID</code>
 	 *
-	 * @deprecated replaced by the PROCESSING_AID value of {@link #PROP_INGLIST_FLAGS}
+	 * @deprecated replaced by the PROCESSING_AID value of {@link #PROP_INGLIST_FLAGS}, kept in sync with it
 	 */
 	@Deprecated
 	QName PROP_INGLIST_IS_PROCESSING_AID = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsProcessingAid");
 	/**
 	 * Constant <code>PROP_INGLIST_IS_SUPPORT</code>: the line is a carrier brought by its parent ingredient
 	 *
-	 * @deprecated replaced by the SUPPORT value of {@link #PROP_INGLIST_FLAGS}
+	 * @deprecated replaced by the SUPPORT value of {@link #PROP_INGLIST_FLAGS}, kept in sync with it
 	 */
 	@Deprecated
 	QName PROP_INGLIST_IS_SUPPORT = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsSupport");

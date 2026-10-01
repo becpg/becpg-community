@@ -481,6 +481,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	 *
 	 * @return true when the line is made from genetically modified organisms
 	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListIsGMO")
 	public Boolean getIsGMO() {
 		return hasFlag(IngListFlag.GMO);
 	}
@@ -488,10 +490,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the GMO flag.</p>
 	 *
-	 * @param isGMO true to mark the line as made from genetically modified organisms
+	 * @param isGMO true to mark the line as made from genetically modified organisms, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsGMO(Boolean isGMO) {
-		setFlag(IngListFlag.GMO, Boolean.TRUE.equals(isGMO));
+		if (isGMO == null) {
+			return;
+		}
+		setFlag(IngListFlag.GMO, isGMO);
 	}
 
 	/**
@@ -499,6 +504,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	 *
 	 * @return true when the line is a processing aid
 	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListIsProcessingAid")
 	public Boolean getIsProcessingAid() {
 		return hasFlag(IngListFlag.PROCESSING_AID);
 	}
@@ -506,10 +513,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the PROCESSING_AID flag.</p>
 	 *
-	 * @param isProcessingAid true to mark the line as a processing aid
+	 * @param isProcessingAid true to mark the line as a processing aid, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsProcessingAid(Boolean isProcessingAid) {
-		setFlag(IngListFlag.PROCESSING_AID, Boolean.TRUE.equals(isProcessingAid));
+		if (isProcessingAid == null) {
+			return;
+		}
+		setFlag(IngListFlag.PROCESSING_AID, isProcessingAid);
 	}
 
 	/**
@@ -517,6 +527,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	 *
 	 * @return true when the line is a carrier brought by its parent ingredient
 	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListIsSupport")
 	public Boolean getIsSupport() {
 		return hasFlag(IngListFlag.SUPPORT);
 	}
@@ -524,10 +536,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the SUPPORT flag.</p>
 	 *
-	 * @param isSupport true to mark the line as a carrier brought by its parent ingredient
+	 * @param isSupport true to mark the line as a carrier brought by its parent ingredient, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsSupport(Boolean isSupport) {
-		setFlag(IngListFlag.SUPPORT, Boolean.TRUE.equals(isSupport));
+		if (isSupport == null) {
+			return;
+		}
+		setFlag(IngListFlag.SUPPORT, isSupport);
 	}
 
 	/**
@@ -542,10 +557,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the IMPURITY flag.</p>
 	 *
-	 * @param isImpurity true to mark the line as an impurity brought by its parent ingredient
+	 * @param isImpurity true to mark the line as an impurity brought by its parent ingredient, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsImpurity(Boolean isImpurity) {
-		setFlag(IngListFlag.IMPURITY, Boolean.TRUE.equals(isImpurity));
+		if (isImpurity == null) {
+			return;
+		}
+		setFlag(IngListFlag.IMPURITY, isImpurity);
 	}
 
 	/**
@@ -560,10 +578,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the NANO flag.</p>
 	 *
-	 * @param isNano true to mark the line as used in nanomaterial form
+	 * @param isNano true to mark the line as used in nanomaterial form, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsNano(Boolean isNano) {
-		setFlag(IngListFlag.NANO, Boolean.TRUE.equals(isNano));
+		if (isNano == null) {
+			return;
+		}
+		setFlag(IngListFlag.NANO, isNano);
 	}
 
 	/**
@@ -571,6 +592,8 @@ public class IngListDataItem extends AbstractManualDataItem
 	 *
 	 * @return true when the line is ionized
 	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListIsIonized")
 	public Boolean getIsIonized() {
 		return hasFlag(IngListFlag.IONIZED);
 	}
@@ -578,10 +601,13 @@ public class IngListDataItem extends AbstractManualDataItem
 	/**
 	 * <p>Adds or removes the IONIZED flag.</p>
 	 *
-	 * @param isIonized true to mark the line as ionized
+	 * @param isIonized true to mark the line as ionized, false to unmark it, null to leave it unchanged
 	 */
 	public void setIsIonized(Boolean isIonized) {
-		setFlag(IngListFlag.IONIZED, Boolean.TRUE.equals(isIonized));
+		if (isIonized == null) {
+			return;
+		}
+		setFlag(IngListFlag.IONIZED, isIonized);
 	}
 
 	/**

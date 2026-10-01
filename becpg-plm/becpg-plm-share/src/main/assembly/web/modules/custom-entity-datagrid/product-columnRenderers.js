@@ -236,12 +236,14 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:ingListFlags"],
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            if (data.value == null || data.value === "") {
+            var flagCode = YAHOO.lang.isArray(data.value) ? data.value.join("") : data.value;
+            if (flagCode == null || String(flagCode).replace(/\s/g, "") === "") {
                 return "";
             }
+            var flagLabel = (data.displayValue != null && String(data.displayValue).replace(/\s/g, "") !== "") ? data.displayValue : flagCode;
             YAHOO.util.Dom.addClass(elCell, "ing-list-flags-cell");
-            var flagClass = "ing-list-flag-" + String(data.value).toLowerCase().replace(/_/g, "-");
-            var flagLabel = Alfresco.util.encodeHTML(data.displayValue != null ? data.displayValue : data.value);
+            var flagClass = "ing-list-flag-" + String(flagCode).toLowerCase().replace(/_/g, "-");
+            flagLabel = Alfresco.util.encodeHTML(flagLabel);
             return '<span class="ing-list-flag ' + flagClass + '" title="' + flagLabel + '">' + flagLabel + '</span>';
         }
 
