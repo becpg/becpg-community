@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -35,8 +36,19 @@ public class DefaultCompareEntityServicePluginTest {
 		nodeService = mock(NodeService.class);
 		DictionaryService dictionaryService = mock(DictionaryService.class);
 		when(dictionaryService.getProperty(PIVOT)).thenReturn(mock(PropertyDefinition.class));
-		plugin = new DefaultCompareEntityServicePlugin(null, null, nodeService, dictionaryService, null, null, null, null, null, null, null,
-				null);
+		plugin = new DefaultCompareEntityServicePlugin();
+		inject("nodeService", nodeService);
+		inject("dictionaryService", dictionaryService);
+	}
+
+	private void inject(String fieldName, Object value) {
+		try {
+			Field field = DefaultCompareEntityServicePlugin.class.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			field.set(plugin, value);
+		} catch (ReflectiveOperationException e) {
+			throw new IllegalStateException("Cannot inject " + fieldName, e);
+		}
 	}
 
 	@Test
