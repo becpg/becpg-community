@@ -108,8 +108,47 @@ public class BecpgRegulatoryClientTest {
 	public void projectionTellsAnImpurityFromTheIngredientThatCarriesIt() {
 		RemoteParams params = BecpgRegulatoryClient.recipeParams();
 
-		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_INGLIST_IS_SUPPORT));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_INGLIST_FLAGS));
 		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_DEPTH_LEVEL));
 		assertTrue(params.getFilteredProperties().contains(BeCPGModel.PROP_PARENT_LEVEL));
+	}
+
+	@Test
+	public void projectionCarriesTheProductAttributes() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_USE_MODE));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_APPLICATION_ZONES));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_TARGET_POPULATIONS));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_LEGAL_STATUS));
+	}
+
+	@Test
+	public void projectionCarriesTheCharacteristicsALimitDependsOn() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_PHYSICOCHEMLIST_VALUE));
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM).contains(PLMModel.PROP_PHYSICO_CHEM_CODE));
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_ALLERGENLIST_ALLERGEN).contains(PLMModel.PROP_ALLERGEN_CODE));
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_LCL_LABELCLAIM).contains(PLMModel.PROP_LABEL_CLAIM_CODE));
+	}
+
+	@Test
+	public void projectionIdentifiesTheSubstancesPresentWithoutBeingFormulated() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.getFilteredProperties().contains(PLMModel.ASSOC_SVHCLIST_ING));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_SVHCLIST_MIGRATION_PERC));
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_SVHCLIST_ING).contains(PLMModel.PROP_CAS_NUMBER));
+	}
+
+	@Test
+	public void projectionExtractsOnlyTheListsTheCheckReads() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.shouldExtractList(PLMModel.TYPE_INGLIST.getLocalName()));
+		assertTrue(params.shouldExtractList(PLMModel.TYPE_SVHCLIST.getLocalName()));
+		assertFalse(params.shouldExtractList(PLMModel.TYPE_NUTLIST.getLocalName()));
+		assertFalse(params.shouldExtractList(PLMModel.TYPE_COMPOLIST.getLocalName()));
 	}
 }

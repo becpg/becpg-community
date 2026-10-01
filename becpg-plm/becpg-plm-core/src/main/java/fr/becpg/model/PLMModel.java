@@ -59,6 +59,8 @@ public interface PLMModel {
 	QName ASSOC_ALLERGENLIST_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergenListAllergen");
 	/** Constant <code>PROP_ALLERGENLIST_INVOLUNTARY</code> */
 	QName PROP_ALLERGENLIST_INVOLUNTARY = QName.createQName(BeCPGModel.BECPG_URI, "allergenListInVoluntary");
+	/** Constant <code>PROP_ALLERGENLIST_QTY_PERC</code> */
+	QName PROP_ALLERGENLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "allergenListQtyPerc");
 	/** Constant <code>ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES</code> */
 	QName ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "allergenListVolSources");
 	/** Constant <code>ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES</code> */
@@ -171,13 +173,37 @@ public interface PLMModel {
 	/** Constant <code>PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD</code> */
 	QName PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithSecondaryYield");
 
-	/** Constant <code>PROP_INGLIST_IS_GMO</code> */
+	/** Constant <code>PROP_INGLIST_FLAGS</code>: the qualifiers of an ingredient line (processing aid, support, impurity, nano, GMO, ionized) */
+	QName PROP_INGLIST_FLAGS = QName.createQName(BeCPGModel.BECPG_URI, "ingListFlags");
+	/** Constant <code>PROP_INGLIST_QTY_MAXI</code> */
+	QName PROP_INGLIST_QTY_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyMaxi");
+	/**
+	 * Constant <code>PROP_INGLIST_IS_GMO</code>
+	 *
+	 * @deprecated replaced by the GMO value of {@link #PROP_INGLIST_FLAGS}
+	 */
+	@Deprecated
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
-	/** Constant <code>PROP_INGLIST_IS_IONIZED</code> */
+	/**
+	 * Constant <code>PROP_INGLIST_IS_IONIZED</code>
+	 *
+	 * @deprecated replaced by the IONIZED value of {@link #PROP_INGLIST_FLAGS}
+	 */
+	@Deprecated
 	QName PROP_INGLIST_IS_IONIZED = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsIonized");
-	/** Constant <code>PROP_INGLIST_IS_PROCESSING_AID</code> */
+	/**
+	 * Constant <code>PROP_INGLIST_IS_PROCESSING_AID</code>
+	 *
+	 * @deprecated replaced by the PROCESSING_AID value of {@link #PROP_INGLIST_FLAGS}
+	 */
+	@Deprecated
 	QName PROP_INGLIST_IS_PROCESSING_AID = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsProcessingAid");
-	/** Constant <code>PROP_INGLIST_IS_SUPPORT</code>: the line is an impurity or a carrier brought by its parent ingredient */
+	/**
+	 * Constant <code>PROP_INGLIST_IS_SUPPORT</code>: the line is a carrier brought by its parent ingredient
+	 *
+	 * @deprecated replaced by the SUPPORT value of {@link #PROP_INGLIST_FLAGS}
+	 */
+	@Deprecated
 	QName PROP_INGLIST_IS_SUPPORT = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsSupport");
 	/** Constant <code>PROP_INGLIST_DECL_TYPE</code> */
 	QName PROP_INGLIST_DECL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingListDeclType");
@@ -419,6 +445,8 @@ public interface PLMModel {
 	QName TYPE_SVHCLIST = QName.createQName(BeCPGModel.BECPG_URI, "svhcList");
 	/** Constant <code>TYPE_SVHC_LIST_QTY_PERC</code> */
 	QName PROP_SVHCLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
+	/** Constant <code>PROP_SVHCLIST_MIGRATION_PERC</code> */
+	QName PROP_SVHCLIST_MIGRATION_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListMigrationPerc");
 
 	/** Constant <code>PROP_IS_SVHC</code> */
 	QName PROP_IS_SVHC = QName.createQName(BeCPGModel.BECPG_URI, "isSubstanceOfVeryHighConcern");
@@ -933,6 +961,22 @@ public interface PLMModel {
 
 	/** Constant <code>ASPECT_REGULATORY</code> */
 	QName ASPECT_REGULATORY = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryAspect");
+	/** Constant <code>ASPECT_REGULATORY_PRODUCT</code>: the attributes of a product that select its regulatory limits */
+	QName ASPECT_REGULATORY_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryProductAspect");
+	/** Constant <code>PROP_REGULATORY_USE_MODE</code> */
+	QName PROP_REGULATORY_USE_MODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUseMode");
+	/** Constant <code>PROP_REGULATORY_APPLICATION_ZONES</code> */
+	QName PROP_REGULATORY_APPLICATION_ZONES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryApplicationZones");
+	/** Constant <code>PROP_REGULATORY_MUCOUS_CONTACT</code> */
+	QName PROP_REGULATORY_MUCOUS_CONTACT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryMucousContact");
+	/** Constant <code>PROP_REGULATORY_EXPOSURE_ROUTES</code> */
+	QName PROP_REGULATORY_EXPOSURE_ROUTES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryExposureRoutes");
+	/** Constant <code>PROP_REGULATORY_TARGET_POPULATIONS</code> */
+	QName PROP_REGULATORY_TARGET_POPULATIONS = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryTargetPopulations");
+	/** Constant <code>PROP_REGULATORY_PROFESSIONAL_USE</code> */
+	QName PROP_REGULATORY_PROFESSIONAL_USE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryProfessionalUse");
+	/** Constant <code>PROP_REGULATORY_LEGAL_STATUS</code>: legal status of the product on the markets of a regulatory line */
+	QName PROP_REGULATORY_LEGAL_STATUS = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryLegalStatus");
 	/** Constant <code>PROP_REGULATORY_CODE</code> */
 	QName PROP_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCode");
 

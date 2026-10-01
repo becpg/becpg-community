@@ -1157,6 +1157,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	/**
+	 * Returns the properties of a node to write in the report. Subclasses override it to expose
+	 * values derived from the stored ones, such as properties kept for existing report templates.
+	 *
+	 * @param nodeRef the node to extract
+	 * @param nodeType the type of the node
+	 * @return a mutable map of the properties to write
+	 */
+	protected Map<QName, Serializable> getReportProperties(NodeRef nodeRef, QName nodeType) {
+		return nodeService.getProperties(nodeRef);
+	}
+
+	/**
 	 * <p>loadAttributes.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
@@ -1168,8 +1180,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
 		QName nodeType = nodeService.getType(nodeRef);
-		// properties
-		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		Map<QName, Serializable> properties = getReportProperties(nodeRef, nodeType);
 
 		// versionLabel
 		String versionLabelDisplayValue = null;

@@ -124,6 +124,12 @@
 					<show id="bcpg:regulatoryResult" force="false" />
 					<show id="bcpg:regulatoryFormulatedDate" force="false" />
 					<show id="bcpg:regulatoryValidationDate" force="false" />
+					<show id="bcpg:regulatoryUseMode" force="false" />
+					<show id="bcpg:regulatoryApplicationZones" force="false" />
+					<show id="bcpg:regulatoryMucousContact" force="false" />
+					<show id="bcpg:regulatoryExposureRoutes" force="false" />
+					<show id="bcpg:regulatoryTargetPopulations" force="false" />
+					<show id="bcpg:regulatoryProfessionalUse" force="false" />
 					
 					<!--workflow validation -->
 					<show id="bcpgwf:pvValidationDate" for-mode="view" />
@@ -370,6 +376,20 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
+
+					<set appearance="bordered-panel" id="regulatoryProduct" label-id="becpg.forms.set.regulatoryProduct.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:regulatoryUseMode" set="regulatoryProduct" />
+					<field id="bcpg:regulatoryApplicationZones" set="regulatoryProduct">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+					</field>
+					<field id="bcpg:regulatoryMucousContact" set="regulatoryProduct" />
+					<field id="bcpg:regulatoryExposureRoutes" set="regulatoryProduct">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+					</field>
+					<field id="bcpg:regulatoryTargetPopulations" set="regulatoryProduct">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+					</field>
+					<field id="bcpg:regulatoryProfessionalUse" set="regulatoryProduct" />
 
 					<set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />

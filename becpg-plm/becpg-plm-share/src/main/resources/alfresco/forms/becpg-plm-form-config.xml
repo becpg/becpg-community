@@ -2208,6 +2208,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2222,6 +2223,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2264,6 +2266,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -2282,6 +2285,7 @@
                     <show id="bcpg:toxAbsorptionType" force="true" />
                     <show id="bcpg:toxCalculateSystemic" />
                     <show id="bcpg:toxCalculateMax" />
+                    <show id="bcpg:toxBodyWeight" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -10159,10 +10163,7 @@
                     <show id="bcpg:ingListQtyMini" />
                     <show id="bcpg:ingListQtyMaxi" />
 
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10228,10 +10229,9 @@
 
                     <field id="bcpg:ingListComments" set="2-col-1" />
 
-                    <field id="bcpg:ingListIsIonized" set="2-col-1" />
-                    <field id="bcpg:ingListIsGMO" set="2-col-1" />
-                    <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
-                    <field id="bcpg:ingListIsSupport" set="2-col-1" />
+                    <field id="bcpg:ingListFlags" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" />
+                    </field>
 
 
                     <field id="bcpg:parentLevel" set="1-col-2">
@@ -10273,10 +10273,7 @@
                     <show id="bcpg:ingListQtyMini" />
                     <show id="bcpg:ingListQtyMaxi" />
 
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10342,10 +10339,9 @@
 
                     <field id="bcpg:ingListComments" set="2-col-1" />
 
-                    <field id="bcpg:ingListIsIonized" set="2-col-1" />
-                    <field id="bcpg:ingListIsGMO" set="2-col-1" />
-                    <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
-                    <field id="bcpg:ingListIsSupport" set="2-col-1" />
+                    <field id="bcpg:ingListFlags" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" />
+                    </field>
 
 
                     <field id="bcpg:parentLevel" set="1-col-2">
@@ -10389,10 +10385,7 @@
                     <show id="bcpg:ingListQtyPerc3" />
                     <show id="bcpg:ingListQtyPerc4" />
                     <show id="bcpg:ingListQtyPerc5" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10439,10 +10432,7 @@
                     <show id="bcpg:ingListQtyPerc3" />
                     <show id="bcpg:ingListQtyPerc4" />
                     <show id="bcpg:ingListQtyPerc5" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10488,10 +10478,7 @@
                     <show id="bcpg:ingListQtyPerc" />
                     <show id="bcpg:ingListQtyPercWithYield" />
                     <show id="bcpg:ingListQtyPercWithSecondaryYield" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10525,10 +10512,7 @@
                     <show id="bcpg:ingListQtyPerc3" />
                     <show id="bcpg:ingListQtyPerc4" />
                     <show id="bcpg:ingListQtyPerc5" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10570,10 +10554,7 @@
                     <show id="bcpg:ingListQtyPercWithYield" />
                     <show id="bcpg:ingListQtyMini" />
                     <show id="bcpg:ingListQtyMaxi" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
@@ -10617,23 +10598,8 @@
 
                     </field>
 
-                    <field id="bcpg:ingListIsGMO" set="2-col">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:ingListIsIonized" set="2-col">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:ingListIsProcessingAid" set="2-col">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                    <field id="bcpg:ingListIsSupport" set="2-col">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
+                    <field id="bcpg:ingListFlags" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/selectmany.ftl">
                             <control-param name="isSearch">true</control-param>
                         </control>
                     </field>
@@ -10669,10 +10635,7 @@
                     <show id="bcpg:ingListQtyPerc5" force="true" />
                     <show id="bcpg:ingListQtyMini" />
                     <show id="bcpg:ingListQtyMaxi" />
-                    <show id="bcpg:ingListIsGMO" />
-                    <show id="bcpg:ingListIsIonized" />
-                    <show id="bcpg:ingListIsProcessingAid" />
-                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListFlags" />
 
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
@@ -10746,10 +10709,9 @@
 
                     <field id="bcpg:ingListComments" set="2-col-1" />
 
-                    <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
-                    <field id="bcpg:ingListIsSupport" set="2-col-1" />
-                    <field id="bcpg:ingListIsGMO" set="2-col-1" />
-                    <field id="bcpg:ingListIsIonized" set="2-col-1" />
+                    <field id="bcpg:ingListFlags" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" />
+                    </field>
 
                     <field id="bcpg:parentLevel" set="1-col-2">
                         <control template="/org/alfresco/components/form/controls/autocomplete.ftl">

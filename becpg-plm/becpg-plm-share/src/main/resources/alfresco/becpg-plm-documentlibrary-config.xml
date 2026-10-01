@@ -38,6 +38,7 @@
 				<aspect name="ghs:sdsAspect" />
 				<aspect name="bcpg:undeletableAspect" />
 				<aspect name="bcpg:regulatoryAspect" />
+				<aspect name="bcpg:regulatoryProductAspect" />
 				<aspect name="bcpg:archivedEntityAspect" />
 				<aspect name="gs1:referencedTradeItemAspect"/>
 				<aspect name="gs1:seasonalAspect"/>
