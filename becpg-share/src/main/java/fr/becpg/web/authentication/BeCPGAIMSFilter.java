@@ -192,6 +192,7 @@ public class BeCPGAIMSFilter implements Filter
 
     /** Session attribute carrying the step of a re-authentication asked with prompt=true. */
     private static final String REAUTH_STEP_ATTRIBUTE = "becpg.aims.reauthStep";
+    private static final String EXPIRED_SESSION_CONTENT_TYPE = "application/json";
     /** A re-authentication older than this is forgotten, so a stale marker cannot force the identity provider later. */
     private static final long REAUTH_MAX_AGE_MILLIS = 5L * 60L * 1000L;
 
@@ -234,6 +235,7 @@ public class BeCPGAIMSFilter implements Filter
     private String clientId;
     private String audience;
     private String shareContext;
+    private ExpiredSessionAjaxRequestMatcher expiredSessionAjaxRequestMatcher;
 
     /**
      * Margin applied before the real access-token expiry so the token is refreshed slightly ahead of time.
@@ -298,6 +300,7 @@ public class BeCPGAIMSFilter implements Filter
             this.authorizationRequestRepository = new HttpSessionOAuth2AuthorizationRequestRepository();
             this.throwableAnalyzer = new SecurityUtils.DefaultThrowableAnalyzer();
             this.shareContext = config.getShareContext();
+            this.expiredSessionAjaxRequestMatcher = new ExpiredSessionAjaxRequestMatcher(this.shareContext);
         }
         this.connectorService = (ConnectorService) context.getBean("connector.service");
         this.loginController = (SlingshotLoginController) context.getBean("loginController");
@@ -380,6 +383,12 @@ public class BeCPGAIMSFilter implements Filter
         {
             // This request goes through the identity provider while the session stays alive for the other windows
             isAuthenticated = false;
+        }
+
+        if (!isAuthenticated && this.enabled && this.expiredSessionAjaxRequestMatcher.matches(request))
+        {
+            this.rejectExpiredSessionAjaxRequest(request, response);
+            return;
         }
 
         if (!isAuthenticated && this.enabled && (request.getRequestURI().contains(this.shareContext + SHARE_PAGE) || request.getRequestURI().contains(this.shareContext + SHARE_AIMS_LOGOUT)))
@@ -491,6 +500,26 @@ public class BeCPGAIMSFilter implements Filter
 
             chain.doFilter(sreq, sres);
         }
+    }
+
+    /**
+     * Answers 401 to a background request that has no authenticated user, so that the Share client reloads
+     * the page and goes through the identity provider again instead of reporting a server error.
+     *
+     * The content type is required: the client only treats a 401 as a lost session when the response carries one.
+     *
+     * @param request  the rejected request
+     * @param response the response to fill
+     */
+    private void rejectExpiredSessionAjaxRequest(HttpServletRequest request, HttpServletResponse response)
+    {
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("No authenticated user for background request URI=" + request.getRequestURI()
+                             + ", answering 401 so that the client replays the login");
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(EXPIRED_SESSION_CONTENT_TYPE);
     }
 
 	/**
