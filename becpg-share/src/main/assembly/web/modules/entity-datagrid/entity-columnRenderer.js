@@ -738,6 +738,10 @@
 
 						Bubbling.fire("dirtyDataTable", { "record": oSelf.getRecord(), "column": oSelf.getColumn() });
 
+						if (typeof scope.refreshComputedTotal === "function") {
+							scope.refreshComputedTotal(oSelf.getColumn().getField());
+						}
+
 						oSelf.fireEvent("saveEvent", {
 							editor: oSelf,
 							oldData: oOrigValue,
