@@ -41,6 +41,12 @@
     var ANY_ROW_PERMISSION_PREFIX = "any:";
 
     /**
+     * Item type of the total row some lists (e.g. the ingredient list) get from the
+     * repository, computed over the rows of the page.
+     */
+    var COMPUTED_TOTAL_ITEM_TYPE = "total";
+
+    /**
      * Entity DataGrid constructor.
      * 
      * @param htmlId
@@ -430,6 +436,26 @@
                  * @type number
                  */
                 activeListToken: 0,
+
+                /**
+                 * Incremented by every refresh of the total row computed by the repository.
+                 * Only the response of the latest refresh is displayed, so that a late
+                 * response cannot put back the values of an earlier save.
+                 *
+                 * @property computedTotalRefreshToken
+                 * @type number
+                 */
+                computedTotalRefreshToken: 0,
+
+                /**
+                 * True while the latest refresh of the total row has not answered yet: any
+                 * cell saved meanwhile requests a new refresh, whatever its field, since the
+                 * pending response may have been read before that save.
+                 *
+                 * @property computedTotalRefreshPending
+                 * @type boolean
+                 */
+                computedTotalRefreshPending: false,
 
 
                 /**
@@ -2878,67 +2904,137 @@
 
                         this.queryExecutionId = null;
 
-                        var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
-                            : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&site=" + this.options.siteId;
-
-                        // Reload the node's metadata
-                        Alfresco.util.Ajax
-                            .jsonPost(
-                                {
-                                    url: url,
-                                    dataObj: this._buildDataGridParams(),
-                                    successCallback:
-                                    {
-                                        fn: function EntityDataGrid_onDataItemCreated_refreshSuccess(response) {
-
-                                            if (response.json && (response.json.item !== null)) {
-                                                var item = response.json.item;
-
-                                                var fnAfterUpdate = function EntityDataGrid_onDataItemCreated_refreshSuccess_fnAfterUpdate() {
-                                                    var recordFound = this._findRecordByParameter(nodeRef,
-                                                        "nodeRef");
-                                                    if (recordFound !== null) {
-                                                        var el = this.widgets.dataTable.getTrEl(recordFound);
-                                                        Alfresco.util.Anim.pulse(el);
-                                                    }
-
-                                                    if (obj.callback) {
-                                                        obj.callback.call(response.json.item);
-                                                    }
-                                                };
-                                                this.afterDataGridUpdate.push(fnAfterUpdate);
-
-                                                if (response.json.lastSiblingNodeRef != null) {
-                                                    var prevRecord = this._findRecordByParameter(
-                                                        response.json.lastSiblingNodeRef, "nodeRef");
-                                                    if (prevRecord !== null) {
-                                                        var idx = this.widgets.dataTable
-                                                            .getRecordIndex(prevRecord);
-                                                        this.widgets.dataTable.addRow(item, idx + 1);
-                                                    }
-                                                }
-                                                else {
-                                                    this.widgets.dataTable.addRow(item);
-                                                }
-
-                                                Bubbling.fire("dirtyDataTable");
-
-                                            }
-                                        },
-                                        scope: this
-                                    },
-                                    failureCallback:
-                                    {
-                                        fn: function EntityDataGrid_onDataItemCreated_refreshFailure(response) {
-                                            Alfresco.util.PopupManager.displayMessage(
-                                                {
-                                                    text: this.msg("message.create.refresh.failure")
-                                                });
-                                        },
-                                        scope: this
-                                    }
-                                });
+                        if (this._hasComputedTotalRow()) {
+                            // inserting the new row alone would leave the total computed by the repository stale
+                            this._reloadPageWithCreatedItem(obj);
+                        }
+                        else {
+                            this._insertCreatedItem(obj);
+                        }
                     }
+                },
+
+                /**
+                 * Fetches the item just created and inserts it in the current page, after its
+                 * last sibling when that one is displayed, otherwise before the total row or
+                 * at the end of the page.
+                 * 
+                 * @method _insertCreatedItem
+                 * @private
+                 * @param obj
+                 *            {object} the dataItemCreated event parameters (nodeRef, optional callback)
+                 */
+                _insertCreatedItem: function EntityDataGrid__insertCreatedItem(obj) {
+                    var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
+                        : "?") + "itemType=" + encodeURIComponent(this._getItemType()) + "&dataListName=" + encodeURIComponent(this._getDataListName()) + "&site=" + this.options.siteId;
+
+                    // Reload the node's metadata
+                    Alfresco.util.Ajax
+                        .jsonPost(
+                            {
+                                url: url,
+                                dataObj: this._buildDataGridParams(),
+                                successCallback:
+                                {
+                                    fn: function EntityDataGrid_onDataItemCreated_refreshSuccess(response) {
+
+                                        if (response.json && (response.json.item !== null)) {
+                                            var item = response.json.item;
+
+                                            var fnAfterUpdate = function EntityDataGrid_onDataItemCreated_refreshSuccess_fnAfterUpdate() {
+                                                var recordFound = this._findRecordByParameter(nodeRef,
+                                                    "nodeRef");
+                                                if (recordFound !== null) {
+                                                    var el = this.widgets.dataTable.getTrEl(recordFound);
+                                                    Alfresco.util.Anim.pulse(el);
+                                                }
+
+                                                if (obj.callback) {
+                                                    obj.callback.call(response.json.item);
+                                                }
+                                            };
+                                            this.afterDataGridUpdate.push(fnAfterUpdate);
+
+                                            var index = this._getCreatedItemIndex(response.json.lastSiblingNodeRef);
+                                            if (index !== null) {
+                                                this.widgets.dataTable.addRow(item, index);
+                                            }
+
+                                            Bubbling.fire("dirtyDataTable");
+
+                                        }
+                                    },
+                                    scope: this
+                                },
+                                failureCallback:
+                                {
+                                    fn: function EntityDataGrid_onDataItemCreated_refreshFailure(response) {
+                                        Alfresco.util.PopupManager.displayMessage(
+                                            {
+                                                text: this.msg("message.create.refresh.failure")
+                                            });
+                                    },
+                                    scope: this
+                                }
+                            });
+                },
+
+                /**
+                 * Gives the index where a created item goes in the current page: right after
+                 * its last sibling when that one is displayed, otherwise before the total row
+                 * computed by the repository when the page holds one. Without such a row, an
+                 * item whose last sibling is not displayed (collapsed level, other page) is
+                 * not inserted, and an item without sibling goes at the end of the page.
+                 * 
+                 * @method _getCreatedItemIndex
+                 * @private
+                 * @param lastSiblingNodeRef
+                 *            {String} the nodeRef of the item's last sibling, may be null
+                 * @return {number} the record index to insert the item at, null not to insert it
+                 */
+                _getCreatedItemIndex: function EntityDataGrid__getCreatedItemIndex(lastSiblingNodeRef) {
+                    var dataTable = this.widgets.dataTable;
+                    var prevRecord = lastSiblingNodeRef != null ? this._findRecordByParameter(lastSiblingNodeRef, "nodeRef") : null;
+                    if (prevRecord !== null) {
+                        return dataTable.getRecordIndex(prevRecord) + 1;
+                    }
+                    var totalRecord = this._findRecordByParameter(COMPUTED_TOTAL_ITEM_TYPE, "itemType");
+                    if (totalRecord !== null) {
+                        return dataTable.getRecordIndex(totalRecord);
+                    }
+                    return lastSiblingNodeRef != null ? null : dataTable.getRecordSet().getLength();
+                },
+
+                /**
+                 * Reloads the current page so that it shows the item just created together
+                 * with the total row recomputed by the repository, then highlights the item.
+                 * When the item belongs to another page of the list, it is inserted in the
+                 * current one instead, so that the user still sees it.
+                 * 
+                 * @method _reloadPageWithCreatedItem
+                 * @private
+                 * @param obj
+                 *            {object} the dataItemCreated event parameters (nodeRef, optional callback)
+                 */
+                _reloadPageWithCreatedItem: function EntityDataGrid__reloadPageWithCreatedItem(obj) {
+                    var fnAfterUpdate = function EntityDataGrid__reloadPageWithCreatedItem_fnAfterUpdate() {
+                        var recordFound = this._findRecordByParameter(obj.nodeRef, "nodeRef");
+                        if (recordFound === null) {
+                            this._insertCreatedItem(obj);
+                            return;
+                        }
+                        Alfresco.util.Anim.pulse(this.widgets.dataTable.getTrEl(recordFound));
+                        if (obj.callback) {
+                            obj.callback.call(recordFound.getData());
+                        }
+                        Bubbling.fire("dirtyDataTable");
+                    };
+                    this.afterDataGridUpdate.push(fnAfterUpdate);
+
+                    this._updateDataGrid.call(this,
+                        {
+                            page: this.currentPage
+                        });
                 },
 
                 /**
@@ -3117,6 +3213,12 @@
                  * @private
                  * @param p_obj.filter
                  *            {object} Optional filter to navigate with
+                 * @param p_obj.isStale
+                 *            {function} Optional, tells whether a newer request supersedes
+                 *            this one: its response is then dropped
+                 * @param p_obj.onResponse
+                 *            {function} Optional, called once the response of a request that
+                 *            is not stale arrived, successful or not
                  */
                 _updateDataGrid: function EntityDataGrid__updateDataGrid(p_obj) {
                     p_obj = p_obj || {};
@@ -3201,6 +3303,15 @@
                             return;
                         }
 
+                        if (p_obj.isStale && p_obj.isStale.call(this)) {
+                            // a newer request of the same kind supersedes this response
+                            return;
+                        }
+
+                        if (p_obj.onResponse) {
+                            p_obj.onResponse.call(this);
+                        }
+
                         if (p_obj.updateOnly && this.scopeId == "") {
                             this.widgets.dataTable.onDataReturnUpdateRows.call(this.widgets.dataTable,
                                 sRequest, oResponse, oPayload);
@@ -3233,6 +3344,10 @@
                         if (listToken !== this.activeListToken) {
                             // failure of a list the user already left: do not report it on the new one
                             return;
+                        }
+
+                        if (p_obj.onResponse && !(p_obj.isStale && p_obj.isStale.call(this))) {
+                            p_obj.onResponse.call(this);
                         }
 
                         // Clear out deferred functions
@@ -3361,6 +3476,65 @@
                         }
                     }
                     return null;
+                },
+
+                /**
+                 * Tells whether the displayed page holds a total row computed by the
+                 * repository (e.g. the ingredient list total), which only a reload of the
+                 * page brings up to date.
+                 *
+                 * @method _hasComputedTotalRow
+                 * @private
+                 * @return {boolean} true when the page holds such a total row
+                 */
+                _hasComputedTotalRow: function EntityDataGrid__hasComputedTotalRow() {
+                    return this._findRecordByParameter(COMPUTED_TOTAL_ITEM_TYPE, "itemType") !== null;
+                },
+
+                /**
+                 * Tells whether the total row computed by the repository sums the given
+                 * field (it carries a numeric value for it), i.e. whether a change of that
+                 * field makes the total stale.
+                 *
+                 * @method _isComputedTotalField
+                 * @private
+                 * @param field
+                 *            {String} the datagrid field, e.g. prop_bcpg_ingListQtyPerc
+                 * @return {boolean} true when the total row carries that field
+                 */
+                _isComputedTotalField: function EntityDataGrid__isComputedTotalField(field) {
+                    var totalRecord = this._findRecordByParameter(COMPUTED_TOTAL_ITEM_TYPE, "itemType");
+                    var totalColumn = totalRecord !== null ? totalRecord.getData("itemData")[field] : null;
+                    return totalColumn != null && YAHOO.lang.isNumber(totalColumn.value);
+                },
+
+                /**
+                 * Refreshes the rows of the current page in place after a cell edit, when
+                 * the edited field is summed by a total row computed by the repository, or
+                 * when such a refresh is still pending. Any other edit, and any list without
+                 * such a row, sends no request.
+                 *
+                 * @method refreshComputedTotal
+                 * @param field
+                 *            {String} the datagrid field that was just saved
+                 */
+                refreshComputedTotal: function EntityDataGrid_refreshComputedTotal(field) {
+                    if (!this.computedTotalRefreshPending && !this._isComputedTotalField(field)) {
+                        return;
+                    }
+                    var refreshToken = ++this.computedTotalRefreshToken;
+                    this.computedTotalRefreshPending = true;
+                    this._updateDataGrid.call(this,
+                        {
+                            page: this.currentPage,
+                            updateOnly: true,
+                            isStale: function EntityDataGrid_refreshComputedTotal_isStale() {
+                                return refreshToken !== this.computedTotalRefreshToken;
+                            },
+                            onResponse: function EntityDataGrid_refreshComputedTotal_onResponse() {
+                                this.computedTotalRefreshPending = false;
+                            }
+                        });
                 },
 
                 /**
