@@ -3,6 +3,7 @@ package fr.becpg.repo.regulatory.becpg.regulatory;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -50,6 +52,35 @@ public class BecpgRegulatoryClient {
 	static final String HEADER_BECPG_TICKET = "BECPG_TICKET";
 	static final String CHECK_PATH = "/v1/regulatory/check";
 	static final String CHECK_VIEW_PATH = "/v1/regulatory/check/view?refresh=";
+
+	/** Ingredient identifiers read on every ingredient a recipe points to (ingredient lines, substances). */
+	private static final Set<QName> INGREDIENT_IDENTIFIERS = Set.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER,
+			PLMModel.PROP_FDA_NUMBER, PLMModel.PROP_FEMA_NUMBER, PLMModel.PROP_FL_NUMBER, PLMModel.PROP_ING_TYPE_V2,
+			PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, PLMModel.PROP_PLURAL_LEGAL_NAME);
+
+	/** Product attributes that select the applicable limits: use mode, body zones, exposure, population, serving. */
+	private static final Set<QName> PRODUCT_ATTRIBUTES = Set.of(ContentModel.PROP_SYS_NAME, PLMModel.PROP_REGULATORY_USE_MODE,
+			PLMModel.PROP_REGULATORY_APPLICATION_ZONES, PLMModel.PROP_REGULATORY_MUCOUS_CONTACT, PLMModel.PROP_REGULATORY_EXPOSURE_ROUTES,
+			PLMModel.PROP_REGULATORY_TARGET_POPULATIONS, PLMModel.PROP_REGULATORY_PROFESSIONAL_USE, PLMModel.PROP_PRODUCT_SERVING_SIZE,
+			PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT);
+
+	/** Markets to check: usages, countries and the legal status of the product on them. */
+	private static final Set<QName> REGULATORY_LINE_PROPERTIES = Set.of(PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES,
+			PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_REGULATORY_LEGAL_STATUS);
+
+	/** Ingredient lines: quantities, hierarchy and flags; an impurity or a carrier belongs to the parent line it sits under. */
+	private static final Set<QName> INGREDIENT_LINE_PROPERTIES = Set.of(PLMModel.PROP_INGLIST_QTY_PERC, PLMModel.PROP_INGLIST_QTY_MAXI,
+			PLMModel.ASSOC_INGLIST_ING, PLMModel.PROP_INGLIST_FLAGS, BeCPGModel.PROP_DEPTH_LEVEL, BeCPGModel.PROP_PARENT_LEVEL);
+
+	/** Product characteristics a limit can depend on: physico-chemical values, declared allergens, claims such as halal. */
+	private static final Set<QName> CHARACTERISTIC_LINE_PROPERTIES = Set.of(PLMModel.PROP_PHYSICOCHEMLIST_VALUE,
+			PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, PLMModel.PROP_ALLERGENLIST_QTY_PERC, PLMModel.PROP_ALLERGENLIST_VOLUNTARY,
+			PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN, PLMModel.PROP_LCL_CLAIM_VALUE,
+			PLMModel.ASSOC_LCL_LABELCLAIM);
+
+	/** Substances present without being formulated: contaminants, residues, packaging migration, REACH. */
+	private static final Set<QName> SUBSTANCE_LINE_PROPERTIES = Set.of(PLMModel.PROP_SVHCLIST_QTY_PERC, PLMModel.PROP_SVHCLIST_MIGRATION_PERC,
+			PLMModel.ASSOC_SVHCLIST_ING);
 
 	private final SystemConfigurationService systemConfigurationService;
 	private final RemoteEntityService remoteEntityService;
@@ -151,23 +182,35 @@ public class BecpgRegulatoryClient {
 	}
 
 	/**
-	 * @return the filtered projection sent to the regulatory service: recipe quantities,
-	 *         ingredient identifiers, the jurisdictions / usages to check, and the ingredient
-	 *         hierarchy: a line flagged as impurity or support belongs to the parent line it sits under
+	 * @return the filtered projection sent to the regulatory service, for the compliance check and the
+	 *         compliance view alike: the product attributes, the markets with their legal status, the
+	 *         ingredient lines with their flags, the physico-chemical, allergen and claim lines, and the
+	 *         substances present without being formulated
 	 */
 	static RemoteParams recipeParams() {
 		RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
-		params.setFilteredProperties(Set.of(ContentModel.PROP_SYS_NAME, PLMModel.PROP_INGLIST_QTY_PERC, PLMModel.ASSOC_INGLIST_ING,
-				PLMModel.PROP_INGLIST_FLAGS, BeCPGModel.PROP_DEPTH_LEVEL, BeCPGModel.PROP_PARENT_LEVEL,
-				PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES, PLMModel.PROP_REGULATORY_CODE));
-		params.setFilteredAssocProperties(Map.of(
-				PLMModel.ASSOC_INGLIST_ING,
-				Set.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER, PLMModel.PROP_FDA_NUMBER,
-						PLMModel.PROP_FEMA_NUMBER, PLMModel.PROP_FL_NUMBER, PLMModel.PROP_ING_TYPE_V2, PLMModel.PROP_ING_TYPE_DEC_THRESHOLD,
-						PLMModel.PROP_PLURAL_LEGAL_NAME),
-				PLMModel.TYPE_ING_TYPE_ITEM, Set.of(PLMModel.PROP_REGULATORY_CODE),
-				PLMModel.ASSOC_REGULATORY_USAGE_REF, Set.of(PLMModel.PROP_REGULATORY_CODE),
-				PLMModel.ASSOC_REGULATORY_COUNTRIES, Set.of(PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_GEO_ORIGIN_ISOCODE)));
+		params.setFilteredProperties(recipeProperties());
+		params.setFilteredAssocProperties(recipeTargetProperties());
 		return params;
+	}
+
+	private static Set<QName> recipeProperties() {
+		Set<QName> properties = new HashSet<>(PRODUCT_ATTRIBUTES);
+		properties.addAll(REGULATORY_LINE_PROPERTIES);
+		properties.addAll(INGREDIENT_LINE_PROPERTIES);
+		properties.addAll(CHARACTERISTIC_LINE_PROPERTIES);
+		properties.addAll(SUBSTANCE_LINE_PROPERTIES);
+		return properties;
+	}
+
+	private static Map<QName, Set<QName>> recipeTargetProperties() {
+		return Map.ofEntries(Map.entry(PLMModel.ASSOC_INGLIST_ING, INGREDIENT_IDENTIFIERS),
+				Map.entry(PLMModel.ASSOC_SVHCLIST_ING, INGREDIENT_IDENTIFIERS),
+				Map.entry(PLMModel.TYPE_ING_TYPE_ITEM, Set.of(PLMModel.PROP_REGULATORY_CODE)),
+				Map.entry(PLMModel.ASSOC_REGULATORY_USAGE_REF, Set.of(PLMModel.PROP_REGULATORY_CODE)),
+				Map.entry(PLMModel.ASSOC_REGULATORY_COUNTRIES, Set.of(PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_GEO_ORIGIN_ISOCODE)),
+				Map.entry(PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, Set.of(PLMModel.PROP_PHYSICO_CHEM_CODE, PLMModel.PROP_PHYSICO_CHEM_UNIT)),
+				Map.entry(PLMModel.ASSOC_ALLERGENLIST_ALLERGEN, Set.of(PLMModel.PROP_ALLERGEN_CODE)),
+				Map.entry(PLMModel.ASSOC_LCL_LABELCLAIM, Set.of(PLMModel.PROP_LABEL_CLAIM_CODE)));
 	}
 }
