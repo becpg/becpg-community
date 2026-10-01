@@ -27,6 +27,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,9 @@ public class MultiLevelDataListSecurityIT extends PLMBaseTestCase {
 
 	@Autowired
 	private SecurityService securityService;
+
+	@Autowired
+	private NamespaceService namespaceService;
 
 	private NodeRef protectedSubProductNodeRef;
 
