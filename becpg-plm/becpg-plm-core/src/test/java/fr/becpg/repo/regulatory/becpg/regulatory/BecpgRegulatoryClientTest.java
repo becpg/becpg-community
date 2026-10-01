@@ -141,4 +141,14 @@ public class BecpgRegulatoryClientTest {
 		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_SVHCLIST_MIGRATION_PERC));
 		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_SVHCLIST_ING).contains(PLMModel.PROP_CAS_NUMBER));
 	}
+
+	@Test
+	public void projectionExtractsOnlyTheListsTheCheckReads() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.shouldExtractList(PLMModel.TYPE_INGLIST.getLocalName()));
+		assertTrue(params.shouldExtractList(PLMModel.TYPE_SVHCLIST.getLocalName()));
+		assertFalse(params.shouldExtractList(PLMModel.TYPE_NUTLIST.getLocalName()));
+		assertFalse(params.shouldExtractList(PLMModel.TYPE_COMPOLIST.getLocalName()));
+	}
 }

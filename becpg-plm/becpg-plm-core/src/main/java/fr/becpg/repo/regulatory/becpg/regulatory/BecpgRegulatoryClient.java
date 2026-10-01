@@ -53,6 +53,11 @@ public class BecpgRegulatoryClient {
 	static final String CHECK_PATH = "/v1/regulatory/check";
 	static final String CHECK_VIEW_PATH = "/v1/regulatory/check/view?refresh=";
 
+	/** The only product lists the check reads; the others would weigh on every request for nothing. */
+	private static final Set<String> RECIPE_LISTS = Set.of(PLMModel.TYPE_REGULATORY_LIST.getLocalName(), PLMModel.TYPE_INGLIST.getLocalName(),
+			PLMModel.TYPE_PHYSICOCHEMLIST.getLocalName(), PLMModel.TYPE_ALLERGENLIST.getLocalName(), PLMModel.TYPE_LABELCLAIMLIST.getLocalName(),
+			PLMModel.TYPE_SVHCLIST.getLocalName());
+
 	/** Ingredient identifiers read on every ingredient a recipe points to (ingredient lines, substances). */
 	private static final Set<QName> INGREDIENT_IDENTIFIERS = Set.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER,
 			PLMModel.PROP_FDA_NUMBER, PLMModel.PROP_FEMA_NUMBER, PLMModel.PROP_FL_NUMBER, PLMModel.PROP_ING_TYPE_V2,
@@ -189,6 +194,7 @@ public class BecpgRegulatoryClient {
 	 */
 	static RemoteParams recipeParams() {
 		RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+		params.setFilteredLists(RECIPE_LISTS);
 		params.setFilteredProperties(recipeProperties());
 		params.setFilteredAssocProperties(recipeTargetProperties());
 		return params;
