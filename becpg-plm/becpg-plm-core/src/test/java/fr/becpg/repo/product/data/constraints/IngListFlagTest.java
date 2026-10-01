@@ -35,4 +35,11 @@ public class IngListFlagTest {
     public void normalizeReturnsAnEmptyListForNull() {
         assertTrue(IngListFlag.normalize(null).isEmpty());
     }
+
+    @Test
+    public void normalizeDropsTheEmptyCodeOfAFormSavedWithNoBoxTicked() {
+        List<String> normalized = IngListFlag.normalize(Arrays.asList("", " ", "NANO"));
+
+        assertEquals(Arrays.asList("NANO"), normalized);
+    }
 }

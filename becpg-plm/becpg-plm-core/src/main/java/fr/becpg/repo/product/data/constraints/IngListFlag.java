@@ -36,8 +36,9 @@ public enum IngListFlag {
     IONIZED;
 
     /**
-     * Returns the flag codes without duplicates, known flags first in declaration order, so that two
-     * lines carrying the same flags compare equal whatever the order they were written in.
+     * Returns the flag codes without duplicates nor blanks, known flags first in declaration order, so that
+     * two lines carrying the same flags compare equal whatever the order they were written in. A form saved
+     * with no box ticked stores an empty code, which means no flag.
      *
      * @param codes the flag codes, may be null
      * @return a new list of distinct codes, empty when codes is null
@@ -53,7 +54,7 @@ public enum IngListFlag {
             }
         }
         for (String code : codes) {
-            if ((code != null) && !normalized.contains(code)) {
+            if ((code != null) && !code.isBlank() && !normalized.contains(code)) {
                 normalized.add(code);
             }
         }

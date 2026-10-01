@@ -1035,6 +1035,7 @@
 		<constraint name="bcpg:ingListFlags" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>PROCESSING_AID</value>
 					<value>SUPPORT</value>
 					<value>IMPURITY</value>
@@ -1057,6 +1058,7 @@
 		<constraint name="bcpg:regulatoryApplicationZones" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>HAIR</value>
 					<value>SCALP</value>
 					<value>EYELASHES_EYEBROWS</value>
@@ -1074,6 +1076,7 @@
 		<constraint name="bcpg:regulatoryExposureRoutes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>AEROSOL</value>
 					<value>PUMP_SPRAY</value>
 					<value>POWDER</value>
@@ -1084,6 +1087,7 @@
 		<constraint name="bcpg:regulatoryTargetPopulations" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>INFANT_6_12M</value>
 					<value>UNDER_3Y</value>
 					<value>UNDER_6Y</value>
