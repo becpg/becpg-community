@@ -18,8 +18,8 @@
 package fr.becpg.repo.product.policy;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies.OnCreateNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
@@ -35,16 +35,18 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.helper.IngListLegacyFlags;
 
 /**
- * Folds the deprecated boolean properties of an ingredient line into bcpg:ingListFlags when a writer
- * still sets them: imports, remote clients or scripts written before the flags existed.
+ * Keeps the deprecated boolean properties of an ingredient line and bcpg:ingListFlags in sync, both
+ * ways: ticking a flag fills the matching boolean, and a writer that still sets a boolean (custom form,
+ * import, connector, script) fills the matching flag. See {@link IngListLegacyFlags} for the conflict rule.
+ *
+ * <p>The sync is computed when the properties change, because the rule needs the values before the
+ * update. Writing the result fires this policy again, which then finds both sides in agreement.</p>
  *
  * @author matthieu
  */
 public class IngListLegacyFlagsPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, OnCreateNodePolicy {
 
     private static final Log logger = LogFactory.getLog(IngListLegacyFlagsPolicy.class);
-
-    private static final String KEY_LEGACY_FLAGS = "IngListLegacyFlagsPolicy.legacyFlags";
 
     /** {@inheritDoc} */
     @Override
@@ -56,42 +58,26 @@ public class IngListLegacyFlagsPolicy extends AbstractBeCPGPolicy implements OnU
     /** {@inheritDoc} */
     @Override
     public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-        if (IngListLegacyFlags.containsLegacyProperty(after)) {
-            queueNode(KEY_LEGACY_FLAGS, nodeRef);
-        }
+        synchronize(nodeRef, before, after);
     }
 
     /** {@inheritDoc} */
     @Override
     public void onCreateNode(ChildAssociationRef childAssocRef) {
         NodeRef nodeRef = childAssocRef.getChildRef();
-        if (IngListLegacyFlags.containsLegacyProperty(nodeService.getProperties(nodeRef))) {
-            queueNode(KEY_LEGACY_FLAGS, nodeRef);
-        }
+        synchronize(nodeRef, Collections.emptyMap(), nodeService.getProperties(nodeRef));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-        if (!KEY_LEGACY_FLAGS.equals(key)) {
-            return false;
-        }
-        for (NodeRef nodeRef : pendingNodes) {
-            migrateLegacyFlags(nodeRef);
-        }
-        return true;
-    }
-
-    private void migrateLegacyFlags(NodeRef nodeRef) {
-        if (!nodeService.exists(nodeRef) || isPendingDelete(nodeRef) || isVersionNode(nodeRef)) {
+    private void synchronize(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+        if (!nodeService.exists(nodeRef) || isVersionNode(nodeRef) || isPendingDelete(nodeRef)) {
             return;
         }
-        Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-        if (IngListLegacyFlags.containsLegacyProperty(properties)) {
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
+        if (!changes.isEmpty()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Folding legacy ingredient line flags into bcpg:ingListFlags for: " + nodeRef);
+                logger.debug("Syncing ingredient line flags and legacy booleans of " + nodeRef + ": " + changes);
             }
-            nodeService.setProperties(nodeRef, IngListLegacyFlags.migrate(properties));
+            nodeService.addProperties(nodeRef, changes);
         }
     }
 }

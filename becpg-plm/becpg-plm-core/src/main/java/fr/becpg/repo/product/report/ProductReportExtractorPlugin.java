@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.report;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.charset.StandardCharsets;
@@ -80,7 +79,6 @@ import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelRenderer;
 import fr.becpg.repo.product.helper.AllocationHelper;
-import fr.becpg.repo.product.helper.IngListLegacyFlags;
 import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -693,21 +691,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Ingredient lines also expose the deprecated booleans rebuilt from bcpg:ingListFlags, so that
-	 * report templates reading bcpg:ingListIsGMO and the other booleans keep working.
-	 */
-	@Override
-	protected Map<QName, Serializable> getReportProperties(NodeRef nodeRef, QName nodeType) {
-		Map<QName, Serializable> properties = super.getReportProperties(nodeRef, nodeType);
-		if (PLMModel.TYPE_INGLIST.equals(nodeType)) {
-			return IngListLegacyFlags.withLegacyValues(properties);
-		}
-		return properties;
 	}
 
 	/** {@inheritDoc} */

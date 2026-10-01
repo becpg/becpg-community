@@ -39,12 +39,12 @@ public class IngListDataItemTest {
     }
 
     @Test
-    public void aNullValueClearsTheFlag() {
+    public void aNullValueLeavesTheFlagUnchanged() {
         IngListDataItem line = new IngListDataItem();
         line.setIsImpurity(true);
         line.setIsImpurity(null);
 
-        assertFalse(line.getIsImpurity());
+        assertTrue(line.getIsImpurity());
     }
 
     @Test

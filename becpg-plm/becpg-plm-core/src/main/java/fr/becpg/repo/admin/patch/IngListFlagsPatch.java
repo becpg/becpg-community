@@ -38,8 +38,10 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.helper.IngListLegacyFlags;
 
 /**
- * Migrates the deprecated boolean properties of the ingredient lines (GMO, ionized, processing aid,
- * support) into the multi-valued bcpg:ingListFlags property, then removes them.
+ * Aligns the multi-valued bcpg:ingListFlags property and the deprecated boolean properties of every
+ * ingredient line (GMO, ionized, processing aid, support). A line written before the flags existed gets
+ * its flags from the booleans; a line whose booleans were removed by the first version of this patch
+ * gets them back from its flags. Both stay stored afterwards, kept in sync by the ingredient line policy.
  *
  * @author matthieu
  */
@@ -47,7 +49,7 @@ public class IngListFlagsPatch extends AbstractBeCPGPatch {
 
     private static final Log logger = LogFactory.getLog(IngListFlagsPatch.class);
 
-    private static final String MSG_SUCCESS = "patch.bcpg.plm.ingListFlagsPatch.result";
+    private static final String MSG_SUCCESS = "patch.bcpg.plm.ingListFlagsSyncPatch.result";
 
     private BehaviourFilter policyBehaviourFilter;
 
@@ -110,8 +112,9 @@ public class IngListFlagsPatch extends AbstractBeCPGPatch {
             return;
         }
         Map<QName, Serializable> properties = nodeService.getProperties(ingListNodeRef);
-        if (IngListLegacyFlags.containsLegacyProperty(properties)) {
-            nodeService.setProperties(ingListNodeRef, IngListLegacyFlags.migrate(properties));
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(properties, properties);
+        if (!changes.isEmpty()) {
+            nodeService.addProperties(ingListNodeRef, changes);
         }
     }
 }

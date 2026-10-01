@@ -7,10 +7,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
@@ -20,75 +21,95 @@ import fr.becpg.model.PLMModel;
 public class IngListLegacyFlagsTest {
 
     @Test
-    public void detectsALegacyPropertyWhateverItsValue() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_IS_GMO, false);
+    public void tickingAFlagFillsItsBoolean() {
+        Map<QName, Serializable> before = lineWith(List.of(), false, false, false, false);
+        Map<QName, Serializable> after = lineWith(List.of("GMO"), false, false, false, false);
 
-        assertTrue(IngListLegacyFlags.containsLegacyProperty(properties));
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
+
+        assertEquals(Map.of(PLMModel.PROP_INGLIST_IS_GMO, Boolean.TRUE), changes);
     }
 
     @Test
-    public void ignoresPropertiesWithoutLegacyBooleans() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(Arrays.asList("NANO")));
+    public void tickingABooleanFillsItsFlag() {
+        Map<QName, Serializable> before = lineWith(List.of("NANO"), false, false, false, false);
+        Map<QName, Serializable> after = lineWith(List.of("NANO"), false, false, false, true);
 
-        assertFalse(IngListLegacyFlags.containsLegacyProperty(properties));
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
+
+        assertEquals(Map.of(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(List.of("SUPPORT", "NANO"))), changes);
     }
 
     @Test
-    public void migrateTurnsTrueBooleansIntoFlags() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_IS_SUPPORT, true);
-        properties.put(PLMModel.PROP_INGLIST_IS_GMO, true);
-        properties.put(PLMModel.PROP_INGLIST_IS_IONIZED, false);
+    public void untickingABooleanRemovesItsFlagOnly() {
+        Map<QName, Serializable> before = lineWith(List.of("GMO", "IMPURITY"), true, false, false, false);
+        Map<QName, Serializable> after = lineWith(List.of("GMO", "IMPURITY"), false, false, false, false);
 
-        Map<QName, Serializable> migrated = IngListLegacyFlags.migrate(properties);
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
 
-        assertEquals(Arrays.asList("SUPPORT", "GMO"), migrated.get(PLMModel.PROP_INGLIST_FLAGS));
+        assertEquals(Map.of(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(List.of("IMPURITY"))), changes);
     }
 
     @Test
-    public void migrateRemovesTheLegacyBooleans() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_IS_PROCESSING_AID, true);
-        properties.put(ContentModel.PROP_NAME, "line");
+    public void theFlagsWinWhenBothSidesChanged() {
+        Map<QName, Serializable> before = lineWith(List.of(), false, false, false, false);
+        Map<QName, Serializable> after = lineWith(List.of("IONIZED"), true, false, false, false);
 
-        Map<QName, Serializable> migrated = IngListLegacyFlags.migrate(properties);
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
 
-        assertFalse(IngListLegacyFlags.containsLegacyProperty(migrated));
-        assertEquals("line", migrated.get(ContentModel.PROP_NAME));
+        assertEquals(Boolean.FALSE, changes.get(PLMModel.PROP_INGLIST_IS_GMO));
+        assertEquals(Boolean.TRUE, changes.get(PLMModel.PROP_INGLIST_IS_IONIZED));
+        assertFalse(changes.containsKey(PLMModel.PROP_INGLIST_FLAGS));
     }
 
     @Test
-    public void migrateKeepsTheFlagsNotCoveredByLegacyBooleans() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(Arrays.asList("IMPURITY", "NANO")));
-        properties.put(PLMModel.PROP_INGLIST_IS_GMO, true);
+    public void nothingIsWrittenWhenBothSidesAgree() {
+        Map<QName, Serializable> line = lineWith(List.of("PROCESSING_AID", "NANO"), false, false, true, false);
 
-        Map<QName, Serializable> migrated = IngListLegacyFlags.migrate(properties);
-
-        assertEquals(Arrays.asList("IMPURITY", "NANO", "GMO"), migrated.get(PLMModel.PROP_INGLIST_FLAGS));
+        assertTrue(IngListLegacyFlags.synchronize(line, line).isEmpty());
     }
 
     @Test
-    public void migrateRemovesAFlagSetToFalseByALegacyWriter() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(Arrays.asList("GMO", "NANO")));
-        properties.put(PLMModel.PROP_INGLIST_IS_GMO, false);
+    public void aLineWrittenBeforeTheFlagsGetsItsFlagsFromTheBooleans() {
+        Map<QName, Serializable> line = new HashMap<>(lineWith(List.of(), true, false, false, true));
+        line.remove(PLMModel.PROP_INGLIST_FLAGS);
 
-        Map<QName, Serializable> migrated = IngListLegacyFlags.migrate(properties);
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(line, line);
 
-        assertEquals(Arrays.asList("NANO"), migrated.get(PLMModel.PROP_INGLIST_FLAGS));
+        assertEquals(Map.of(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(List.of("SUPPORT", "GMO"))), changes);
     }
 
     @Test
-    public void migrateLeavesTheSourceMapUnchanged() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_IS_GMO, true);
+    public void aLineWhoseBooleansWereRemovedGetsThemBackFromItsFlags() {
+        Map<QName, Serializable> line = new HashMap<>();
+        line.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(List.of("SUPPORT")));
 
-        IngListLegacyFlags.migrate(properties);
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(line, line);
 
-        assertTrue(properties.containsKey(PLMModel.PROP_INGLIST_IS_GMO));
+        assertEquals(Boolean.TRUE, changes.get(PLMModel.PROP_INGLIST_IS_SUPPORT));
+        assertEquals(Boolean.FALSE, changes.get(PLMModel.PROP_INGLIST_IS_GMO));
+        assertEquals(4, changes.size());
+    }
+
+    @Test
+    public void anImportCreatingALineWithBooleansOnlyFillsTheFlags() {
+        Map<QName, Serializable> created = new HashMap<>();
+        created.put(PLMModel.PROP_INGLIST_IS_PROCESSING_AID, true);
+
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(Collections.emptyMap(), created);
+
+        assertEquals(new ArrayList<>(List.of("PROCESSING_AID")), changes.get(PLMModel.PROP_INGLIST_FLAGS));
+        assertEquals(Boolean.FALSE, changes.get(PLMModel.PROP_INGLIST_IS_GMO));
+    }
+
+    @Test
+    public void aFormSavedWithNoBoxTickedMeansNoFlag() {
+        Map<QName, Serializable> before = lineWith(List.of("GMO"), true, false, false, false);
+        Map<QName, Serializable> after = lineWith(Arrays.asList(""), true, false, false, false);
+
+        Map<QName, Serializable> changes = IngListLegacyFlags.synchronize(before, after);
+
+        assertEquals(Map.of(PLMModel.PROP_INGLIST_IS_GMO, Boolean.FALSE), changes);
     }
 
     @Test
@@ -100,34 +121,13 @@ public class IngListLegacyFlagsTest {
         assertFalse(legacyValues.get(PLMModel.PROP_INGLIST_IS_SUPPORT));
     }
 
-    @Test
-    public void withLegacyValuesExposesTheBooleansForReports() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(Arrays.asList("GMO")));
-
-        Map<QName, Serializable> withLegacy = IngListLegacyFlags.withLegacyValues(properties);
-
-        assertEquals(Boolean.TRUE, withLegacy.get(PLMModel.PROP_INGLIST_IS_GMO));
-        assertEquals(Boolean.FALSE, withLegacy.get(PLMModel.PROP_INGLIST_IS_IONIZED));
-    }
-
-    @Test
-    public void withLegacyValuesKeepsAValueStoredOnALineNotYetMigrated() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_IS_SUPPORT, true);
-
-        Map<QName, Serializable> withLegacy = IngListLegacyFlags.withLegacyValues(properties);
-
-        assertEquals(Boolean.TRUE, withLegacy.get(PLMModel.PROP_INGLIST_IS_SUPPORT));
-    }
-
-    @Test
-    public void withLegacyValuesAcceptsASingleFlagValue() {
-        Map<QName, Serializable> properties = new HashMap<>();
-        properties.put(PLMModel.PROP_INGLIST_FLAGS, "IONIZED");
-
-        Map<QName, Serializable> withLegacy = IngListLegacyFlags.withLegacyValues(properties);
-
-        assertEquals(Boolean.TRUE, withLegacy.get(PLMModel.PROP_INGLIST_IS_IONIZED));
+    private static Map<QName, Serializable> lineWith(List<String> flags, boolean gmo, boolean ionized, boolean processingAid, boolean support) {
+        Map<QName, Serializable> line = new HashMap<>();
+        line.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(flags));
+        line.put(PLMModel.PROP_INGLIST_IS_GMO, gmo);
+        line.put(PLMModel.PROP_INGLIST_IS_IONIZED, ionized);
+        line.put(PLMModel.PROP_INGLIST_IS_PROCESSING_AID, processingAid);
+        line.put(PLMModel.PROP_INGLIST_IS_SUPPORT, support);
+        return line;
     }
 }

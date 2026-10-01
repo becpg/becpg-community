@@ -3482,7 +3482,7 @@
 						<constraint ref="bcpg:ingListFlags" />
 					</constraints>
 				</property>
-				<!-- Deprecated: replaced by bcpg:ingListFlags, kept to read the values written by imports and remote clients -->
+				<!-- Deprecated: replaced by bcpg:ingListFlags, kept in sync with it by IngListLegacyFlagsPolicy for the forms, reports and connectors that read them -->
 				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>

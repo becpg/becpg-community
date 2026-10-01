@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.service.namespace.QName;
 
@@ -32,13 +33,17 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.constraints.IngListFlag;
 
 /**
- * Bridges the deprecated boolean properties of an ingredient line (bcpg:ingListIsGMO,
- * bcpg:ingListIsIonized, bcpg:ingListIsProcessingAid, bcpg:ingListIsSupport) and the
- * multi-valued bcpg:ingListFlags property that replaces them.
+ * Keeps the deprecated boolean properties of an ingredient line (bcpg:ingListIsGMO,
+ * bcpg:ingListIsIonized, bcpg:ingListIsProcessingAid, bcpg:ingListIsSupport) in sync with the
+ * multi-valued bcpg:ingListFlags property.
  *
- * <p>The migration patch and the ingredient line policy fold the legacy values into the flags, so
- * that imports and remote clients still writing the booleans keep working; report extraction
- * rebuilds the booleans from the flags, so that existing report templates keep working.</p>
+ * <p>Both representations stay stored, so that forms, reports, connectors and exports written for
+ * the booleans keep working. The flags that have no boolean counterpart (impurity, nano) live in
+ * bcpg:ingListFlags only.</p>
+ *
+ * <p>Conflict rule: when the flags changed they win and rewrite the booleans; when only the booleans
+ * changed they rewrite their four flags; when neither changed, the flags win if the property is
+ * stored, the booleans otherwise (a line written before the flags existed).</p>
  *
  * @author matthieu
  */
@@ -61,42 +66,28 @@ public final class IngListLegacyFlags {
     }
 
     /**
-     * Tells whether a property map still holds one of the deprecated boolean properties.
+     * Computes the properties to write so that the flags and the legacy booleans agree again.
      *
-     * @param properties the node properties
-     * @return true when at least one legacy boolean property is present, whatever its value
+     * @param before the properties before the update, empty for a creation
+     * @param after the properties after the update
+     * @return the properties to set, empty when both representations already agree
      */
-    public static boolean containsLegacyProperty(Map<QName, Serializable> properties) {
-        for (QName legacyProperty : LEGACY_PROPERTIES.keySet()) {
-            if (properties.containsKey(legacyProperty)) {
-                return true;
+    public static Map<QName, Serializable> synchronize(Map<QName, Serializable> before, Map<QName, Serializable> after) {
+        List<String> flags = resolveFlags(before, after);
+        Map<QName, Serializable> changes = new HashMap<>();
+        if (!flags.equals(IngListFlag.normalize(readFlags(after)))) {
+            changes.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(flags));
+        }
+        for (Map.Entry<QName, Boolean> legacy : toLegacyValues(flags).entrySet()) {
+            if (!Objects.equals(legacy.getValue(), after.get(legacy.getKey()))) {
+                changes.put(legacy.getKey(), legacy.getValue());
             }
         }
-        return false;
+        return changes;
     }
 
     /**
-     * Folds the legacy boolean properties into bcpg:ingListFlags: a true value adds the flag, any other
-     * value removes it, and the legacy property itself is dropped.
-     *
-     * @param properties the node properties, left unchanged
-     * @return a copy of the properties without the legacy booleans and with the resulting flags
-     */
-    public static Map<QName, Serializable> migrate(Map<QName, Serializable> properties) {
-        Map<QName, Serializable> migrated = new HashMap<>(properties);
-        List<String> flags = new ArrayList<>(readFlags(properties));
-        for (Map.Entry<QName, IngListFlag> legacy : LEGACY_PROPERTIES.entrySet()) {
-            if (migrated.containsKey(legacy.getKey())) {
-                Serializable value = migrated.remove(legacy.getKey());
-                applyLegacyValue(flags, legacy.getValue(), Boolean.TRUE.equals(value));
-            }
-        }
-        migrated.put(PLMModel.PROP_INGLIST_FLAGS, new ArrayList<>(IngListFlag.normalize(flags)));
-        return migrated;
-    }
-
-    /**
-     * Rebuilds the value each legacy boolean property would have for the given flags.
+     * Rebuilds the value each legacy boolean property has for the given flags.
      *
      * @param flags the flag codes of the line, may be null
      * @return the legacy boolean value per legacy property, in a stable order
@@ -109,20 +100,37 @@ public final class IngListLegacyFlags {
         return legacyValues;
     }
 
-    /**
-     * Adds the legacy boolean properties rebuilt from bcpg:ingListFlags, so that report templates
-     * written before the flags keep reading bcpg:ingListIsGMO and the other booleans. A legacy value
-     * still stored on a line not yet migrated is kept as it is.
-     *
-     * @param properties the ingredient line properties, left unchanged
-     * @return a copy of the properties with every legacy boolean property set
-     */
-    public static Map<QName, Serializable> withLegacyValues(Map<QName, Serializable> properties) {
-        Map<QName, Serializable> withLegacy = new HashMap<>(properties);
-        for (Map.Entry<QName, Boolean> legacy : toLegacyValues(readFlags(properties)).entrySet()) {
-            withLegacy.putIfAbsent(legacy.getKey(), legacy.getValue());
+    private static List<String> resolveFlags(Map<QName, Serializable> before, Map<QName, Serializable> after) {
+        List<String> flagsAfter = IngListFlag.normalize(readFlags(after));
+        if (!flagsAfter.equals(IngListFlag.normalize(readFlags(before)))) {
+            return flagsAfter;
         }
-        return withLegacy;
+        if (legacyChanged(before, after) || !after.containsKey(PLMModel.PROP_INGLIST_FLAGS)) {
+            return applyLegacyValues(flagsAfter, after);
+        }
+        return flagsAfter;
+    }
+
+    private static boolean legacyChanged(Map<QName, Serializable> before, Map<QName, Serializable> after) {
+        for (QName legacyProperty : LEGACY_PROPERTIES.keySet()) {
+            if (!Objects.equals(before.get(legacyProperty), after.get(legacyProperty))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<String> applyLegacyValues(List<String> flags, Map<QName, Serializable> properties) {
+        List<String> merged = new ArrayList<>(flags);
+        for (Map.Entry<QName, IngListFlag> legacy : LEGACY_PROPERTIES.entrySet()) {
+            if (properties.containsKey(legacy.getKey())) {
+                merged.remove(legacy.getValue().name());
+                if (Boolean.TRUE.equals(properties.get(legacy.getKey()))) {
+                    merged.add(legacy.getValue().name());
+                }
+            }
+        }
+        return IngListFlag.normalize(merged);
     }
 
     @SuppressWarnings("unchecked")
@@ -135,12 +143,5 @@ public final class IngListLegacyFlags {
             return List.of(flag);
         }
         return Collections.emptyList();
-    }
-
-    private static void applyLegacyValue(List<String> flags, IngListFlag flag, boolean enabled) {
-        flags.remove(flag.name());
-        if (enabled) {
-            flags.add(flag.name());
-        }
     }
 }
