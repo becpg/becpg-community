@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -624,21 +623,67 @@ public class SurveyServiceImpl implements SurveyService {
 		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
 			return true;
 		}
-		boolean inNextQuestions = new ArrayList<>(surveyQuestionByNodeRef.values()).stream()
-				.map(sQuestion -> getSurveyQuestionCache().getSurveyQuestionsByParent().get(sQuestion)).flatMap(List::stream)
-				.map(surveyQuestionByNodeRef::get)
-				.filter(sAnswer -> sAnswer.getNextQuestions() != null)
-				.anyMatch(q -> q.getNextQuestions().contains(parentQuestion));
-		if (!inNextQuestions) {
+		if (!isNextQuestionOfAnyAnswer(parentQuestion, surveyQuestionByNodeRef)) {
 			return true;
 		}
-		return surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-				.map(surveyQuestionByNodeRef::get)
-				.filter(Objects::nonNull)
-				.map(SurveyQuestion::getNextQuestions)
-				.filter(Objects::nonNull)
-				.flatMap(List::stream)
-				.anyMatch(parentQuestion::equals);
+		return isNextQuestionOfAChosenAnswer(parentQuestion, surveyListDataItems, surveyQuestionByNodeRef);
+	}
+
+	/**
+	 * Tells whether a question is revealed by some answer of the questionnaire, i.e. whether it is a
+	 * follow-up question at all.
+	 *
+	 * @param question the question to look for
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when an answer lists the question among its next questions
+	 */
+	private boolean isNextQuestionOfAnyAnswer(SurveyQuestion question, Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		for (List<NodeRef> answers : getSurveyQuestionCache().getSurveyQuestionsByParent().values()) {
+			if (leadsTo(answers, question, surveyQuestionByNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tells whether a question is revealed by an answer actually chosen on the survey rows.
+	 *
+	 * @param question the question to look for
+	 * @param surveyListDataItems the survey rows, whose choices may be empty or unset
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when a chosen answer lists the question among its next questions
+	 */
+	private static boolean isNextQuestionOfAChosenAnswer(SurveyQuestion question, List<SurveyListDataItem> surveyListDataItems,
+			Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		for (SurveyListDataItem surveyListDataItem : surveyListDataItems) {
+			if (leadsTo(surveyListDataItem.getChoices(), question, surveyQuestionByNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tells whether one of the given answers leads to a question. A row with no choice, an answer missing
+	 * from the questionnaire or an answer with no next question leads nowhere.
+	 *
+	 * @param answers the answer nodes, may be null
+	 * @param question the question to look for
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when one answer lists the question among its next questions
+	 */
+	static boolean leadsTo(List<NodeRef> answers, SurveyQuestion question, Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		if (answers == null) {
+			return false;
+		}
+		for (NodeRef answerNodeRef : answers) {
+			SurveyQuestion answer = surveyQuestionByNodeRef.get(answerNodeRef);
+			if ((answer != null) && (answer.getNextQuestions() != null) && answer.getNextQuestions().contains(question)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
