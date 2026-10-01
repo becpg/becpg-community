@@ -271,41 +271,57 @@
 
 
 							});
-							
-							formsRuntime.
-							
-							
+
 							YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", onBeforeFormRuntimeInit, me);
 						};
 
+						var getBrowserFullScreenElement = function() {
+							return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || null;
+						};
 
-
-						if (Dom.hasClass("share-header", "hidden")) {
-
-							if (document.exitFullscreen) {
-								document.exitFullscreen();
-							}
-							else if (document.mozCancelFullScreen) {
-								document.mozCancelFullScreen();
-							}
-							else if (document.webkitCancelFullScreen) {
-								document.webkitCancelFullScreen();
-							}
-
+						var exitFullScreenLayout = function() {
 							Dom.removeClass("share-header", "hidden");
 							Dom.removeClass("alf-hd", "hidden");
 							Dom.removeClass("alf-filters", "hidden");
 							Dom.removeClass("alf-ft", "hidden");
 							Dom.removeClass("Share", "full-screen");
 							Dom.addClass("alf-content", "yui-b");
-							if (this.fullScreen) {
-								Dom.setStyle("alf-content", "margin-left", this.fullScreen.marginLeft);
-								this.fullScreen = null;
+							if (me.fullScreen) {
+								Dom.setStyle("alf-content", "margin-left", me.fullScreen.marginLeft);
+								me.fullScreen = null;
 							}
 							Dom.addClass("full-screen-form", "hidden");
 
-
 							YAHOO.Bubbling.fire("refreshFloatingHeader");
+						};
+
+						// Escape leaves the browser full screen without going through this action
+						if (!me.onBrowserFullScreenChange) {
+							me.onBrowserFullScreenChange = function() {
+								if (getBrowserFullScreenElement() === null && Dom.hasClass("share-header", "hidden")) {
+									exitFullScreenLayout();
+								}
+							};
+							YAHOO.util.Event.addListener(document, "fullscreenchange", me.onBrowserFullScreenChange);
+							YAHOO.util.Event.addListener(document, "webkitfullscreenchange", me.onBrowserFullScreenChange);
+							YAHOO.util.Event.addListener(document, "mozfullscreenchange", me.onBrowserFullScreenChange);
+						}
+
+						if (Dom.hasClass("share-header", "hidden")) {
+
+							if (getBrowserFullScreenElement() !== null) {
+								if (document.exitFullscreen) {
+									document.exitFullscreen();
+								}
+								else if (document.mozCancelFullScreen) {
+									document.mozCancelFullScreen();
+								}
+								else if (document.webkitCancelFullScreen) {
+									document.webkitCancelFullScreen();
+								}
+							}
+
+							exitFullScreenLayout();
 						} else {
 
 							var docElm = document.documentElement;
