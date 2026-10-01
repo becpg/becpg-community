@@ -11122,6 +11122,8 @@
                     <show id="bcpg:nutListFormulatedValue" />
                     <show id="bcpg:nutListUnit" />
                     <show id="bcpg:nutListValuePrepared" force="true" />
+                    <show id="bcpg:nutListFormulatedValuePrepared" force="true" />
+                    <show id="bcpg:nutListUnitPrepared" force="true" />
                     <show id="bcpg:nutListMini" />
                     <show id="bcpg:nutListMaxi" />
                     <show id="bcpg:nutListFormulatedMini" />
