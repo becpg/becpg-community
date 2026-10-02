@@ -352,8 +352,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 					String batchFullId = REFORMULATE_BATCH_ID + "|" + REFORMULATE_BATCH_DESC_ID;
 					batchQueueService.clearBatchError(entityNodeRef, batchFullId);
 					logger.info("Retrying formulation for product: " + entityNodeRef);
+					nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 				}
-				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}
 		});
 		steps.add(retryProductsStep);
