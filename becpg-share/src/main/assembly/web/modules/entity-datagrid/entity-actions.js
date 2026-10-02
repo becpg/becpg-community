@@ -696,6 +696,7 @@
                     + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
                     + (this.options.list != null ? "&list=" + this.options.list : "")
+                    + (this.options.columnPrefsScope != null ? "&prefsScope=" + encodeURIComponent(this.options.columnPrefsScope) : "")
                     + ("&noCache=" + timeStamp),
                 successCallback: {
                     fn: function(response) {

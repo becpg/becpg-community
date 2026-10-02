@@ -368,6 +368,13 @@
                     columnFormId: null,
 
                     /**
+                     * Scope of the column preferences: pages showing the same item type with another form
+                     * (e.g. the project list and the product repository) use their own scope, so that a
+                     * column choice made on one page does not hide columns on the other
+                     */
+                    columnPrefsScope: null,
+
+                    /**
                      * filter formId
                      */
                     filterFormId: "filter",
@@ -956,7 +963,8 @@
 
                     var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this._getItemType()) + "&list=" + encodeURIComponent(this._getDataListName()) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
                         + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
-                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "");
+                        + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
+                        + (this.options.columnPrefsScope != null ? "&prefsScope=" + encodeURIComponent(this.options.columnPrefsScope) : "");
 
 
                     var cacheTimeStamp = this.cacheTimeStamp
@@ -1040,7 +1048,7 @@
                             filterOwner: this.id,
                             filterId: "filterform",
                             filterData: YAHOO.lang.JSON.stringify(
-                                this.cleanFilterData(this.formsFilterRuntime.getFormData())).replace("|",
+                                this.cleanFilterData(this.formsFilterRuntime.getFormData())).replace(/\|/g,
                                     "$ML$")
                         });
 
@@ -1171,7 +1179,7 @@
                         var filters = strFilter.split("|"), filterObj =
                         {
                             filterId: window.unescape(filters[0] || ""),
-                            filterData: window.unescape((filters[1] || "")).replace("$ML$", "|")
+                            filterData: window.unescape((filters[1] || "")).replace(/\$ML\$/g, "|")
                         };
 
                         filterObj.filterOwner = Alfresco.util.FilterManager.getOwner(filterObj.filterId);
@@ -2649,7 +2657,9 @@
                         this.services.preferences = new Alfresco.service.Preferences();
                     }
                     this.cacheTimeStamp = (new Date().getTime());
-                    var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemType.replace(":", "_");
+                    var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"
+                        + (this.options.columnPrefsScope != null ? "." + this.options.columnPrefsScope : "")
+                        + "." + itemType.replace(":", "_");
                     this.services.preferences.set(prefs, obj.selectedColumns, {
                         successCallback: function() {
                             this.services.preferences.set("fr.becpg.column.cache", { "timeStamp": this.cacheTimeStamp }, {
