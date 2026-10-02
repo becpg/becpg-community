@@ -36,7 +36,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     /**
      * Reads the value a rounded value JSON holds for a regulation, null when there is none.
-     * A tolerance of 0 is a real limit and must not be taken for a missing value.
+     * A value or a tolerance of 0 is a real one and must not be taken for a missing value.
      */
     var getRegulationValue = function(jsonData, valueKey, regulationKey) {
         if (jsonData[valueKey] && jsonData[valueKey][regulationKey] !== undefined && jsonData[valueKey][regulationKey] !== null) {
@@ -1120,8 +1120,8 @@ if (beCPG.module.EntityDataGridRenderers) {
                         ret += '<div id="nut-details-' + oColumn.field + "-" + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">' + nutName + '</div><div class="bd" >';
                         for (var i = 0; i < keys.length; i++) {
                             var k = keys[i];
-                            var value = jsonData.v[k];
-                            if (k && value) {
+                            var value = getRegulationValue(jsonData, "v", k);
+                            if (k && value !== null) {
                                 minimumFractionDigits = 0;
                                 if (k == "EU" && jsonData.v[key] != null && value < 10 && value >= 1) {
                                     minimumFractionDigits = 1;
