@@ -362,8 +362,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 						nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) batchErrorIds);
 						logger.info("Retrying formulation for product: " + entityNodeRef);
 					}
+					nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 				}
-				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}
 		});
 		steps.add(retryProductsStep);
