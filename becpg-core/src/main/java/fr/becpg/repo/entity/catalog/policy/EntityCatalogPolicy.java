@@ -4,10 +4,12 @@
 package fr.becpg.repo.entity.catalog.policy;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -29,7 +31,8 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  */
 public class EntityCatalogPolicy extends AbstractBeCPGPolicy
-		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy,
+		NodeServicePolicies.OnSetNodeTypePolicy {
 
 	/** Constant <code>CHANGED_CATALOG_ENTRIES="EntityCatalogPolicy.ChangedCatalogEntri"{trunked}</code> */
 	private static final String CHANGED_CATALOG_ENTRIES = "EntityCatalogPolicy.ChangedCatalogEntries";
@@ -61,6 +64,8 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnSetNodeTypePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onSetNodeType"));
 	}
 
 
@@ -68,18 +73,7 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			
-			String diffKey = CHANGED_CATALOG_ENTRIES + assocRef.getSourceRef();
-			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-			
-			if (pendingDiff == null) {
-				pendingDiff = new HashSet<>();
-			}
-			
-			pendingDiff.add(assocRef.getTypeQName());
-			TransactionSupportUtil.bindResource(diffKey, pendingDiff);
-			
-			queueNode(assocRef.getSourceRef());
+			queueAssociationChange(assocRef);
 		}
 	}
 
@@ -87,18 +81,7 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			
-			String diffKey = CHANGED_CATALOG_ENTRIES + assocRef.getSourceRef();
-			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-			
-			if (pendingDiff == null) {
-				pendingDiff = new HashSet<>();
-			}
-			
-			pendingDiff.add(assocRef.getTypeQName());
-			TransactionSupportUtil.bindResource(diffKey, pendingDiff);
-			
-			queueNode(assocRef.getSourceRef());
+			queueAssociationChange(assocRef);
 		}
 	}
 
@@ -128,20 +111,76 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 				changedEntries.addAll(diff.entriesDiffering().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
-				
-				String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
-				Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-				
-				if (pendingDiff == null) {
-					pendingDiff = new HashSet<>();
-				}
-				
-				pendingDiff.addAll(changedEntries);
-				
-				TransactionSupportUtil.bindResource(diffKey, pendingDiff);
-				queueNode(nodeRef);
+
+				queueChangedEntries(nodeRef, changedEntries);
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>
+	 * A type change updates cm:modified without firing onUpdateProperties, so the modified date is
+	 * queued explicitly to notify the catalog observers.
+	 * </p>
+	 */
+	@Override
+	public void onSetNodeType(NodeRef nodeRef, QName oldType, QName newType) {
+		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && isAuditableUpdated(nodeRef)) {
+			queueChangedEntries(nodeRef, Set.of(ContentModel.PROP_MODIFIED));
+		}
+	}
+
+	/**
+	 * Queues the association type of a created or deleted association on its source entity.
+	 * <p>
+	 * An association change updates cm:modified without firing onUpdateProperties, so the modified
+	 * date is queued too when the auditable behaviour has actually updated it.
+	 * </p>
+	 *
+	 * @param assocRef the created or deleted association
+	 */
+	private void queueAssociationChange(AssociationRef assocRef) {
+		NodeRef sourceNodeRef = assocRef.getSourceRef();
+		Set<QName> changedEntries = new HashSet<>();
+		changedEntries.add(assocRef.getTypeQName());
+		if (isAuditableUpdated(sourceNodeRef)) {
+			changedEntries.add(ContentModel.PROP_MODIFIED);
+		}
+		queueChangedEntries(sourceNodeRef, changedEntries);
+	}
+
+	/**
+	 * Tells whether the node DAO updates cm:modified when the node is touched, which mirrors the
+	 * condition applied by the node DAO itself.
+	 *
+	 * @param nodeRef the touched node
+	 * @return <code>true</code> if the node is auditable and its auditable behaviour is enabled
+	 */
+	private boolean isAuditableUpdated(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)
+				&& policyBehaviourFilter.isEnabled(nodeRef, ContentModel.ASPECT_AUDITABLE);
+	}
+
+	/**
+	 * Adds the changed entries to the pending catalog diff of the node and queues it for the
+	 * before-commit processing.
+	 *
+	 * @param nodeRef the changed entity
+	 * @param changedEntries the changed properties or association types
+	 */
+	private void queueChangedEntries(NodeRef nodeRef, Collection<QName> changedEntries) {
+		String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
+		Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
+
+		if (pendingDiff == null) {
+			pendingDiff = new HashSet<>();
+		}
+
+		pendingDiff.addAll(changedEntries);
+		TransactionSupportUtil.bindResource(diffKey, pendingDiff);
+		queueNode(nodeRef);
 	}
 
 }

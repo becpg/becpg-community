@@ -51,6 +51,7 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -341,6 +342,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	
 	/** Constant <code>ARCHIVE_PJT_TPL_NAME="plm.project.archive.tpl.name"</code> */
 	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
+	/** Constant <code>FORMULATE_ENTITIES_CHANNEL_NAME="plm.publication.channel.formulate-entities.name"</code> */
+	private static final String FORMULATE_ENTITIES_CHANNEL_NAME = "plm.publication.channel.formulate-entities.name";
 	/** Constant <code>ARCHIVE_PJT_TASK_NAME="plm.project.archive.task.name"</code> */
 	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
 	/** Constant <code>ARCHIVE_PJT_DELIVERABLE_NAME="plm.project.archive.deliverable.name"</code> */
@@ -582,10 +585,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param channelListFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitChannelList(NodeRef channelListFolder) {
-		NodeRef formulateChannel = nodeService.getChildByName(channelListFolder, ContentModel.ASSOC_CONTAINS, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
-		if (formulateChannel == null) {
+		List<ChildAssociationRef> formulateChannels = nodeService.getChildAssocsByPropertyValue(channelListFolder, PublicationModel.PROP_PUBCHANNEL_ID,
+				FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+		if (formulateChannels.isEmpty()) {
 			Map<QName, Serializable> props = new HashMap<>();
-			props.put(ContentModel.PROP_NAME, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			props.put(ContentModel.PROP_NAME, I18NUtil.getMessage(FORMULATE_ENTITIES_CHANNEL_NAME));
 			props.put(PublicationModel.PROP_PUBCHANNEL_ID, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
 			props.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, "{\"query\": \" (+TYPE:\\\"bcpg:product\\\" OR +TYPE:\\\"sec:aclGroup\\\")\"}");
 			nodeService.createNode(channelListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,

@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -38,6 +39,7 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction;
@@ -57,6 +59,9 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 	private static final String CHANNEL_ID1 = "test-channel-1" + UNIQUE_SUFFIX;
 	private static final String CHANNEL_ID2 = "test-channel-2" + UNIQUE_SUFFIX;
 	private static final String CHANNEL_ID3 = "test-channel-3" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID4 = "test-channel-4" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID5 = "test-channel-5" + UNIQUE_SUFFIX;
+	private static final String UPDATED_DESCRIPTION = "Updated description";
 
 	@Autowired
 	private PublicationChannelService publicationChannelService;
@@ -628,6 +633,59 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		
 	}
 	
+	@Test
+	public void testDefaultChannelNotifiedOnAssociationChange() {
+		final NodeRef channelNodeRef = createPublicationChannelNode(CHANNEL_ID4);
+		final NodeRef pfNodeRef = createFinishedProductNode("finished-product 4", CHANNEL_ID4 + "01");
+		final NodeRef clientNodeRef = createClientNode("client " + CHANNEL_ID4);
+		final NodeRef channelListItemNodeRef = createChannelListItemNode(channelNodeRef, pfNodeRef);
+		final Date beforeChannelModifiedDate = touchEntityAndGetChannelModifiedDate(pfNodeRef, channelListItemNodeRef);
+
+		inWriteTx(() -> nodeService.createAssociation(pfNodeRef, clientNodeRef, PLMModel.ASSOC_CLIENTS));
+
+		assertTrue(getChannelModifiedDate(channelListItemNodeRef).after(beforeChannelModifiedDate));
+	}
+
+	@Test
+	public void testDefaultChannelNotifiedOnSetTypeFollowedByPropertyUpdate() {
+		final NodeRef channelNodeRef = createPublicationChannelNode(CHANNEL_ID5);
+		final NodeRef pfNodeRef = createFinishedProductNode("finished-product 5", CHANNEL_ID5 + "01");
+		final NodeRef channelListItemNodeRef = createChannelListItemNode(channelNodeRef, pfNodeRef);
+		final Date beforeChannelModifiedDate = touchEntityAndGetChannelModifiedDate(pfNodeRef, channelListItemNodeRef);
+
+		inWriteTx(() -> {
+			nodeService.setType(pfNodeRef, PLMModel.TYPE_FINISHEDPRODUCT);
+			nodeService.setProperty(pfNodeRef, ContentModel.PROP_DESCRIPTION, UPDATED_DESCRIPTION);
+			return null;
+		});
+
+		assertTrue(getChannelModifiedDate(channelListItemNodeRef).after(beforeChannelModifiedDate));
+	}
+
+	private Date touchEntityAndGetChannelModifiedDate(NodeRef pfNodeRef, NodeRef channelListItemNodeRef) {
+		inWriteTx(() -> {
+			nodeService.setProperty(pfNodeRef, ContentModel.PROP_TITLE, "Update");
+			return null;
+		});
+		Date channelModifiedDate = getChannelModifiedDate(channelListItemNodeRef);
+		assertNotNull(channelModifiedDate);
+		return channelModifiedDate;
+	}
+
+	private Date getChannelModifiedDate(NodeRef channelListItemNodeRef) {
+		return inReadTx(() -> (Date) nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE));
+	}
+
+	private NodeRef createClientNode(String name) {
+		return inWriteTx(() -> {
+			ClientData client = new ClientData();
+			client.setName(name);
+			client.setParentNodeRef(getTestFolderNodeRef());
+			alfrescoRepository.save(client);
+			return client.getNodeRef();
+		});
+	}
+
 	private List<ActivityListDataItem> getChannelListActivityNumber(NodeRef pfNodeRef) {
 		return inWriteTx(() -> {
 			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
