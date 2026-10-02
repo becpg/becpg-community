@@ -49,6 +49,7 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 
 	static {
 		register(v -> (v > 50) ? 10d : ((v >= 5) ? 5d : 1d), NutrientCode.EnergykcalUS);
+		register(v -> 10d, NutrientCode.EnergykJ);
 		register(v -> (v > 5) ? 1d : ((v >= 0.5) ? 0.5d : 0.1d), NutrientCode.FatTrans, NutrientCode.Fat, NutrientCode.FatSaturated);
 		register(v -> (v > 140) ? 10d : ((v >= 5) ? 5d : 1d), NutrientCode.Sodium);
 		register(v -> 5d, NutrientCode.Cholesterol);

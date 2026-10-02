@@ -36,6 +36,17 @@ public class CanadianNutrientRegulationTest {
 	}
 
 	@Test
+	public void roundsKilojoulesToTheNearestMultipleOfTen() {
+		assertEquals(100d, regulation.round(95.4d, NutrientCode.EnergykJ, null), DELTA);
+		assertEquals(1280d, regulation.round(1275.7d, NutrientCode.EnergykJ, null), DELTA);
+	}
+
+	@Test
+	public void givesNoToleranceToKilojoules() {
+		assertNull(tolerances(1275.7d, NutrientCode.EnergykJ));
+	}
+
+	@Test
 	public void neverDeclaresANegativeValue() {
 		assertEquals(0d, regulation.round(-0.2d, NutrientCode.Protein, null), DELTA);
 	}
