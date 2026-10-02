@@ -1,5 +1,6 @@
 package fr.becpg.repo.activity.extractor;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,10 @@ import fr.becpg.repo.helper.impl.AttributeExtractorField;
  * @author matthieu
  */
 public class AuditActivityExtractor implements DataListExtractor {
+
+	private static final String CREATED_DATE_RANGE_CRITERIA = "prop_cm_created-date-range";
+
+	private static final String DATE_RANGE_SEPARATOR = "\\|";
 
 	private BeCPGAuditService beCPGAuditService;
 
@@ -119,14 +124,8 @@ public class AuditActivityExtractor implements DataListExtractor {
 					listAuditEntries = listAuditEntries.stream().filter(e -> value.equals("="+e.getString("prop_bcpg_alType"))).toList();
 				} else if ("prop_bcpg_alUserId".equals(key)) {
 					listAuditEntries = listAuditEntries.stream().filter(e -> value.equals(e.getString("prop_bcpg_alUserId"))).toList();
-				} else if ("prop_cm_created-date-range".equals(key)) {
-					String[] split = value.split("\\|");
-					Date from = !split[0].isBlank() ? ISO8601DateFormat.parse(split[0]) : null;
-					Date to = split.length > 1 && !split[1].isBlank() ? ISO8601DateFormat.parse(split[1]) : null;
-					listAuditEntries = listAuditEntries.stream().filter(e -> {
-						Date date = ISO8601DateFormat.parse(e.getString("completedAt"));
-						return (from == null || date.after(from)) && (to == null || date.before(to));
-					}).toList();
+				} else if (CREATED_DATE_RANGE_CRITERIA.equals(key)) {
+					listAuditEntries = filterByCreatedDateRange(listAuditEntries, value);
 				}
 			}
 		}
@@ -196,4 +195,26 @@ public class AuditActivityExtractor implements DataListExtractor {
 		return 2;
 	}
 
+	/**
+	 * Keeps the activity audit entries created within a date range. Both bounds are inclusive days:
+	 * the end bound, a midnight sent by the date-range control, is extended to the next midnight.
+	 *
+	 * @param entries the activity audit entries
+	 * @param rangeValue the range "from|to", either bound may be empty
+	 * @return the entries whose creation date falls within the range
+	 */
+	static List<JSONObject> filterByCreatedDateRange(List<JSONObject> entries, String rangeValue) {
+		String[] bounds = rangeValue.split(DATE_RANGE_SEPARATOR, -1);
+		Date from = parseBound(bounds[0]);
+		Date to = bounds.length > 1 ? parseBound(bounds[1]) : null;
+		Date toExclusive = to != null ? Date.from(to.toInstant().plus(1, ChronoUnit.DAYS)) : null;
+		return entries.stream().filter(e -> e.has(ActivityAuditPlugin.PROP_CM_CREATED)).filter(e -> {
+			Date created = ISO8601DateFormat.parse(e.getString(ActivityAuditPlugin.PROP_CM_CREATED));
+			return ((from == null) || !created.before(from)) && ((toExclusive == null) || created.before(toExclusive));
+		}).toList();
+	}
+
+	private static Date parseBound(String bound) {
+		return bound.isBlank() ? null : ISO8601DateFormat.parse(bound.trim());
+	}
 }
