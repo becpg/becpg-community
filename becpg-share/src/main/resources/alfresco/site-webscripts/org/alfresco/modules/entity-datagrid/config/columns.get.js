@@ -19,6 +19,21 @@
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+var DATAGRID_PREFS = "fr.becpg.formulation.dashlet.custom.datagrid-prefs";
+
+var PREFS_SCOPE_PATTERN = /^[A-Za-z0-9_-]+$/;
+
+var datagridPrefsRoot = DATAGRID_PREFS;
+
+/**
+ * Scopes the column preferences, ignoring any scope that is not a plain preference segment.
+ */
+function initDatagridPrefsRoot(prefsScope) {
+	if (prefsScope != null && PREFS_SCOPE_PATTERN.test(prefsScope)) {
+		datagridPrefsRoot = DATAGRID_PREFS + "." + prefsScope;
+	}
+}
+
 /**
  * Retrieves the value of the given named argument from the URL arguments
  * 
@@ -255,7 +270,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
 				} else  {
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+					var preferences = AlfrescoUtil.getPreferences(datagridPrefsRoot + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
 					
 					if(existInPref(preferences) && isChecked(preferences)){
 						postBodyForcedFields.push(fieldId);
@@ -283,7 +298,10 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 function main() {
 	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
-	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
+	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef")
+	, prefsScope = getArgument("prefsScope");
+
+	initDatagridPrefsRoot(prefsScope);
 
 	var skipSecurityRules = false;
 	var referer = getRequestHeader("Referer");
@@ -419,7 +437,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
 				   } 
 				   
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
+					var preferences = AlfrescoUtil.getPreferences(datagridPrefsRoot + "." + prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
