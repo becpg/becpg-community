@@ -437,6 +437,35 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
+	public void testChannelFormulationKeepsTriggerModifiedDate() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM trigger date test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+
+		Date triggerDate = new Date(System.currentTimeMillis() - 3_600_000L);
+		inWriteTx(() -> {
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(rawMaterialNodeRef,
+					FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, triggerDate);
+			return null;
+		});
+
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertNotNull(inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+		assertEquals(triggerDate, inReadTx(() -> nodeService.getProperty(getChannelListNodeRef(rawMaterialNodeRef),
+				PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE)));
+		assertIsPublished(rawMaterialNodeRef);
+	}
+
+	@Test
 	public void testFailedBatchPublishesErrorAndRetryAction() throws InterruptedException {
 		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 			RawMaterialData rawMaterial = new RawMaterialData();

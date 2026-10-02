@@ -777,6 +777,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				nodeName = nodeService.getProperty(toProcess, ContentModel.PROP_NAME).toString();
 			}
 			
+			Date triggerDate = getChannelModifiedDate(toProcess);
+
 			// Using L2CacheSupport is good practice.
 			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true);
 			
@@ -794,6 +796,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 							IntegrityChecker.setWarnInTransaction();
 							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
 									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
+							restoreChannelModifiedDate(toProcess, triggerDate);
 						} catch (Exception e) {
 							logger.error("Error publishing product to channel after formulation: " + toProcess, e);
 							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
@@ -809,6 +812,40 @@ public class FormulationChannelService implements BatchQueuePlugin {
 					}, false, true);
 				}
 			});
+		}
+
+		/**
+		 * Reads the channel modified date, which holds the date of the change that triggered the formulation.
+		 *
+		 * @param entityNodeRef the entity to formulate
+		 * @return the channel modified date, null when not set
+		 */
+		private Date getChannelModifiedDate(NodeRef entityNodeRef) {
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
+			return channelListNodeRef != null ? (Date) nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE) : null;
+		}
+
+		/**
+		 * Puts back the channel modified date overwritten by the formulation itself: the formulated date change notifies every
+		 * channel of the entity, this one included, which would otherwise lose the date of the change that triggered it.
+		 *
+		 * @param entityNodeRef the formulated entity
+		 * @param triggerDate the channel modified date read before the formulation
+		 */
+		private void restoreChannelModifiedDate(NodeRef entityNodeRef, Date triggerDate) {
+			if (triggerDate == null) {
+				return;
+			}
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
+			boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+			try {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, triggerDate);
+			} finally {
+				if (isEnabledAudit) {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}
+			}
 		}
 	}
 	
