@@ -751,6 +751,7 @@
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
                     + (this.options.list != null ? "&list=" + this.options.list : "")
                     + this._buildSetsArguments(this._getSetsNodeRef(itemType))
+                    + (this.options.columnPrefsScope != null ? "&prefsScope=" + encodeURIComponent(this.options.columnPrefsScope) : "")
                     + ("&noCache=" + timeStamp),
                 successCallback: {
                     fn: function(response) {
