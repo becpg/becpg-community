@@ -304,7 +304,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (logger.isDebugEnabled()) {
 				logger.debug("update node. Properties: " + properties);
 			}
-			if(entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(nodeRef))) {
+			QName currentType = nodeService.getType(nodeRef);
+			if (!importContext.getType().equals(currentType) && entityDictionaryService.isSubClass(importContext.getType(), currentType)) {
 				nodeService.setType(nodeRef, importContext.getType());
 			}
 
