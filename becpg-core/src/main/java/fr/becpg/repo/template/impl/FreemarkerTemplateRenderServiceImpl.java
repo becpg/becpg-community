@@ -206,7 +206,7 @@ public class FreemarkerTemplateRenderServiceImpl implements BeCPGTemplateRenderS
 	}
 
 	private Template getTemplate(String templateName, Locale locale) throws IOException {
-		return configuration.getTemplate(templateName, locale != null ? locale : I18NUtil.getLocale());
+		return configuration.getTemplate(templateName, TemplateLookupLocale.sanitize(locale != null ? locale : I18NUtil.getLocale()));
 	}
 
 }
