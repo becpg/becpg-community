@@ -1223,4 +1223,79 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		});
 	}
 
+
+	/**
+	 * Reproduces #34489: with a product yield and a secondary yield, the ingredient list must give the
+	 * same "with secondary yield" percentages as the label. The secondary yield applies after the
+	 * product yield, so the water must lose the secondary evaporation on top of the water already lost
+	 * to the product yield. Starting it again from its raw quantity left the column above 100 %, and
+	 * the rescaling then shrank every other ingredient.
+	 * <p>
+	 * 100 kg in, 80 kg net (yield 80 %) then a secondary yield of 75 %: 60 kg remain, all the 40 kg
+	 * lost come from the 46 kg of water.
+	 */
+	@Test
+	public void testSecondaryYieldAfterProductYield() {
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			NodeRef ingFlour = CharactTestHelper.getOrCreateIng(nodeService, "farine 34489");
+			NodeRef ingWater = CharactTestHelper.getOrCreateIng(nodeService, "eau 34489");
+			NodeRef ingChocolate = CharactTestHelper.getOrCreateIng(nodeService, "chocolat 34489");
+			NodeRef ingCocoa = CharactTestHelper.getOrCreateIng(nodeService, "cacao 34489");
+			NodeRef ingSugar = CharactTestHelper.getOrCreateIng(nodeService, "sucre 34489");
+
+			nodeService.setProperty(ingWater, PLMModel.PROP_EVAPORATED_RATE, 100d);
+
+			IngListDataItem chocolate = buildIng(ingChocolate, 100d);
+			RawMaterialData chocolateRM = RawMaterialData.build().withName("RM Chocolate 34489").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(chocolate, buildIng(ingCocoa, 62.5d).withParent(chocolate), buildIng(ingSugar, 37.5d).withParent(chocolate)));
+			NodeRef chocolateNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), chocolateRM).getNodeRef();
+
+			RawMaterialData flour = RawMaterialData.build().withName("RM Flour 34489").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingFlour, 100d)));
+			NodeRef flourNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), flour).getNodeRef();
+
+			RawMaterialData water = RawMaterialData.build().withName("RM Water 34489").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingWater, 100d)));
+			NodeRef waterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), water).getNodeRef();
+			// The label evaporates the components, the ingredient list the ingredients
+			nodeService.setProperty(waterNodeRef, PLMModel.PROP_EVAPORATED_RATE, 100d);
+
+			FinishedProductData fp = FinishedProductData.build().withName("FP Brownie 34489").withUnit(ProductUnit.kg).withQty(80d)
+					.withCompoList(List.of(
+							CompoListDataItem.build().withQtyUsed(30d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+									.withProduct(flourNodeRef),
+							CompoListDataItem.build().withQtyUsed(24d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+									.withProduct(chocolateNodeRef),
+							CompoListDataItem.build().withQtyUsed(46d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+									.withProduct(waterNodeRef)));
+			fp.setSecondaryYield(75d);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		});
+
+		checkILL(finishedProductNodeRef, new ArrayList<>(List.of(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
+				LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})").withLabelingRuleType(LabelingRuleType.Format),
+				LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true").withLabelingRuleType(LabelingRuleType.Prefs),
+				LabelingRuleListDataItem.build().withName("Param2").withFormula("useSecondaryYield=true").withLabelingRuleType(LabelingRuleType.Prefs))),
+				"farine 34489 50%, chocolat 34489 (cacao 34489 25%, sucre 34489 15%), RM Water 34489 10%", Locale.FRENCH);
+
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			List<IngListDataItem> ingList = formulatedProduct.getIngList();
+
+			Assert.assertEquals("Flour Qty with yield", 37.5d, findIngByName(ingList, "farine 34489").getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Water Qty with yield", 32.5d, findIngByName(ingList, "eau 34489").getQtyPercWithYield(), 0.1);
+
+			Assert.assertEquals("Flour Qty with secondary yield", 50d, findIngByName(ingList, "farine 34489").getQtyPercWithSecondaryYield(), 0.1);
+			Assert.assertEquals("Chocolate Qty with secondary yield", 40d, findIngByName(ingList, "chocolat 34489").getQtyPercWithSecondaryYield(),
+					0.1);
+			Assert.assertEquals("Cocoa Qty with secondary yield", 25d, findIngByName(ingList, "cacao 34489").getQtyPercWithSecondaryYield(), 0.1);
+			Assert.assertEquals("Sugar Qty with secondary yield", 15d, findIngByName(ingList, "sucre 34489").getQtyPercWithSecondaryYield(), 0.1);
+			Assert.assertEquals("Water Qty with secondary yield", 10d, findIngByName(ingList, "eau 34489").getQtyPercWithSecondaryYield(), 0.1);
+			return null;
+		});
+	}
 }
