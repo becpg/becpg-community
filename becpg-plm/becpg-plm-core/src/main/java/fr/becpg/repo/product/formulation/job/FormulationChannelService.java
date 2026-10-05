@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,6 +34,7 @@ import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,6 +92,9 @@ public class FormulationChannelService implements BatchQueuePlugin {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationChannelService.class);
+
+	/** Runs after the level 0 listeners, hence after the entity catalog policy has notified the channels. */
+	private static final int AFTER_CATALOG_NOTIFICATION_PRIORITY = 1;
 
 	/** Constant <code>FORMULATE_ENTITIES_CHANNEL_ID="formulate-entities"</code> */
 	public static final String FORMULATE_ENTITIES_CHANNEL_ID = "formulate-entities";
@@ -777,7 +782,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				nodeName = nodeService.getProperty(toProcess, ContentModel.PROP_NAME).toString();
 			}
 			
-			Date triggerDate = getChannelModifiedDate(toProcess);
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(toProcess, FORMULATE_ENTITIES_CHANNEL_ID);
+			Date triggerDate = getChannelModifiedDate(channelListNodeRef);
 
 			// Using L2CacheSupport is good practice.
 			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true);
@@ -788,6 +794,8 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				logger.debug("Formulation time for " + nodeName + " (" + toProcess + "): " + stopWatch.getTotalTimeMillis() + " ms");
 			}
 
+			AtomicReference<Date> formulationDate = bindFormulationDateCapture(channelListNodeRef);
+
 			BeCPGTransactionUtil.bindLateTransactionListener(new TransactionListenerAdapter() {
 				@Override
 				public void afterCommit() {
@@ -796,7 +804,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 							IntegrityChecker.setWarnInTransaction();
 							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
 									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
-							restoreChannelModifiedDate(toProcess, triggerDate);
+							restoreChannelModifiedDate(channelListNodeRef, triggerDate, formulationDate.get());
 						} catch (Exception e) {
 							logger.error("Error publishing product to channel after formulation: " + toProcess, e);
 							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
@@ -817,26 +825,44 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		/**
 		 * Reads the channel modified date, which holds the date of the change that triggered the formulation.
 		 *
-		 * @param entityNodeRef the entity to formulate
+		 * @param channelListNodeRef the formulate-entities channel list item of the entity
 		 * @return the channel modified date, null when not set
 		 */
-		private Date getChannelModifiedDate(NodeRef entityNodeRef) {
-			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
+		private Date getChannelModifiedDate(NodeRef channelListNodeRef) {
 			return channelListNodeRef != null ? (Date) nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE) : null;
+		}
+
+		/**
+		 * Captures, at the very end of the formulation transaction, the channel modified date written by the formulation itself.
+		 *
+		 * @param channelListNodeRef the formulate-entities channel list item of the entity
+		 * @return the holder filled with the captured date once the transaction is about to commit
+		 */
+		private AtomicReference<Date> bindFormulationDateCapture(NodeRef channelListNodeRef) {
+			AtomicReference<Date> formulationDate = new AtomicReference<>();
+			TransactionSupportUtil.bindListener(new TransactionListenerAdapter() {
+				@Override
+				public void beforeCommit(boolean readOnly) {
+					formulationDate.set(getChannelModifiedDate(channelListNodeRef));
+				}
+			}, AFTER_CATALOG_NOTIFICATION_PRIORITY);
+			return formulationDate;
 		}
 
 		/**
 		 * Puts back the channel modified date overwritten by the formulation itself: the formulated date change notifies every
 		 * channel of the entity, this one included, which would otherwise lose the date of the change that triggered it.
+		 * The date is left untouched when it no longer is the one written by the formulation, so that a change saved after the
+		 * formulation commit still triggers the next reformulation.
 		 *
-		 * @param entityNodeRef the formulated entity
+		 * @param channelListNodeRef the formulate-entities channel list item of the entity
 		 * @param triggerDate the channel modified date read before the formulation
+		 * @param formulationDate the channel modified date written by the formulation
 		 */
-		private void restoreChannelModifiedDate(NodeRef entityNodeRef, Date triggerDate) {
-			if (triggerDate == null) {
+		private void restoreChannelModifiedDate(NodeRef channelListNodeRef, Date triggerDate, Date formulationDate) {
+			if (triggerDate == null || !Objects.equals(getChannelModifiedDate(channelListNodeRef), formulationDate)) {
 				return;
 			}
-			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 			boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
 			try {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
