@@ -666,7 +666,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			}
 
 			if ((lastName == null) || lastName.isBlank()) {
-				firstName = email;
+				lastName = email;
 			}
 
 			BeCPGUserAccount userAccount = new BeCPGUserAccount();
