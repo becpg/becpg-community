@@ -1,6 +1,5 @@
 package fr.becpg.repo.helper;
 
-import org.springframework.extensions.surf.util.URLEncoder;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
@@ -36,7 +35,7 @@ public class AttachmentHelper {
 	            {
 	            	 if (req == null)
 		                {
-		                    headerValue += "; filename*=UTF-8''" + URLEncoder.encode(attachFileName)
+		                    headerValue += "; filename*=UTF-8''" + UrlPathEncoder.encode(attachFileName)
 		                            + "; filename=\"" + filterNameForQuotedString(attachFileName) + "\"";
 		                }
 		                else
@@ -45,12 +44,12 @@ public class AttachmentHelper {
 		                    boolean isLegacy = (null != userAgent) && (userAgent.contains("MSIE 8") || userAgent.contains("MSIE 7"));
 		                    if (isLegacy)
 		                    {
-		                        headerValue += "; filename=\"" + URLEncoder.encode(attachFileName);
+		                        headerValue += "; filename=\"" + UrlPathEncoder.encode(attachFileName);
 		                    }
 		                    else
 		                    {
 		                        headerValue += "; filename=\"" + filterNameForQuotedString(attachFileName) + "\"; filename*=UTF-8''"
-		                                + URLEncoder.encode(attachFileName);
+		                                + UrlPathEncoder.encode(attachFileName);
 		                    }
 		                }
 	            }

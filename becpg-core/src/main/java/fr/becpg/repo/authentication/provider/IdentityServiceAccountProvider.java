@@ -410,12 +410,15 @@ public class IdentityServiceAccountProvider {
         }
     }
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The admin password and the client secret are deliberately left out so that logging this provider never leaks them.
+	 */
 	@Override
 	public String toString() {
-		return "IdentityServiceAccountProvider [enabled=" + enabled + ", identityServiceUserName=" + identityServiceUserName
-				+ ", identityServicePassword=" + identityServicePassword + ", realm=" + realm + ", clientId=" + clientId + ", clientSecret="
-				+ clientSecret + ", authServerUrl=" + authServerUrl + "]";
+		return "IdentityServiceAccountProvider [enabled=" + enabled + ", identityServiceUserName=" + identityServiceUserName + ", realm=" + realm
+				+ ", clientId=" + clientId + ", authServerUrl=" + authServerUrl + "]";
 	}
 
 }
