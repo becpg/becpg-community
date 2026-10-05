@@ -46,6 +46,8 @@ public class ScoreContext {
 	public static final String COMPUTED_VALUE = "computedValue";
 	/** Constant <code>COMPUTED_CLASS="computedClass"</code> */
 	public static final String COMPUTED_CLASS = "computedClass";
+	/** Constant <code>SOURCE="source"</code> */
+	public static final String SOURCE = "source";
 
 	private String code;
 
@@ -70,6 +72,8 @@ public class ScoreContext {
 	private Double computedValue;
 
 	private String computedClass;
+
+	private JSONObject source;
 
 	/**
 	 * <p>Getter for the field <code>code</code>.</p>
@@ -282,6 +286,25 @@ public class ScoreContext {
 	}
 
 	/**
+	 * Returns the detail of the engine that computed the score, kept beside the normalized one for an
+	 * explanation only this engine can give, such as the thresholds of each Nutri-Score component.
+	 *
+	 * @return the detail of the engine, or {@code null} when the engine gives none
+	 */
+	public JSONObject getSource() {
+		return source;
+	}
+
+	/**
+	 * Keeps the detail of the engine that computed the score beside the normalized one.
+	 *
+	 * @param source the detail of the engine
+	 */
+	public void setSource(JSONObject source) {
+		this.source = source;
+	}
+
+	/**
 	 * <p>toJSON.</p>
 	 *
 	 * @return a {@link org.json.JSONObject} object
@@ -297,6 +320,7 @@ public class ScoreContext {
 		json.putOpt(SCALE, scale);
 		json.put(PARTS, toJSONArray(parts));
 		json.put(STEPS, toJSONArray(steps));
+		json.putOpt(SOURCE, source);
 		if (manual) {
 			json.put(MANUAL, true);
 			json.putOpt(COMPUTED_VALUE, computedValue);
@@ -339,6 +363,7 @@ public class ScoreContext {
 		context.manual = json.optBoolean(MANUAL, false);
 		context.computedValue = json.has(COMPUTED_VALUE) && !json.isNull(COMPUTED_VALUE) ? json.getDouble(COMPUTED_VALUE) : null;
 		context.computedClass = json.optString(COMPUTED_CLASS, null);
+		context.source = json.optJSONObject(SOURCE);
 
 		fillParts(json.optJSONArray(PARTS), context.parts);
 		fillParts(json.optJSONArray(STEPS), context.steps);

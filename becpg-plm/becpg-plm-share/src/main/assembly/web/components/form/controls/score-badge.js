@@ -86,10 +86,80 @@
     }
 
     /**
+     * Wording of a Nutri-Score line, its tokens being the bounds of the band the value falls in,
+     * the value and the points it gives.
+     */
+    function nutriScoreLine(key, part) {
+        if (!part) {
+            return null;
+        }
+        return Alfresco.util.message(key, null, [formatBound(part.lowerValue), formatBound(part.value),
+            formatBound(part.upperValue), formatBound(part.score)]);
+    }
+
+    /**
+     * Formats a token in the language of the user, as the historical badge did; a bound such as
+     * "-Inf" comes as text and is kept as it is.
+     */
+    function formatBound(value) {
+        if (typeof value !== "number") {
+            return isBlank(value) ? "" : value.toString();
+        }
+        return beCPG.util.getJSLocale ? value.toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 3 }) : formatNumber(value, 3);
+    }
+
+    function pushLine(lines, line) {
+        if (line !== null) {
+            lines.push(line);
+        }
+    }
+
+    /**
+     * Explanation of the Nutri-Score from its own detail, as the historical badge gave it: the
+     * negative and the positive components with the thresholds of each, the final score and the
+     * bounds of the class (#37232).
+     */
+    function buildNutriScoreTooltip(source) {
+        var parts = source.parts || {};
+        var lines = [Alfresco.util.message("nutriscore.display.negative")];
+
+        pushLine(lines, nutriScoreLine("nutriscore.display.energy", parts["ENER-KJO"]));
+        pushLine(lines, source.category === "Fats" ? nutriScoreLine("nutriscore.display.totalfat", parts.FAT)
+            : nutriScoreLine("nutriscore.display.satfat", parts.FASAT));
+        pushLine(lines, nutriScoreLine("nutriscore.display.totalsugar", parts.SUGAR));
+        pushLine(lines, nutriScoreLine(source.displaySaltScore ? "nutriscore.display.salt" : "nutriscore.display.sodium", parts.NA));
+        if (source.nonNutritiveSugars && source.nonNutritiveSugars.length > 0) {
+            lines.push(Alfresco.util.message("nutriscore.display.nns", null, [source.nonNutritiveSugars.join(",")]));
+        }
+
+        lines.push("", Alfresco.util.message("nutriscore.display.positive"));
+        if (source.hasProteinScore) {
+            pushLine(lines, nutriScoreLine("nutriscore.display.protein", parts["PRO-"]));
+        }
+        pushLine(lines, nutriScoreLine("nutriscore.display.percfruitsandveg", parts.FRUIT_VEGETABLE));
+        pushLine(lines, nutriScoreLine("nutriscore.display.nspfibre", parts.PSACNS));
+        pushLine(lines, nutriScoreLine("nutriscore.display.aoacfibre", parts.FIBTG));
+
+        lines.push("", Alfresco.util.message("nutriscore.display.finalScore", null,
+            [formatBound(source.aScore), formatBound(source.cScore), formatBound(source.nutriScore)]));
+        lines.push("", Alfresco.util.message("nutriscore.display.class", null, [formatBound(source.classLowerValue),
+            formatBound(source.nutriScore), formatBound(source.classUpperValue), formatBound(source.nutrientClass)]));
+
+        return lines.join("\n");
+    }
+
+    /** Scores whose engine detail gives an explanation of its own, by code. */
+    var SOURCE_TOOLTIPS = { NUTRISCORE: buildNutriScoreTooltip };
+
+    /**
      * Text summary of a score, shown on hover: the verdict then one line per part, so the
      * breakdown is reachable without opening the detail panel.
      */
     function buildTooltip(details, scope) {
+        if (details.source && !details.manual && SOURCE_TOOLTIPS[details.code]) {
+            return SOURCE_TOOLTIPS[details.code](details.source);
+        }
+
         var lines = [];
         var header = details.code || "";
 
