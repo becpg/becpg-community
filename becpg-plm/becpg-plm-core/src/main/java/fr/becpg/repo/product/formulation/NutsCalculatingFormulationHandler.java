@@ -22,7 +22,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -333,20 +332,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	protected boolean accept(ProductData formulatedProduct) {
 		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| ((formulatedProduct.getNutList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST))
-				|| isLogisticUnitWithoutNutList(formulatedProduct));
-	}
-
-	/**
-	 * Tells whether the product is a logistic unit that carries no nutrient list. A product loaded from
-	 * the repository always holds a lazy, non null list, so the null check above never skips it and the
-	 * formulation created a nutrient list from the finished product it groups (#37189). A logistic unit
-	 * only gets nutrients when its template, or the user, gave it a nutrient list.
-	 *
-	 * @param formulatedProduct the formulated product
-	 * @return {@code true} for a logistic unit without nutrient list
-	 */
-	private boolean isLogisticUnitWithoutNutList(ProductData formulatedProduct) {
-		return (formulatedProduct instanceof LogisticUnitData) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST);
+				|| isLogisticUnitWithoutList(formulatedProduct, PLMModel.TYPE_NUTLIST));
 	}
 
 	/**
