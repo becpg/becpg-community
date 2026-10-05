@@ -193,7 +193,8 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
-				|| ((formulatedProduct.getSvhcList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SVHCLIST)));
+				|| ((formulatedProduct.getSvhcList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SVHCLIST))
+				|| isLogisticUnitWithoutList(formulatedProduct, PLMModel.TYPE_SVHCLIST));
 	}
 
 	/** {@inheritDoc} */

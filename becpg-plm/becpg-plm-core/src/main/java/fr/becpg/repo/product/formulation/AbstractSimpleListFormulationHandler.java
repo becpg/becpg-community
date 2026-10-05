@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -1177,6 +1178,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			return true;
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * Tells whether the product is a logistic unit that carries no list of the given type. A product loaded
+	 * from the repository always holds a lazy, non null list, so a null check never skips it and the
+	 * formulation created the list from the finished product the unit groups (#37189). A logistic unit only
+	 * gets the list when its template, or the user, gave it one.
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param dataListType the type of the list
+	 * @return {@code true} for a logistic unit without such a list
+	 */
+	protected boolean isLogisticUnitWithoutList(ProductData formulatedProduct, QName dataListType) {
+		return (formulatedProduct instanceof LogisticUnitData) && !alfrescoRepository.hasDataList(formulatedProduct, dataListType);
 	}
 
 	/**
