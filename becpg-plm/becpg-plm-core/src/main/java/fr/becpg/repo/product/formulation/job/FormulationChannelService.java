@@ -102,6 +102,28 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	/** Constant <code>REFORMULATE_BATCH_ID="reformulateChangedEntities"</code> */
 	public static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
 
+	/**
+	 * What the channel does with a product it found.
+	 */
+	private enum ChannelProductAction {
+		/** The product changed since its last formulation: formulate it, then its where-used products. */
+		FORMULATE,
+		/** The product is up to date, typically formulated by hand: publish it and formulate its where-used products. */
+		PUBLISH_AND_PROPAGATE,
+		/** The product is archived: only publish it. */
+		PUBLISH,
+		/** The product changed too recently: leave it untouched so that a later run picks it up again. */
+		WAIT;
+
+		private boolean isPublishedOnly() {
+			return this == PUBLISH_AND_PROPAGATE || this == PUBLISH;
+		}
+
+		private boolean propagatesToWhereUsed() {
+			return this == FORMULATE || this == PUBLISH_AND_PROPAGATE;
+		}
+	}
+
 	private BatchQueueService batchQueueService;
 
 	private PublicationChannelService publicationChannelService;
@@ -329,14 +351,16 @@ public class FormulationChannelService implements BatchQueuePlugin {
 			if (SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(channelProduct))) {
 				markedSecurityRules.add(channelProduct);
 				impactedProducts.addAll(getSecurityRuleProducts(channelProduct, referenceDate));
-			} else if (needsFormulation(channelProduct)) {
-				if (toFormulateProductsSet.add(channelProduct)) {
+			} else {
+				ChannelProductAction channelProductAction = evaluateChannelProductAction(channelProduct);
+				if (channelProductAction == ChannelProductAction.FORMULATE && toFormulateProductsSet.add(channelProduct)) {
 					toFormulateProducts.add(channelProduct);
 				}
-				impactedProducts.addAll(getWhereUsedProducts(channelProduct, referenceDate));
-			} else {
-				if (toPublishProductsSet.add(channelProduct)) {
+				if (channelProductAction.isPublishedOnly() && toPublishProductsSet.add(channelProduct)) {
 					toPublishProducts.add(channelProduct);
+				}
+				if (channelProductAction.propagatesToWhereUsed()) {
+					impactedProducts.addAll(getWhereUsedProducts(channelProduct, referenceDate));
 				}
 			}
 		}
@@ -351,6 +375,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				tolerateInvalidEntityProperties();
 				NodeRef channelListItem = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 				String action = (String) nodeService.getProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_ACTION);
 				if (PublicationChannelAction.RETRY.toString().equals(action)) {
@@ -371,6 +396,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				tolerateInvalidEntityProperties();
 				NodeRef channelListItem = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}
@@ -419,6 +445,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProductsSet, batchId, numberOfErrors);
 		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker,
 				(nodeRef, throwable) -> {
+					tolerateInvalidEntityProperties();
 					publicationChannelService.publishEntityChannel(nodeRef, FORMULATE_ENTITIES_CHANNEL_ID,
 							ChannelData.builder()
 							.status(PublicationChannelStatus.FAILED.toString())
@@ -590,6 +617,15 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	}
 
 	/**
+	 * Downgrades the integrity check of the current transaction to warnings. Updating the channel list rewrites the channel ids on
+	 * the entity node, which makes Alfresco check every property of the entity again: an entity already holding a value that
+	 * breaks a model constraint would otherwise fail the commit, and loop in the channel since even its failure cannot be saved.
+	 */
+	private static void tolerateInvalidEntityProperties() {
+		IntegrityChecker.setWarnInTransaction();
+	}
+
+	/**
 	 * <p>getSecurityRuleProducts.</p>
 	 *
 	 * @param channelProduct a {@link org.alfresco.service.cmr.repository.NodeRef} object
@@ -620,42 +656,37 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	}
 	
 	/**
-	 * <p>needsFormulation.</p>
+	 * Decides what the channel does with a product it found.
 	 *
-	 * @param channelProduct a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a boolean
+	 * @param channelProduct the product found in the channel
+	 * @return the action to apply to the product
 	 */
 	@SuppressWarnings("unchecked")
-	private boolean needsFormulation(NodeRef channelProduct) {
-		
+	private ChannelProductAction evaluateChannelProductAction(NodeRef channelProduct) {
 		if (nodeService.hasAspect(channelProduct, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
-			return false;
+			return ChannelProductAction.PUBLISH;
 		}
 		List<String> channelIds = (List<String>) nodeService.getProperty(channelProduct, PublicationModel.PROP_CHANNELIDS);
 		if (channelIds != null && channelIds.contains(FORMULATE_ENTITIES_CHANNEL_ID)) {
-			return true;
+			return ChannelProductAction.FORMULATE;
 		}
-		
 		Date formulatedDate = (Date) nodeService.getProperty(channelProduct, BeCPGModel.PROP_FORMULATED_DATE);
 		if (formulatedDate == null) {
-			return true;
+			return ChannelProductAction.FORMULATE;
 		}
-		
 		Date modifiedDate = (Date) nodeService.getProperty(channelProduct, ContentModel.PROP_MODIFIED);
-		if (modifiedDate != null && modifiedDate.after(formulatedDate)) {
-			// Check if enough time has passed since modification
-			if (!hasEnoughTimePassedSinceModification(modifiedDate)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Product modified too recently: " + channelProduct);
-				}
-				return false;
-			}
-			return true;
+		if (modifiedDate == null || !modifiedDate.after(formulatedDate)) {
+			return ChannelProductAction.PUBLISH_AND_PROPAGATE;
 		}
-		
-		return false;
+		if (!hasEnoughTimePassedSinceModification(modifiedDate)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Product modified too recently, waiting for the next run: " + channelProduct);
+			}
+			return ChannelProductAction.WAIT;
+		}
+		return ChannelProductAction.FORMULATE;
 	}
-	
+
 	/**
 	 * Checks if enough time has passed since the last modification based on
 	 * the configured numberOfHoursBeforeFormulation.
@@ -753,6 +784,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 			}
 			
 			if (toPublishProducts.contains(toProcess)) {
+				tolerateInvalidEntityProperties();
 				publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
 						ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
 				return;
@@ -801,7 +833,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				public void afterCommit() {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						try {
-							IntegrityChecker.setWarnInTransaction();
+							tolerateInvalidEntityProperties();
 							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
 									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
 							restoreChannelModifiedDate(channelListNodeRef, triggerDate, formulationDate.get());

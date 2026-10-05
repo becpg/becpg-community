@@ -11,8 +11,10 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
@@ -42,6 +45,14 @@ import fr.becpg.test.PLMBaseTestCase;
 public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	protected static final Log logger = LogFactory.getLog(FormulationChannelServiceIT.class);
+
+	private static final QName PROP_GS1_DESCRIPTION_SHORT = QName.createQName(GS1Model.GS1_URI, "descriptionShort");
+
+	private static final String DESCRIPTION_OVER_40_CHARS = "Gruyere AOP Michel Grossrieder 9M Moleson";
+
+	private static final String MODIFICATION_AFTER_FORMULATION = "Modified after formulation";
+
+	private static final String MIN_HOURS_SINCE_MODIFICATION = "4";
 
 	private FormulationChannelService formulationChannelService;
 	
@@ -349,6 +360,107 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertEquals(formulatedDate, newFormulatedDate);
 	}
 	
+	@Test
+	public void testWhereUsedFormulationOfProductFormulatedByHand() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM formulated by hand test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		NodeRef finishedProductNodeRef = createFinishedProductUsing("FP where used of RM formulated by hand", rawMaterialNodeRef);
+
+		inWriteTx(() -> {
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		Date formulatedDate = inReadTx(() -> (Date) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+		assertIsPublished(finishedProductNodeRef);
+		assertEquals(formulatedDate, inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+		assertNotNull(inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	@Test
+	public void testPublicationOfProductBreakingModelConstraint() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM breaking model constraint test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		inWriteTx(() -> {
+			IntegrityChecker.setWarnInTransaction();
+			nodeService.setProperty(rawMaterialNodeRef, PROP_GS1_DESCRIPTION_SHORT, DESCRIPTION_OVER_40_CHARS);
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+	}
+
+	@Test
+	public void testProductModifiedTooRecentlyIsLeftForLaterRun() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM modified too recently test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		inWriteTx(() -> {
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		Date formulatedDate = inReadTx(() -> (Date) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+		inWriteTx(() -> {
+			nodeService.setProperty(rawMaterialNodeRef, ContentModel.PROP_DESCRIPTION, MODIFICATION_AFTER_FORMULATION);
+			return null;
+		});
+		doReturn(MIN_HOURS_SINCE_MODIFICATION).when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsNotPublished(rawMaterialNodeRef);
+		assertEquals(formulatedDate, inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	/**
+	 * Creates a finished product holding the given component in its composition, left unformulated.
+	 *
+	 * @param name the finished product name
+	 * @param componentNodeRef the component of the composition
+	 * @return the finished product node
+	 */
+	private NodeRef createFinishedProductUsing(String name, NodeRef componentNodeRef) {
+		return inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(name);
+			finishedProduct.setParentNodeRef(getTestFolderNodeRef());
+			CompoListDataItem compoItem = new CompoListDataItem();
+			compoItem.setQtySubFormula(1d);
+			compoItem.setCompoListUnit(ProductUnit.kg);
+			compoItem.setProduct(componentNodeRef);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(compoItem);
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.save(finishedProduct).getNodeRef();
+		});
+	}
+
 	@Test
 	public void testSystemConditionsThresholds() throws InterruptedException {
 		
