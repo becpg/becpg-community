@@ -983,6 +983,9 @@ public interface PLMModel {
 	/** Constant <code>PROP_TOX_VALUE</code> */
 	QName PROP_TOX_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "toxValue");
 
+	/** Constant <code>PROP_TOX_BODY_WEIGHT</code> */
+	QName PROP_TOX_BODY_WEIGHT = QName.createQName(BeCPGModel.BECPG_URI, "toxBodyWeight");
+
 	/** Constant <code>PROP_TOX_ING_ING</code> */
 	QName PROP_TOX_ING_ING = QName.createQName(BeCPGModel.BECPG_URI, "toxIngIng");
 

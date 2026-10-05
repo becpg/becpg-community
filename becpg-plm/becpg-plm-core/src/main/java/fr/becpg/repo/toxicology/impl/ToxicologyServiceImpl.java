@@ -41,6 +41,8 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ToxicologyServiceImpl.class);
 
+	private static final double DEFAULT_BODY_WEIGHT = 60d;
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -348,6 +350,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			String absorptionType = (String) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_ABSORPTION_TYPE);
 			Double dermalAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DERMAL_ABSORPTION);
 			Double oralAbsorption = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_ORAL_ABSORPTION);
+			double bodyWeight = getBodyWeight(toxNodeRef);
 			
 			logger.debug("Systemic calculation inputs - podMax: " + podMax + ", mosMoe: " + mosMoe + 
 						", finalQuantity: " + finalQuantity + ", absorptionType: " + absorptionType + 
@@ -362,7 +365,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			logger.debug("Final absorption value: " + finalAbsorption);
 			
 			if (podMax != null && finalAbsorption != null && finalAbsorption != 0 && mosMoe != null && mosMoe != 0 && finalQuantity != null) {
-				systemicValue = (podMax * 60 / (finalQuantity * finalAbsorption / 100 * mosMoe)) * 100;
+				systemicValue = (podMax * bodyWeight / (finalQuantity * finalAbsorption / 100 * mosMoe)) * 100;
 				if (logger.isDebugEnabled()) {
 					logger.debug("Calculate systemic value from ingNodeRef: " + ingNodeRef + " and toxNodeRef: " + toxNodeRef + ", systemicValue=" + systemicValue);
 				}
@@ -373,6 +376,17 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			}
 		}
 		return systemicValue;
+	}
+
+	/**
+	 * Returns the body weight of the exposed population of a toxicology characteristic.
+	 *
+	 * @param toxNodeRef the toxicology characteristic
+	 * @return the body weight in kg, 60 kg when not set
+	 */
+	private double getBodyWeight(NodeRef toxNodeRef) {
+		Double bodyWeight = (Double) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_BODY_WEIGHT);
+		return bodyWeight != null && bodyWeight > 0 ? bodyWeight : DEFAULT_BODY_WEIGHT;
 	}
 	
 	/**
