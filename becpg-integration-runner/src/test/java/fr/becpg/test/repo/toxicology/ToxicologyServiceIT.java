@@ -210,6 +210,23 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 	}
 	
 	@Test
+	public void testToxBodyWeight() {
+		inWriteTx(() -> {
+			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			nodeService.setProperty(adultROHairNodeRef, PLMModel.PROP_TOX_BODY_WEIGHT, 30d);
+			return null;
+		});
+
+		waitForSolr();
+		inWriteTx(() -> {
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			assertTrue(systemicValues.contains("- Adult RO Hair - test: 15151"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			return null;
+		});
+	}
+
+	@Test
 	public void testToxCalculateFlag() {
 		inWriteTx(() -> {
 			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
