@@ -759,30 +759,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	// render target assocs (plants...special cases)
 	/**
-	 * Helper method to check if a specific association should be extracted based on preferences and whether the current node is the root.
-	 *
-	 * @param preferenceValue the raw preference value string (e.g. from assocsToExtract)
-	 * @param prefixedAssocName the prefix string of the association name
-	 * @param isRoot true if the current node is the root entity of the report
-	 * @return true if the association should be extracted
-	 */
-	protected boolean shouldExtractAssoc(String preferenceValue, String prefixedAssocName, boolean isRoot) {
-		if (preferenceValue == null || preferenceValue.isEmpty()) {
-			return false;
-		}
-		for (String s : preferenceValue.split(",")) {
-			String token = s.trim();
-			if (token.equals(prefixedAssocName)) {
-				return true;
-			}
-			if (isRoot && token.equals("entity_" + prefixedAssocName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * <p>loadTargetAssoc.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
@@ -807,9 +783,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					extractAssoc = true;
 				}
 			} else {
-				boolean isRoot = (context.getRootNodeRef() != null && entityNodeRef.equals(context.getRootNodeRef()));
-				String assocsPref = context.getPrefValue("assocsToExtract", assocsToExtract());
-				if (shouldExtractAssoc(assocsPref, prefixedAssocName, isRoot)) {
+				if (context.prefsContainsAssoc("assocsToExtract", assocsToExtract(), prefixedAssocName, entityNodeRef)) {
 					extractAssoc = true;
 				}
 			}
@@ -1235,15 +1209,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				boolean extractNodeRefAssoc = false;
-				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString())) {
-					String prefixString = propertyDef.getName().toPrefixString(namespaceService);
-					boolean isRoot = (context.getRootNodeRef() != null && nodeRef.equals(context.getRootNodeRef()));
-					String assocsPref = context.getPrefValue("assocsToExtract", assocsToExtract());
-					extractNodeRefAssoc = shouldExtractAssoc(assocsPref, prefixString, isRoot);
-				}
-
-				if (extractNodeRefAssoc) {
+				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContainsAssoc("assocsToExtract",
+						assocsToExtract(), propertyDef.getName().toPrefixString(namespaceService), nodeRef)) {
 
 					NodeRef dNodeRef = (NodeRef) property.getValue();
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -18,6 +19,9 @@ import org.dom4j.Element;
  * @author matthieu
  */
 public class DefaultExtractorContext {
+
+	private static final String ROOT_ENTITY_PREFIX = "entity_";
+	private static final Pattern ASSOC_NAMES_SEPARATOR = Pattern.compile("[,;\\s]+");
 
 	boolean isInDataListContext = false;
 
@@ -142,6 +146,35 @@ public class DefaultExtractorContext {
 			return true;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Tells whether an association is listed in the system configuration or in the report preferences.
+	 * Both sources are tested independently, so report preferences add to the system configuration
+	 * instead of replacing it. Names are matched exactly, separated by commas, semicolons or blanks.
+	 * A name prefixed with <code>entity_</code> only matches on the root entity of the report.
+	 *
+	 * @param key the preference key, e.g. assocsToExtract
+	 * @param defaultValue the system configuration value
+	 * @param prefixedAssocName the prefixed association name, e.g. bcpg:plants
+	 * @param nodeRef the node the association is read from
+	 * @return true if the association must be extracted on this node
+	 */
+	public boolean prefsContainsAssoc(String key, String defaultValue, String prefixedAssocName, NodeRef nodeRef) {
+		boolean isRoot = (rootNodeRef != null) && rootNodeRef.equals(nodeRef);
+		return listsAssoc(defaultValue, prefixedAssocName, isRoot) || listsAssoc(preferences.get(key), prefixedAssocName, isRoot);
+	}
+
+	private static boolean listsAssoc(String assocNames, String prefixedAssocName, boolean isRoot) {
+		if ((assocNames == null) || assocNames.isBlank()) {
+			return false;
+		}
+		for (String token : ASSOC_NAMES_SEPARATOR.split(assocNames.trim())) {
+			if (token.equals(prefixedAssocName) || (isRoot && token.equals(ROOT_ENTITY_PREFIX + prefixedAssocName))) {
+				return true;
+			}
+		}
 		return false;
 	}
 
