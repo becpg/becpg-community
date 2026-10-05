@@ -44,15 +44,7 @@ public class ExpiredSessionAjaxRequestMatcher {
 
     private static final String REQUESTED_WITH_HEADER = "X-Requested-With";
 
-    private static final String SERVICE_PATH = "/service/";
-
-    private static final String PROXY_PATH = "/proxy/";
-
-    private static final String NOAUTH_MARKER = "noauth";
-
-    private final String servicePrefix;
-
-    private final String proxyPrefix;
+    private final ShareBackgroundEndpoints protectedEndpoints;
 
     /**
      * <p>Constructor for ExpiredSessionAjaxRequestMatcher.</p>
@@ -60,8 +52,7 @@ public class ExpiredSessionAjaxRequestMatcher {
      * @param shareContext the Share context path, for instance <code>/share</code>
      */
     public ExpiredSessionAjaxRequestMatcher(String shareContext) {
-        this.servicePrefix = shareContext + SERVICE_PATH;
-        this.proxyPrefix = shareContext + PROXY_PATH;
+        this.protectedEndpoints = new ShareBackgroundEndpoints(shareContext);
     }
 
     /**
@@ -71,18 +62,11 @@ public class ExpiredSessionAjaxRequestMatcher {
      * @return true for a background service or proxy request carrying no authenticated Share user
      */
     public boolean matches(HttpServletRequest request) {
-        return isBackgroundRequest(request) && targetsProtectedEndpoint(request.getRequestURI())
+        return isBackgroundRequest(request) && protectedEndpoints.isProtected(request.getRequestURI())
                 && !AuthenticationUtil.isAuthenticated(request);
     }
 
     private boolean isBackgroundRequest(HttpServletRequest request) {
         return request.getHeader(REQUESTED_WITH_HEADER) != null;
-    }
-
-    private boolean targetsProtectedEndpoint(String requestUri) {
-        if (requestUri == null || requestUri.contains(NOAUTH_MARKER)) {
-            return false;
-        }
-        return requestUri.startsWith(servicePrefix) || requestUri.startsWith(proxyPrefix);
     }
 }
