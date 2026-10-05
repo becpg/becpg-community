@@ -394,6 +394,9 @@ public class NutriScoreContext {
 		context.getSteps().add(new ScorePart(A_SCORE).withContribution(aScore != null ? aScore * 1d : null));
 		context.getSteps().add(new ScorePart(C_SCORE).withContribution(cScore != null ? cScore * 1d : null));
 
+		// the thresholds of each component and the class bounds only exist in the Nutri-Score detail
+		context.setSource(toJSON());
+
 		return context;
 	}
 

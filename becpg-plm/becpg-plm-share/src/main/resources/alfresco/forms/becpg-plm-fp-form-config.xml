@@ -1522,6 +1522,7 @@
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show for-mode="view" force="false" id="bcpg:nutrientReferenceProducts" />
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
+          <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
           <show force="false" id="bcpg:glopTargetCharact"/>
@@ -1548,6 +1549,9 @@
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false"/>
+          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
+          </field>
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
@@ -1587,12 +1591,16 @@
           <show force="true" id="bcpg:lcaScore"/>
           <show force="true" id="bcpg:lcaScoreMethod"/>
           <show force="true" id="bcpg:ecoScore"/>
+          <show force="true" id="bcpg:ecoScoreDetails"/>
           <show force="true" id="bcpg:ecoScoreCategory"/>
         </field-visibility>
         <appearance>
           <field id="bcpg:lcaScore" mandatory="false" read-only="true"/>
           <field id="bcpg:lcaScoreMethod" mandatory="false" read-only="false"/>
           <field id="bcpg:ecoScore" mandatory="false" read-only="true"/>
+          <field id="bcpg:ecoScoreDetails" label-id="becpg.forms.field.green-score.label" mandatory="false" read-only="true">
+            <control template="/org/alfresco/components/form/controls/greenscore-class.ftl"/>
+          </field>
           <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ecoscore</control-param>
