@@ -497,8 +497,6 @@ public interface PLMModel {
 	QName PROP_SCORE_DEF_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefVersion");
 	/** Constant <code>PROP_SCORE_DEF_ENGINE</code> */
 	QName PROP_SCORE_DEF_ENGINE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefEngine");
-	/** Constant <code>PROP_SCORE_DEF_PLUGIN_ID</code> */
-	QName PROP_SCORE_DEF_PLUGIN_ID = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefPluginId");
 	/** Constant <code>PROP_SCORE_DEF_SCALE</code> */
 	QName PROP_SCORE_DEF_SCALE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefScale");
 	/** Constant <code>PROP_SCORE_DEF_RANGE</code> */
@@ -509,18 +507,8 @@ public interface PLMModel {
 	QName PROP_SCORE_DEF_BASIS = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefBasis");
 	/** Constant <code>PROP_SCORE_DEF_SCALE_FACTOR</code> */
 	QName PROP_SCORE_DEF_SCALE_FACTOR = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefScaleFactor");
-	/** Constant <code>PROP_SCORE_DEF_FORMULA</code> */
-	QName PROP_SCORE_DEF_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefFormula");
-	/** Constant <code>PROP_SCORE_DEF_DETAIL_FORMULA</code> */
-	QName PROP_SCORE_DEF_DETAIL_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefDetailFormula");
-	/** Constant <code>PROP_SCORE_DEF_RANGE_FORMULA</code> */
-	QName PROP_SCORE_DEF_RANGE_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefRangeFormula");
 	/** Constant <code>PROP_SCORE_DEF_CATEGORY_PROPERTY</code> */
 	QName PROP_SCORE_DEF_CATEGORY_PROPERTY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCategoryProperty");
-	/** Constant <code>PROP_SCORE_DEF_IS_OFFICIAL</code> */
-	QName PROP_SCORE_DEF_IS_OFFICIAL = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefIsOfficial");
-	/** Constant <code>PROP_SCORE_DEF_VALIDITY_PERIOD</code> */
-	QName PROP_SCORE_DEF_VALIDITY_PERIOD = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefValidityPeriod");
 	/** Constant <code>PROP_SCORE_DEF_START_EFFECTIVITY</code> */
 	QName PROP_SCORE_DEF_START_EFFECTIVITY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefStartEffectivity");
 	/** Constant <code>PROP_SCORE_DEF_END_EFFECTIVITY</code> */

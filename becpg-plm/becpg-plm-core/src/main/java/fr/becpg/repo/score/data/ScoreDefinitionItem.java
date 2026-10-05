@@ -42,8 +42,6 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 
 	private String engine;
 
-	private String pluginId;
-
 	private String scale;
 
 	private String range;
@@ -53,16 +51,6 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	private String basis;
 
 	private Double scaleFactor;
-
-	private String formula;
-
-	private String detailFormula;
-
-	private String rangeFormula;
-
-	private Boolean isOfficial = false;
-
-	private Integer validityPeriod;
 
 	private Date startEffectivity;
 
@@ -330,26 +318,6 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	}
 
 	/**
-	 * <p>Getter for the field <code>pluginId</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefPluginId")
-	public String getPluginId() {
-		return pluginId;
-	}
-
-	/**
-	 * <p>Setter for the field <code>pluginId</code>.</p>
-	 *
-	 * @param pluginId a {@link java.lang.String} object
-	 */
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
-	}
-
-	/**
 	 * <p>Getter for the field <code>scale</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object
@@ -447,106 +415,6 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	 */
 	public void setScaleFactor(Double scaleFactor) {
 		this.scaleFactor = scaleFactor;
-	}
-
-	/**
-	 * <p>Getter for the field <code>formula</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefFormula")
-	public String getFormula() {
-		return formula;
-	}
-
-	/**
-	 * <p>Setter for the field <code>formula</code>.</p>
-	 *
-	 * @param formula a {@link java.lang.String} object
-	 */
-	public void setFormula(String formula) {
-		this.formula = formula;
-	}
-
-	/**
-	 * <p>Getter for the field <code>detailFormula</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefDetailFormula")
-	public String getDetailFormula() {
-		return detailFormula;
-	}
-
-	/**
-	 * <p>Setter for the field <code>detailFormula</code>.</p>
-	 *
-	 * @param detailFormula a {@link java.lang.String} object
-	 */
-	public void setDetailFormula(String detailFormula) {
-		this.detailFormula = detailFormula;
-	}
-
-	/**
-	 * <p>Getter for the field <code>rangeFormula</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefRangeFormula")
-	public String getRangeFormula() {
-		return rangeFormula;
-	}
-
-	/**
-	 * <p>Setter for the field <code>rangeFormula</code>.</p>
-	 *
-	 * @param rangeFormula a {@link java.lang.String} object
-	 */
-	public void setRangeFormula(String rangeFormula) {
-		this.rangeFormula = rangeFormula;
-	}
-
-	/**
-	 * <p>Getter for the field <code>isOfficial</code>.</p>
-	 *
-	 * @return a {@link java.lang.Boolean} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefIsOfficial")
-	public Boolean getIsOfficial() {
-		return isOfficial;
-	}
-
-	/**
-	 * <p>Setter for the field <code>isOfficial</code>.</p>
-	 *
-	 * @param isOfficial a {@link java.lang.Boolean} object
-	 */
-	public void setIsOfficial(Boolean isOfficial) {
-		this.isOfficial = isOfficial;
-	}
-
-	/**
-	 * <p>Getter for the field <code>validityPeriod</code>.</p>
-	 *
-	 * @return a {@link java.lang.Integer} object
-	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:scoreDefValidityPeriod")
-	public Integer getValidityPeriod() {
-		return validityPeriod;
-	}
-
-	/**
-	 * <p>Setter for the field <code>validityPeriod</code>.</p>
-	 *
-	 * @param validityPeriod a {@link java.lang.Integer} object
-	 */
-	public void setValidityPeriod(Integer validityPeriod) {
-		this.validityPeriod = validityPeriod;
 	}
 
 	/**
