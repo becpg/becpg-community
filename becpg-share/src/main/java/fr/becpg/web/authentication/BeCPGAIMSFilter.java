@@ -121,6 +121,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponse;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
@@ -142,6 +143,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.WebUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.Filter;
@@ -236,6 +238,7 @@ public class BeCPGAIMSFilter implements Filter
     private String audience;
     private String shareContext;
     private ExpiredSessionAjaxRequestMatcher expiredSessionAjaxRequestMatcher;
+    private RejectedAlfrescoTicketTracker rejectedTicketTracker;
 
     /**
      * Margin applied before the real access-token expiry so the token is refreshed slightly ahead of time.
@@ -301,6 +304,7 @@ public class BeCPGAIMSFilter implements Filter
             this.throwableAnalyzer = new SecurityUtils.DefaultThrowableAnalyzer();
             this.shareContext = config.getShareContext();
             this.expiredSessionAjaxRequestMatcher = new ExpiredSessionAjaxRequestMatcher(this.shareContext);
+            this.rejectedTicketTracker = new RejectedAlfrescoTicketTracker(this.shareContext);
         }
         this.connectorService = (ConnectorService) context.getBean("connector.service");
         this.loginController = (SlingshotLoginController) context.getBean("loginController");
@@ -350,6 +354,18 @@ public class BeCPGAIMSFilter implements Filter
                             // NullPointerException that would otherwise invalidate the session on every refresh.
                             this.initRequestContext(request, response);
                             refreshToken(attribute, session, request);
+                        }
+
+                        if (this.rejectedTicketTracker.isRejected(session))
+                        {
+                            this.initRequestContext(request, response);
+                            if (!renewRejectedTicket(attribute, session, request))
+                            {
+                                // Without a ticket the repository accepts, only a new SSO login breaks the reload loop
+                                session.invalidate();
+                                session = request.getSession();
+                                isAuthenticated = false;
+                            }
                         }
                     }
                     catch (Exception refreshException)
@@ -498,8 +514,43 @@ public class BeCPGAIMSFilter implements Filter
                 return;
             }
 
+            boolean watchesTicket = this.enabled && isAuthenticated;
+            String sentTicket = watchesTicket ? this.currentAlfTicket(session) : null;
+
             chain.doFilter(sreq, sres);
+
+            if (watchesTicket)
+            {
+                this.markRejectedTicket(request, response, sentTicket);
+            }
         }
+    }
+
+    /**
+     * Marks the session for a ticket renewal when the repository refused the ticket this request was sent with.
+     *
+     * A request sent before a renewal and answered after it must not mark the session again: its ticket is no longer
+     * the one the session holds.
+     *
+     * @param request the served request
+     * @param response its response
+     * @param sentTicket the ticket the session held when the request was sent
+     */
+    private void markRejectedTicket(HttpServletRequest request, HttpServletResponse response, String sentTicket)
+    {
+        HttpSession session = request.getSession(false);
+        if (session == null || !this.rejectedTicketTracker.isTicketRejection(request, response.getStatus())
+                || !Objects.equals(sentTicket, this.currentAlfTicket(session)))
+        {
+            return;
+        }
+
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Repository refused the Alfresco ticket for URI=" + request.getRequestURI()
+                             + ", renewing it on the next request");
+        }
+        this.rejectedTicketTracker.markRejected(request);
     }
 
     /**
@@ -738,16 +789,7 @@ public class BeCPGAIMSFilter implements Filter
      */
     private String getAlfTicket(HttpSession session, String username, String accessToken) throws ConnectorServiceException
     {
-        if (LOGGER.isInfoEnabled())
-        {
-            LOGGER.info("Retrieving the Alfresco Ticket from Repository.");
-        }
-
-        String alfTicket = null;
-        Connector connector = this.connectorService.getConnector(ALFRESCO_API_ENDPOINT_ID, username, session);
-        ConnectorContext c = new ConnectorContext(HttpMethod.GET, null, Collections.singletonMap("Authorization", "Bearer " + accessToken));
-        c.setContentType("application/json");
-        Response r = connector.call("/-default-/public/authentication/versions/1/tickets/-me-?noCache=" + UUID.randomUUID().toString(), c);
+        Response r = this.callTicketEndpoint(session, username, accessToken);
 
         if (Status.STATUS_OK != r.getStatus().getCode())
         {
@@ -755,25 +797,68 @@ public class BeCPGAIMSFilter implements Filter
             {
                 LOGGER.error("Failed to retrieve Alfresco Ticket from Repository.");
             }
-        }
-        else
-        {
-            try
-            {
-                JSONObject json = new JSONObject(r.getText());
-                alfTicket = json.getJSONObject("entry")
-                    .getString("id");
-            }
-            catch (JSONException e)
-            {
-                if (LOGGER.isErrorEnabled())
-                {
-                    LOGGER.error("Failed to parse Alfresco Ticket from Repository response.");
-                }
-            }
+            return null;
         }
 
-        return alfTicket;
+        return this.parseAlfTicket(r);
+    }
+
+    /**
+     * Asks the repository for the Alfresco ticket of the user identified by the access token.
+     *
+     * @param session HTTP Session
+     * @param username username
+     * @param accessToken access token
+     * @return the raw response of the ticket endpoint
+     * @throws org.springframework.extensions.surf.exception.ConnectorServiceException if the connector cannot be obtained
+     */
+    private Response callTicketEndpoint(HttpSession session, String username, String accessToken) throws ConnectorServiceException
+    {
+        if (LOGGER.isInfoEnabled())
+        {
+            LOGGER.info("Retrieving the Alfresco Ticket from Repository.");
+        }
+
+        Connector connector = this.connectorService.getConnector(ALFRESCO_API_ENDPOINT_ID, username, session);
+        ConnectorContext c = new ConnectorContext(HttpMethod.GET, null, Collections.singletonMap("Authorization", "Bearer " + accessToken));
+        c.setContentType("application/json");
+        return connector.call("/-default-/public/authentication/versions/1/tickets/-me-?noCache=" + UUID.randomUUID().toString(), c);
+    }
+
+    /**
+     * Reads the ticket out of a successful answer of the ticket endpoint.
+     *
+     * @param r the response of the ticket endpoint
+     * @return the Alfresco ticket, or null when the body cannot be parsed
+     */
+    private String parseAlfTicket(Response r)
+    {
+        try
+        {
+            JSONObject json = new JSONObject(r.getText());
+            return json.getJSONObject("entry")
+                .getString("id");
+        }
+        catch (JSONException e)
+        {
+            if (LOGGER.isErrorEnabled())
+            {
+                LOGGER.error("Failed to parse Alfresco Ticket from Repository response.");
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Reads the Alfresco ticket the session currently sends to the repository.
+     *
+     * @param session the HTTP session
+     * @return the bound ticket, or null when none is bound yet
+     */
+    private String currentAlfTicket(HttpSession session)
+    {
+        return this.connectorService.getConnectorSession(session, ALFRESCO_ENDPOINT_ID)
+            .getParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET);
     }
 
     /**
@@ -1376,38 +1461,87 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
-     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and rebind the session, so repository calls
-     * keep authenticating once the previously obtained ticket has expired.
+     * Fetches a new Alfresco ticket for a session whose ticket the repository refused, with the access token of the
+     * session, and rebinds the session to it.
+     *
+     * Locked on the session, so that the burst of requests sent by a page reload asks the repository for a single
+     * ticket: the requests that waited on the lock find the mark already cleared. Other users are never blocked.
+     *
+     * @param attribute the security context of the session
+     * @param session the HTTP session
+     * @param request the HTTP request being served, used to re-initialise the user metadata
+     * @return false when the repository refused the access token as well, so the session can no longer be used
+     */
+    private boolean renewRejectedTicket(SecurityContext attribute, HttpSession session, HttpServletRequest request)
+    {
+        synchronized (WebUtils.getSessionMutex(session))
+        {
+            if (!this.rejectedTicketTracker.isRejected(session))
+            {
+                return true;
+            }
+            this.rejectedTicketTracker.clearRejected(session);
+
+            OAuth2LoginAuthenticationToken authentication = (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
+            TicketEndpointOutcome outcome =
+                renewAlfTicket(session, authentication.getPrincipal(), authentication.getAccessToken(), request);
+            if (outcome == TicketEndpointOutcome.TOKEN_REFUSED)
+            {
+                LOGGER.warn("The repository refused the access token while renewing a refused Alfresco ticket, invalidating the session (URI="
+                                + request.getRequestURI() + ")");
+                return false;
+            }
+            if (outcome == TicketEndpointOutcome.UNAVAILABLE)
+            {
+                // The next refused request marks the session again and retries
+                LOGGER.warn("Could not renew a refused Alfresco ticket, keeping the session (URI=" + request.getRequestURI() + ")");
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Re-fetch a fresh Alfresco ticket and rebind the session, so repository calls keep authenticating once the
+     * previously obtained ticket has expired or been deleted.
      *
      * @param session the HTTP session
-     * @param oidcUser the refreshed OIDC user
-     * @param accessToken the refreshed access token
+     * @param user the authenticated user
+     * @param accessToken the current access token
      * @param request the HTTP request being served, used to re-initialise the user metadata
+     * @return what the repository answered, {@link TicketEndpointOutcome#ISSUED} once the session is bound to the new ticket
      */
-    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken,
-                                HttpServletRequest request)
+    private TicketEndpointOutcome renewAlfTicket(HttpSession session, OAuth2User user, OAuth2AccessToken accessToken,
+                                                 HttpServletRequest request)
     {
+        String username = user.getAttribute(this.principalAttribute);
+        if (username == null)
+        {
+            return TicketEndpointOutcome.TOKEN_REFUSED;
+        }
+
         try
         {
-            String username = oidcUser.getAttribute(this.principalAttribute);
-            if (username == null)
+            Response r = this.callTicketEndpoint(session, username, accessToken.getTokenValue());
+            TicketEndpointOutcome outcome = TicketEndpointOutcome.fromStatus(r.getStatus().getCode());
+            String alfTicket = outcome == TicketEndpointOutcome.ISSUED ? this.parseAlfTicket(r) : null;
+            if (alfTicket == null)
             {
-                return;
+                LOGGER.error("Failed to renew Alfresco ticket, the repository answered " + r.getStatus().getCode());
+                return outcome == TicketEndpointOutcome.ISSUED ? TicketEndpointOutcome.UNAVAILABLE : outcome;
             }
 
-            String alfTicket = this.getAlfTicket(session, username, accessToken.getTokenValue());
-            if (alfTicket != null)
-            {
-                // Rebind the whole session, not only the ticket: the request served during this refresh would
-                // otherwise reach the web scripts without a user in its request context, and fail on "user is
-                // not defined".
-                this.bindAlfrescoSession(session, username, alfTicket);
-                this.initUser(request);
-            }
+            // Rebind the whole session, not only the ticket: the request served during this refresh would
+            // otherwise reach the web scripts without a user in its request context, and fail on "user is
+            // not defined".
+            this.bindAlfrescoSession(session, username, alfTicket);
+            this.initUser(request);
+            this.rejectedTicketTracker.clearRejected(session);
+            return TicketEndpointOutcome.ISSUED;
         }
         catch (ConnectorServiceException | UserFactoryException e)
         {
-            LOGGER.error("Failed to renew Alfresco ticket after token refresh: " + e.getMessage(), e);
+            LOGGER.error("Failed to renew Alfresco ticket: " + e.getMessage(), e);
+            return TicketEndpointOutcome.UNAVAILABLE;
         }
     }
 
