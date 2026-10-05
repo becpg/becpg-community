@@ -98,7 +98,16 @@
     -->
     <Engine name="Catalina" defaultHost="localhost">
     
-     <Valve className="org.apache.catalina.valves.RemoteIpValve" />
+     <!-- Behind the GCP load balancer (NEG), requests reach the pod from the Google front
+          ends, 35.191.0.0/16 and 130.211.0.0/22, which are not in the Tomcat default list:
+          X-Forwarded-Proto was ignored and absolute URLs (OIDC redirect_uri) were built in
+          http. The other ranges are the Tomcat 11 defaults. Override with
+          -Dbecpg.tomcat.internalProxies (CIDR list). -->
+     <Valve className="org.apache.catalina.valves.RemoteIpValve"
+            remoteIpHeader="X-Forwarded-For"
+            protocolHeader="X-Forwarded-Proto"
+            protocolHeaderHttpsValue="https"
+            internalProxies="${becpg.tomcat.internalProxies:-35.191.0.0/16, 130.211.0.0/22, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16, 100.64.0.0/10, 127.0.0.0/8, fc00::/7, fe80::/10, ::1/128}" />
 
       <!-- Use the LockOutRealm to prevent attempts to guess user passwords
            via a brute-force attack -->
