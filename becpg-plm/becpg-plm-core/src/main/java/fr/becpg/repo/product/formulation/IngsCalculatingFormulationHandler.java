@@ -345,25 +345,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					ingListDataItem.setQtyPercWithYield(null);
 				}
 
-				if (!formulatedProduct.isGeneric() && (formulatedProduct.getSecondaryYield() != null)
-						&& (formulatedProduct.getSecondaryYield() != 0d)) {
-					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
-							: ingListDataItem.getQtyPerc();
-
-					if (qtyPercWithSecondaryYield != null) {
-						double secondaryYieldFactor = formulatedProduct.getSecondaryYield() / 100d;
-						if (hasEvaporationData(ingListDataItem) && !supersededEvaporation.contains(ingListDataItem)) {
-							Double evaporateRate = getEvaporateRate(ingListDataItem);
-							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate, null, null));
-						} else {
-							qtyPercWithSecondaryYield /= secondaryYieldFactor;
-						}
-					}
-					ingListDataItem.setQtyPercWithSecondaryYield(qtyPercWithSecondaryYield);
-				} else {
-					ingListDataItem.setQtyPercWithSecondaryYield(null);
-				}
-
 				// add detailable aspect
 				if (!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 					ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
@@ -371,8 +352,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 
 			if (!formulatedProduct.isGeneric()) {
-
 				applyEvaporation(formulatedProduct, evaporatedDataItems);
+			}
+
+			initQtyPercWithSecondaryYield(formulatedProduct, evaporatedDataItems, supersededEvaporation);
+
+			if (!formulatedProduct.isGeneric()) {
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
 			}
 
@@ -392,6 +377,61 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
+	}
+
+	/**
+	 * Starts the "with secondary yield" percentages from the "with yield" ones once the evaporation of the
+	 * product yield has been applied.
+	 * <p>
+	 * The secondary yield applies after the product yield (see #21401): an evaporating ingredient must
+	 * therefore lose the secondary evaporation on top of the water already lost to the product yield, as
+	 * the labeling does with the combined yield. Starting from the quantity before evaporation counted the
+	 * water lost to the product yield as still present, and the rescaling to 100 % then spread the error
+	 * over every other ingredient (see #34489). Non evaporating ingredients are concentrated by the
+	 * secondary yield; evaporating ones keep their quantity until the secondary evaporation is applied.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 * @param evaporatedDataItems the evaporating ingredients, completed with those found here
+	 * @param supersededEvaporation the composite ingredients whose evaporation rate is ignored
+	 */
+	private void initQtyPercWithSecondaryYield(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems,
+			Set<IngListDataItem> supersededEvaporation) {
+
+		boolean hasSecondaryYield = !formulatedProduct.isGeneric() && (formulatedProduct.getSecondaryYield() != null)
+				&& (formulatedProduct.getSecondaryYield() != 0d);
+
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			Double qtyPercWithSecondaryYield = null;
+			if (hasSecondaryYield) {
+				qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
+						: ingListDataItem.getQtyPerc();
+				if (qtyPercWithSecondaryYield != null) {
+					qtyPercWithSecondaryYield = applySecondaryYieldFactor(formulatedProduct, ingListDataItem, qtyPercWithSecondaryYield,
+							evaporatedDataItems, supersededEvaporation);
+				}
+			}
+			ingListDataItem.setQtyPercWithSecondaryYield(qtyPercWithSecondaryYield);
+		}
+	}
+
+	/**
+	 * Concentrates a percentage by the secondary yield, unless the ingredient evaporates: its quantity is
+	 * then kept and the ingredient is registered for the secondary evaporation.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 * @param ingListDataItem the ingredient
+	 * @param qtyPerc the percentage after the product yield
+	 * @param evaporatedDataItems the evaporating ingredients
+	 * @param supersededEvaporation the composite ingredients whose evaporation rate is ignored
+	 * @return the percentage before the secondary evaporation
+	 */
+	private Double applySecondaryYieldFactor(ProductData formulatedProduct, IngListDataItem ingListDataItem, Double qtyPerc,
+			Set<EvaporatedDataItem> evaporatedDataItems, Set<IngListDataItem> supersededEvaporation) {
+		if (hasEvaporationData(ingListDataItem) && !supersededEvaporation.contains(ingListDataItem)) {
+			evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), getEvaporateRate(ingListDataItem), null, null));
+			return qtyPerc;
+		}
+		return qtyPerc / (formulatedProduct.getSecondaryYield() / 100d);
 	}
 
 	/**
