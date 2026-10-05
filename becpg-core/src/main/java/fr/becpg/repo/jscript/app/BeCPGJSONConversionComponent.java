@@ -32,10 +32,10 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
-import org.springframework.extensions.surf.util.URLEncoder;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.UrlPathEncoder;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -55,6 +55,10 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	
 	/** Constant <code>REPORT_DOWNLOAD_API_URL="becpg/report/node/{0}/{1}/{2}/content/{"{trunked}</code> */
 	private static final String REPORT_DOWNLOAD_API_URL = "becpg/report/node/{0}/{1}/{2}/content/{3}";
+
+	private static final String CONTENT_DOWNLOAD_API_URL = "/slingshot/node/content/{0}/{1}/{2}/{3}";
+
+	private static final String CONTENT_URL = "contentURL";
 
 
 	/**
@@ -119,12 +123,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 				setRootValues(nodeInfo, json, useShortQNames);
 				
 				if (ReportModel.TYPE_REPORT.equals(nodeService.getType(nodeRef))) {
-					json.put("contentURL", MessageFormat.format(
-							REPORT_DOWNLOAD_API_URL,
-	                                nodeRef.getStoreRef().getProtocol(),
-	                                nodeRef.getStoreRef().getIdentifier(),
-	                                nodeRef.getId(),
-	                                URLEncoder.encode(nodeInfo.getName())));
+					json.put(CONTENT_URL, buildContentURL(REPORT_DOWNLOAD_API_URL, nodeInfo));
 				}
 
 				// add permissions
@@ -142,6 +141,34 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		}
 
 		return json.toJSONString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Rebuilds the content URL so that file names outside the BMP (emojis) are encoded as valid UTF-8.
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void setRootValues(FileInfo nodeInfo, JSONObject rootJSONObject, boolean useShortQNames) {
+		super.setRootValues(nodeInfo, rootJSONObject, useShortQNames);
+		if (rootJSONObject.containsKey(CONTENT_URL)) {
+			rootJSONObject.put(CONTENT_URL, buildContentURL(CONTENT_DOWNLOAD_API_URL, nodeInfo));
+		}
+	}
+
+	/**
+	 * Builds a content URL from a pattern whose placeholders are the store protocol, the store identifier,
+	 * the node id and the encoded file name.
+	 *
+	 * @param urlPattern the URL pattern
+	 * @param nodeInfo the node to build the URL for
+	 * @return the content URL
+	 */
+	static String buildContentURL(String urlPattern, FileInfo nodeInfo) {
+		NodeRef nodeRef = nodeInfo.getNodeRef();
+		return MessageFormat.format(urlPattern, nodeRef.getStoreRef().getProtocol(), nodeRef.getStoreRef().getIdentifier(),
+				nodeRef.getId(), UrlPathEncoder.encode(nodeInfo.getName()));
 	}
 
 	/**
