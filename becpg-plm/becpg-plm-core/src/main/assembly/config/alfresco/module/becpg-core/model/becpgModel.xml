@@ -2016,10 +2016,6 @@
 						<constraint ref="bcpg:scoreDefEngines" />
 					</constraints>
 				</property>
-				<property name="bcpg:scoreDefPluginId">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
 				<property name="bcpg:scoreDefScale">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -2063,31 +2059,10 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:scoreDefFormula">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:scoreDefDetailFormula">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:scoreDefRangeFormula">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
 				<!-- Product property holding the category this score reads, for instance
 				     bcpg:nutrientProfileCategory or bcpg:ecoScoreCategory -->
 				<property name="bcpg:scoreDefCategoryProperty">
 					<type>d:text</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:scoreDefIsOfficial">
-					<type>d:boolean</type>
-					<default>false</default>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:scoreDefValidityPeriod">
-					<type>d:int</type>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:scoreDefStartEffectivity">
