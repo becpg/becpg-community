@@ -1522,6 +1522,7 @@
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show for-mode="view" force="false" id="bcpg:nutrientReferenceProducts" />
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
+          <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
           <show force="false" id="bcpg:glopTargetCharact"/>
@@ -1548,6 +1549,9 @@
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false"/>
+          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
+          </field>
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
