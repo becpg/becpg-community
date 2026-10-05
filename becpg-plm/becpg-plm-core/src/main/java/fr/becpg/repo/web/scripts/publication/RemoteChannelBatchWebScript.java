@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -209,6 +210,9 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				String channelListAction = entityAttributes.has(actionAttr) ? getStringAttribute(entityAttributes, actionAttr) : null;
 
 				ChannelData channelData = ChannelData.builder().status(status).batchId(batchId).error(error).action(channelListAction).build();
+				// The ack only writes channel state, but it also updates the entity: a business value that already breaks a model
+				// constraint must not prevent the connector from acknowledging the entity.
+				IntegrityChecker.setWarnInTransaction();
 				AuthenticationUtil.runAsSystem(() -> {
 					publicationChannelService.publishEntityChannel(nodeRef, channelId, channelData);
 					return null;

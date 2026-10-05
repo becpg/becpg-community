@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.test.repo.web.scripts.remote;
 
+import static org.junit.Assert.assertThrows;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -24,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
+import org.alfresco.repo.node.integrity.IntegrityException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -49,6 +53,9 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 
 	private static final String CONNECTOR_PASSWORD = "PWD";
 	private static final String CONNECTOR_ACCOUNT_TEST = "connector_account_test";
+	private static final QName PROP_GS1_FUNCTIONAL_NAME = QName.createQName("http://www.bcpg.fr/model/gs1/1.0", "functionalName");
+	private static final String FUNCTIONAL_NAME_OVER_35_CHARS = "Functional name longer than thirty-five characters";
+	private static final String UPDATED_DESCRIPTION = "Updated description";
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -256,6 +263,52 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 			assertNotNull(nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE));
 			return null;
 		});
+	}
+
+	/**
+	 * Test batch acknowledgment on an entity holding a value that breaks a model constraint unrelated to the channel.
+	 */
+	@Test
+	public void testBatchAckEntityWithConstraintViolation() throws IOException {
+		inWriteTx(() -> {
+			if (authenticationDAO.userExists(CONNECTOR_ACCOUNT_TEST)) {
+				personService.deletePerson(CONNECTOR_ACCOUNT_TEST);
+			}
+			BeCPGTestHelper.createUser(CONNECTOR_ACCOUNT_TEST);
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.ApiConnector, CONNECTOR_ACCOUNT_TEST);
+			return null;
+		});
+		NodeRef channelNodeRef = createTestChannel("test-channel-ack-constraint");
+		String channelId = inReadTx(() -> (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ID));
+		NodeRef entityNodeRef = createTestEntity("test-entity-constraint");
+
+		inWriteTx(() -> {
+			IntegrityChecker.setWarnInTransaction();
+			nodeService.setProperty(entityNodeRef, PROP_GS1_FUNCTIONAL_NAME, FUNCTIONAL_NAME_OVER_35_CHARS);
+			return null;
+		});
+
+		JSONObject attributes = new JSONObject();
+		attributes.put("bp:pubChannelListStatus", PublicationChannelStatus.COMPLETED.toString());
+		attributes.put("bp:pubChannelListBatchId", "batch-004");
+		JSONObject requestBody = new JSONObject();
+		requestBody.put("entity", new JSONObject().put("attributes", attributes));
+
+		String url = "/becpg/remote/channel/batch/ack?channelId=" + channelId + "&nodeRef=" + entityNodeRef.toString();
+		TestWebscriptExecuters.sendRequest(new PostRequest(url, requestBody.toString(), "application/json"), 200, CONNECTOR_ACCOUNT_TEST,
+				CONNECTOR_PASSWORD);
+
+		inReadTx(() -> {
+			NodeRef listNodeRef = entityListDAO.getList(entityListDAO.getListContainer(entityNodeRef), PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+			NodeRef channelListNodeRef = entityListDAO.getListItem(listNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, channelNodeRef);
+			assertEquals("batch-004", nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID));
+			return null;
+		});
+
+		assertThrows(IntegrityException.class, () -> inWriteTx(() -> {
+			nodeService.setProperty(entityNodeRef, ContentModel.PROP_DESCRIPTION, UPDATED_DESCRIPTION);
+			return null;
+		}));
 	}
 
 	/**
