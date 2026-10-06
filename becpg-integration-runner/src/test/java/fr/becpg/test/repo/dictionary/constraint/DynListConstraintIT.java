@@ -3,11 +3,14 @@
  */
 package fr.becpg.test.repo.dictionary.constraint;
 
+import static org.junit.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.alfresco.model.ContentModel;
@@ -42,6 +45,10 @@ public class DynListConstraintIT extends PLMBaseTestCase {
 	private static final String AUTHORITY_GROUP = "AUTHORITY_GROUP_" + DynListConstraintIT.class.getSimpleName();
 
 	private static final String NUT_TYPES_PATH = "cm:System/cm:Lists/bcpg:entityLists/cm:NutTypes";
+
+	private static final String DUPLICATE_CODE = "QUAL01";
+
+	private static final String OTHER_CODE = "QUAL02";
 
 	@Autowired
 	private AuthorityService authorityService;
@@ -129,6 +136,51 @@ public class DynListConstraintIT extends PLMBaseTestCase {
 			
 		});
 
+	}
+
+	@Test
+	public void testListValueCodeDuplicateCreationIsForbidden() {
+		final NodeRef listNodeRef = inWriteTx(this::createListFolder);
+		inWriteTx(() -> createListValue(listNodeRef, DUPLICATE_CODE));
+
+		assertThrows(IllegalStateException.class, () -> inWriteTx(() -> createListValue(listNodeRef, DUPLICATE_CODE)));
+	}
+
+	@Test
+	public void testListValueCodeDuplicateUpdateIsForbidden() {
+		final NodeRef listNodeRef = inWriteTx(this::createListFolder);
+		inWriteTx(() -> createListValue(listNodeRef, DUPLICATE_CODE));
+		final NodeRef otherListValueNodeRef = inWriteTx(() -> createListValue(listNodeRef, OTHER_CODE));
+
+		assertThrows(IllegalStateException.class, () -> inWriteTx(() -> {
+			nodeService.setProperty(otherListValueNodeRef, BeCPGModel.PROP_LV_CODE, DUPLICATE_CODE);
+			return null;
+		}));
+	}
+
+	@Test
+	public void testListValueCodeIsAllowedInAnotherList() {
+		final NodeRef listNodeRef = inWriteTx(this::createListFolder);
+		final NodeRef otherListNodeRef = inWriteTx(this::createListFolder);
+		inWriteTx(() -> createListValue(listNodeRef, DUPLICATE_CODE));
+
+		NodeRef listValueNodeRef = inWriteTx(() -> createListValue(otherListNodeRef, DUPLICATE_CODE));
+
+		assertTrue(inReadTx(() -> nodeService.exists(listValueNodeRef)));
+	}
+
+	private NodeRef createListFolder() {
+		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER,
+				Map.of(ContentModel.PROP_NAME, UUID.randomUUID().toString())).getChildRef();
+	}
+
+	private NodeRef createListValue(NodeRef listNodeRef, String code) {
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(BeCPGModel.PROP_LV_CODE, code);
+		props.put(BeCPGModel.PROP_LV_VALUE, code);
+		props.put(ContentModel.PROP_NAME, UUID.randomUUID().toString());
+		return nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, BeCPGModel.TYPE_LIST_VALUE, props)
+				.getChildRef();
 	}
 
 	private DynListConstraint findDynListContraint(QName propQName) {

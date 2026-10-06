@@ -42,6 +42,8 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ListValuePolicy.class);
 
+	private static final String MESSAGE_DUPLICATE_CODE = "message.constraint.list-value.code.duplicate";
+
 
 	private BeCPGCacheService beCPGCacheService;
 	
@@ -138,26 +140,59 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (after.get(BeCPGModel.PROP_LV_CODE) == null || after.get(BeCPGModel.PROP_LV_CODE).toString().isBlank()) {
-			String beforeDefaultValue = null;
-			if (before.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText beforeMltext) {
-				beforeDefaultValue = MLTextHelper.getClosestValue(beforeMltext, Locale.getDefault());
-				String afterDefaultValue = null;
-				if (after.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText afterMltext) {
-					afterDefaultValue = MLTextHelper.getClosestValue(afterMltext, Locale.getDefault());
+		Serializable code = after.get(BeCPGModel.PROP_LV_CODE);
+		if (code == null || code.toString().isBlank()) {
+			checkValueUnchangedWithoutCode(nodeRef, before, after);
+		} else if (!Objects.equals(before.get(BeCPGModel.PROP_LV_CODE), code)) {
+			checkCodeIsUnique(nodeRef, code);
+		}
+	}
+
+	/**
+	 * Forbids changing the default value of a list value having no code, as the value is then its key.
+	 *
+	 * @param nodeRef the list value
+	 * @param before the properties before the update
+	 * @param after the properties after the update
+	 * @throws IllegalStateException if the default value has changed
+	 */
+	private void checkValueUnchangedWithoutCode(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		String beforeDefaultValue = null;
+		if (before.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText beforeMltext) {
+			beforeDefaultValue = MLTextHelper.getClosestValue(beforeMltext, Locale.getDefault());
+			String afterDefaultValue = null;
+			if (after.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText afterMltext) {
+				afterDefaultValue = MLTextHelper.getClosestValue(afterMltext, Locale.getDefault());
+			}
+			if (!Objects.equals(beforeDefaultValue, afterDefaultValue)) {
+				Path nodePath = nodeService.getPath(nodeRef);
+				String pathString = nodePath != null ? nodePath.toPrefixString(namespaceService) : null;
+				StringBuilder messageBuilder = new StringBuilder("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
+				messageBuilder.append(" before=").append(beforeDefaultValue);
+				messageBuilder.append(" after=").append(afterDefaultValue);
+				messageBuilder.append(" nodeRef=").append(nodeRef);
+				if (pathString != null) {
+					messageBuilder.append(" path=").append(pathString);
 				}
-				if (!Objects.equals(beforeDefaultValue, afterDefaultValue)) {
-					Path nodePath = nodeService.getPath(nodeRef);
-					String pathString = nodePath != null ? nodePath.toPrefixString(namespaceService) : null;
-					StringBuilder messageBuilder = new StringBuilder("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
-					messageBuilder.append(" before=").append(beforeDefaultValue);
-					messageBuilder.append(" after=").append(afterDefaultValue);
-					messageBuilder.append(" nodeRef=").append(nodeRef);
-					if (pathString != null) {
-						messageBuilder.append(" path=").append(pathString);
-					}
-					throw new IllegalStateException(messageBuilder.toString());
-				}
+				throw new IllegalStateException(messageBuilder.toString());
+			}
+		}
+	}
+
+	/**
+	 * Forbids two values of the same list sharing a code, as the code is the key the constraint
+	 * stores and only one of them could be displayed. The lookup is a database query, so that it
+	 * also sees the values created in the current transaction.
+	 *
+	 * @param nodeRef the list value whose code is set
+	 * @param code the code of the list value
+	 * @throws IllegalStateException if another value of the list already has this code
+	 */
+	private void checkCodeIsUnique(NodeRef nodeRef, Serializable code) {
+		NodeRef listNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+		for (ChildAssociationRef childAssocRef : nodeService.getChildAssocsByPropertyValue(listNodeRef, BeCPGModel.PROP_LV_CODE, code)) {
+			if (!nodeRef.equals(childAssocRef.getChildRef())) {
+				throw new IllegalStateException(I18NUtil.getMessage(MESSAGE_DUPLICATE_CODE, code));
 			}
 		}
 	}

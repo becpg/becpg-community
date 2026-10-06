@@ -32,6 +32,12 @@
     var FORM_DIALOG_LOCK_TIMEOUT = 10000;
 
     /**
+     * Java exception class name the server puts in front of an error message, such as
+     * "java.lang.IllegalStateException: ", which means nothing to the user.
+     */
+    var EXCEPTION_CLASS_PREFIX = /^\s*(?:[\w$]+\.)+[\w$]*(?:Exception|Error):\s*/;
+
+    /**
      * Width of the popups holding a checkbox picker, wide enough for its four columns.
      */
     var PICKER_PANEL_WIDTH = "76em";
@@ -76,6 +82,28 @@
           */
         _unlockFormDialog: function EntityDataGrid__unlockFormDialog() {
             this.formDialogPending = false;
+        },
+
+        /**
+          * Displays the failure of an action, with the message sent back by the server when there is one.
+          *
+          * @method _displayActionFailure
+          * @param title
+          *           {string} the failure message, also used when the server sends no message
+          * @param response
+          *           {object} the server response
+          */
+        _displayActionFailure: function EntityDataGrid__displayActionFailure(title, response) {
+            if (response && response.json && response.json.message) {
+                Alfresco.util.PopupManager.displayPrompt({
+                    title: title,
+                    text: response.json.message.replace(EXCEPTION_CLASS_PREFIX, "")
+                });
+            } else {
+                Alfresco.util.PopupManager.displayMessage({
+                    text: title
+                });
+            }
         },
 
         /**
@@ -285,9 +313,7 @@
                 },
                 onFailure: {
                     fn: function EntityDataGrid_onActionCreate_failure(response) {
-                        Alfresco.util.PopupManager.displayMessage({
-                            text: me.msg("message.new-row.failure")
-                        });
+                        me._displayActionFailure(me.msg("message.new-row.failure"), response);
                     },
                     scope: this
                 }
@@ -403,9 +429,7 @@
                 },
                 onFailure: {
                     fn: function EntityDataGrid_onActionEdit_failure(response) {
-                        Alfresco.util.PopupManager.displayMessage({
-                            text: me.msg("message.details.failure")
-                        });
+                        me._displayActionFailure(me.msg("message.details.failure"), response);
                     },
                     scope: this
                 }
@@ -567,16 +591,7 @@
                         callback:
                         {
                             fn: function(response, obj) {
-                                if (response.json && response.json.message) {
-                                    Alfresco.util.PopupManager.displayPrompt({
-                                        title: me.msg("message.delete.failure"),
-                                        text: response.json.message
-                                    });
-                                } else {
-                                    Alfresco.util.PopupManager.displayMessage({
-                                        text: me.msg("message.delete.failure")
-                                    });
-                                }
+                                me._displayActionFailure(me.msg("message.delete.failure"), response);
                             }
                         }
                     },
