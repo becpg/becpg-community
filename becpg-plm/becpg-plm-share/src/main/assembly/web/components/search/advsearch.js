@@ -297,8 +297,11 @@
 						var savedValue = savedQuery[name];
 		
 						if (savedValue !== undefined && savedValue !== "") {
-							if (element.type === "checkbox" || element.type === "radio") {
+							if (element.type === "checkbox") {
 								element.checked = (savedValue === "true");
+							} else if (element.type === "radio") {
+								// radio groups such as boolean.ftl submit the value of the checked radio (e.g. "=true" in search mode)
+								element.checked = (element.value === savedValue);
 							} else if (name.match("-range$") == "-range") {
 								// found number range?
 								var cntrl = Dom.get(element.id + "-cntrl-min");
