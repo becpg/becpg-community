@@ -151,10 +151,10 @@ public class ScoreMarkingRenderer {
 	 *
 	 * @param score the computed score, as parsed from {@code bcpg:rslDetails}
 	 * @param locale the locale of the marking
-	 * @return the SVG, empty when the score has neither parts nor class, or no template draws it
+	 * @return the SVG, empty when the score has neither parts, class nor value, or no template draws it
 	 */
 	public Optional<String> render(ScoreContext score, Locale locale) {
-		if (score.getParts().isEmpty() && isBlank(score.getScoreClass())) {
+		if (score.getParts().isEmpty() && isBlank(score.getScoreClass()) && (score.getValue() == null)) {
 			return Optional.empty();
 		}
 		return renderMarking(new ScoreMarkingBuilder(locale).build(score), locale);

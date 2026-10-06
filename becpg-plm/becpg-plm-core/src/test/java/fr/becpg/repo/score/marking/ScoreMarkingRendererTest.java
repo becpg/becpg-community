@@ -270,9 +270,128 @@ public class ScoreMarkingRendererTest {
 
 	@Test
 	public void testScaleWithoutTemplateIsLeftToTheBrowser() {
-		ScoreContext score = ScoreContext.parse("{\"code\":\"NUTRISCORE\",\"scale\":\"Letter\",\"class\":\"B\",\"parts\":[{\"code\":\"FAT\"}]}");
+		ScoreContext score = ScoreContext.parse("{\"code\":\"CUSTOM\",\"scale\":\"Custom\",\"class\":\"B\",\"parts\":[{\"code\":\"FAT\"}]}");
 
 		assertEquals(Optional.empty(), renderer.render(score, Locale.ENGLISH));
+	}
+
+	/** One score of every scale the reference data ships, as the formulation details them. */
+	private static final List<String> SHIPPED_SCALES = List.of(
+			"{\"code\":\"NUTRISCORE\",\"scale\":\"Letter\",\"class\":\"E\",\"value\":29,\"version\":\"2017\",\"parts\":[{\"code\":\"FASAT\",\"value\":9.5,\"share\":27.3,\"contribution\":9}]}",
+			"{\"code\":\"NUTRIGRADE\",\"scale\":\"Letter\",\"class\":\"D\",\"value\":3,\"parts\":[{\"code\":\"SUGAR\",\"label\":\"D\",\"value\":140}]}",
+			"{\"code\":\"PPWR\",\"scale\":\"Letter\",\"class\":\"NR\",\"value\":40,\"unit\":\"%\",\"parts\":[]}",
+			"{\"code\":\"PLANETSCORE_PESTICIDES\",\"scale\":\"Gauge\",\"class\":\"E\",\"value\":0.495,\"parts\":[]}",
+			"{\"code\":\"PLANETSCORE\",\"scale\":\"Mark\",\"class\":\"D\",\"parts\":[{\"code\":\"PLANETSCORE_PESTICIDES\",\"label\":\"E\"},{\"code\":\"PLANETSCORE_CLIMAT\",\"label\":\"B\"}]}",
+			"{\"code\":\"HSR\",\"scale\":\"Stars\",\"class\":\"1.5\",\"value\":1.5,\"unit\":\"stars\",\"parts\":[]}",
+			"{\"code\":\"WARNINGS_MX\",\"scale\":\"Warnings\",\"class\":\"2\",\"value\":2,\"parts\":[{\"code\":\"SUGAR\",\"label\":\"EXCESO AZ\u00daCARES\"},{\"code\":\"FASAT\",\"label\":\"EXCESO GRASAS SATURADAS\"}]}",
+			"{\"code\":\"WARNINGS_BR\",\"scale\":\"Warnings\",\"class\":\"1\",\"value\":1,\"parts\":[{\"code\":\"SUGAR\",\"label\":\"ALTO EM A\u00c7\u00daCAR ADICIONADO\"}]}",
+			"{\"code\":\"WARNINGS_IL\",\"scale\":\"Warnings\",\"class\":\"1\",\"value\":1,\"parts\":[{\"code\":\"NA\",\"label\":\"HIGH SODIUM\"}]}",
+			"{\"code\":\"NUTRINFORM\",\"scale\":\"Numeric\",\"parts\":[{\"code\":\"ENER-E14\",\"label\":\"Energy\",\"value\":57.3,\"unit\":\"kJ\",\"share\":2.87},{\"code\":\"FASAT\",\"label\":\"Saturates\",\"value\":2.85,\"share\":14.25}]}",
+			"{\"code\":\"FSAOFCOM\",\"scale\":\"Numeric\",\"class\":\"HFSS\",\"value\":19,\"unit\":\"points\",\"parts\":[{\"code\":\"SUGAR\",\"value\":32,\"share\":30.4,\"contribution\":7}]}",
+			"{\"code\":\"EF31\",\"scale\":\"Numeric\",\"value\":0.052167317738889205,\"unit\":\"Pt\",\"parts\":[{\"code\":\"WATER_USE\",\"value\":0.0558,\"unit\":\"m3 world eq/kg\",\"share\":0.79}]}",
+			"{\"code\":\"NOVA\",\"scale\":\"Grade\",\"class\":\"4\",\"value\":4,\"parts\":[]}",
+			"{\"code\":\"YUKA\",\"scale\":\"Grade\",\"value\":30,\"unit\":\"/100\",\"parts\":[{\"code\":\"ADDITIVES\",\"value\":100,\"share\":100}]}");
+
+	@Test
+	public void testEveryShippedScaleIsMarkedWithWellFormedSvg() throws Exception {
+		for (String details : SHIPPED_SCALES) {
+			for (Locale locale : List.of(Locale.ENGLISH, Locale.FRENCH)) {
+				String svg = renderer.render(ScoreContext.parse(details), locale).orElseThrow(() -> new AssertionError("No marking for " + details));
+				Element root = parse(svg).getDocumentElement();
+				assertEquals(details, SVG_NAMESPACE, root.getNamespaceURI());
+				assertTrue(details, root.getAttribute("width").endsWith("pt"));
+				assertFalse(details, svg.contains("dominant-baseline"));
+				assertFalse(details, svg.contains("foreignObject"));
+				assertFalse("a figure is never written with a decimal comma", svg.matches("(?s).*=\"[0-9]+,[0-9]+\".*"));
+			}
+		}
+	}
+
+	private String renderShipped(String code, Locale locale) {
+		for (String details : SHIPPED_SCALES) {
+			if (details.contains("\"code\":\"" + code + "\",\"scale\"")) {
+				return renderer.render(ScoreContext.parse(details), locale).orElseThrow();
+			}
+		}
+		throw new IllegalArgumentException(code);
+	}
+
+	@Test
+	public void testLetterStripGrowsTheReachedClassUnderTheNameOfTheScheme() {
+		String svg = renderShipped("NUTRISCORE", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">NUTRI-SCORE</text>"));
+		assertTrue("the reached class is outlined", svg.contains("fill=\"#ff0100\" stroke=\"#333333\""));
+		assertTrue("the other classes are faded", svg.contains("fill=\"#00853f\" opacity=\"0.45\""));
+	}
+
+	@Test
+	public void testLetterThemeNamingItsOwnClassesGradesOnThem() {
+		String svg = renderShipped("PPWR", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">NR</text>"));
+		assertFalse("the PPWR has no E grade", svg.contains(">E</text>"));
+	}
+
+	@Test
+	public void testNutriGradeIsStampedAsATag() {
+		String svg = renderShipped("NUTRIGRADE", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">NUTRI-GRADE</text>"));
+		assertTrue("four pips, one per grade", svg.split("<circle ").length == 5);
+	}
+
+	@Test
+	public void testWarningsDrawOneMarkPerPartInTheShapeOfTheirCountry() {
+		String mexico = renderShipped("WARNINGS_MX", Locale.ENGLISH);
+		assertEquals("one octagon per warning", 3, mexico.split("<polygon ").length);
+		assertTrue(mexico.contains(">SATURADAS</text>"));
+
+		assertTrue("Israel stamps a red circle", renderShipped("WARNINGS_IL", Locale.ENGLISH).contains("<circle "));
+		assertTrue("Brazil prints a magnifying glass", renderShipped("WARNINGS_BR", Locale.ENGLISH).contains("stroke-width=\"3\""));
+	}
+
+	@Test
+	public void testNutrInformDrawsOneBatteryPerPartFilledToItsShare() {
+		String svg = renderShipped("NUTRINFORM", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">14% RI</text>"));
+		assertTrue("the battery of saturates is filled to 14.25%", svg.contains("width=\"5.1\""));
+		assertFalse("no plate when the score states no value", svg.contains(">NUTRINFORM</text>"));
+	}
+
+	@Test
+	public void testNumericScoreStatesItsValueUnitAndClass() {
+		String fsa = renderShipped("FSAOFCOM", Locale.ENGLISH);
+		assertTrue(fsa.contains(">19 points</text>"));
+		assertTrue(fsa.contains(">HFSS</text>"));
+
+		assertTrue("three significant digits under a hundred", renderShipped("EF31", Locale.ENGLISH).contains(">0.0522 Pt</text>"));
+		assertTrue("in the locale of the marking", renderShipped("EF31", Locale.FRENCH).contains(">0,0522 Pt</text>"));
+	}
+
+	@Test
+	public void testStarsAreFilledByHalfStarSteps() {
+		String svg = renderShipped("HSR", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">HEALTH STAR RATING</text>"));
+		assertEquals("one half star", 1, svg.split("clip-path=\"url\\(#halfStar").length - 1);
+		assertTrue(svg.contains(">1.5</text>"));
+	}
+
+	@Test
+	public void testGradeWithoutClassStatesItsValue() {
+		assertTrue(renderShipped("YUKA", Locale.ENGLISH).contains(">30/100</text>"));
+		assertTrue(renderShipped("NOVA", Locale.ENGLISH).contains("fill=\"#ff0100\""));
+	}
+
+	@Test
+	public void testMarkListsTheAxesItGrades() {
+		String svg = renderShipped("PLANETSCORE", Locale.FRENCH);
+
+		assertTrue(svg.contains(">Pesticides</text>"));
+		assertTrue(svg.contains(">Climat</text>"));
+		assertFalse("an axis without level is not listed", svg.contains(">Biodiversit"));
 	}
 
 	@Test

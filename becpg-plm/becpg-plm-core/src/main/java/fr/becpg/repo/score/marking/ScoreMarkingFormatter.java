@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.score.marking;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -18,6 +20,11 @@ public class ScoreMarkingFormatter {
 	private static final String AMOUNT_PATTERN = "0.##";
 
 	private static final String WHOLE_PATTERN = "0";
+
+	/** Enough decimals for a value already rounded to its significant digits. */
+	private static final String SIGNIFICANT_PATTERN = "0.##########";
+
+	private static final MathContext SIGNIFICANT_DIGITS = new MathContext(3);
 
 	private static final String EMPTY = "";
 
@@ -66,6 +73,23 @@ public class ScoreMarkingFormatter {
 	 */
 	public String share(Double share) {
 		return share != null ? labels.referenceIntake(format(share, WHOLE_PATTERN)) : null;
+	}
+
+	/**
+	 * <p>The value of a score, "0.0522" or "62.5": three significant digits under a hundred, so that
+	 * an environmental footprint of a few thousandths of a point does not read as zero.</p>
+	 *
+	 * @param value the value, may be null
+	 * @return the formatted value, null when there is none
+	 */
+	public String value(Double value) {
+		if ((value == null) || value.isNaN() || value.isInfinite()) {
+			return null;
+		}
+		if (Math.abs(value) >= 100d) {
+			return format(value, WHOLE_PATTERN);
+		}
+		return format(new BigDecimal(value).round(SIGNIFICANT_DIGITS).doubleValue(), SIGNIFICANT_PATTERN);
 	}
 
 	private String format(Double value, String pattern) {

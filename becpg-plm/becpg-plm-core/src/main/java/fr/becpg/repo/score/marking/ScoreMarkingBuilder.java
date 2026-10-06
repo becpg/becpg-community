@@ -42,6 +42,8 @@ public class ScoreMarkingBuilder {
 
 	static final String DEFAULT_MASS_UNIT = "g";
 
+	private static final String PERCENT_UNIT = "%";
+
 	private static final String EMPTY = "";
 
 	private final ScoreMarkingLabels labels;
@@ -71,14 +73,30 @@ public class ScoreMarkingBuilder {
 			parts.add(buildPart(part));
 		}
 		return new ScoreMarking(score.getCode(), score.getScale(), score.getScoreClass(), parts, labels.caption(score.getCode()), List.of(),
-				score.getVersion());
+				score.getVersion(), formatter.value(score.getValue()), blankToNull(score.getUnit()), score.getValue());
 	}
 
 	private ScoreMarkingPart buildPart(ScorePart part) {
 		boolean energy = ENERGY_CODES.contains(part.getCode());
 		String level = trafficLevel(part);
 		return new ScoreMarkingPart(part.getCode(), labels.partName(part.getCode()), amount(part, energy), null, level, labels.verdict(level),
-				formatter.share(part.getShare()), energy);
+				formatter.share(part.getShare()), energy, blankToNull(part.getLabel()), fill(part));
+	}
+
+	/**
+	 * Share of the reference intake a battery is filled to. A part stated in percent is that share
+	 * itself, which is how {@code score-badge.js} reads it on screen.
+	 */
+	private static Double fill(ScorePart part) {
+		Double share = PERCENT_UNIT.equals(part.getUnit()) ? part.getValue() : part.getShare();
+		if ((share == null) || share.isNaN()) {
+			return null;
+		}
+		return Math.max(0d, Math.min(100d, share)) / 100d;
+	}
+
+	private static String blankToNull(String value) {
+		return (value == null) || value.isBlank() ? null : value;
 	}
 
 	/**

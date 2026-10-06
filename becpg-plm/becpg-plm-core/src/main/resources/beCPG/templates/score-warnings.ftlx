@@ -1,0 +1,83 @@
+<#--
+  Front of pack warnings, one mark per nutrient in excess, side by side. Most of Latin America
+  stamps a black octagon, Brazil a black rectangle bearing a magnifying glass, Israel a red circle.
+  The wording is the one the score publishes for each part, "ALTO EN AZUCARES", stacked over as
+  many lines as it has words.
+
+  These are drawings of the regulated shapes, not the official artwork: the regulations fix the
+  exact typography and proportions a package has to print.
+
+  The model is a ScoreMarking under "score": the label of each part is the wording of a warning.
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign BLACK = "#000000">
+<#assign RED = "#d0021b">
+<#assign SIZE = 54>
+<#assign GAP = 4>
+
+<#-- Bold capitals run wider than the average glyph svg-lib.ftlx measures with -->
+<#assign CAPITALS_RATIO = 0.7>
+
+<#assign shape = (score.code() == "WARNINGS_BR")?then("rect", (score.code() == "WARNINGS_IL")?then("circle", "octagon"))>
+
+<#assign words = []>
+<#list score.parts() as part>
+	<#assign words = words + [(part.label()!"!")?trim?split(r"\s+", "r")]>
+</#list>
+
+<#function brazilWidth lines>
+	<#local longest = 0>
+	<#list lines as line>
+		<#local longest = [longest, line?length]?max>
+	</#list>
+	<#return [88, 40 + (longest * 9 * CAPITALS_RATIO)?ceiling + 8]?max>
+</#function>
+
+<#function markWidth lines>
+	<#return (shape == "rect")?then(brazilWidth(lines), SIZE)>
+</#function>
+
+<#function markHeight lines>
+	<#return (shape == "rect")?then([56, lines?size * 11 + 18]?max, SIZE)>
+</#function>
+
+<#assign W = 0>
+<#assign H = 1>
+<#list words as lines>
+	<#assign W = W + markWidth(lines) + (lines?is_first)?then(0, GAP)>
+	<#assign H = [H, markHeight(lines)]?max>
+</#list>
+<#assign W = [W, 1]?max>
+
+<@svg.document width=W height=H>
+	<#assign left = 0>
+	<#list words as lines>
+		<#assign mw = markWidth(lines)>
+		<#assign mh = markHeight(lines)>
+		<#assign top = (H - mh) / 2>
+		<#if shape == "rect">
+			<rect x="${left + 1}" y="${top + 1}" width="${mw - 2}" height="${mh - 2}" fill="${BLACK}" stroke="${lib.WHITE}" stroke-width="2"/>
+			<#assign middle = top + mh / 2>
+			<circle cx="${left + 19}" cy="${middle - 4}" r="9" fill="none" stroke="${lib.WHITE}" stroke-width="3"/>
+			<rect x="${left + 26}" y="${middle + 2}" width="3" height="10" fill="${lib.WHITE}" transform="rotate(-45 ${left + 27.5} ${middle + 7})"/>
+			<#assign firstLine = middle - (lines?size - 1) * 11 / 2>
+			<#list lines as word>
+			<text x="${left + 40}" y="${svg.centredBaseline(firstLine + word?index * 11, 9)}" font-size="9" font-weight="bold" fill="${lib.WHITE}">${word}</text>
+			</#list>
+		<#else>
+			<#if shape == "circle">
+			<circle cx="${left + SIZE / 2}" cy="${top + SIZE / 2}" r="${SIZE / 2 - 1}" fill="${RED}"/>
+			<#else>
+			<polygon points="${left + 16},${top + 1} ${left + 38},${top + 1} ${left + 53},${top + 16} ${left + 53},${top + 38} ${left + 38},${top + 53} ${left + 16},${top + 53} ${left + 1},${top + 38} ${left + 1},${top + 16}" fill="${BLACK}"/>
+			</#if>
+			<#assign lineHeight = (lines?size gt 3)?then(9, 11)>
+			<#assign firstLine = top + SIZE / 2 - (lines?size - 1) * lineHeight / 2>
+			<#list lines as word>
+			<@svg.centredText x=left + SIZE / 2 middle=firstLine + word?index * lineHeight text=word size=svg.fittedSize(word, SIZE - 14, (lines?size gt 3)?then(7, 8), CAPITALS_RATIO) fill=lib.WHITE/>
+			</#list>
+		</#if>
+		<#assign left = left + mw + GAP>
+	</#list>
+</@svg.document>

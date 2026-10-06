@@ -1,0 +1,44 @@
+<#--
+  A mark stating its themes side by side, the Planet-score being the case: the overall grade as a
+  letter strip, then one row per axis with the gauge of the level it reaches. An axis is listed
+  only when the score publishes its level, as the label of the part.
+
+  The model is a ScoreMarking under "score": its class is the overall grade, the label of each
+  part the level of an axis.
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign theme = lib.themeOf(score.code())>
+<#assign titleText = lib.titleOf(score.code())>
+<#assign PAD = 3>
+<#assign GROWN = 25>
+<#assign STRIP_W = lib.stripWidth(theme.classes, 17, GROWN)>
+<#assign NAME_SIZE = 7>
+<#assign NAME_W = 62>
+<#assign ROW_H = lib.GAUGE_H>
+
+<#assign axes = []>
+<#list score.parts() as part>
+	<#if part.label()??>
+		<#assign axes = axes + [part]>
+	</#if>
+</#list>
+
+<#assign hasClass = (score.scoreClass()!"")?has_content>
+<#assign W = [STRIP_W, NAME_W + lib.GAUGE_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+<#assign H = lib.TITLE_H + hasClass?then(GROWN + PAD, 0) + axes?size * ROW_H + 2 * PAD>
+
+<@svg.document width=W height=H>
+	<@lib.title x=W / 2 text=titleText/>
+	<#assign top = lib.TITLE_H + PAD>
+	<#if hasClass>
+		<@lib.letterStrip x=(W - STRIP_W) / 2 top=top theme=theme reached=score.scoreClass()?upper_case grown=GROWN/>
+		<#assign top = top + GROWN + PAD>
+	</#if>
+	<#list axes as axis>
+		<text x="${PAD}" y="${svg.centredBaseline(top + ROW_H / 2 - 2, NAME_SIZE)}" font-size="${NAME_SIZE}" font-weight="bold" fill="${lib.INK}">${axis.name()}</text>
+		<@lib.gauge x=PAD + NAME_W top=top reached=axis.label()?upper_case/>
+		<#assign top = top + ROW_H>
+	</#list>
+</@svg.document>
