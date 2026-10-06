@@ -251,8 +251,9 @@ public class ImportHelper {
 
 					MLText mlText = new MLText();
 
-					// load translations
-					boolean currentLocaleUnset = true;
+					// load translations: the column read is either the property itself or one of its translations, and
+					// only the translations of the same property may follow it
+					boolean firstColumn = true;
 					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
@@ -274,17 +275,17 @@ public class ImportHelper {
 								} else {
 									throw new IllegalStateException("Unsupported locale : "+locale);
 								}
-							} else if (currentLocaleUnset) {
+							} else if (firstColumn) {
 								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
-								currentLocaleUnset = false;
 							} else {
 								// the translation is finished
 								break;
 							}
+							firstColumn = false;
 						}
 					}
-					
-					if (currentLocaleUnset) {
+
+					if (!mlText.containsKey(I18NUtil.getContentLocaleLang())) {
 						mlText.addValue(I18NUtil.getContentLocaleLang(), "");
 					}
 
