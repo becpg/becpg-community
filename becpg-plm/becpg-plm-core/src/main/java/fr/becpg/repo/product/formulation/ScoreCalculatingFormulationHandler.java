@@ -27,6 +27,7 @@ import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreResultWriter;
 import fr.becpg.repo.score.ScoredEntity;
 
@@ -299,6 +300,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 			return;
 		}
 
+		// the lines of the template come first, so a score entered by hand or computed by
+		// several versions finds its line
+		if ((scoreResultWriter != null) && (scorableEntity instanceof ScoredEntity scoredEntity)) {
+			scoreResultWriter.synchronizeTemplate(scoredEntity);
+		}
+
 		for (ScoreCalculatingPlugin plugin : scorePlugins) {
 			if (plugin.accept(scorableEntity)) {
 				plugin.formulateScore(scorableEntity);
@@ -319,7 +326,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		}
 
 		try {
-			plugin.getScoreContext(scorableEntity).ifPresent(context -> scoreResultWriter.write(scoredEntity, context));
+			for (ScoreContext context : plugin.getScoreContexts(scorableEntity)) {
+				scoreResultWriter.write(scoredEntity, context);
+			}
 		} catch (Exception e) {
 			logger.error("Cannot publish score " + plugin.getCode() + " for " + scorableEntity.getNodeRef(), e);
 		}
