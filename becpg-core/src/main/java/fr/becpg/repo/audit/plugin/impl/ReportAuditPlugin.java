@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -89,6 +90,16 @@ public class ReportAuditPlugin extends AbstractAuditPlugin implements DatabaseAu
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 		// nothing
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The reports are mostly read entity by entity.
+	 */
+	@Override
+	public List<String> getFilterHierarchy() {
+		return List.of(ENTITY_NODE_REF, NAME, FORMAT, LOCALE);
 	}
 
 }

@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import fr.becpg.repo.audit.model.AuditDataType;
@@ -61,6 +62,20 @@ public interface DatabaseAuditPlugin extends AuditPlugin {
 	 */
 	default boolean isRecordOnStart() {
 		return false;
+	}
+
+	/**
+	 * The audit keys a query may filter on, the most selective first.
+	 *
+	 * The database matches a single filter, the other ones being applied in memory on the entries
+	 * it returns: the query reads with the most selective of its filters, so that the database
+	 * returns as few entries as possible. A key missing from the hierarchy comes after the listed
+	 * ones.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	default List<String> getFilterHierarchy() {
+		return List.of();
 	}
 
 }

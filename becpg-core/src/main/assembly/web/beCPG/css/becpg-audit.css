@@ -70,6 +70,7 @@
   color: #555;
 }
 .audit-toolbar input[type="text"],
+.audit-toolbar input[type="date"],
 .audit-toolbar select {
   padding: 5px 8px;
   border: 1px solid #ccc;
@@ -78,6 +79,54 @@
 }
 .audit-toolbar input[type="text"] {
   min-width: 220px;
+}
+.audit-filter-group {
+  align-items: flex-start;
+}
+.audit-filter-group > label {
+  margin-top: 6px;
+}
+.audit-filter-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.audit-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.audit-filter-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid;
+  border-radius: 3px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+}
+.audit-filter-remove {
+  border-color: #ccc;
+  background: #f0f0f0;
+  color: #333;
+}
+.audit-filter-remove:hover {
+  background: #e0e0e0;
+}
+.audit-filter-add {
+  border-color: #1a6b9a;
+  color: #1a6b9a;
+}
+.audit-filter-add:hover {
+  background: #1a6b9a;
+  color: #fff;
+}
+/* Only the last row offers to add a filter; the other ones keep its room so that the buttons line up */
+.audit-filter-row:not(:last-child) .audit-filter-add {
+  visibility: hidden;
 }
 .audit-toolbar input[type="text"]:disabled {
   background: #f0f0f0;
@@ -127,11 +176,6 @@
   margin-bottom: 12px;
   font-size: 12px;
   line-height: 1.4;
-}
-
-.audit-continue-bar {
-  margin-bottom: 12px;
-  text-align: center;
 }
 
 /* Data Table */
@@ -305,4 +349,53 @@
   gap: 8px;
   background: #f8f9fa;
   border-radius: 0 0 6px 6px;
+}
+
+/* Pager */
+.audit-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.audit-pager .audit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.audit-page-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.audit-page-number {
+  min-width: 28px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+}
+.audit-page-number:hover {
+  background: #f0f0f0;
+}
+.audit-page-number.current {
+  border-color: #0073aa;
+  background: #0073aa;
+  color: #fff;
+  font-weight: bold;
+  cursor: default;
+}
+.audit-page-more {
+  padding: 0 4px;
+  color: #555;
+  font-weight: bold;
+  cursor: help;
+}
+.audit-error-msg {
+  color: #d9534f;
 }

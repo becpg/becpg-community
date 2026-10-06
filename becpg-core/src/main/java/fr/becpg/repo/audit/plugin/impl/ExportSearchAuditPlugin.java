@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -109,6 +110,16 @@ public class ExportSearchAuditPlugin extends AbstractAuditPlugin implements Data
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 		AuthenticationUtil.popAuthentication();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * An export is identified by its download node, then mostly told apart by its author and its template.
+	 */
+	@Override
+	public List<String> getFilterHierarchy() {
+		return List.of(DOWNLOAD_NODE_REF, USERNAME, TEMPLATE, FILENAME, RESULTS_SIZE, DURATION, ASYNC, IS_COMPLETED);
 	}
 
 }

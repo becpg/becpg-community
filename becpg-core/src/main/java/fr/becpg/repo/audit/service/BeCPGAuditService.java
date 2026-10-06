@@ -20,6 +20,10 @@ public interface BeCPGAuditService {
 	/**
 	 * <p>listAuditEntries.</p>
 	 *
+	 * The filters but the most selective one are applied in memory, on the entries the database
+	 * returns within the query size: with several filters, the list may hold less entries than
+	 * the matching ones. {@link #listAuditPage(AuditType, AuditQuery)} reads them all, page by page.
+	 *
 	 * @param type a {@link fr.becpg.repo.audit.model.AuditType} object
 	 * @param auditFilter a {@link fr.becpg.repo.audit.model.AuditQuery} object
 	 * @return a {@link java.util.List} object

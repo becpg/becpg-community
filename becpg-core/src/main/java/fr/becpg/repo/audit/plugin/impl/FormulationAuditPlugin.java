@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -83,6 +84,16 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin implements Datab
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 		// Intentionally empty: no action needed after recording audit entry
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * A formulation chain gathers the formulations of a few entities only.
+	 */
+	@Override
+	public List<String> getFilterHierarchy() {
+		return List.of(CHAIN_ID, ENTITY_NODE_REF, ENTITY_NAME);
 	}
 
 }

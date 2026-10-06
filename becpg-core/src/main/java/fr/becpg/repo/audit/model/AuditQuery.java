@@ -1,6 +1,9 @@
 package fr.becpg.repo.audit.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import fr.becpg.repo.RepoConsts;
 
@@ -15,6 +18,8 @@ public class AuditQuery {
 	private String sortBy;
 
 	private String filter;
+
+	private List<String> inMemoryFilters = new ArrayList<>();
 
 	private boolean asc = true;
 	
@@ -51,6 +56,7 @@ public class AuditQuery {
     	AuditQuery copy = new AuditQuery();
     	copy.sortBy = sortBy;
     	copy.filter = filter;
+    	copy.inMemoryFilters = new ArrayList<>(inMemoryFilters);
     	copy.asc = asc;
     	copy.dbAsc = dbAsc;
     	copy.maxResults = maxResults;
@@ -145,6 +151,24 @@ public class AuditQuery {
     	return this;
     }
     
+    /**
+     * <p>filters.</p>
+     *
+     * The audit query of Alfresco matches a single key-value pair: the first filter is the one the
+     * database reads with, the next ones are applied in memory on the entries it returns. The audit
+     * service puts the most selective one first, following the filter hierarchy of the plugin.
+     *
+     * The given filters replace every filter of the query: an empty list leaves it unfiltered.
+     *
+     * @param filters the filters, each written "key=value", all of which an entry must match
+     * @return a {@link fr.becpg.repo.audit.model.AuditQuery} object
+     */
+    public AuditQuery filters(List<String> filters) {
+    	this.filter = filters.isEmpty() ? null : filters.get(0);
+    	this.inMemoryFilters = filters.isEmpty() ? new ArrayList<>() : new ArrayList<>(filters.subList(1, filters.size()));
+    	return this;
+    }
+
     /**
      * <p>dbAsc.</p>
      *
@@ -257,6 +281,33 @@ public class AuditQuery {
 	 */
 	public String getFilter() {
 		return filter;
+	}
+
+	/**
+	 * <p>getFilters.</p>
+	 *
+	 * Every filter of the query, the one the database reads with first.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	public List<String> getFilters() {
+		List<String> filters = new ArrayList<>(inMemoryFilters.size() + 1);
+		if (filter != null) {
+			filters.add(filter);
+		}
+		filters.addAll(inMemoryFilters);
+		return filters;
+	}
+
+	/**
+	 * <p>Getter for the field <code>inMemoryFilters</code>.</p>
+	 *
+	 * The filters the entries read from the database still have to match.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	public List<String> getInMemoryFilters() {
+		return Collections.unmodifiableList(inMemoryFilters);
 	}
 
 	/**

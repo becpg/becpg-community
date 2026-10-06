@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.audit.model.AuditDataType;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditPage;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
@@ -161,6 +162,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	/** {@inheritDoc} */
 	@Override
 	public List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditQuery) {
+		List<AuditFilter> inMemoryFilters = inMemoryFilters(plugin, auditQuery);
 		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditQuery);
 		if (plugin instanceof ExtraQueryDatabaseAuditPlugin extraQueryPlugin) {
 			AuditQuery extraAuditQuery = extraQueryPlugin.extraQuery(auditQuery);
@@ -168,6 +170,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 				auditEntries.addAll(internalListAuditEntries(plugin, extraAuditQuery));
 			}
 		}
+		auditEntries.removeIf(entry -> !matchesAll(plugin, entry, inMemoryFilters));
 		return toStatistics(plugin, auditQuery, auditEntries);
 	}
 
@@ -211,25 +214,86 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	 * @return what the scan gathered and where it stopped
 	 */
 	private ScanResult scanWindows(DatabaseAuditPlugin plugin, AuditQuery auditQuery, IdRange range) {
-		List<String> filters = scanFilters(plugin, auditQuery);
+		WindowScan windowScan = new WindowScan(plugin, auditQuery, scanFilters(plugin, auditQuery), inMemoryFilters(plugin, auditQuery));
 		List<AuditEntry> collected = new ArrayList<>();
 		long windowSize = (long) auditQuery.getMaxResults() * INITIAL_WINDOW_FACTOR;
 		IdRange remaining = range;
 
 		for (int window = 0; (window < maxScannedWindows) && !remaining.isEmpty()
 				&& (collected.size() < auditQuery.getMaxResults()); window++) {
-			IdRange scanned = nextWindow(remaining, windowSize, auditQuery.isDbAscending());
-			for (String filter : filters) {
-				collected.addAll(queryAuditEntries(plugin, windowQuery(auditQuery, filter, scanned)));
-			}
-			remaining = shrink(remaining, scanned, auditQuery.isDbAscending());
+			WindowRead read = readWindow(windowScan, nextWindow(remaining, windowSize, auditQuery.isDbAscending()));
+			collected.addAll(read.entries());
+			remaining = shrink(remaining, read.scanned(), auditQuery.isDbAscending());
 			windowSize *= WINDOW_GROWTH_FACTOR;
 		}
 
-		if (filters.size() > 1) {
+		if (windowScan.filters().size() > 1) {
 			collected.sort(byEntryId(auditQuery.isDbAscending()));
 		}
 		return new ScanResult(collected, remaining);
+	}
+
+	/**
+	 * Read one window of entry identifiers with each filter of the scan, and keep the entries the
+	 * in-memory filters match.
+	 *
+	 * A query cut short by the page size leaves entries behind its last one: the window is then
+	 * narrowed down to that entry, so that the next window resumes right after it. Without it, the
+	 * in-memory filters could discard the entries read and let the scan skip the ones left unread.
+	 *
+	 * @param windowScan what every window of the scan is read with
+	 * @param window the identifiers the window covers
+	 * @return the matching entries of the window, and the identifiers actually read
+	 */
+	private WindowRead readWindow(WindowScan windowScan, IdRange window) {
+		boolean ascending = windowScan.auditQuery().isDbAscending();
+		List<AuditEntry> read = new ArrayList<>();
+		IdRange scanned = window;
+
+		for (String filter : windowScan.filters()) {
+			List<AuditEntry> entries = queryAuditEntries(windowScan.plugin(), windowQuery(windowScan.auditQuery(), filter, window));
+			if (entries.size() > windowScan.auditQuery().getMaxResults()) {
+				scanned = narrow(scanned, entries.get(entries.size() - 1).getId(), ascending);
+			}
+			read.addAll(entries);
+		}
+		return new WindowRead(keepMatching(windowScan, read, scanned), scanned);
+	}
+
+	private List<AuditEntry> keepMatching(WindowScan windowScan, List<AuditEntry> entries, IdRange scanned) {
+		List<AuditEntry> matching = new ArrayList<>(entries.size());
+		for (AuditEntry entry : entries) {
+			if (scanned.contains(entry.getId()) && matchesAll(windowScan.plugin(), entry, windowScan.inMemoryFilters())) {
+				matching.add(entry);
+			}
+		}
+		return matching;
+	}
+
+	/**
+	 * The in-memory filters of a query, checked against the audit keys of the plugin the way the
+	 * filter the database reads with is.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditQuery a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @return a {@link java.util.List} object
+	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if a filter syntax or key is not supported
+	 */
+	private List<AuditFilter> inMemoryFilters(DatabaseAuditPlugin plugin, AuditQuery auditQuery) {
+		List<AuditFilter> filters = new ArrayList<>();
+		for (String filter : auditQuery.getInMemoryFilters()) {
+			filters.add(checkedFilter(plugin, filter));
+		}
+		return filters;
+	}
+
+	private boolean matchesAll(DatabaseAuditPlugin plugin, AuditEntry entry, List<AuditFilter> filters) {
+		for (AuditFilter filter : filters) {
+			if (!filter.matches(entry.getValues().get(valuePath(plugin, filter.key())))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -329,6 +393,13 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return new IdRange(remaining.lowId(), scanned.lowId() - 1);
 	}
 
+	private IdRange narrow(IdRange scanned, long lastReadId, boolean ascending) {
+		if (ascending) {
+			return new IdRange(scanned.lowId(), Math.min(scanned.highId(), lastReadId));
+		}
+		return new IdRange(Math.max(scanned.lowId(), lastReadId), scanned.highId());
+	}
+
 	private Comparator<AuditEntry> byEntryId(boolean ascending) {
 		Comparator<AuditEntry> byId = Comparator.comparing(AuditEntry::getId);
 		return ascending ? byId : byId.reversed();
@@ -398,7 +469,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		statItem.put(AuditPlugin.ID, auditEntry.getId());
 
 		for (String auditKey : plugin.getKeyMap().keySet()) {
-			String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + VALUE_SUFFIX;
+			String key = valuePath(plugin, auditKey);
 			if (auditEntry.getValues().containsKey(key)) {
 				statItem.put(auditKey, auditEntry.getValues().get(key));
 			}
@@ -580,20 +651,38 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if the filter syntax, key or value is not supported
 	 */
 	private String buildFilterStatement(DatabaseAuditPlugin plugin, String filter) {
-		String[] splitted = filter.split("=", 2);
-		if (splitted.length < 2) {
-			throw new BeCPGAuditException("statistics filter '" + filter + "' has wrong syntax");
+		AuditFilter auditFilter = checkedFilter(plugin, filter);
+		if (UNSUPPORTED_FILTER_VALUE_CHARS.matcher(auditFilter.value()).find()) {
+			throw new BeCPGAuditException("Audit filter value of key '" + auditFilter.key() + "' contains unsupported characters");
 		}
-		String valuesKey = splitted[0].trim();
-		String valuesValue = splitted[1].trim();
-		if (!AuditPlugin.ID.equals(valuesKey) && !plugin.getKeyMap().containsKey(valuesKey)) {
-			throw new BeCPGAuditException("Unknown audit filter key: " + valuesKey);
+		return "valuesKey='" + valuePath(plugin, auditFilter.key()) + "' and valuesValue='" + auditFilter.value() + "'";
+	}
+
+	/**
+	 * Parse a filter and check that it reads an audit key of the plugin.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param filter the filter, written "key=value"
+	 * @return a {@link fr.becpg.repo.audit.model.AuditFilter} object
+	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if the filter syntax or key is not supported
+	 */
+	private AuditFilter checkedFilter(DatabaseAuditPlugin plugin, String filter) {
+		AuditFilter auditFilter = AuditFilter.parse(filter);
+		if (!AuditPlugin.ID.equals(auditFilter.key()) && !plugin.getKeyMap().containsKey(auditFilter.key())) {
+			throw new BeCPGAuditException("Unknown audit filter key: " + auditFilter.key());
 		}
-		if (UNSUPPORTED_FILTER_VALUE_CHARS.matcher(valuesValue).find()) {
-			throw new BeCPGAuditException("Audit filter value of key '" + valuesKey + "' contains unsupported characters");
-		}
-		return "valuesKey='/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + VALUE_SUFFIX
-				+ "' and valuesValue='" + valuesValue + "'";
+		return auditFilter;
+	}
+
+	/**
+	 * The path an audit entry records the value of an audit key under.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditKey the audit key
+	 * @return a {@link java.lang.String} object
+	 */
+	private String valuePath(DatabaseAuditPlugin plugin, String auditKey) {
+		return "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + VALUE_SUFFIX;
 	}
 
 	/**
@@ -647,12 +736,29 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		private boolean isEmpty() {
 			return lowId > highId;
 		}
+
+		private boolean contains(long id) {
+			return (id >= lowId) && (id <= highId);
+		}
 	}
 
 	/**
 	 * What a scan gathered, and the identifiers it has not read yet.
 	 */
 	private record ScanResult(List<AuditEntry> collected, IdRange remaining) {
+	}
+
+	/**
+	 * What every window of a scan is read with: the filters the database reads with, one query
+	 * each, and the filters then applied in memory.
+	 */
+	private record WindowScan(DatabaseAuditPlugin plugin, AuditQuery auditQuery, List<String> filters, List<AuditFilter> inMemoryFilters) {
+	}
+
+	/**
+	 * The matching entries of a window, and the identifiers actually read.
+	 */
+	private record WindowRead(List<AuditEntry> entries, IdRange scanned) {
 	}
 
 	private class StatisticsComparator implements Comparator<JSONObject> {

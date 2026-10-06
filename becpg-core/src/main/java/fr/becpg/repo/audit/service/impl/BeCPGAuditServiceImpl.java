@@ -1,5 +1,7 @@
 package fr.becpg.repo.audit.service.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditPage;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
@@ -58,28 +61,76 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		return new AuditScope(plugin, databaseAuditService, this, auditClass, scopeName).start();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The filters are first ordered on the filter hierarchy of the plugin.
+	 */
 	@Override
 	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditQuery) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			AuditPlugin plugin = getPlugin(type);
-			if (plugin.isDatabaseEnable()) {
-				return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
-			}
-			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+			DatabaseAuditPlugin plugin = getDatabasePlugin(type);
+			return databaseAuditService.listAuditEntries(plugin, prioritizeFilters(plugin, auditQuery));
 		});
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The filters are first ordered on the filter hierarchy of the plugin.
+	 */
 	@Override
 	public AuditPage listAuditPage(AuditType type, AuditQuery auditQuery) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			AuditPlugin plugin = getPlugin(type);
-			if (plugin.isDatabaseEnable()) {
-				return databaseAuditService.listAuditPage((DatabaseAuditPlugin) plugin, auditQuery);
-			}
-			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+			DatabaseAuditPlugin plugin = getDatabasePlugin(type);
+			return databaseAuditService.listAuditPage(plugin, prioritizeFilters(plugin, auditQuery));
 		});
+	}
+
+	/**
+	 * A copy of the query whose filters are ordered on the filter hierarchy of the plugin, so that
+	 * the database reads with the most selective one and the other ones are applied in memory.
+	 *
+	 * The identifier matches a single entry: it comes first, unless the plugin places it in its
+	 * hierarchy. The filters on a key missing from the hierarchy keep their order, after the other
+	 * ones.
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditQuery a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @return a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if a filter has a wrong syntax
+	 */
+	private AuditQuery prioritizeFilters(DatabaseAuditPlugin plugin, AuditQuery auditQuery) {
+		List<String> filters = new ArrayList<>(auditQuery.getFilters());
+		if (filters.size() < 2) {
+			return auditQuery;
+		}
+		List<String> hierarchy = plugin.getFilterHierarchy();
+		filters.sort(Comparator.comparingInt(filter -> filterRank(hierarchy, AuditFilter.parse(filter).key())));
+		return auditQuery.copy().filters(filters);
+	}
+
+	private int filterRank(List<String> hierarchy, String filterKey) {
+		int rank = hierarchy.indexOf(filterKey);
+		if (rank >= 0) {
+			return rank;
+		}
+		return AuditPlugin.ID.equals(filterKey) ? -1 : Integer.MAX_VALUE;
+	}
+
+	/**
+	 * <p>getDatabasePlugin.</p>
+	 *
+	 * @param type a {@link fr.becpg.repo.audit.model.AuditType} object
+	 * @return a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @throws fr.becpg.repo.audit.exception.BeCPGAuditException if the plugin of the type does not record in the database
+	 */
+	private DatabaseAuditPlugin getDatabasePlugin(AuditType type) {
+		AuditPlugin plugin = getPlugin(type);
+		if (plugin.isDatabaseEnable() && (plugin instanceof DatabaseAuditPlugin databasePlugin)) {
+			return databasePlugin;
+		}
+		throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
 	}
 
 	/** {@inheritDoc} */

@@ -16,29 +16,15 @@
       </div>
 
       <div class="audit-toolbar">
-        <div class="toolbar-group">
-          <label for="audit-filter-column-select">${msg("audit.toolbar.filter")}:</label>
-          <select id="audit-filter-column-select" onchange="AuditViewer.onFilterColumnChange();">
-            <option value="">--</option>
-          </select>
-          <input type="text" id="audit-filter-value-input" disabled="disabled" placeholder="${msg("audit.toolbar.filter.placeholder")}" onkeypress="if(event.keyCode===13){AuditViewer.search();}" />
-          <button type="button" class="audit-btn audit-btn-secondary" onclick="AuditViewer.resetFilter();" title="${msg("audit.filter.reset")}">&times;</button>
+        <div class="toolbar-group audit-filter-group">
+          <label>${msg("audit.toolbar.filter")}:</label>
+          <div id="audit-filter-rows" class="audit-filter-rows"></div>
         </div>
-        <div class="toolbar-group">
-          <label for="audit-limit-select">${msg("audit.toolbar.limit")}:</label>
-          <select id="audit-limit-select" onchange="AuditViewer.search();">
-            <option value="25">25</option>
-            <option value="50" selected="selected">50</option>
-            <option value="100">100</option>
-            <option value="250">250</option>
-            <option value="500">500</option>
-            <option value="1000">1000</option>
-            <option value="10000">10000</option>
-          </select>
-        </div>
-        <div class="toolbar-group">
-          <label>${msg("audit.toolbar.order")}:</label>
-          <button type="button" id="audit-db-order-btn" class="audit-btn audit-btn-secondary" onclick="AuditViewer.toggleDbOrder();" title="${msg("audit.toolbar.order.tooltip")}"></button>
+        <div class="toolbar-group" title="${msg("audit.toolbar.dateRange.tooltip")}">
+          <label for="audit-from-date-input">${msg("audit.toolbar.fromDate")}:</label>
+          <input type="date" id="audit-from-date-input" onchange="AuditViewer.onDateRangeChange();" />
+          <label for="audit-to-date-input">${msg("audit.toolbar.toDate")}:</label>
+          <input type="date" id="audit-to-date-input" onchange="AuditViewer.onDateRangeChange();" />
         </div>
         <div id="audit-status-bar" class="audit-status-bar"></div>
       </div>
@@ -54,8 +40,10 @@
         </table>
       </div>
 
-      <div class="audit-continue-bar">
-        <button type="button" id="audit-continue-btn" class="audit-btn" style="display:none;" onclick="AuditViewer.continueSearch();">${msg("audit.btn.continue")}</button>
+      <div class="audit-pager">
+        <button type="button" id="audit-previous-btn" class="audit-btn audit-btn-secondary" disabled="disabled" onclick="AuditViewer.previousPage();">&lsaquo; ${msg("audit.btn.previous")}</button>
+        <div id="audit-page-numbers" class="audit-page-numbers"></div>
+        <button type="button" id="audit-next-btn" class="audit-btn audit-btn-secondary" disabled="disabled" onclick="AuditViewer.nextPage();">${msg("audit.btn.next")} &rsaquo;</button>
       </div>
     </div>
 
@@ -100,10 +88,12 @@
           loading: "${msg("audit.loading")?js_string}",
           noRecords: "${msg("audit.no-records")?js_string}",
           errorLoading: "${msg("audit.error.loading")?js_string}",
-          recordsFound: "${msg("audit.records-found")?js_string}",
-          newestFirst: "${msg("audit.order.newest-first")?js_string}",
-          oldestFirst: "${msg("audit.order.oldest-first")?js_string}",
-          continueSearch: "${msg("audit.btn.continue")?js_string}",
+          recordsRange: "${msg("audit.records-range")?js_string}",
+          moreToRead: "${msg("audit.page.more")?js_string}",
+          next: "${msg("audit.btn.next")?js_string}",
+          filterPlaceholder: "${msg("audit.toolbar.filter.placeholder")?js_string}",
+          removeFilter: "${msg("audit.filter.remove")?js_string}",
+          addFilter: "${msg("audit.filter.add")?js_string}",
           noticeInterrupted: "${msg("audit.notice.interrupted")?js_string}",
           inspect: "${msg("audit.btn.inspect")?js_string}",
           copied: "${msg("audit.copied")?js_string}",

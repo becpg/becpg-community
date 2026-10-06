@@ -17,8 +17,8 @@
 -->
 <webscript>
   <shortname>Get statistics</shortname>
-  <description>Read one page of audit entries, by keyset paging on the entry identifiers</description>
-  <url>/becpg/stats/{type}?sortBy={sortBy}&amp;asc={asc}&amp;filter={filter}&amp;maxResults={maxResults}&amp;dbAsc={dbAsc}&amp;startAfterId={startAfterId}</url>
+  <description>Read one page of audit entries, by keyset paging on the entry identifiers. The filter parameter may be repeated, every filter must match; fromDate and toDate (ISO 8601, inclusive, a toDate without time standing for the whole day) restrict the entries to a creation date range</description>
+  <url>/becpg/stats/{type}?sortBy={sortBy}&amp;asc={asc}&amp;filter={filter}&amp;maxResults={maxResults}&amp;dbAsc={dbAsc}&amp;startAfterId={startAfterId}&amp;fromDate={fromDate}&amp;toDate={toDate}</url>
   <format default="json" />
   <authentication>user</authentication>
   <transaction>required</transaction>
