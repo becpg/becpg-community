@@ -346,7 +346,7 @@ public class BeCPGAIMSFilter implements Filter
                         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
                             (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
                         OAuth2AccessToken oAuth2AccessToken = oAuth2LoginAuthenticationToken.getAccessToken();
-                        if (isAuthTokenExpired(oAuth2AccessToken.getExpiresAt()))
+                        if (isAuthTokenExpired(oAuth2AccessToken, Instant.now()))
                         {
                             // The token refresh below reaches Surf services (connector, authorized-client store)
                             // that expect a RequestContext bound to the thread. Unlike the initial login path,
@@ -1422,7 +1422,7 @@ public class BeCPGAIMSFilter implements Filter
         // A concurrent request for the same user may have already refreshed the token while this thread was
         // waiting on the lock. Re-check the expiry inside the critical section to avoid a redundant round-trip
         // to the identity provider (token + userinfo endpoints).
-        if (!isAuthTokenExpired(oAuth2LoginAuthenticationToken.getAccessToken().getExpiresAt()))
+        if (!isAuthTokenExpired(oAuth2LoginAuthenticationToken.getAccessToken(), Instant.now()))
         {
             return;
         }
@@ -1680,19 +1680,32 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
-     * <p>isAuthTokenExpired.</p>
+     * Tells whether the access token has to be refreshed now.
      *
-     * @param authTokenExpiration a {@link java.time.Instant} object
-     * @return a boolean
+     * The token is refreshed {@link #TOKEN_EXPIRY_REFRESH_MARGIN} ahead of its expiry, except when it was issued
+     * for no longer than twice that margin: the identity provider caps the token at the end of the SSO session, so
+     * such a token means the session is ending and an early refresh would only return another capped token, on every
+     * request, until the session dies (#37292). That token is refreshed at its real expiry, where the refresh fails
+     * once and the session is invalidated once.
+     *
+     * @param accessToken the access token of the session
+     * @param now the current time
+     * @return true when the token must be refreshed
      */
-    private static boolean isAuthTokenExpired(Instant authTokenExpiration)
+    static boolean isAuthTokenExpired(OAuth2AccessToken accessToken, Instant now)
     {
-        if (authTokenExpiration == null)
+        Instant expiresAt = accessToken.getExpiresAt();
+        if (expiresAt == null)
         {
             return true;
         }
-        return Instant.now()
-            .plus(TOKEN_EXPIRY_REFRESH_MARGIN)
-            .compareTo(authTokenExpiration) >= 0;
+
+        Duration margin = TOKEN_EXPIRY_REFRESH_MARGIN;
+        Instant issuedAt = accessToken.getIssuedAt();
+        if ((issuedAt != null) && (Duration.between(issuedAt, expiresAt).compareTo(TOKEN_EXPIRY_REFRESH_MARGIN.multipliedBy(2)) <= 0))
+        {
+            margin = Duration.ZERO;
+        }
+        return !now.plus(margin).isBefore(expiresAt);
     }
 }
