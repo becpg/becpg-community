@@ -1,5 +1,7 @@
 package fr.becpg.repo.product.helper;
 
+import java.util.Optional;
+
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -104,7 +106,33 @@ public class NutrientRegulatoryHelper {
 	public static String resolveVersion(ProductData productData) {
 		return retrieveNutrientPlugin(productData.getNutrientProfileVersion()).getVersion();
 	}
-	
+
+	/**
+	 * Computes the Nutri-Score of a product with a given version of the method, whatever the
+	 * version the product applies to its historical properties.
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param version the version of the method, as held by {@code bcpg:scoreDefVersion}
+	 * @return the computed breakdown, empty when no method implements this version or when
+	 *         the product is not applicable to the Nutri-Score
+	 */
+	public static Optional<NutriScoreContext> computeContext(ProductData productData, String version) {
+		for (NutrientRegulatoryPlugin plugin : instance.nutrientPlugins) {
+			if (plugin.getVersion().equals(version)) {
+				NutriScoreContext context = plugin.buildContext(productData);
+				if (context == null) {
+					return Optional.empty();
+				}
+				// the context is built with the version the product applies, the one asked is kept
+				context.setVersion(version);
+				plugin.computeScore(context);
+				plugin.extractClass(context);
+				return Optional.of(context);
+			}
+		}
+		return Optional.empty();
+	}
+
 	/**
 	 * <p>retrieveNutrientPlugin.</p>
 	 *

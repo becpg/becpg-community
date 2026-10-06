@@ -1,6 +1,7 @@
 package fr.becpg.test.repo.score;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
 import fr.becpg.repo.score.ScoreEngine;
@@ -29,7 +31,8 @@ import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * Checks that a score is published in the score list of an entity only when a matching
- * definition exists and applies to the markets of the entity.
+ * definition exists, applies to the markets of the entity and is listed on the entity or on
+ * its template.
  *
  * @author matthieu
  */
@@ -57,6 +60,7 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 		final NodeRef productNodeRef = inWriteTx(() -> {
 			FinishedProductData product = new FinishedProductData();
 			product.setName("Score framework product " + System.nanoTime());
+			product.setRegulatoryScoreList(listing(definitionNodeRef));
 			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
 		});
 
@@ -125,11 +129,12 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 	@Test
 	public void testPreviousValueIsKeptOnRecompute() {
 
-		inWriteTx(this::createTestDefinition);
+		final NodeRef definitionNodeRef = inWriteTx(this::createTestDefinition);
 
 		final NodeRef productNodeRef = inWriteTx(() -> {
 			FinishedProductData product = new FinishedProductData();
 			product.setName("Recomputed framework product " + System.nanoTime());
+			product.setRegulatoryScoreList(listing(definitionNodeRef));
 			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
 		});
 
@@ -163,6 +168,91 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 
 			return null;
 		});
+	}
+
+	@Test
+	public void testScoreIsSkippedWhenNotListed() {
+
+		inWriteTx(this::createTestDefinition);
+
+		final NodeRef productNodeRef = inWriteTx(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setName("Unlisted score product " + System.nanoTime());
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			scoreResultWriter.write(product, buildContext());
+			alfrescoRepository.save(product);
+			return null;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+
+			List<RegulatoryScoreListDataItem> scores = product.getRegulatoryScoreList();
+			Assert.assertTrue("A score listed neither on the product nor on its template is not published", (scores == null) || scores.isEmpty());
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testScoreOfTheTemplateIsPublished() {
+
+		final NodeRef definitionNodeRef = inWriteTx(this::createTestDefinition);
+
+		final NodeRef templateNodeRef = inWriteTx(() -> {
+			FinishedProductData template = new FinishedProductData();
+			template.setName("Score framework template " + System.nanoTime());
+			template.setRegulatoryScoreList(listing(definitionNodeRef));
+			NodeRef nodeRef = alfrescoRepository.create(getTestFolderNodeRef(), template).getNodeRef();
+			nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL, null);
+			return nodeRef;
+		});
+
+		final NodeRef productNodeRef = inWriteTx(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setName("Templated score product " + System.nanoTime());
+			product.setEntityTpl((ProductData) alfrescoRepository.findOne(templateNodeRef));
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			scoreResultWriter.write(product, buildContext());
+			alfrescoRepository.save(product);
+			return null;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+
+			List<RegulatoryScoreListDataItem> scores = product.getRegulatoryScoreList();
+			Assert.assertEquals(1, scores.size());
+			Assert.assertEquals(definitionNodeRef, scores.get(0).getScoreDef());
+			Assert.assertEquals(TEST_VALUE, scores.get(0).getValue());
+
+			FinishedProductData template = (FinishedProductData) alfrescoRepository.findOne(templateNodeRef);
+			Assert.assertNull("The template line is copied, not moved", template.getRegulatoryScoreList().get(0).getValue());
+
+			return null;
+		});
+	}
+
+	/**
+	 * <p>A score list holding one empty line for the given definition.</p>
+	 *
+	 * @param definitionNodeRef the definition to list
+	 * @return a {@link java.util.List} object
+	 */
+	private static List<RegulatoryScoreListDataItem> listing(NodeRef definitionNodeRef) {
+		RegulatoryScoreListDataItem item = new RegulatoryScoreListDataItem();
+		item.setScoreDef(definitionNodeRef);
+		List<RegulatoryScoreListDataItem> scores = new ArrayList<>();
+		scores.add(item);
+		return scores;
 	}
 
 	/**

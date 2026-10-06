@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation.score;
 
+import java.util.List;
 import java.util.Optional;
 
 import fr.becpg.repo.product.data.ScorableEntity;
@@ -61,6 +62,18 @@ public interface ScoreCalculatingPlugin {
 	 */
 	default Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
 		return Optional.empty();
+	}
+
+	/**
+	 * Breakdowns to publish in the score list. A plugin serving several versions of its code
+	 * returns one breakdown per version the entity lists, the version applied to the
+	 * historical properties included.
+	 *
+	 * @param scorableEntity a {@link fr.becpg.repo.product.data.ScorableEntity} object
+	 * @return a {@link java.util.List} object, never null
+	 */
+	default List<ScoreContext> getScoreContexts(ScorableEntity scorableEntity) {
+		return getScoreContext(scorableEntity).map(List::of).orElse(List.of());
 	}
 
 }

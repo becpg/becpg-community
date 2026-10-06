@@ -6,9 +6,11 @@ package fr.becpg.repo.score;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.project.formulation.ScoreRangeConverter;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -27,9 +30,13 @@ import fr.becpg.repo.score.data.ScoreDefinitionItem;
 /**
  * Publishes a computed score into the score list of an entity.
  *
- * <p>Writing is a no-op when no score definition matches the computed score, so the
- * framework stays dormant until definitions are created: the historical properties such
- * as {@code bcpg:nutrientProfilingScore} keep being the only output.</p>
+ * <p>Like the other characteristic lists, the score list follows the entity template: a
+ * score is published only when the entity, or its template, lists it. A line deleted from
+ * a product therefore stays deleted unless the template carries it, and the markets of the
+ * entity filter the lines the template brings. Writing is a no-op when no score definition
+ * matches the computed score, so the framework stays dormant until definitions are
+ * created: the historical properties such as {@code bcpg:nutrientProfilingScore} keep
+ * being written whatever the score list holds.</p>
  *
  * @author matthieu
  */
@@ -83,9 +90,20 @@ public class ScoreResultWriter {
 			return;
 		}
 
+		synchronizeTemplate(entity);
+
+		Optional<RegulatoryScoreListDataItem> listedItem = findItem(entity, definition.get().getNodeRef());
+
+		if (listedItem.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Score " + context.getCode() + " " + context.getVersion() + " is listed neither on the entity nor on its template");
+			}
+			return;
+		}
+
 		context.computeShares();
 
-		RegulatoryScoreListDataItem item = findOrCreateItem(entity, definition.get());
+		RegulatoryScoreListDataItem item = listedItem.get();
 
 		// a score entered by hand is an audited figure, the formulation must not overwrite it
 		if (Boolean.TRUE.equals(item.getIsManual())) {
@@ -152,28 +170,117 @@ public class ScoreResultWriter {
 	}
 
 	/**
-	 * <p>findOrCreateItem.</p>
+	 * Copies onto the entity the score lines of its template it does not list yet.
+	 *
+	 * <p>A line is copied only when its definition is still effective and applies to the
+	 * markets of the entity, so one template can serve several markets. Running it again
+	 * adds nothing: the lines already listed are left as they are.</p>
 	 *
 	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
-	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
-	 * @return a {@link fr.becpg.repo.score.data.RegulatoryScoreListDataItem} object
 	 */
-	private RegulatoryScoreListDataItem findOrCreateItem(ScoredEntity entity, ScoreDefinitionItem definition) {
+	public void synchronizeTemplate(ScoredEntity entity) {
+		List<RegulatoryScoreListDataItem> templateItems = templateItems(entity);
+
+		if (templateItems.isEmpty()) {
+			return;
+		}
+
 		if (entity.getRegulatoryScoreList() == null) {
 			entity.setRegulatoryScoreList(new ArrayList<>());
 		}
 
-		for (RegulatoryScoreListDataItem item : entity.getRegulatoryScoreList()) {
-			if (Objects.equals(item.getScoreDef(), definition.getNodeRef())) {
-				return item;
+		for (RegulatoryScoreListDataItem templateItem : templateItems) {
+			NodeRef scoreDef = templateItem.getScoreDef();
+			if ((scoreDef != null) && findItem(entity, scoreDef).isEmpty() && isApplicable(entity, scoreDef)) {
+				entity.getRegulatoryScoreList().add(copyOf(templateItem));
+			}
+		}
+	}
+
+	/**
+	 * Versions of a score the entity lists, for a plugin able to compute several versions of
+	 * its code.
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param code the score code, as held by {@code bcpg:scoreDefCode}
+	 * @return a {@link java.util.List} object, never null
+	 */
+	public List<String> listedVersions(ScoredEntity entity, String code) {
+		List<String> versions = new ArrayList<>();
+
+		if (entity.getRegulatoryScoreList() != null) {
+			for (RegulatoryScoreListDataItem item : entity.getRegulatoryScoreList()) {
+				Optional<ScoreDefinitionItem> definition = scoreDefinitionService.findByNodeRef(item.getScoreDef());
+				if (definition.isPresent() && Objects.equals(code, definition.get().getCode()) && (definition.get().getVersion() != null)) {
+					versions.add(definition.get().getVersion());
+				}
 			}
 		}
 
+		return versions;
+	}
+
+	/**
+	 * Score lines of the template of an entity. A template formulated on its own has no
+	 * template to follow.
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @return a {@link java.util.List} object, never null
+	 */
+	private static List<RegulatoryScoreListDataItem> templateItems(ScoredEntity entity) {
+		if ((entity instanceof ProductData product) && (product.getEntityTpl() != null) && !product.getEntityTpl().equals(product)
+				&& (product.getEntityTpl().getRegulatoryScoreList() != null)) {
+			return product.getEntityTpl().getRegulatoryScoreList();
+		}
+		return List.of();
+	}
+
+	/**
+	 * A copied line carries what the template sets: the score, and for a score entered by
+	 * hand, its default entry. The computed fields are left to the formulation.
+	 *
+	 * @param templateItem a {@link fr.becpg.repo.score.data.RegulatoryScoreListDataItem} object
+	 * @return a {@link fr.becpg.repo.score.data.RegulatoryScoreListDataItem} object
+	 */
+	private static RegulatoryScoreListDataItem copyOf(RegulatoryScoreListDataItem templateItem) {
 		RegulatoryScoreListDataItem item = new RegulatoryScoreListDataItem();
-		item.setScoreDef(definition.getNodeRef());
-		entity.getRegulatoryScoreList().add(item);
+		item.setScoreDef(templateItem.getScoreDef());
+
+		if (Boolean.TRUE.equals(templateItem.getIsManual())) {
+			item.setIsManual(true);
+			item.setValue(templateItem.getValue());
+			item.setScoreClass(templateItem.getScoreClass());
+		}
 
 		return item;
+	}
+
+	/**
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param scoreDef the node reference of a score definition
+	 * @return whether the definition is effective and applies to the markets of the entity
+	 */
+	private boolean isApplicable(ScoredEntity entity, NodeRef scoreDef) {
+		Optional<ScoreDefinitionItem> definition = scoreDefinitionService.findByNodeRef(scoreDef);
+		return definition.isPresent() && isApplicable(entity, definition.get());
+	}
+
+	/**
+	 * <p>findItem.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param scoreDef the node reference of a score definition
+	 * @return the line of the entity holding this score, if listed
+	 */
+	private static Optional<RegulatoryScoreListDataItem> findItem(ScoredEntity entity, NodeRef scoreDef) {
+		if (entity.getRegulatoryScoreList() != null) {
+			for (RegulatoryScoreListDataItem item : entity.getRegulatoryScoreList()) {
+				if (Objects.equals(item.getScoreDef(), scoreDef)) {
+					return Optional.of(item);
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 

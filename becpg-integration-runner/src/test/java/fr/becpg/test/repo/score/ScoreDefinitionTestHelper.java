@@ -1,6 +1,7 @@
 package fr.becpg.test.repo.score;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,26 @@ public final class ScoreDefinitionTestHelper {
 		scoreDefinitionService.clearCache();
 
 		return definitionNodeRef;
+	}
+
+	/**
+	 * <p>Lists a score on an entity, as its template would, so the formulation publishes it.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param definitionNodeRef the definition of the score to publish
+	 */
+	public static void listScore(ScoredEntity entity, NodeRef definitionNodeRef) {
+		if (findScore(entity, definitionNodeRef).isPresent()) {
+			return;
+		}
+
+		if (entity.getRegulatoryScoreList() == null) {
+			entity.setRegulatoryScoreList(new ArrayList<>());
+		}
+
+		RegulatoryScoreListDataItem item = new RegulatoryScoreListDataItem();
+		item.setScoreDef(definitionNodeRef);
+		entity.getRegulatoryScoreList().add(item);
 	}
 
 	/**
