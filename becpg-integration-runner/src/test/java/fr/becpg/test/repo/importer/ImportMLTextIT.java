@@ -49,6 +49,8 @@ public class ImportMLTextIT extends PLMBaseTestCase {
 
 	private static final String NEW_US_NAME = "Apricot US 2";
 
+	private static final String CAS_NUMBER = "7732-18-5";
+
 	@Autowired
 	private ImportService importService;
 
@@ -101,6 +103,48 @@ public class ImportMLTextIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * A column following the last translation of a multilingual property was read as its default value, so the CAS
+	 * number of the file replaced the name of the ingredient.
+	 */
+	@Test
+	public void testImportColumnAfterTranslations() throws Exception {
+
+		createIngredient();
+
+		importFile("import-36417-after-translations.csv", columnAfterTranslationsFile());
+
+		inReadTx(() -> {
+			MLText charactName = readCharactName();
+			Assert.assertEquals("The default name is kept", ingName, charactName.getValue(I18NUtil.getContentLocaleLang()));
+			Assert.assertEquals("The US translation is added", US_NAME, charactName.getValue(Locale.US));
+			Assert.assertEquals("The German translation is updated", NEW_GERMAN_NAME, charactName.getValue(Locale.GERMAN));
+			Assert.assertEquals("The following column is imported on its own property", CAS_NUMBER,
+					mlAwareNodeService.getProperty(ingNodeRef, PLMModel.PROP_CAS_NUMBER));
+			return null;
+		});
+	}
+
+	/**
+	 * A translation column in the content locale was replaced by the empty default value, so the import did not
+	 * update the default name.
+	 */
+	@Test
+	public void testImportContentLocaleTranslationColumn() throws Exception {
+
+		createIngredient();
+
+		String newName = ingName + " new";
+		importFile("import-36417-content-locale.csv", contentLocaleTranslationFile(newName));
+
+		inReadTx(() -> {
+			MLText charactName = readCharactName();
+			Assert.assertEquals("The default name is updated", newName, charactName.getValue(I18NUtil.getContentLocaleLang()));
+			Assert.assertEquals("The German translation is kept", GERMAN_NAME, charactName.getValue(Locale.GERMAN));
+			return null;
+		});
+	}
+
 	private void createIngredient() {
 		long timestamp = Calendar.getInstance().getTimeInMillis();
 		ingName = "Abricot 36417 " + timestamp;
@@ -142,6 +186,19 @@ public class ImportMLTextIT extends PLMBaseTestCase {
 		return String.join(LINE_SEPARATOR, header(), String.join(COLUMN_SEPARATOR, "COLUMNS_PARAMS", "@Key"),
 				String.join(COLUMN_SEPARATOR, "COLUMNS", "bcpg:charactName", "bcpg:charactName_en_US"),
 				String.join(COLUMN_SEPARATOR, "VALUES", ingName, NEW_US_NAME), "");
+	}
+
+	private String columnAfterTranslationsFile() {
+		return String.join(LINE_SEPARATOR, header(),
+				String.join(COLUMN_SEPARATOR, "COLUMNS_PARAMS", "@Key", "@MLText", "@MLText"),
+				String.join(COLUMN_SEPARATOR, "COLUMNS", "bcpg:regulatoryCode", "bcpg:charactName_en_US", "bcpg:charactName_de", "bcpg:casNumber"),
+				String.join(COLUMN_SEPARATOR, "VALUES", regulatoryCode, US_NAME, NEW_GERMAN_NAME, CAS_NUMBER), "");
+	}
+
+	private String contentLocaleTranslationFile(String newName) {
+		return String.join(LINE_SEPARATOR, header(), String.join(COLUMN_SEPARATOR, "COLUMNS_PARAMS", "@Key", "@MLText"),
+				String.join(COLUMN_SEPARATOR, "COLUMNS", "bcpg:regulatoryCode", "bcpg:charactName_" + I18NUtil.getContentLocaleLang().getLanguage()),
+				String.join(COLUMN_SEPARATOR, "VALUES", regulatoryCode, newName), "");
 	}
 
 	private String header() {
