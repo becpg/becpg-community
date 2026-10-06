@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -140,9 +141,21 @@ public class NutriScoreIT extends PLMBaseTestCase {
 				.doInTransaction(() -> ScoreDefinitionTestHelper.createPluginDefinition(nodeService, entitySystemService, scoreDefinitionService,
 						systemFolderNodeRef, NutriScoreContext.SCORE_CODE, appliedVersion), false, true);
 
+		// another version listed beside it is computed for the score list only
+		final String otherVersion = NutrientProfileVersion.VERSION_2023.toString().equals(appliedVersion)
+				? NutrientProfileVersion.VERSION_2017.toString()
+				: NutrientProfileVersion.VERSION_2023.toString();
+
+		final NodeRef otherNutriScoreDefinition = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> ScoreDefinitionTestHelper.createPluginDefinition(nodeService, entitySystemService, scoreDefinitionService,
+						systemFolderNodeRef, NutriScoreContext.SCORE_CODE, otherVersion), false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
+
+			ScoreDefinitionTestHelper.listScore(finishedProduct, nutriScoreDefinition);
+			ScoreDefinitionTestHelper.listScore(finishedProduct, otherNutriScoreDefinition);
 
 			productService.formulate(finishedProduct);
 
@@ -161,6 +174,19 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			ScoreContext details = ScoreContext.parse(publishedScore.getDetails());
 			Assert.assertEquals(NutriScoreContext.SCORE_CODE, details.getCode());
 			Assert.assertEquals("D", details.getScoreClass());
+			Assert.assertEquals(appliedVersion, publishedScore.getVersion());
+
+			RegulatoryScoreListDataItem otherScore = ScoreDefinitionTestHelper.findScore(finishedProduct, otherNutriScoreDefinition)
+					.orElseThrow(() -> new AssertionError("The other Nutri-Score version listed was not published"));
+
+			Assert.assertEquals(otherVersion, otherScore.getVersion());
+			Assert.assertNotNull(otherScore.getValue());
+			Assert.assertNotNull(otherScore.getScoreClass());
+			Assert.assertEquals(otherVersion, ScoreContext.parse(otherScore.getDetails()).getVersion());
+
+			// the historical properties keep the version applied to the product
+			Assert.assertEquals((Double) 12d, finishedProduct.getNutrientScore());
+			Assert.assertEquals("D", finishedProduct.getNutrientClass());
 
 			alfrescoRepository.save(finishedProduct);
 

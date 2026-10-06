@@ -201,6 +201,25 @@ public class ScoreDefinitionService {
 	}
 
 	/**
+	 * <p>Finds the effective definition a score line points to.</p>
+	 *
+	 * @param nodeRef the node reference of the definition, may be null
+	 * @return a {@link java.util.Optional} object, empty when the definition is deleted or no
+	 *         longer effective
+	 */
+	public Optional<ScoreDefinitionItem> findByNodeRef(NodeRef nodeRef) {
+		if (nodeRef == null) {
+			return Optional.empty();
+		}
+		for (ScoreDefinitionItem definition : getEffectiveScoreDefinitions(new Date())) {
+			if (nodeRef.equals(definition.getNodeRef())) {
+				return Optional.of(definition);
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * <p>matches.</p>
 	 *
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object

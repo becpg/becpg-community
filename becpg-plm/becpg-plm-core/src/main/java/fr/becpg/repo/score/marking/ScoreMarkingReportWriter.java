@@ -29,13 +29,15 @@ import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
  *
  * <pre>
  * &lt;scoreMarkings&gt;
- *   &lt;scoreMarking imageId="scoreMarking_MTL_1" code="MTL" scoreClass="High" locale="en" width="336.0" height="78.0"/&gt;
+ *   &lt;scoreMarking imageId="scoreMarking_MTL_1" code="MTL" version="2016" scoreClass="High" locale="en" width="336.0" height="78.0"/&gt;
  *   &lt;scoreMarking imageId="scoreMarking_MTL_FOP_2" code="MTL_FOP" scoreClass="High" locale="en" width="336.0" height="115.0"/&gt;
  * &lt;/scoreMarkings&gt;
  * </pre>
  *
  * <p>Besides the marking of each score, the UK front of pack marking a technical sheet prints is
- * written under the code {@code MTL_FOP}, see {@link FrontOfPackMarkingService}.</p>
+ * written under the code {@code MTL_FOP}, see {@link FrontOfPackMarkingService}. A product may list
+ * several versions of one score, such as the Nutri-Score 2017 and 2023: the version attribute tells
+ * them apart.</p>
  *
  * @author matthieu
  */
@@ -53,6 +55,9 @@ public class ScoreMarkingReportWriter {
 
 	/** Constant <code>ATTR_CODE="code"</code> */
 	public static final String ATTR_CODE = "code";
+
+	/** Constant <code>ATTR_VERSION="version"</code> */
+	public static final String ATTR_VERSION = "version";
 
 	/** Constant <code>ATTR_SCORE_CLASS="scoreClass"</code> */
 	public static final String ATTR_SCORE_CLASS = "scoreClass";
@@ -103,13 +108,13 @@ public class ScoreMarkingReportWriter {
 		for (RegulatoryScoreListDataItem scoreLine : scoreLines(product)) {
 			Optional<RenderedScoreMarking> marking = scoreMarkingRenderer.render(scoreLine, locale);
 			if (marking.isPresent()) {
-				addMarking(marking.get(), ++position, markingsElt, images, locale);
+				addMarking(marking.get(), scoreLine.getVersion(), ++position, markingsElt, images, locale);
 			}
 		}
 
 		Optional<RenderedScoreMarking> frontOfPack = frontOfPackMarkingService.render(product, locale);
 		if (frontOfPack.isPresent()) {
-			addMarking(frontOfPack.get(), ++position, markingsElt, images, locale);
+			addMarking(frontOfPack.get(), null, ++position, markingsElt, images, locale);
 		}
 	}
 
@@ -117,9 +122,10 @@ public class ScoreMarkingReportWriter {
 		return product.getRegulatoryScoreList() != null ? product.getRegulatoryScoreList() : List.of();
 	}
 
-	private static void addMarking(RenderedScoreMarking marking, int position, Element markingsElt, Set<EntityImageInfo> images, Locale locale) {
+	private static void addMarking(RenderedScoreMarking marking, String version, int position, Element markingsElt, Set<EntityImageInfo> images,
+			Locale locale) {
 		String imageId = imageId(marking.code(), position);
-		addMarkingElement(markingsElt, marking, imageId, locale);
+		addMarkingElement(markingsElt, marking, version, imageId, locale);
 		images.add(new EntityImageInfo(imageId, marking.svg().getBytes(StandardCharsets.UTF_8), SVG_MIME_TYPE));
 	}
 
@@ -131,10 +137,13 @@ public class ScoreMarkingReportWriter {
 		return IMAGE_ID_PREFIX + code.replaceAll(IMAGE_ID_FORBIDDEN_CHARACTERS, IMAGE_ID_SEPARATOR) + IMAGE_ID_SEPARATOR + position;
 	}
 
-	private static void addMarkingElement(Element markingsElt, RenderedScoreMarking marking, String imageId, Locale locale) {
+	private static void addMarkingElement(Element markingsElt, RenderedScoreMarking marking, String version, String imageId, Locale locale) {
 		Element markingElt = markingsElt.addElement(TAG_SCORE_MARKING);
 		markingElt.addAttribute(ATTR_IMAGE_ID, imageId);
 		markingElt.addAttribute(ATTR_CODE, marking.code());
+		if (version != null) {
+			markingElt.addAttribute(ATTR_VERSION, version);
+		}
 		markingElt.addAttribute(ATTR_SCORE_CLASS, marking.scoreClass());
 		markingElt.addAttribute(ATTR_LOCALE, MLTextHelper.localeKey(locale));
 		SvgDimensions.of(marking.svg()).ifPresent(dimensions -> dimensions.writeTo(markingElt));

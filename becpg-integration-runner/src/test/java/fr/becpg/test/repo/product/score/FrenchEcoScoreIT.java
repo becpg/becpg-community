@@ -88,6 +88,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			Assert.assertEquals("C", finishedProductData.getEcoScoreClass());
 
 			// the score framework publishes the same verdict, without touching the historical properties
+			ScoreDefinitionTestHelper.listScore(finishedProductData, greenScoreDefinition);
 			frenchEcoScore.getScoreContext(finishedProductData)
 					.ifPresent(context -> scoreResultWriter.write(finishedProductData, context));
 
