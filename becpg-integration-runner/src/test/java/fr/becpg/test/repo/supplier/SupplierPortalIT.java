@@ -1,11 +1,17 @@
 package fr.becpg.test.repo.supplier;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -26,6 +32,7 @@ import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -53,6 +60,10 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String TEST_INTERNAL_USER_NAME = "supplierPortalInternalUser";
 	private static final String TEST_EXTERNAL_SUPPLIER_NAME = "Junit Supplier external account test";
 	private static final String TEST_EXTERNAL_SUPPLIER_EMAIL = "removed-supplier@becpg.fr";
+	private static final String TEST_COMMENT_SUPPLIER_NAME = "Junit Supplier comment test";
+	private static final String TEST_COMMENT_SUPPLIER_PLANT_NAME = "Junit Supplier comment plant test";
+	private static final String SUPPLIER_COMMENT = "Supplier comment";
+	private static final String UPDATED_SUPPLIER_COMMENT = "Updated supplier comment";
 
 	@Autowired
 	private SupplierPortalService supplierPortalService;
@@ -68,6 +79,12 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 	@Autowired
 	private SignatureProjectHelper signatureProjectHelper;
+
+	@Autowired
+	private CommentService commentService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@Test
 	public void testSupplierPortal() {
@@ -114,6 +131,36 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 		assertFalse("An external account removed from its last supplier should be disabled",
 				inReadTx(() -> AuthorityHelper.isAccountEnabled(TEST_EXTERNAL_SUPPLIER_EMAIL)));
+	}
+
+	@Test
+	public void testSupplierCanModifyEntityCommentOnlyUntilProjectFormulation() {
+		NodeRef supplierNodeRef = createSupplier(TEST_COMMENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_COMMENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		NodeRef projectNodeRef = createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+		NodeRef projectEntityNodeRef = inWriteTx(() -> {
+			NodeRef entityNodeRef = ((ProjectData) alfrescoRepository.findOne(projectNodeRef)).getEntities().get(0);
+			permissionService.setPermission(entityNodeRef, TEST_SUPPLIER_EMAIL, PermissionService.COORDINATOR, true);
+			return entityNodeRef;
+		});
+
+		NodeRef commentNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> commentService.createComment(projectEntityNodeRef, "", SUPPLIER_COMMENT, false));
+		updateCommentAsSupplier(commentNodeRef);
+
+		inWriteTx(() -> {
+			projectService.formulate(projectNodeRef);
+			return null;
+		});
+		assertThrows(AccessDeniedException.class, () -> updateCommentAsSupplier(commentNodeRef));
+	}
+
+	private void updateCommentAsSupplier(NodeRef commentNodeRef) {
+		inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_SUPPLIER_COMMENT);
+			return null;
+		});
 	}
 
 	private void deletePersonIfExists(String userName) {
@@ -332,6 +379,23 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 			this.totalDeliverables = totalDeliverables;
 			this.inProgress = inProgress;
 			this.planned = planned;
+		}
+	}
+
+	/**
+	 * Runs a write transaction as a user logged in, the identity Alfresco records as the creator of a node.
+	 *
+	 * @param userName the user to log in
+	 * @param callback the work to run
+	 * @return the work result
+	 */
+	private <T> T inWriteTxAs(String userName, RetryingTransactionCallback<T> callback) {
+		String previousUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		AuthenticationUtil.setFullyAuthenticatedUser(userName);
+		try {
+			return inWriteTx(callback);
+		} finally {
+			AuthenticationUtil.setFullyAuthenticatedUser(previousUser);
 		}
 	}
 }

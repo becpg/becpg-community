@@ -6,6 +6,7 @@ import org.alfresco.repo.template.BaseTemplateProcessorExtension;
 import org.alfresco.repo.template.TemplateNode;
 import org.alfresco.service.cmr.security.AuthorityService;
 
+import fr.becpg.repo.comment.CommentPermissionService;
 import fr.becpg.repo.helper.AuthorityHelper;
 
 /**
@@ -16,6 +17,8 @@ import fr.becpg.repo.helper.AuthorityHelper;
 public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 
     private AuthorityService authorityService;
+
+    private CommentPermissionService commentPermissionService;
     
 	/**
 	 * <p>Setter for the field <code>authorityService</code>.</p>
@@ -24,6 +27,15 @@ public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>commentPermissionService</code>.</p>
+	 *
+	 * @param commentPermissionService a {@link fr.becpg.repo.comment.CommentPermissionService} object
+	 */
+	public void setCommentPermissionService(CommentPermissionService commentPermissionService) {
+		this.commentPermissionService = commentPermissionService;
 	}
 
 	/**
@@ -43,5 +55,15 @@ public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 	
 	public boolean isCurrentUserExternal() {
 		return AuthorityHelper.isCurrentUserExternal();
+	}
+
+	/**
+	 * Tells whether the current user can edit and delete a comment, see {@link CommentPermissionService}.
+	 *
+	 * @param comment the comment node
+	 * @return true if no comment permission plugin refuses it
+	 */
+	public boolean canModifyComment(TemplateNode comment) {
+		return commentPermissionService.canModify(comment.getNodeRef());
 	}
 }

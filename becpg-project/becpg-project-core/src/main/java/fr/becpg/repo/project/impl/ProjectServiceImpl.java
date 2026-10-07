@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.query.PagingRequest;
-import org.alfresco.query.PagingResults;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -38,7 +36,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
-import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
@@ -626,31 +623,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 						}
 					}
 				}
-				PagingResults<NodeRef> comments = commentService.listComments(taskListNodeRef, new PagingRequest(5000, null));
-				disableCommentsEditionForResource(comments.getPage(), authorityName);
 			}
-		}
-	}
-
-	@Override
-	public void disableCommentsEditionForResource(List<NodeRef> comments, String resourceUserName) {
-		for (NodeRef commentNodeRef : comments) {
-			boolean inheritParentPermissions = permissionService.getInheritParentPermissions(commentNodeRef);
-			if (!inheritParentPermissions) {
-				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(commentNodeRef);
-				boolean alreadyConsumer = !permissions.isEmpty() && permissions.stream()
-						.anyMatch(p -> PermissionService.CONSUMER.equals(p.getPermission()) && p.getAuthority().equals(resourceUserName));
-				if (alreadyConsumer) {
-					continue;
-				}
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("Updating permissions to Consumer for commentNodeRef: " + commentNodeRef + ", authority: " + resourceUserName);
-			}
-			if (inheritParentPermissions) {
-				permissionService.setInheritParentPermissions(commentNodeRef, false);
-			}
-			permissionService.setPermission(commentNodeRef, resourceUserName, PermissionService.CONSUMER, true);
 		}
 	}
 

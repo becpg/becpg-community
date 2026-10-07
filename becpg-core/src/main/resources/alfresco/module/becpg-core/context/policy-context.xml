@@ -144,6 +144,11 @@
 		<property name="permissionService" ref="permissionService" />
 		<property name="securityService" ref="securityService" />
 	</bean>
+
+	<bean id="commentPermissionPolicy" class="fr.becpg.repo.comment.policy.CommentPermissionPolicy" parent="abstractBeCPGPolicy">
+		<property name="commentPermissionService" ref="commentPermissionService" />
+		<property name="commentService" ref="commentService" />
+	</bean>
 	
 	<!-- Documents -->
 	

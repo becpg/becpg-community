@@ -1,3 +1,25 @@
+var COMMENTS_TOPIC_NAME = "Comments";
+
+/**
+ * Counts the comments of a node the current user can read. The fm:commentCount property counts every comment,
+ * including the restricted ones an external user cannot see.
+ */
+function countVisibleComments(node) {
+    if (!node.hasAspect("fm:discussable")) {
+        return 0;
+    }
+    var forums = node.childAssocs["fm:discussion"];
+    if (!forums || forums.length == 0) {
+        return 0;
+    }
+    var commentsTopic = forums[0].childByNamePath(COMMENTS_TOPIC_NAME);
+    if (!commentsTopic) {
+        return 0;
+    }
+    var comments = commentsTopic.childAssocs["cm:contains"];
+    return comments ? comments.length : 0;
+}
+
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
         if (a[i] === obj) {
@@ -26,6 +48,11 @@ function main()
    model.deliverables = [];
    model.urlMap = {};
    model.contentMap = {};
+   model.commentCounts = {};
+
+   if (task != null) {
+      model.commentCounts[task.nodeRef.toString()] = countVisibleComments(task);
+   }
    
    
 	if (task != null && task.sourceAssocs["pjt:dlTask"] != null) {
@@ -34,6 +61,7 @@ function main()
 			if (deliverable.properties["pjt:dlScriptExecOrder"] == null ||
 				deliverable.properties["pjt:dlScriptExecOrder"] == "None") {
 				model.contentMap[deliverable.nodeRef.toString()] = [];
+				model.commentCounts[deliverable.nodeRef.toString()] = countVisibleComments(deliverable);
 				
 				var delContents = deliverable.assocs["pjt:dlContent"];
 				

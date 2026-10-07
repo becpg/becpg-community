@@ -9,7 +9,7 @@
 					"state": "${deliverable.properties["pjt:dlState"]!""}",
 					"url": "${urlMap[deliverable.nodeRef.toString()]!""}",
 			   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
-			   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
+			   		"commentCount":"${(commentCounts[deliverable.nodeRef.toString()]!0)?c}",
 			   		"contents": [
 		   			<#if contentMap[deliverable.nodeRef.toString()]?exists>
 			   			<#list contentMap[deliverable.nodeRef.toString()] as content>
@@ -47,7 +47,7 @@
 		"description": "${task.properties["pjt:tlTaskDescription"]!""}",
 	   "state": "${task.properties["pjt:tlState"]!""}",
 	   "completionPercent": "${task.properties["pjt:completionPercent"]!""}",
-	   "commentCount":"${task.properties["fm:commentCount"]!""}",
+	   "commentCount":"${(commentCounts[task.nodeRef.toString()]!0)?c}",
 	   "nodeRef": "${task.nodeRef}",
 	   "isRefusedEnabled": <#if isRefusedEnabled?? && isRefusedEnabled>true<#else>false</#if>,
 	   "deliverables":

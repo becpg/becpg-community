@@ -3,6 +3,8 @@
  */
 package fr.becpg.test.project;
 
+import static org.junit.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,10 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
@@ -66,6 +73,13 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 	@Autowired
 	private PersonService personService;
+
+	@Autowired
+	private CommentService commentService;
+
+	private static final String TASK_COMMENT = "Task comment";
+
+	private static final String UPDATED_TASK_COMMENT = "Updated task comment";
 
 	/**
 	 * Test a project create InProgress start automatically
@@ -857,5 +871,102 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 			return null;
 		}, false, true);
+	}
+
+	@Test
+	public void testAuthorCanModifyTaskCommentAfterFormulation() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		inWriteTx(() -> {
+			projectService.formulate(projectNodeRef);
+			return null;
+		});
+
+		inWriteTxAs(BeCPGTestHelper.USER_ONE, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		});
+	}
+
+	@Test
+	public void testOtherUserCannotModifyTaskComment() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			return null;
+		}));
+
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		}));
+	}
+
+	@Test
+	public void testAdminCanModifyOtherUserTaskComment() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		inWriteTx(() -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		});
+	}
+
+	@Test
+	public void testTaskCommentedByOtherUserCanBeDeleted() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef plannedTaskNodeRef = getTaskNodeRef(projectNodeRef, 2);
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, plannedTaskNodeRef);
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeService.deleteNode(plannedTaskNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertFalse(nodeService.exists(commentNodeRef));
+			return null;
+		});
+	}
+
+	private NodeRef createProjectEditableByUsers() {
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
+		inWriteTx(() -> {
+			permissionService.setPermission(projectNodeRef, BeCPGTestHelper.USER_ONE, PermissionService.COORDINATOR, true);
+			permissionService.setPermission(projectNodeRef, BeCPGTestHelper.USER_TWO, PermissionService.COORDINATOR, true);
+			return null;
+		});
+		return projectNodeRef;
+	}
+
+	private NodeRef getTaskNodeRef(NodeRef projectNodeRef, int taskIndex) {
+		return inReadTx(() -> ((ProjectData) alfrescoRepository.findOne(projectNodeRef)).getTaskList().get(taskIndex).getNodeRef());
+	}
+
+	private NodeRef commentAs(String userName, NodeRef discussableNodeRef) {
+		return inWriteTxAs(userName, () -> commentService.createComment(discussableNodeRef, "", TASK_COMMENT, false));
+	}
+
+	/**
+	 * Runs a write transaction as a user logged in, the identity Alfresco records as the creator of a node.
+	 *
+	 * @param userName the user to log in
+	 * @param callback the work to run
+	 * @return the work result
+	 */
+	private <T> T inWriteTxAs(String userName, RetryingTransactionCallback<T> callback) {
+		String previousUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		AuthenticationUtil.setFullyAuthenticatedUser(userName);
+		try {
+			return inWriteTx(callback);
+		} finally {
+			AuthenticationUtil.setFullyAuthenticatedUser(previousUser);
+		}
 	}
 }

@@ -29,6 +29,9 @@
         <property name="authorityService">
             <ref bean="AuthorityService"/>
         </property>
+        <property name="commentPermissionService">
+            <ref bean="commentPermissionService"/>
+        </property>
     </bean>
 
 	<bean id="beCPGTemplateRenderService" class="fr.becpg.repo.template.impl.FreemarkerTemplateRenderServiceImpl">
