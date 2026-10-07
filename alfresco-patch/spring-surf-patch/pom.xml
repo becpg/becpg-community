@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>fr.becpg</groupId>
+		<artifactId>alfresco-patch</artifactId>
+		<version>26.1.0.50-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>spring-surf</artifactId>
+	<name>Spring surf Patch</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- alfresco -->
+		<dependency>
+			<groupId>org.alfresco.surf</groupId>
+			<artifactId>spring-surf</artifactId>
+			<version>${spring-surf.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		 <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <scope>provided</scope>
+          </dependency>
+		
+
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}-${spring-surf.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<artifactSet>
+								<includes>
+									<include>org.alfresco.surf:spring-surf</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>org.alfresco.surf:spring-surf</artifact>
+									<excludes>
+										<exclude>org/springframework/extensions/directives/OutputCSSContentModelElement**</exclude>
+										<exclude>org/springframework/extensions/webscripts/MessagesWebScript**</exclude>
+									</excludes>
+								</filter>
+								<filter>
+									<artifact>fr.becpg:spring-surf</artifact>
+									<excludes>
+										<exclude>META-INF/**</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

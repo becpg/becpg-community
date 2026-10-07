@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>alfresco-patch</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>26.1.0.50-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>alfresco-core-patch</artifactId>
+	<packaging>jar</packaging>
+	<name>Alfresco core Patch</name>
+	<description>AMP patch for Alfresco core</description>
+	<dependencies>
+
+		<!-- alfresco -->
+
+		 <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <scope>provided</scope>
+          </dependency>
+
+		<!-- patch -->
+		<dependency>
+            <groupId>fr.becpg</groupId>
+            <artifactId>alfresco-remote-api</artifactId>
+            <version>26.1.0.50-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.alfresco</groupId>
+            		<artifactId>alfresco-remote-api</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+		<dependency>
+            <groupId>fr.becpg</groupId>
+            <artifactId>alfresco-repository</artifactId>
+            <version>26.1.0.50-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.alfresco</groupId>
+            		<artifactId>alfresco-repository</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>fr.becpg</groupId>
+            <artifactId>alfresco-core</artifactId>
+            <version>26.1.0.50-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.alfresco</groupId>
+            		<artifactId>alfresco-core</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>fr.becpg</groupId>
+            <artifactId>spring-webscripts</artifactId>
+            <version>26.1.0.50-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.alfresco.surf</groupId>
+					<artifactId>spring-webscripts</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+		</plugins>
+	</build>
+</project>

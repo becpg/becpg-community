@@ -1,0 +1,820 @@
+/*
+ * #%L
+ * Alfresco Repository
+ * %%
+ * Copyright (C) 2005 - 2016 Alfresco Software Limited
+ * %%
+ * This file is part of the Alfresco software. 
+ * If the software was purchased under a paid Alfresco license, the terms of 
+ * the paid license agreement will prevail.  Otherwise, the software is 
+ * provided under the following open source license terms:
+ * 
+ * Alfresco is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Alfresco is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+package org.alfresco.repo.domain.permissions;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.node.NodeIdAndAclId;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.permissions.ACLType;
+import org.alfresco.repo.security.permissions.AccessControlList;
+import org.alfresco.repo.security.permissions.AccessControlListProperties;
+import org.alfresco.repo.security.permissions.SimpleAccessControlListProperties;
+import org.alfresco.repo.security.permissions.impl.AclChange;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
+
+/**
+ * DAO layer for the improved ACL implementation. This layer is responsible for setting ACLs and any cascade behaviour
+ * required. It also implements the migration from the old implementation to the new.
+ *
+ * @author andyh
+ */
+public class ADMAccessControlListDAO implements AccessControlListDAO
+{
+    private static final Log log = LogFactory.getLog(ADMAccessControlListDAO.class);
+    /**
+     * The DAO for Nodes.
+     */
+    private NodeDAO nodeDAO;
+
+    private AclDAO aclDaoComponent;
+    
+    private BehaviourFilter behaviourFilter;
+    private boolean preserveAuditableData = true;
+    
+    /**maxim transaction time allowed for {@link #setFixedAcls(Long, Long, Long, Long, List, boolean, AsyncCallParameters, boolean)} */
+    private long fixedAclMaxTransactionTime = 10 * 1000;
+
+    /**
+     * <p>Setter for the field <code>nodeDAO</code>.</p>
+     *
+     * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
+     */
+    public void setNodeDAO(NodeDAO nodeDAO)
+    {
+        this.nodeDAO = nodeDAO;
+    }
+
+    /**
+     * <p>setAclDAO.</p>
+     *
+     * @param aclDaoComponent a {@link org.alfresco.repo.domain.permissions.AclDAO} object
+     */
+    public void setAclDAO(AclDAO aclDaoComponent)
+    {
+        this.aclDaoComponent = aclDaoComponent;
+    }
+    
+    /**
+     * <p>Setter for the field <code>fixedAclMaxTransactionTime</code>.</p>
+     *
+     * @param fixedAclMaxTransactionTime a long
+     */
+    public void setFixedAclMaxTransactionTime(long fixedAclMaxTransactionTime)
+    {
+        this.fixedAclMaxTransactionTime = fixedAclMaxTransactionTime;
+    }
+    
+    /**
+     * <p>Setter for the field <code>behaviourFilter</code>.</p>
+     *
+     * @param behaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+     */
+    public void setBehaviourFilter(BehaviourFilter behaviourFilter)
+    {
+        this.behaviourFilter = behaviourFilter;
+    }
+
+    /**
+     * <p>Setter for the field <code>preserveAuditableData</code>.</p>
+     *
+     * @param preserveAuditableData a boolean
+     */
+    public void setPreserveAuditableData(boolean preserveAuditableData)
+    {
+        this.preserveAuditableData = preserveAuditableData;
+    }
+    
+    /**
+     * <p>isPreserveAuditableData.</p>
+     *
+     * @return a boolean
+     */
+    public boolean isPreserveAuditableData()
+    {
+        return preserveAuditableData;
+    }
+
+    /** {@inheritDoc} */
+    public void forceCopy(NodeRef nodeRef)
+    {
+        // Nothing to do
+    }
+
+    private Long getNodeIdNotNull(NodeRef nodeRef)
+    {
+        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+        if (nodePair == null)
+        {
+            throw new InvalidNodeRefException(nodeRef);
+        }
+        return nodePair.getFirst();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>getAccessControlList.</p>
+     */
+    public Acl getAccessControlList(NodeRef nodeRef)
+    {
+        Long nodeId = getNodeIdNotNull(nodeRef);
+        Long aclId = nodeDAO.getNodeAclId(nodeId);
+        return aclDaoComponent.getAcl(aclId);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param storeRef a {@link org.alfresco.service.cmr.repository.StoreRef} object
+     * @return a {@link org.alfresco.repo.domain.permissions.Acl} object
+     */
+    public Acl getAccessControlList(StoreRef storeRef)
+    {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Long getIndirectAcl(NodeRef nodeRef)
+    {
+        return getAccessControlList(nodeRef).getId();
+    }
+
+    /** {@inheritDoc} */
+    public Long getInheritedAcl(NodeRef nodeRef)
+    {
+        Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+        if (nodePair == null)
+        {
+            return null;
+        }
+        Pair<Long, ChildAssociationRef> parentAssocRefPair = nodeDAO.getPrimaryParentAssoc(nodePair.getFirst());
+        if (parentAssocRefPair == null || parentAssocRefPair.getSecond().getParentRef() == null)
+        {
+            return null;
+        }
+        Acl acl = getAccessControlList(parentAssocRefPair.getSecond().getParentRef());
+        if (acl != null)
+        {
+            return acl.getId();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * <p>patchAcls.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
+    public Map<ACLType, Integer> patchAcls()
+    {
+        CounterSet result = new CounterSet();
+        List<Pair<Long, StoreRef>> stores = nodeDAO.getStores();
+
+        for (Pair<Long, StoreRef> pair : stores)
+        {
+            CounterSet update;
+            Long rootNodeId = nodeDAO.getRootNode(pair.getSecond()).getFirst();
+            update = fixOldDmAcls(rootNodeId, nodeDAO.getNodeAclId(rootNodeId), (Long)null, true);
+            result.add(update);
+        }
+
+        HashMap<ACLType, Integer> toReturn = new HashMap<ACLType, Integer>();
+        toReturn.put(ACLType.DEFINING, Integer.valueOf(result.get(ACLType.DEFINING).getCounter()));
+        toReturn.put(ACLType.FIXED, Integer.valueOf(result.get(ACLType.FIXED).getCounter()));
+        toReturn.put(ACLType.GLOBAL, Integer.valueOf(result.get(ACLType.GLOBAL).getCounter()));
+        toReturn.put(ACLType.LAYERED, Integer.valueOf(result.get(ACLType.LAYERED).getCounter()));
+        toReturn.put(ACLType.OLD, Integer.valueOf(result.get(ACLType.OLD).getCounter()));
+        toReturn.put(ACLType.SHARED, Integer.valueOf(result.get(ACLType.SHARED).getCounter()));
+        return toReturn;
+    }
+
+    private CounterSet fixOldDmAcls(Long nodeId, Long existingNodeAclId, Long inheritedAclId, boolean isRoot)
+    {
+        CounterSet result = new CounterSet();
+        
+        // If existingNodeAclId is not null and equal to inheritedAclId then we know we have hit a shared ACL we have bulk set 
+        // - just carry on in this case - we do not need to get the acl
+        
+        Long newDefiningAcl = null;
+        
+        if((existingNodeAclId != null) && (existingNodeAclId.equals(inheritedAclId)))
+        {
+            // nothing to do except move into the children
+        }
+        else
+        {
+            AccessControlList existing = null;
+            if (existingNodeAclId != null)
+            {
+                existing = aclDaoComponent.getAccessControlList(existingNodeAclId);
+            }
+
+            if (existing != null)
+            {
+                if (existing.getProperties().getAclType() == ACLType.OLD)
+                {
+                    result.increment(ACLType.DEFINING);
+                    SimpleAccessControlListProperties properties = new SimpleAccessControlListProperties(aclDaoComponent.getDefaultProperties());
+                    properties.setInherits(existing.getProperties().getInherits());
+                   
+                    Long actuallyInherited = null;
+                    if (existing.getProperties().getInherits())
+                    {
+                        if (inheritedAclId != null)
+                        {
+                            actuallyInherited = inheritedAclId;
+                        }
+                    }
+                    Acl newAcl = aclDaoComponent.createAccessControlList(properties, existing.getEntries(), actuallyInherited);
+                    newDefiningAcl = newAcl.getId();
+                    nodeDAO.setNodeAclId(nodeId, newDefiningAcl);
+                }
+                else if (existing.getProperties().getAclType() == ACLType.SHARED)
+                {
+                    // nothing to do just cascade into the children - we most likely did a bulk set above.
+                    // TODO: Check shared ACL set is correct
+                }
+                else
+                {
+                    // Already fixed up
+                    // TODO: Keep going to check
+                    // Check inheritance is correct
+                    return result;
+                }
+            }
+            else
+            {
+                // Set default ACL on roots with no settings
+                if (isRoot)
+                {
+                    result.increment(ACLType.DEFINING);
+
+                    AccessControlListProperties properties = aclDaoComponent.getDefaultProperties();
+                    Acl newAcl = aclDaoComponent.createAccessControlList(properties);
+                    newDefiningAcl = newAcl.getId();
+                    nodeDAO.setNodeAclId(nodeId, newDefiningAcl);
+                }
+                else
+                {
+                    // Unset - simple inherit
+                    nodeDAO.setNodeAclId(nodeId, inheritedAclId);
+                }
+            }
+        }
+
+        Long toInherit = null;
+        List<NodeIdAndAclId> children = nodeDAO.getPrimaryChildrenAcls(nodeId);
+        if (children.size() > 0)
+        {
+            // Only make inherited if required
+            if (newDefiningAcl == null)
+            {
+                toInherit = inheritedAclId;
+            }
+            else
+            {
+                toInherit = aclDaoComponent.getInheritedAccessControlList(newDefiningAcl);
+            }
+
+        }
+
+        if(children.size() > 0)
+        {
+            nodeDAO.setPrimaryChildrenSharedAclId(nodeId, null, toInherit);
+        }
+
+        for (NodeIdAndAclId child : children)
+        {
+            CounterSet update = fixOldDmAcls(child.getId(), child.getAclId(), toInherit, false);
+            result.add(update);
+        }
+        
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>setAccessControlList.</p>
+     */
+    public void setAccessControlList(NodeRef nodeRef, Long aclId)
+    {
+        boolean auditableBehaviorWasDisabled = preserveAuditableData && behaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+        if (auditableBehaviorWasDisabled)
+        {
+            behaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+        }
+        
+        try
+        {
+            Long nodeId = getNodeIdNotNull(nodeRef);
+            nodeDAO.setNodeAclId(nodeId, aclId);
+        }
+        finally
+        {
+            if (auditableBehaviorWasDisabled)
+            {
+                behaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param acl a {@link org.alfresco.repo.domain.permissions.Acl} object
+     */
+    public void setAccessControlList(NodeRef nodeRef, Acl acl)
+    {
+        Long aclId = null;
+        if (acl != null)
+        {
+            aclId = acl.getId();
+        }
+        setAccessControlList(nodeRef, aclId);
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * @param storeRef a {@link org.alfresco.service.cmr.repository.StoreRef} object
+     * @param acl a {@link org.alfresco.repo.domain.permissions.Acl} object
+     */
+    public void setAccessControlList(StoreRef storeRef, Acl acl)
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public List<AclChange> setInheritanceForChildren(NodeRef parent, Long inheritFrom, Long sharedAclToReplace)
+    {
+        //check transaction resource to determine if async call may be required 
+        boolean asyncCall = AlfrescoTransactionSupport.getResource(FixedAclUpdater.FIXED_ACL_ASYNC_CALL_KEY) == null ? false : true;
+        return setInheritanceForChildren(parent, inheritFrom, sharedAclToReplace,  asyncCall);
+    }
+    
+    /** {@inheritDoc} */
+    public List<AclChange> setInheritanceForChildren(NodeRef parent, Long inheritFrom, Long sharedAclToReplace, boolean asyncCall)
+    {
+        List<AclChange> changes = new ArrayList<AclChange>();
+        setFixedAcls(getNodeIdNotNull(parent), inheritFrom, null, sharedAclToReplace, changes, false, asyncCall, true);
+        return changes;
+    }
+
+    /** {@inheritDoc} */
+    public List<AclChange> setInheritanceForChildren(NodeRef parent, Long inheritFrom, Long sharedAclToReplace, boolean asyncCall, boolean forceSharedACL)
+    {
+        List<AclChange> changes = new ArrayList<AclChange>();
+        setFixedAcls(getNodeIdNotNull(parent), inheritFrom, null, sharedAclToReplace, changes, false, asyncCall, true, forceSharedACL);
+        return changes;
+    }
+
+    /** {@inheritDoc} */
+    public void updateChangedAcls(NodeRef startingPoint, List<AclChange> changes)
+    {
+        // Nothing to do: no nodes change as a result of ACL changes
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Support to set a shared ACL on a node and all of its children
+     */
+    public void setFixedAcls(Long nodeId, Long inheritFrom, Long mergeFrom, Long sharedAclToReplace, List<AclChange> changes, boolean set)
+    {
+        setFixedAcls(nodeId, inheritFrom, mergeFrom, sharedAclToReplace, changes, set, false, true);
+    }
+    
+    /**
+     * Support to set a shared ACL on a node and all of its children
+     *
+     * @param nodeId
+     *            the parent node
+     * @param inheritFrom
+     *            the parent node's ACL
+     * @param mergeFrom
+     *            the shared ACL, if already known. If <code>null</code>, will be retrieved / created lazily
+     * @param changes
+     *            the list in which to record changes
+     * @param set
+     *            set the shared ACL on the parent ?
+     * @param asyncCall
+     *            function may require asynchronous call depending the execution time; if time exceeds configured <code>fixedAclMaxTransactionTime</code> value,
+     *            recursion is stopped using propagateOnChildren parameter(set on false) and those nodes for which the method execution was not finished
+     *            in the classical way, will have ASPECT_PENDING_FIX_ACL, which will be used in {@link org.alfresco.repo.domain.permissions.FixedAclUpdater} for later processing
+     * @param sharedAclToReplace a {@link java.lang.Long} object
+     * @param propagateOnChildren a boolean
+     */
+    public void setFixedAcls(Long nodeId, Long inheritFrom, Long mergeFrom, Long sharedAclToReplace, List<AclChange> changes, boolean set, boolean asyncCall, boolean propagateOnChildren)
+    {
+    	//beCPG forceFixSharedACL = true
+        setFixedAcls(nodeId, inheritFrom, mergeFrom, sharedAclToReplace, changes, set, false, true, true);
+    }
+
+    /**
+     * Support to set a shared ACL on a node and all of its children
+     *
+     * @param nodeId
+     *            the parent node
+     * @param inheritFrom
+     *            the parent node's ACL
+     * @param mergeFrom
+     *            the shared ACL, if already known. If <code>null</code>, will be retrieved / created lazily
+     * @param changes
+     *            the list in which to record changes
+     * @param set
+     *            set the shared ACL on the parent ?
+     * @param asyncCall
+     *            function may require asynchronous call depending the execution time; if time exceeds configured <code>fixedAclMaxTransactionTime</code> value,
+     *            recursion is stopped using propagateOnChildren parameter(set on false) and those nodes for which the method execution was not finished
+     *            in the classical way, will have ASPECT_PENDING_FIX_ACL, which will be used in {@link org.alfresco.repo.domain.permissions.FixedAclUpdater} for later processing
+     * @param forceSharedACL
+     *            When a child node has an unexpected ACL, force it to assume the new shared ACL instead of throwing a concurrency exception.
+     * @param sharedAclToReplace a {@link java.lang.Long} object
+     * @param propagateOnChildren a boolean
+     */
+    public void setFixedAcls(Long nodeId, Long inheritFrom, Long mergeFrom, Long sharedAclToReplace, List<AclChange> changes, boolean set, boolean asyncCall, boolean propagateOnChildren, boolean forceSharedACL)
+    {
+        if (log.isDebugEnabled())
+        {
+            log.debug(" Set fixed acl for nodeId=" + nodeId + " inheritFrom=" + inheritFrom + " sharedAclToReplace=" + sharedAclToReplace
+                    + " mergefrom= " + mergeFrom);
+        }
+        
+        if (nodeId == null)
+        {
+            return;
+        }
+        else
+        {
+            // When node is copied when the aspect is applied, the sharedACLtoReplace will not match the children's ACLS
+            // to replace, we need to use the current one.
+            Long currentAcl = nodeDAO.getNodeAclId(nodeId);
+
+            if (nodeDAO.hasNodeAspect(nodeId, ContentModel.ASPECT_PENDING_FIX_ACL))
+            {
+                // If node has a pending acl, retrieve the sharedAclToReplace from node property. When the job calls
+                // this, it already does it but on move and copy operations, it uses the new parents old ACL.
+                sharedAclToReplace = (Long) nodeDAO.getNodeProperty(nodeId, ContentModel.PROP_SHARED_ACL_TO_REPLACE);
+                
+            }
+
+            // Lazily retrieve/create the shared ACL
+            if (mergeFrom == null)
+            {
+                mergeFrom = aclDaoComponent.getInheritedAccessControlList(inheritFrom);
+            }
+            
+            if (set)
+            {
+                nodeDAO.setNodeAclId(nodeId, mergeFrom);
+            }
+            
+            List<NodeIdAndAclId> children = nodeDAO.getPrimaryChildrenAcls(nodeId);
+            
+            if (!propagateOnChildren)
+            {
+                return;
+            }
+            
+            for (NodeIdAndAclId child : children)
+            {
+                //Use the current ACL instead of the stored value, it could've been changed meanwhile
+                Long acl = nodeDAO.getNodeAclId(child.getId());
+               
+                if (acl == null)
+                {
+                    propagateOnChildren = setFixAclPending(child.getId(), inheritFrom, mergeFrom, sharedAclToReplace, changes, false, asyncCall, propagateOnChildren, forceSharedACL);
+                }
+                else
+                {
+                    // Still has old shared ACL or already replaced
+                    if(acl.equals(sharedAclToReplace) || acl.equals(mergeFrom) || acl.equals(currentAcl))
+                    {
+                        propagateOnChildren = setFixAclPending(child.getId(), inheritFrom, mergeFrom, sharedAclToReplace, changes, false, asyncCall, propagateOnChildren, forceSharedACL);
+                    }
+                    else
+                    {
+                        Acl dbAcl = aclDaoComponent.getAcl(acl);
+                        if (dbAcl.getAclType() == ACLType.LAYERED)
+                        {
+                            throw new UnsupportedOperationException();
+                        }
+                        else if (dbAcl.getAclType() == ACLType.DEFINING)
+                        {
+                            if (dbAcl.getInherits())
+                            {
+                                @SuppressWarnings("unused")
+                                List<AclChange> newChanges = aclDaoComponent.mergeInheritedAccessControlList(mergeFrom, acl);
+                            }
+                        }
+                        else if (dbAcl.getAclType() == ACLType.SHARED)
+                        {
+                            if (forceSharedACL)
+                            {
+                                log.warn("Forcing shared ACL on node: " + child.getId() + " ( "
+                                        + nodeDAO.getNodePair(child.getId()).getSecond() + ") - " + dbAcl);
+                                sharedAclToReplace = acl;
+                                propagateOnChildren = setFixAclPending(child.getId(), inheritFrom, mergeFrom, sharedAclToReplace,
+                                        changes, false, asyncCall, propagateOnChildren, forceSharedACL);
+                            }
+                            else
+                            {
+                                throw new ConcurrencyFailureException(
+                                        "setFixedAcls: unexpected shared acl: " + dbAcl + " on node " + child.getId() + " ( "
+                                                + nodeDAO.getNodePair(child.getId()).getSecond() + ")");
+                            }
+                        }
+                    }
+                }
+            }
+
+            // By doing an eager update of the direct children we canot see if another thread has changed the ACL
+            // between the time we get the child nodes and we update them. By updating the direct children last it is
+            // possible to verify if any child has changed meanwhile.
+            if(children.size() > 0)
+            {
+                nodeDAO.setPrimaryChildrenSharedAclId(nodeId, sharedAclToReplace, mergeFrom);
+            }
+            
+            // When this is not executed triggered by the job, but a move or copy operation occures on a pending
+            // node, we don't want to apply the OLD ACL that was pending
+            if(nodeDAO.hasNodeAspect(nodeId, ContentModel.ASPECT_PENDING_FIX_ACL))
+            {
+                removePendingAclAspect(nodeId);
+            }
+        }
+    }
+    
+    /**
+     * Adds ASPECT_PENDING_FIX_ACL aspect to nodes when transactionTime reaches max admitted time
+     * MNT-18308: No longer checks if call is async in order to evaluate time passed to decide if nodes should be
+     * processed by job. This is now the default behavior for both sync and async calls: when fixedAclMaxTransactionTime
+     * is exceeded, call turns async and all remaining nodes should be processed by job FixedACLUpdater
+     * 
+     * @param nodeId
+     *            the nodeId of the current node being processed
+     * @param inheritFrom
+     *            the parent node's ACL
+     * @param mergeFrom
+     *            the new shared ACL, if already known.
+     * @param sharedAclToReplace
+     *            the old shared ACL, to be replaced
+     * @param changes
+     *            the list in which to record changes
+     * @param set
+     *            if to set the shared ACL on the parent
+     * @param asyncCall
+     *            if the call was initially set as async
+     * @param propagateOnChildren
+     *            current setting of child propagation of ACL creation
+     * @return new setting on child propagation of ACL creation
+     * 
+     */
+    private boolean setFixAclPending(Long nodeId, Long inheritFrom, Long mergeFrom, Long sharedAclToReplace,
+            List<AclChange> changes, boolean set, boolean asyncCall, boolean propagateOnChildren, boolean forceSharedACL)
+    {
+        // check transaction time
+        long transactionStartTime = AlfrescoTransactionSupport.getTransactionStartTime();
+        long transactionTime = System.currentTimeMillis() - transactionStartTime;
+        if (transactionTime < fixedAclMaxTransactionTime)
+        {
+            // make regular method call if time is under max transaction configured time
+            setFixedAcls(nodeId, inheritFrom, mergeFrom, sharedAclToReplace, changes, set, asyncCall, propagateOnChildren, forceSharedACL);
+            return true;
+        }
+
+        // If flag is still unset or false, the call until now has been sync and will turn async, we should throw a
+        // warning
+        if (log.isWarnEnabled() && (AlfrescoTransactionSupport.getResource(FixedAclUpdater.FIXED_ACL_ASYNC_REQUIRED_KEY) == null
+                || (Boolean) AlfrescoTransactionSupport.getResource(FixedAclUpdater.FIXED_ACL_ASYNC_REQUIRED_KEY) == false))
+        {
+            log.warn("The ACL processing time in transaction " + AlfrescoTransactionSupport.getTransactionId()
+                    + " exceeded the configured limit of " + fixedAclMaxTransactionTime
+                    + " ms. The rest of the ACL processing will be done asynchronously.");
+        }
+        // set ASPECT_PENDING_FIX_ACL aspect on node to be later on processed with FixedAclUpdater amd switch flag
+        // FIXED_ACL_ASYNC_REQUIRED_KEY
+        addFixedAclPendingAspect(nodeId, sharedAclToReplace, inheritFrom, mergeFrom);
+        AlfrescoTransactionSupport.bindResource(FixedAclUpdater.FIXED_ACL_ASYNC_REQUIRED_KEY, true);
+        // stop propagating on children nodes
+        return false;
+    }
+
+    private void addFixedAclPendingAspect(Long nodeId, Long sharedAclToReplace, Long inheritFrom, Long mergeFrom)
+    {
+        //If the node already has the pending ACL aspect, just update the new inheritFrom value
+        if (nodeDAO.hasNodeAspect(nodeId, ContentModel.ASPECT_PENDING_FIX_ACL))
+        {
+            Map<QName, Serializable> pendingAclProperties = new HashMap<>();
+            pendingAclProperties.put(ContentModel.PROP_INHERIT_FROM_ACL, inheritFrom);
+            nodeDAO.addNodeProperties(nodeId, pendingAclProperties);
+            return;
+        }
+        
+        Set<QName> aspect = new HashSet<>();
+        aspect.add(ContentModel.ASPECT_PENDING_FIX_ACL);
+        nodeDAO.addNodeAspects(nodeId, aspect);
+        Map<QName, Serializable> pendingAclProperties = new HashMap<>();
+        pendingAclProperties.put(ContentModel.PROP_SHARED_ACL_TO_REPLACE, sharedAclToReplace);
+        pendingAclProperties.put(ContentModel.PROP_INHERIT_FROM_ACL, inheritFrom);
+        nodeDAO.addNodeProperties(nodeId, pendingAclProperties);
+        if (log.isDebugEnabled())
+        {
+            log.debug("Set Fixed Acl Pending : " + nodeId + " " + nodeDAO.getNodePair(nodeId).getSecond());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void removePendingAclAspect(Long nodeId)
+    {
+        Set<QName> aspects = new HashSet<>(1);
+        aspects.add(ContentModel.ASPECT_PENDING_FIX_ACL);
+        Set<QName> pendingFixAclProperties = new HashSet<>();
+        pendingFixAclProperties.add(ContentModel.PROP_SHARED_ACL_TO_REPLACE);
+        pendingFixAclProperties.add(ContentModel.PROP_INHERIT_FROM_ACL);
+        nodeDAO.removeNodeAspects(nodeId, aspects);
+        nodeDAO.removeNodeProperties(nodeId, pendingFixAclProperties);
+    }
+    
+    /** {@inheritDoc} */
+    public void updateInheritance(Long childNodeId, Long oldParentAclId, Long newParentAclId)
+    {
+        if (oldParentAclId == null)
+        {
+            // nothing to do
+            return;
+        }
+        List<AclChange> changes = new ArrayList<AclChange>();
+       
+        Long childAclId = nodeDAO.getNodeAclId(childNodeId);
+        if(childAclId == null)
+        { 
+            if(newParentAclId != null)
+            {
+                Long newParentSharedAclId = aclDaoComponent.getInheritedAccessControlList(newParentAclId);
+                setFixedAcls(childNodeId, newParentSharedAclId, null, null, changes, true);
+            }
+        }
+        Acl acl = aclDaoComponent.getAcl(childAclId);
+        if (acl != null && acl.getInherits())
+        {
+            Long oldParentSharedAclId = aclDaoComponent.getInheritedAccessControlList(oldParentAclId);
+            Long sharedAclchildInheritsFrom = acl.getInheritsFrom();
+            if(childAclId.equals(oldParentSharedAclId))
+            {
+                // child had old shared acl
+                if(newParentAclId != null)
+                {
+                    Long newParentSharedAclId = aclDaoComponent.getInheritedAccessControlList(newParentAclId);
+                    setFixedAcls(childNodeId, newParentSharedAclId, null, childAclId, changes, true);
+                }
+            }
+            else if(sharedAclchildInheritsFrom == null)
+            {
+                // child has defining acl of some form that does not inherit ?
+                // Leave alone
+            }
+            else if(sharedAclchildInheritsFrom.equals(oldParentSharedAclId))
+            {
+                // child has defining acl and needs to be remerged
+                if (acl.getAclType() == ACLType.LAYERED)
+                {
+                    throw new UnsupportedOperationException();
+                }
+                else if (acl.getAclType() == ACLType.DEFINING)
+                {
+                    Long newParentSharedAclId = aclDaoComponent.getInheritedAccessControlList(newParentAclId);
+                    @SuppressWarnings("unused")
+                    List<AclChange> newChanges = aclDaoComponent.mergeInheritedAccessControlList(newParentSharedAclId, childAclId);
+                }
+                else if (acl.getAclType() == ACLType.SHARED)
+                {
+                    throw new IllegalStateException();
+                }
+            }
+            else
+            {
+                // the acl does not inherit from a node and does not need to be fixed up
+                // Leave alone
+            }
+        }
+    }
+    
+    /**
+     * 
+     * Counter for each type of ACL change
+     * @author andyh
+     *
+     */
+    public static class CounterSet extends HashMap<ACLType, Counter>
+    {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3682278258679211481L;
+
+        CounterSet()
+        {
+            super();
+            this.put(ACLType.DEFINING, new Counter());
+            this.put(ACLType.FIXED, new Counter());
+            this.put(ACLType.GLOBAL, new Counter());
+            this.put(ACLType.LAYERED, new Counter());
+            this.put(ACLType.OLD, new Counter());
+            this.put(ACLType.SHARED, new Counter());
+        }
+
+        void add(ACLType type, Counter c)
+        {
+            Counter counter = get(type);
+            counter.add(c.getCounter());
+        }
+
+        void increment(ACLType type)
+        {
+            Counter counter = get(type);
+            counter.increment();
+        }
+
+        void add(CounterSet other)
+        {
+            add(ACLType.DEFINING, other.get(ACLType.DEFINING));
+            add(ACLType.FIXED, other.get(ACLType.FIXED));
+            add(ACLType.GLOBAL, other.get(ACLType.GLOBAL));
+            add(ACLType.LAYERED, other.get(ACLType.LAYERED));
+            add(ACLType.OLD, other.get(ACLType.OLD));
+            add(ACLType.SHARED, other.get(ACLType.SHARED));
+        }
+    }
+
+    /**
+     * Simple counter
+     * @author andyh
+     *
+     */
+    public static class Counter
+    {
+        int counter;
+
+        void increment()
+        {
+            counter++;
+        }
+
+        int getCounter()
+        {
+            return counter;
+        }
+
+        void add(int i)
+        {
+            counter += i;
+        }
+    }
+}
