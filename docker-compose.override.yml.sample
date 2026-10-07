@@ -13,6 +13,7 @@ services:
         -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.local.only=false
         -Djava.rmi.server.hostname=127.0.0.1
+        -DbeCPG.licence.showWarning=true
         -Dtomcat.util.scan.StandardJarScanFilter.jarsToSkip=*
         # beCPG OLAP / Saiku (#24931). url.public is what the BROWSER opens: OlapServiceImpl
         # appends ?ticket= to it. url.internal is what ALFRESCO calls server to server;
