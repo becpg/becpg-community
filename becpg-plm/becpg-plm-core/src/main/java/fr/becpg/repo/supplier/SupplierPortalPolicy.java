@@ -79,7 +79,10 @@ public class SupplierPortalPolicy extends AbstractBeCPGPolicy implements OnDelet
 		sourcesAssocs.removeIf(n -> nodeService.getType(n).equals(ProjectModel.TYPE_PROJECT));
 		if (sourcesAssocs.isEmpty()) {
 			String supplierUserName = (String) nodeService.getProperty(supplierAccountNodeRef, ContentModel.PROP_USERNAME);
-			AuthorityHelper.disableAccount(supplierUserName);
+			// An internal account declared as a supplier contact must survive its removal from the supplier
+			if (AuthorityHelper.isExternalUser(supplierUserName)) {
+				AuthorityHelper.disableAccount(supplierUserName);
+			}
 		}
 	}
 
