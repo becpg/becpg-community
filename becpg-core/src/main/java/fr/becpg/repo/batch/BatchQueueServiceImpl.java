@@ -511,8 +511,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					StepOutcome outcome = Boolean.FALSE.equals(batchStep.getTransactional()) ? runStepOutsideTransaction(batchStep)
 							: runStepInTransaction(batchStep);
 
-					totalItems += outcome.items();
-					totalErrors += outcome.errors();
+					// The audit stores int counts; a batch never comes near Integer.MAX_VALUE items.
+					totalItems += (int) outcome.items();
+					totalErrors += (int) outcome.errors();
 
 					if (outcome.errors() > 0) {
 						hasError = true;
