@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
@@ -44,6 +45,10 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 	
 	/** Constant <code>ERRORS_ACTION="errors"</code> */
 	private static final String ERRORS_ACTION = "errors";
+
+	private static final String ERROR_KEY = "error";
+
+	private static final String BATCH_NOT_FOUND_MESSAGE = "No running or pending batch matches this id";
 
 	private BatchQueueService batchQueueService;
 
@@ -86,13 +91,13 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 
 			} else if (CANCEL_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get(BatchInfo.BATCH_ID);
-				if (batchId != null) {
-					batchQueueService.cancelBatch(batchId);
+				if (batchId != null && !batchQueueService.cancelBatch(batchId)) {
+					setBatchNotFound(resp, ret);
 				}
 			} else if (REMOVE_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get(BatchInfo.BATCH_ID);
-				if (batchId != null) {
-					batchQueueService.removeBatchFromQueue(batchId);
+				if (batchId != null && !batchQueueService.removeBatchFromQueue(batchId)) {
+					setBatchNotFound(resp, ret);
 				}
 			} else if (RETRY_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
@@ -102,7 +107,7 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 						batchQueueService.retryBatchEntryInError(batchId, new NodeRef(nodeRefStr));
 					} else {
 						resp.setStatus(400);
-						ret.put("error", "Invalid nodeRef: " + nodeRefStr);
+						ret.put(ERROR_KEY, "Invalid nodeRef: " + nodeRefStr);
 					}
 				} else {
 					batchQueueService.retryBatchInError(batchId);
@@ -126,12 +131,17 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 			resp.setContentEncoding("UTF-8");
 			try {
 				JSONObject err = new JSONObject();
-				err.put("error", e.getMessage());
+				err.put(ERROR_KEY, e.getMessage());
 				err.write(resp.getWriter());
 			} catch (JSONException je) {
 				logger.error(je, je);
 			}
 		}
+	}
+
+	private void setBatchNotFound(WebScriptResponse resp, JSONObject ret) throws JSONException {
+		resp.setStatus(Status.STATUS_NOT_FOUND);
+		ret.put(ERROR_KEY, BATCH_NOT_FOUND_MESSAGE);
 	}
 
 	private int parseInt(String param, int defaultValue) {

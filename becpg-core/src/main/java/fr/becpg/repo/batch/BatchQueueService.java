@@ -66,10 +66,10 @@ public interface BatchQueueService {
     List<String> getBatchesInQueue();
 
 	/**
-	 * <p>removeBatchFromQueue.</p>
+	 * Removes a pending batch from the execution queue, or cancels it when it is paused.
 	 *
-	 * @param batchId a {@link java.lang.String} object
-	 * @return a boolean
+	 * @param batchId the id of the batch to remove
+	 * @return true if a pending or paused batch matched the id, false otherwise
 	 */
 	boolean removeBatchFromQueue(String batchId);
 
@@ -81,10 +81,10 @@ public interface BatchQueueService {
 	BatchMonitor getLastRunningBatch();
 	
 	/**
-	 * <p>cancelBatch.</p>
+	 * Requests the cancellation of a running or paused batch.
 	 *
-	 * @param batchId a {@link java.lang.String} object
-	 * @return a boolean
+	 * @param batchId the id of the batch to cancel
+	 * @return true if a running or paused batch matched the id, false otherwise
 	 */
 	boolean cancelBatch(String batchId);
 	

@@ -61,6 +61,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 	public void testCancelBatch() throws InterruptedException {
 		
 		AtomicInteger processedEntries = new AtomicInteger(0);
+		AtomicBoolean cancelAccepted = new AtomicBoolean(false);
 		BatchInfo batchInfo = new BatchInfo("batch.id", "batch.desc");
 		batchInfo.setWorkerThreads(1);
 		BatchStep<Integer> step = new BatchStep<>();
@@ -70,7 +71,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 			public void process(Integer entry) throws Throwable {
 				processedEntries.addAndGet(1);
 				if (processedEntries.get() == 5) {
-					batchQueueService.cancelBatch(batchInfo.getBatchId());
+					cancelAccepted.set(batchQueueService.cancelBatch(batchInfo.getBatchId()));
 				}
 				Thread.sleep(500);
 			}
@@ -79,6 +80,8 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		batchQueueService.queueBatch(batchInfo, List.of(step));
 		waitForBatchEnd(batchInfo);
 		assertEquals(5, processedEntries.get());
+		assertTrue(cancelAccepted.get());
+		assertFalse(batchQueueService.cancelBatch(batchInfo.getBatchId()));
 		
 		assertTrue(batchQueueService.getBatchesInQueue().isEmpty());
 		assertNull(batchQueueService.getRunningBatchInfo());
@@ -89,6 +92,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		AtomicInteger lowProcessedEntries = new AtomicInteger(0);
 		AtomicInteger highProcessedEntries = new AtomicInteger(0);
+		AtomicBoolean cancelAccepted = new AtomicBoolean(false);
 		
 		BatchInfo lowBatchInfo = new BatchInfo("batch.low.id", "batch.low.desc");
 		lowBatchInfo.setPriority(BatchPriority.LOW);
@@ -117,7 +121,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 			public void process(Integer entry) throws Throwable {
 				highProcessedEntries.addAndGet(1);
 				if (highProcessedEntries.get() == 5) {
-					batchQueueService.cancelBatch(lowBatchInfo.getBatchId());
+					cancelAccepted.set(batchQueueService.cancelBatch(lowBatchInfo.getBatchId()));
 				}
 				assertTrue(lowProcessedEntries.get() > 0);
 				assertTrue(lowProcessedEntries.get() < 10);
@@ -133,6 +137,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		waitForBatchEnd(lowBatchInfo);
 		assertTrue(lowProcessedEntries.get() < 10);
+		assertTrue(cancelAccepted.get());
 		
 	}
 	

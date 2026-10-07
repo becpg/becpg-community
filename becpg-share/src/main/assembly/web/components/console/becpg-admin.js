@@ -558,10 +558,11 @@
 				},
 
 				handleBatchAction: function(batchId, isCurrent, button) {
+				    var self = this;
 				    var action = isCurrent ? 'cancel' : 'remove';
-				    
+
 				    Alfresco.util.Ajax.request({
-				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/" + action + "/" + batchId,
+				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/" + action + "/" + encodeURIComponent(batchId),
 				        method: Alfresco.util.Ajax.GET,
 				        responseContentType: Alfresco.util.Ajax.JSON,
 				        successCallback: {
@@ -570,6 +571,13 @@
 				                if (batchItem) {
 				                    batchItem.parentNode.removeChild(batchItem);
 				                }
+				            }
+				        },
+				        failureCallback: {
+				            fn: function() {
+				                Alfresco.util.PopupManager.displayMessage({
+				                    text: self.msg("message.cancel.failure")
+				                });
 				            }
 				        }
 				    });

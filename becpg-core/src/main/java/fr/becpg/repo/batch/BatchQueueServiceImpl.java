@@ -373,8 +373,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Override
 	public boolean removeBatchFromQueue(String batchId) {
 		
-		if (pausedCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId))) {
-			cancelBatch(batchId);
+		if (isBatchPaused(batchId)) {
+			return cancelBatch(batchId);
 		}
 		
 		BatchCommand<?> command = findCommandInQueue(batchId);
@@ -408,11 +408,24 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Override
 	public boolean cancelBatch(String batchId) {
 		
-		if (findCommandInQueue(batchId) == null) {
-			return cancelledBatches.add(batchId);
+		if (isBatchRunning(batchId) || isBatchPaused(batchId)) {
+			cancelledBatches.add(batchId);
+			return true;
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("No running or paused batch to cancel: " + batchId);
 		}
 		
 		return false;
+	}
+
+	private boolean isBatchRunning(String batchId) {
+		return runningCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId));
+	}
+
+	private boolean isBatchPaused(String batchId) {
+		return pausedCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId));
 	}
 	
 	public class BatchCommand<T> implements Runnable {
