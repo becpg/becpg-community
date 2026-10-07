@@ -372,8 +372,8 @@
             // ALF-18501 - Redirect on successful moves of documents within the details view.
             var pathName = window.location.pathname || "";
             var searchQuery = window.location.search || "";
-            var isDocumentDetails = pathName.lastIndexOf("document-details") === (pathName.length - "document-details".length);
-            var isEntityDataLists = pathName.lastIndexOf("entity-data-lists") === (pathName.length - "entity-data-lists".length);
+            var isDocumentDetails = pathName.slice(-"document-details".length) === "document-details";
+            var isEntityDataLists = pathName.slice(-"entity-data-lists".length) === "entity-data-lists";
             var isViewDocuments = /(?:^|[?&])list=View-documents(?:&|$)/.test(searchQuery);
 
             if (this.options.mode == "move" && (

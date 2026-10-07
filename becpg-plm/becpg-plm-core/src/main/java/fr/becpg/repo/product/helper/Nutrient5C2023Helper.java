@@ -271,27 +271,27 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 			nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).put(NutriScoreContext.VALUE, energyFats);
 			
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getInt(NutriScoreContext.SCORE);
 			
 			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.VALUE);
 			if (totalFat != 0) {
 				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).put(NutriScoreContext.VALUE, (satFat / totalFat) * 100);
 			}
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE), aCategories[1]);
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.SCORE);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getInt(NutriScoreContext.SCORE);
 
 		} else {
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getInt(NutriScoreContext.SCORE);
 			
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE), aCategories[1]);
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getDouble(NutriScoreContext.SCORE);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getInt(NutriScoreContext.SCORE);
 		}
 
 		
 		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE), aCategories[2]);
 		
-		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getInt(NutriScoreContext.SCORE);
 		
 		JSONObject sodiumPart = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SODIUM_CODE);
 		
@@ -302,11 +302,11 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		
 		NutrientHelper.buildNutriScorePart(sodiumPart, aCategories[3]);
 		
-		aScore += sodiumPart.getDouble(NutriScoreContext.SCORE);
+		aScore += sodiumPart.getInt(NutriScoreContext.SCORE);
 
 		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE), cCategories[0]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getInt(NutriScoreContext.SCORE);
 
 		boolean addProteins = false;
 		
@@ -328,17 +328,17 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).put(NutriScoreContext.SCORE, proteinScore);
 				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).put(NutriScoreContext.UPPER_VALUE, "+Inf");
 			}
-			cScore += proteinScore;
+			cScore += (int) proteinScore;
 			nutriScoreContext.setHasProteinScore(true);
 		}
 
 		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.NSP_CODE), cCategories[1]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.NSP_CODE).getDouble(NutriScoreContext.SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.NSP_CODE).getInt(NutriScoreContext.SCORE);
 
 		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.AOAC_CODE), cCategories[2]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.AOAC_CODE).getDouble(NutriScoreContext.SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.AOAC_CODE).getInt(NutriScoreContext.SCORE);
 
 		if (!nutriScoreContext.getNonNutritiveSugars().isEmpty()) {
 			aScore += 4;

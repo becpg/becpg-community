@@ -759,7 +759,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var copyMessage = Alfresco.util.encodeHTML(
                 scope.msg("message.copy-to-clipboard.success")
-            ).replace(/'/g, "\\'");
+            ).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
             var toggleScript =
                 "var p=document.getElementById('" + panelId + "');" +
@@ -2270,8 +2270,14 @@ if (beCPG.module.EntityDataGridRenderers) {
                         oColumn.showAfterRenderSize = 16;
                     }
 
-                    return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi, " ")
-                        .replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm, " ").replace(/"/gm, "")
+                    // Strip the tags until none is left: one pass can rebuild a tag from the pieces of another
+                    var title = data.displayValue.replace(/&nbsp;/gi, " "), previous;
+                    do {
+                        previous = title;
+                        title = title.replace(/<(?:.|\n)*?>/gm, '');
+                    } while (title !== previous);
+
+                    return "<span title=\"" + title.replace(/\n/gm, " ").replace(/[<>"]/gm, "")
                         + "\" class='instructions'>&nbsp;</span>";
                 } else {
                     return data.displayValue;

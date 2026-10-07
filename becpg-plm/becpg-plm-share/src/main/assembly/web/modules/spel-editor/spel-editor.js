@@ -582,7 +582,7 @@
                   _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
 
 
-                     var nodeRefs = null, instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
+                     var nodeRefs = null, instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z-]*)",
                            "gi");
                      
                      
