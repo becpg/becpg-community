@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -76,6 +77,9 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 	@Autowired
 	private CommentService commentService;
+
+	@Autowired
+	private NodeArchiveService nodeArchiveService;
 
 	private static final String TASK_COMMENT = "Task comment";
 
@@ -931,6 +935,28 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 		inReadTx(() -> {
 			assertFalse(nodeService.exists(commentNodeRef));
+			return null;
+		});
+	}
+
+	@Test
+	public void testTaskCommentedByOtherUserCanBeRestored() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef plannedTaskNodeRef = getTaskNodeRef(projectNodeRef, 2);
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, plannedTaskNodeRef);
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeService.deleteNode(plannedTaskNodeRef);
+			return null;
+		});
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeArchiveService.restoreArchivedNode(nodeArchiveService.getArchivedNode(plannedTaskNodeRef));
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertTrue(nodeService.exists(commentNodeRef));
 			return null;
 		});
 	}

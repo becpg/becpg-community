@@ -61,7 +61,8 @@ public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 	 * Tells whether the current user can edit and delete a comment, see {@link CommentPermissionService}.
 	 *
 	 * @param comment the comment node
-	 * @return true if no comment permission plugin refuses it
+	 * @return false if the current user is an external user who did not post the comment, or if a comment permission
+	 *         plugin refuses it, true otherwise
 	 */
 	public boolean canModifyComment(TemplateNode comment) {
 		return commentPermissionService.canModify(comment.getNodeRef());

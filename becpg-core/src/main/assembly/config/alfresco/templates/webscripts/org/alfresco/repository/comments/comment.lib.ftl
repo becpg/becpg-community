@@ -18,6 +18,7 @@
 -->
 <#macro commentJSON item parent>
 <#assign isExternalUser=bTemplate.isCurrentUserExternal()>                                         
+<#assign canModifyComment=bTemplate.canModifyComment(item.node)>
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
    "url": "api/comment/node/${item.node.nodeRef?replace('://','/')}",
@@ -46,8 +47,8 @@
       "edit": false,
       "delete": false
    <#else>
-      "edit": ${(item.canEditComment && bTemplate.canModifyComment(item.node))?string},
-      "delete": ${(item.node.hasPermission("Delete") && bTemplate.canModifyComment(item.node))?string}
+      "edit": ${(item.canEditComment && canModifyComment)?string},
+      "delete": ${(item.node.hasPermission("Delete") && canModifyComment)?string}
    </#if>
    }
 }
