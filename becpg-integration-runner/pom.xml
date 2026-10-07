@@ -301,6 +301,14 @@
 				</property>
 			</activation>
 			<dependencies>
+				<!-- Patched Alfresco classes, required by the repository initialisation -->
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>alfresco-core-patch</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
 				<!-- beCPG AMPs -->
 				<dependency>
 					<groupId>fr.becpg</groupId>
