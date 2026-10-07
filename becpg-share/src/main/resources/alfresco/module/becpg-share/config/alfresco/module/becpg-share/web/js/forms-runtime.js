@@ -2309,7 +2309,7 @@ Alfresco.forms.validation = Alfresco.forms.validation || {};
            */
          if (emailFirstCharIndex == 0)
          {
-         	args.pattern = /^("[-A-Za-z0-9\xc0-\xff\(\)<>\[\]\\:,;@\".\" *"!#$%&'*+\/=?^_`{}~|]*")+@([\.A-Za-z0-9_-])*[A-Za-z0-9_-]$/;
+         	args.pattern = /^"(?:[-A-Za-z0-9\xc0-\xff()<>\[\]:,;@. !#$%&'*+\/=?^_`{}~|]|\\[\\"])*"@[.A-Za-z0-9_-]*[A-Za-z0-9_-]$/;
          }
          else 
          {
