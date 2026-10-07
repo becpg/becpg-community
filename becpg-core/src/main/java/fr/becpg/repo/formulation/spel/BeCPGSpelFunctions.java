@@ -175,17 +175,21 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper {@code @beCPG.propValue($entity, $qname)}
 		 *
-		 * @param item
-		 * @param qname
+		 * <p>Returns the non-null value set by {@code setValue} when there is one, otherwise reads the node.
+		 * The value read is never kept in the extra properties: they are saved with the entity, so a
+		 * read under another locale (labeling render rules) would overwrite the stored value.</p>
+		 *
+		 * @param item repository entity
+		 * @param qname property qualified name (string form)
 		 * @return entity property value
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			if (item != null) {
-				assertIsNotMappedQname(item, getQName(qname), false);
-				Serializable value = item.getExtraProperties().get(getQName(qname));
+				QName propQName = getQName(qname);
+				assertIsNotMappedQname(item, propQName, false);
+				Serializable value = item.getExtraProperties().get(propQName);
 				if (value == null) {
-					value = propValue(item.getNodeRef(), qname);
-					item.getExtraProperties().put(getQName(qname), value);
+					return propValue(item.getNodeRef(), qname);
 				}
 				return value;
 			}
