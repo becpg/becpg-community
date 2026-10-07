@@ -2,6 +2,7 @@ package fr.becpg.test.repo.supplier;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.SupplierPortalInitRepoVisitor;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -34,9 +36,17 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.supplier.SupplierPortalService;
+import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class SupplierPortalIT extends PLMBaseTestCase {
+		private static final String TEST_SUPPLIER_FIRST_NAME = "Junit";
+		private static final String TEST_SUPPLIER_LAST_NAME = "Supplier";
+		private static final String TEST_INTERNAL_SUPPLIER_NAME = "Junit Supplier internal account test";
+		private static final String TEST_INTERNAL_USER_NAME = "supplierPortalInternalUser";
+		private static final String TEST_EXTERNAL_SUPPLIER_NAME = "Junit Supplier external account test";
+		private static final String TEST_EXTERNAL_SUPPLIER_EMAIL = "removed-supplier@becpg.fr";
+
 		@Autowired
 		private SupplierPortalService supplierPortalService;
 		
@@ -259,6 +269,59 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 			});
 			
 		}
-			
+
+		@Test
+		public void testInternalAccountStaysEnabledWhenRemovedFromSupplier() {
+			NodeRef supplierNodeRef = createSupplier(TEST_INTERNAL_SUPPLIER_NAME);
+			deletePersonIfExists(TEST_INTERNAL_USER_NAME);
+			NodeRef internalUserNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createUser(TEST_INTERNAL_USER_NAME));
+
+			addThenRemoveSupplierAccount(supplierNodeRef, internalUserNodeRef);
+
+			assertTrue("An internal account removed from a supplier should stay enabled",
+					inReadTx(() -> AuthorityHelper.isAccountEnabled(TEST_INTERNAL_USER_NAME)));
+		}
+
+		@Test
+		public void testExternalAccountIsDisabledWhenRemovedFromSupplier() {
+			NodeRef supplierNodeRef = createSupplier(TEST_EXTERNAL_SUPPLIER_NAME);
+			deletePersonIfExists(TEST_EXTERNAL_SUPPLIER_EMAIL);
+			NodeRef externalUserNodeRef = inWriteTx(() -> supplierPortalService.createExternalUser(TEST_EXTERNAL_SUPPLIER_EMAIL,
+					TEST_SUPPLIER_FIRST_NAME, TEST_SUPPLIER_LAST_NAME, false, null));
+
+			addThenRemoveSupplierAccount(supplierNodeRef, externalUserNodeRef);
+
+			assertFalse("An external account removed from its last supplier should be disabled",
+					inReadTx(() -> AuthorityHelper.isAccountEnabled(TEST_EXTERNAL_SUPPLIER_EMAIL)));
+		}
+
+		private NodeRef createSupplier(String supplierName) {
+			return inWriteTx(() -> {
+				SupplierData supplier = new SupplierData();
+				supplier.setName(supplierName);
+				supplier.setParentNodeRef(getTestFolderNodeRef());
+				return alfrescoRepository.save(supplier).getNodeRef();
+			});
+		}
+
+		private void deletePersonIfExists(String userName) {
+			inWriteTx(() -> {
+				if (personService.personExists(userName)) {
+					personService.deletePerson(userName);
+				}
+				return null;
+			});
+		}
+
+		private void addThenRemoveSupplierAccount(NodeRef supplierNodeRef, NodeRef accountNodeRef) {
+			inWriteTx(() -> {
+				associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(accountNodeRef));
+				return null;
+			});
+			inWriteTx(() -> {
+				associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Collections.emptyList());
+				return null;
+			});
+		}
 
 }
