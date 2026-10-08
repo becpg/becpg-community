@@ -23,9 +23,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
+import fr.becpg.repo.sample.ProductInformationFileTestProduct;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardCakeWithLocalSemiFinishedTestProduct;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
@@ -85,6 +88,24 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
+	}
+
+	@Test
+	public void testProductInformationFileProduct() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).build().createTestProduct().getNodeRef());
+
+		assertFormulates(productNodeRef);
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			Assert.assertFalse("Ingredient list should be formulated", product.getIngList().isEmpty());
+			Assert.assertTrue("Primary packaging should be present", product.getPackagingList().stream()
+					.anyMatch(item -> PackagingLevel.Primary.equals(item.getPkgLevel())));
+			Assert.assertFalse("Fragrance allergens should be formulated", product.getAllergenList().isEmpty());
+			Assert.assertEquals(ProductInformationFileTestProduct.EAN_CODE, nodeService.getProperty(productNodeRef, PLMModel.PROP_EAN_CODE));
+			return null;
+		});
 	}
 
 	@Test

@@ -25,6 +25,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
+import fr.becpg.repo.sample.ProductInformationFileTestProduct;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardCakeWithLocalSemiFinishedTestProduct;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
@@ -117,6 +118,18 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 	 */
 	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder bodyMilkProductBuilder(final ScriptNode destFolder) {
 		return withAllSoapLists(new StandardBodyMilkTestProduct.Builder(), destFolder);
+	}
+
+	/**
+	 * Returns the builder of a cosmetic finished product holding all the data of a Product Information File, apart
+	 * from the annexes the customer provides.
+	 *
+	 * @param destFolder the folder the product, its raw materials and packaging materials are created in
+	 * @return the configured builder
+	 */
+	public StandardSoapTestProduct.Builder productInformationFileBuilder(final ScriptNode destFolder) {
+		return new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
+				.withDestFolder(destFolder.getNodeRef());
 	}
 
 	/**

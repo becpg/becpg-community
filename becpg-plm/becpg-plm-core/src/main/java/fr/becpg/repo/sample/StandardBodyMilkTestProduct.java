@@ -118,7 +118,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 	/** {@inheritDoc} */
 	@Override
-	public RawMaterialData createTestProduct() {
+	public ProductData createTestProduct() {
 
 		// Create the body milk raw material product
 		RawMaterialData bodyMilkProduct = RawMaterialData.build()
@@ -194,7 +194,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 * @param regulatoryCode the regulatory code ({@code <beCPGcode>,DECERNIS_<phrase>})
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	private NodeRef getOrCreateUsageRef(String name, String regulatoryCode) {
+	protected NodeRef getOrCreateUsageRef(String name, String regulatoryCode) {
 		HashMap<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_REGULATORY_CODE, regulatoryCode);
@@ -232,7 +232,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 * @param name a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	private NodeRef getOrCreateCountryRef(String code, String name) {
+	protected NodeRef getOrCreateCountryRef(String code, String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(PLMModel.PROP_REGULATORY_CODE, name); // so decernis still works
 		return CharactTestHelper.getOrCreateGeo(nodeService, code, name, properties);
@@ -257,7 +257,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 *
 	 * @return a {@link java.util.List} object
 	 */
-	private List<IngListDataItem> createBodyMilkIngredients() {
+	protected List<IngListDataItem> createBodyMilkIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Create ingredients with their types and all parameters (CAS numbers, hazard classes, toxicities)
