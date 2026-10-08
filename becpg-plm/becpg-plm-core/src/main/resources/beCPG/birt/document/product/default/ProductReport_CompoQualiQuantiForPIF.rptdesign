@@ -111,7 +111,7 @@
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
         </style>
-        <style name="becpg-cell-data" id="10">
+        <style name="becpg-cell-data" id="12199">
             <property name="fontFamily">sans-serif</property>
             <property name="fontSize">8pt</property>
             <property name="color">#000000</property>
@@ -509,7 +509,7 @@
                     <cell id="12279">
                         <property name="style">becpg-cell-header</property>
                         <label id="12280">
-                            <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
+                            <text-property name="text" key="quantityPercentage">Quantity (%)</text-property>
                         </label>
                     </cell>
                 </row>
@@ -617,25 +617,25 @@
                     <cell id="13107">
                         <property name="style">becpg-cell-header</property>
                         <label id="13108">
-                            <text-property name="text" key="functionality">Fonctionnalité</text-property>
+                            <text-property name="text" key="functionality">Functionality</text-property>
                         </label>
                     </cell>
                     <cell id="13109">
                         <property name="style">becpg-cell-header</property>
                         <label id="13110">
-                            <text-property name="text" key="numberCAS">numéro CAS</text-property>
+                            <text-property name="text" key="numberCAS">CAS number</text-property>
                         </label>
                     </cell>
                     <cell id="13111">
                         <property name="style">becpg-cell-header</property>
                         <label id="13112">
-                            <text-property name="text" key="numCE">N° CE / EINECS</text-property>
+                            <text-property name="text" key="numCE">CE / EINECS NUMBER</text-property>
                         </label>
                     </cell>
                     <cell id="13113">
                         <property name="style">becpg-cell-header</property>
                         <label id="13114">
-                            <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
+                            <text-property name="text" key="quantityPercentage">Quantity (%)</text-property>
                         </label>
                     </cell>
                 </row>

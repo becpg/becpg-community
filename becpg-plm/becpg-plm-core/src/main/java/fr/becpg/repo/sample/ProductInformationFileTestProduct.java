@@ -178,25 +178,32 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 
 	private static final Log logger = LogFactory.getLog(ProductInformationFileTestProduct.class);
 
+	/** An INCI ingredient and its share in a raw material, in percent. */
 	private record IngredientShare(String inciName, double qtyPerc) {
 	}
 
+	/** A raw material of the formula: its share in the bulk, its supplier, its origin and its INCI ingredients. */
 	private record RawMaterialSpec(String name, double qtyUsed, String supplier, String originCode, String originName,
 			List<IngredientShare> ingredients) {
 	}
 
+	/** A physico-chemical characteristic with its unit, value and tolerance. */
 	private record PhysicoChemSpec(String name, String unit, double value, Double mini, Double maxi) {
 	}
 
+	/** A microbiological criterion: a maximum count, or a text criterion such as an absence. */
 	private record MicrobioSpec(String name, Double maxi, String textCriteria) {
 	}
 
+	/** A manufacturing process step and its description. */
 	private record ProcessStepSpec(String name, String description) {
 	}
 
+	/** A packaging material with its constitutive material, tare in grams and packaging level. */
 	private record PackagingSpec(String name, String material, double tare, PackagingLevel level) {
 	}
 
+	/** The classification of a safety data sheet: signal word, hazard statement codes and pictogram codes. */
 	private record HazardSpec(String signalWord, List<String> hazardStatements, List<String> pictograms) {
 	}
 

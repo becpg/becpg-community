@@ -1544,13 +1544,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	/**
-	 * <p>loadAllergenLists.</p>
-	 *
-	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param dataListsElt a {@link org.dom4j.Element} object
-	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
-	 */
-	/**
 	 * Writes the labeling threshold of an allergen on its allergen line, so that a report can tell whether the allergen
 	 * has to be labeled, such as a fragrance allergen above 0.001 % in a leave-on cosmetic product.
 	 *
@@ -1564,6 +1557,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadAllergenLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadAllergenLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getAllergenList() != null) && !productData.getAllergenList().isEmpty()) {
 			Element allergenListsElt = dataListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");

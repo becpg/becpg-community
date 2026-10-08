@@ -234,7 +234,7 @@ parts.join(" / ");</expression>
             <property name="paddingTop">3pt</property>
             <property name="paddingBottom">3pt</property>
         </style>
-        <style name="becpg-toc-page" id="10">
+        <style name="becpg-toc-page" id="12199">
             <property name="fontFamily">"arial"</property>
             <property name="fontSize">8.5pt</property>
             <property name="fontWeight">bold</property>
@@ -384,7 +384,7 @@ parts.join(" / ");</expression>
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text" key="becpg.report.pif.title">DOSSIER D'INFORMATION PRODUIT (DIP)</text-property>
+                                <text-property name="text" key="becpg.report.pif.title">PRODUCT INFORMATION FILE (PIF)</text-property>
                             </label>
                             <data id="3333">
                                 <property name="style">becpg-header-title</property>
@@ -445,7 +445,7 @@ parts.join(" / ");</expression>
                                         <property name="style">becpg-meta-cell-label</property>
                                         <property name="textAlign">right</property>
                                          <label id="3406">
-                                             <text-property name="text" key="becpg.report.pif.header.created">Créé le :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.created">Created :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="7261">
@@ -474,7 +474,7 @@ parts.join(" / ");</expression>
                                          <property name="style">becpg-meta-cell-label</property>
                                          <property name="textAlign">right</property>
                                          <label id="1520">
-                                             <text-property name="text" key="becpg.report.pif.header.modified">Modifié le :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.modified">Modified :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="1516">
@@ -505,7 +505,7 @@ parts.join(" / ");</expression>
                                          <property name="style">becpg-meta-cell-label</property>
                                          <property name="textAlign">right</property>
                                          <label id="1521">
-                                             <text-property name="text" key="becpg.report.pif.header.code">Code beCPG :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.code">Code :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="1517">
@@ -568,7 +568,7 @@ parts.join(" / ");</expression>
                     <property name="style">becpg-chapter-header</property>
                     <label id="104">
                         <property name="style">becpg-chapter-header</property>
-                        <text-property name="text" key="becpg.report.pif.toc.title">TABLE DES MATIÈRES</text-property>
+                        <text-property name="text" key="becpg.report.pif.toc.title">TABLE OF CONTENTS</text-property>
                     </label>
                 </cell>
             </row>
@@ -590,7 +590,7 @@ parts.join(" / ");</expression>
                 <cell id="204">
                     <label id="205">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.summary.title">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
+                        <text-property name="text" key="becpg.report.pif.summary.title">PRODUCT INFORMATION FILE SUMMARY</text-property>
                     </label>
                 </cell>
                 <cell id="206">
@@ -608,7 +608,7 @@ parts.join(" / ");</expression>
                 <cell id="209">
                     <label id="210">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.compoqualiquanti.title">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.compoqualiquanti.title">ANNEX 1: QUALITATIVE AND QUANTITATIVE COMPOSITION (QUALI-QUANTI)</text-property>
                     </label>
                 </cell>
                 <cell id="211">
@@ -626,7 +626,7 @@ parts.join(" / ");</expression>
                 <cell id="214">
                     <label id="215">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.rawmaterials.title">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.rawmaterials.title">ANNEX 2: RAW MATERIAL TECHNICAL &amp; SAFETY DATA SHEETS</text-property>
                     </label>
                 </cell>
                 <cell id="216">
@@ -644,7 +644,7 @@ parts.join(" / ");</expression>
                 <cell id="219">
                     <label id="220">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.primarypackaging.title">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.primarypackaging.title">ANNEX 3: PACKAGING SPECIFICATIONS &amp; FOOD/COSMETIC CONTACT</text-property>
                     </label>
                 </cell>
                 <cell id="221">
@@ -662,7 +662,7 @@ parts.join(" / ");</expression>
                 <cell id="224">
                     <label id="225">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.cpsr.title">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT (DSE / CPSR)</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.cpsr.title">ANNEX 4: COSMETIC PRODUCT SAFETY REPORT (CPSR)</text-property>
                     </label>
                 </cell>
                 <cell id="226">
@@ -680,7 +680,7 @@ parts.join(" / ");</expression>
                 <cell id="229">
                     <label id="230">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.stabilitymicro.title">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.stabilitymicro.title">ANNEX 5: STABILITY &amp; MICROBIOLOGICAL CHALLENGE TESTS</text-property>
                     </label>
                 </cell>
                 <cell id="231">
@@ -698,7 +698,7 @@ parts.join(" / ");</expression>
                 <cell id="234">
                     <label id="235">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.claimefficacy.title">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.claimefficacy.title">ANNEX 6: CLAIM SUBSTANTIATION &amp; EFFICACY PROOF</text-property>
                     </label>
                 </cell>
                 <cell id="236">
@@ -716,7 +716,7 @@ parts.join(" / ");</expression>
                 <cell id="239">
                     <label id="240">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.gmpanimaltesting.title">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATIONS DE CONFORMITÉ</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.gmpanimaltesting.title">ANNEX 7: GMP CERTIFICATES &amp; COMPLIANCE STATEMENTS</text-property>
                     </label>
                 </cell>
                 <cell id="241">
@@ -845,7 +845,7 @@ parts.join(" / ");</expression>
                                     <property name="style">becpg-chapter-header</property>
                                     <label id="308">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="becpg.report.pif.summary.title">INFORMATIONS PRODUIT</text-property>
+                                        <text-property name="text" key="becpg.report.pif.summary.title">PRODUCT INFORMATION FILE SUMMARY</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -859,7 +859,7 @@ parts.join(" / ");</expression>
                                 <cell id="313">
                                      <label id="314">
                                          <property name="style">UnderlinedSubTitle</property>
-                                         <text-property name="text" key="becpg.report.pif.section.identity">DÉSIGNATION</text-property>
+                                         <text-property name="text" key="becpg.report.pif.section.identity">1. PRODUCT IDENTITY AND SPECIFICATIONS</text-property>
                                      </label>
                                  </cell>
                              </row>
@@ -878,7 +878,7 @@ parts.join(" / ");</expression>
                                  <cell id="324">
                                      <label id="325">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.commercialname">Dénomination commerciale :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.commercialname">Commercial Name:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="326">
@@ -893,7 +893,7 @@ parts.join(" / ");</expression>
                                  <cell id="329">
                                      <label id="330">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.code">Code &amp; Version :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.code">Code &amp; Version:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="331">
@@ -908,7 +908,7 @@ parts.join(" / ");</expression>
                                  <cell id="334">
                                      <label id="335">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.legalname">Dénomination légale :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.legalname">Legal Name:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="336">
@@ -923,7 +923,7 @@ parts.join(" / ");</expression>
                                  <cell id="339">
                                      <label id="340">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.ean">GTIN/EAN UVC :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.ean">GTIN/EAN:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="341">
@@ -938,7 +938,7 @@ parts.join(" / ");</expression>
                                  <cell id="344">
                                      <label id="345">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.description">Description :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.description">Description:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="346">
@@ -953,7 +953,7 @@ parts.join(" / ");</expression>
                                  <cell id="349">
                                      <label id="350">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.intendeduse">Usage prévu &amp; Conseils d'emploi :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.intendeduse">Intended Use &amp; Instructions:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="351">
@@ -968,7 +968,7 @@ parts.join(" / ");</expression>
                                  <cell id="354">
                                      <label id="355">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.hierarchy">Catégorie de produit :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.hierarchy">Product Category:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="356">
@@ -983,7 +983,7 @@ parts.join(" / ");</expression>
                                  <cell id="401">
                                      <label id="402">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.netcontent">Contenance nominale :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.netcontent">Nominal Content:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="403">
@@ -998,7 +998,7 @@ parts.join(" / ");</expression>
                                  <cell id="406">
                                      <label id="407">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.responsibleperson">Personne responsable :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.responsibleperson">Responsible Person:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="408">
@@ -1013,7 +1013,7 @@ parts.join(" / ");</expression>
                                  <cell id="1406">
                                      <label id="1407">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.responsiblepersonaddress">Adresse de la personne responsable :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.responsiblepersonaddress">Responsible Person Address:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="1408">
@@ -1034,7 +1034,7 @@ parts.join(" / ");</expression>
                                  <cell id="363">
                                      <label id="364">
                                          <property name="style">UnderlinedSubTitle</property>
-                                         <text-property name="text" key="becpg.report.pif.section.regulatory">INFORMATIONS DE CONSOMMATION ET CONSERVATION</text-property>
+                                         <text-property name="text" key="becpg.report.pif.section.regulatory">2. REGULATORY &amp; STORAGE INFORMATION</text-property>
                                      </label>
                                  </cell>
                              </row>
@@ -1053,7 +1053,7 @@ parts.join(" / ");</expression>
                                  <cell id="411">
                                      <label id="412">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.usemode">Mode d'utilisation :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.usemode">Use Mode:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="413">
@@ -1068,7 +1068,7 @@ parts.join(" / ");</expression>
                                  <cell id="416">
                                      <label id="417">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.applicationzones">Zones d'application :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.applicationzones">Application Zones:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="418">
@@ -1083,7 +1083,7 @@ parts.join(" / ");</expression>
                                  <cell id="421">
                                      <label id="422">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.mucouscontact">Contact avec les muqueuses :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.mucouscontact">Contact with Mucous Membranes:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="423">
@@ -1098,7 +1098,7 @@ parts.join(" / ");</expression>
                                  <cell id="426">
                                      <label id="427">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.periodafteropening">PAO (jours) :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.periodafteropening">Period After Opening (days):</text-property>
                                      </label>
                                  </cell>
                                  <cell id="428">
@@ -1113,7 +1113,7 @@ parts.join(" / ");</expression>
                                  <cell id="374">
                                      <label id="375">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.storageconditions">Conditions de stockage :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.storageconditions">Storage Conditions:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="376">
@@ -1128,7 +1128,7 @@ parts.join(" / ");</expression>
                                  <cell id="379">
                                      <label id="380">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.precautions">Précautions d'emploi :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.precautions">Precautions of Use:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="381">
@@ -1143,7 +1143,7 @@ parts.join(" / ");</expression>
                                  <cell id="384">
                                      <label id="385">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.productstate">Statut du produit :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.productstate">Product State:</text-property>
                                      </label>
                                  </cell>
                                  <cell id="386">
@@ -1158,7 +1158,7 @@ parts.join(" / ");</expression>
                                  <cell id="389">
                                      <label id="390">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="becpg.report.pif.label.modified">Dernière modification :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.modified">Last Modified:</text-property>
                                     </label>
                                 </cell>
                                 <cell id="391">
@@ -1179,7 +1179,7 @@ parts.join(" / ");</expression>
                                  <cell id="473">
                                      <label id="474">
                                          <property name="style">UnderlinedSubTitle</property>
-                                         <text-property name="text" key="becpg.report.pif.section.manufacturing">3. FABRICATION</text-property>
+                                         <text-property name="text" key="becpg.report.pif.section.manufacturing">3. MANUFACTURING</text-property>
                                      </label>
                                  </cell>
                              </row>
@@ -1236,19 +1236,19 @@ parts.join(" / ");</expression>
                                      <cell id="485">
                                                  <property name="style">becpg-cell-header</property>
                                                  <label id="486">
-                                                     <text-property name="text" key="becpg.report.pif.label.plant">Site de fabrication :</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plant">Manufacturing Site</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="487">
                                                  <property name="style">becpg-cell-header</property>
                                                  <label id="488">
-                                                     <text-property name="text" key="becpg.report.pif.label.plantaddress">Adresse :</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plantaddress">Address</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="489">
                                                  <property name="style">becpg-cell-header</property>
                                                  <label id="490">
-                                                     <text-property name="text" key="becpg.report.pif.label.plantcertifications">Certifications :</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plantcertifications">Certifications</text-property>
                                                  </label>
                                      </cell>
                                  </row>
@@ -1326,7 +1326,7 @@ parts.join(" / ");</expression>
                                      <cell id="503">
                                                  <property name="style">becpg-cell-header</property>
                                                  <label id="504">
-                                                     <text-property name="text" key="becpg.report.pif.label.step">Étapes du procédé de fabrication :</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.step">Step</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="1509">
@@ -1579,7 +1579,7 @@ parts.join(" / ");</expression>
                                      <cell id="591">
                                                  <property name="style">becpg-cell-header</property>
                                                  <label id="592">
-                                                     <text-property name="text" key="becpg.report.pif.label.textcriteria">Text criterion</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.textcriteria">Text Criterion</text-property>
                                                  </label>
                                      </cell>
                                  </row>

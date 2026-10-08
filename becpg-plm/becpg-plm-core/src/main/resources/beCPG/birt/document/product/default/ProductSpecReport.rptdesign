@@ -6918,7 +6918,7 @@ dataSetRow["name"]
                 <cell id="103">
                     <label id="104">
                         <property name="style">toc-header</property>
-                        <text-property name="text" key="becpg.report.productspec.toc.title">TABLE OF CONTENT</text-property>
+                        <text-property name="text" key="becpg.report.productspec.toc.title">TABLE OF CONTENTS</text-property>
                     </label>
                 </cell>
             </row>
@@ -6937,7 +6937,7 @@ dataSetRow["name"]
                 <cell id="204">
                     <label id="205">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="becpg.report.productspec.summary.title">TECHNICAL SPECIFICATIONS of the ITEM</text-property>
+                        <text-property name="text" key="becpg.report.productspec.summary.title">TECHNICAL SPECIFICATIONS OF THE ITEM</text-property>
                     </label>
                 </cell>
                 <cell id="206">
@@ -6953,7 +6953,7 @@ dataSetRow["name"]
                 <cell id="209">
                     <label id="210">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="becpg.report.productspec.annex.rawmaterials.title">ANNEX 1: TECHNICAL SPECIFICATIONS – RAW MATERIALS</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.rawmaterials.title">ANNEX 1: TECHNICAL SPECIFICATIONS - RAW MATERIALS</text-property>
                     </label>
                 </cell>
                 <cell id="211">
@@ -6968,7 +6968,7 @@ dataSetRow["name"]
                 <cell id="214">
                     <label id="215">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="becpg.report.productspec.annex.primarypackaging.title">ANNEX 2: TECHNICAL SPECIFICATIONS – PRIMARY PACKAGING</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.primarypackaging.title">ANNEX 2: TECHNICAL SPECIFICATIONS - PRIMARY PACKAGING</text-property>
                     </label>
                 </cell>
                 <cell id="216">
@@ -6983,7 +6983,7 @@ dataSetRow["name"]
                 <cell id="219">
                     <label id="220">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="becpg.report.productspec.annex.secondarypackaging.title">ANNEX 3: TECHNICAL SPECIFICATIONS – SECONDARY PACKAGING</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.secondarypackaging.title">ANNEX 3: TECHNICAL SPECIFICATIONS - SECONDARY PACKAGING</text-property>
                     </label>
                 </cell>
                 <cell id="221">
