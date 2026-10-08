@@ -86,6 +86,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String RUN_SEPARATOR = " - ";
 	private static final String PLANT_SUFFIX = " plant";
 	private static final String INCI_LIST_RULE = "INCI list";
+	private static final String HIDE_INCI_FUNCTIONS_RULE = "Do not declare INCI functions";
 	private static final String RENDER_FORMULA = "render()";
 	private static final String CLAIM_MOISTURIZING_CODE = "MOISTURIZING_24H";
 	private static final String CLAIM_NATURAL_ORIGIN_CODE = "ISO_16128";
@@ -167,6 +168,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String USAGE_BODY_LOTION_CODE = "COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion";
 	private static final int PERIOD_AFTER_OPENING_DAYS = 365;
 	private static final String REPORT_LOCALE_ENGLISH = "en";
+	private static final String LABELING_LOCALE_FRENCH = "fr";
 	private static final String REPORT_KIND_COMPO_QUALI_QUANTI = "CompoQualiQuanti";
 	private static final String PIF_AGGREGATE_DEFINITION = "PIFReport.agg.json";
 	private static final int PIF_REPORT_TEMPLATE_COUNT = 2;
@@ -355,7 +357,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates the raw materials and the composition lines of the formula, in percent of the bulk.
+	 * Creates the raw materials and the composition lines of the formula, in percent of the bulk. The lines are
+	 * declared, so the label lists the INCI ingredients of the raw materials, not the raw materials themselves.
 	 *
 	 * @return the composition list
 	 */
@@ -363,7 +366,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		List<CompoListDataItem> compoList = new ArrayList<>();
 		for (RawMaterialSpec spec : FORMULA) {
 			compoList.add(CompoListDataItem.build().withQtyUsed(spec.qtyUsed()).withUnit(ProductUnit.Perc)
-					.withDeclarationType(DeclarationType.Detail).withProduct(createRawMaterial(spec)));
+					.withDeclarationType(DeclarationType.Declare).withProduct(createRawMaterial(spec)));
 		}
 		return compoList;
 	}
@@ -498,27 +501,65 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates the claims the customer has to support in the claim annex.
+	 * Creates the claims the customer has to support in the claim annex. They are declared on the finished product
+	 * itself, so they are manual: formulation does not derive them from the raw materials.
 	 *
 	 * @return the claim list
 	 */
 	private List<LabelClaimListDataItem> createClaimList() {
-		return new ArrayList<>(List.of(
-				LabelClaimListDataItem.build().withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_MOISTURIZING_CODE, CLAIM_MOISTURIZING))
-						.withIsClaimed(true),
-				LabelClaimListDataItem.build().withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_NATURAL_ORIGIN_CODE, CLAIM_NATURAL_ORIGIN))
-						.withIsClaimed(true).withPercentClaim(97d),
-				LabelClaimListDataItem.build().withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_VEGAN_CODE, CLAIM_VEGAN))
-						.withIsClaimed(true)));
+		return new ArrayList<>(List.of(createClaim(CLAIM_MOISTURIZING_CODE, CLAIM_MOISTURIZING, null),
+				createClaim(CLAIM_NATURAL_ORIGIN_CODE, CLAIM_NATURAL_ORIGIN, 97d), createClaim(CLAIM_VEGAN_CODE, CLAIM_VEGAN, null)));
 	}
 
 	/**
-	 * Creates the labeling rules that render the INCI list of the label.
+	 * Creates a manual claim, claimed on the product.
+	 *
+	 * @param code the claim code
+	 * @param name the claim name
+	 * @param percentClaim the claimed percentage, or null when the claim carries none
+	 * @return the claim line
+	 */
+	private LabelClaimListDataItem createClaim(String code, String name, Double percentClaim) {
+		LabelClaimListDataItem claim = LabelClaimListDataItem.build().withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, code, name))
+				.withIsClaimed(true).withPercentClaim(percentClaim);
+		claim.setIsManual(true);
+		return claim;
+	}
+
+	/**
+	 * Creates the labeling rules of the INCI list: a flat list of INCI names by decreasing concentration. The INCI
+	 * functions stay on the ingredients but are not declared, so they do not group the list as food additive classes
+	 * would. The list is rendered in English for the PIF and in French; without explicit locales, it is only rendered in
+	 * the server default language.
 	 *
 	 * @return the labeling rules
 	 */
 	private List<LabelingRuleListDataItem> createLabelingRules() {
-		return List.of(LabelingRuleListDataItem.build().withName(INCI_LIST_RULE).withFormula(RENDER_FORMULA).withLabelingRuleType(LabelingRuleType.Render));
+		LabelingRuleListDataItem render = LabelingRuleListDataItem.build().withName(INCI_LIST_RULE).withFormula(RENDER_FORMULA)
+				.withLabelingRuleType(LabelingRuleType.Render);
+		render.setLocales(List.of(REPORT_LOCALE_ENGLISH, LABELING_LOCALE_FRENCH));
+		LabelingRuleListDataItem hideFunctions = LabelingRuleListDataItem.build().withName(HIDE_INCI_FUNCTIONS_RULE)
+				.withLabelingRuleType(LabelingRuleType.DoNotDeclare).withComponents(findFormulaIngredientTypes());
+		return List.of(render, hideFunctions);
+	}
+
+	/**
+	 * Finds the INCI functions of the ingredients of the formula.
+	 *
+	 * @return the ingredient types, without duplicates
+	 */
+	private List<NodeRef> findFormulaIngredientTypes() {
+		Set<NodeRef> ingredientTypes = new LinkedHashSet<>();
+		for (RawMaterialSpec spec : FORMULA) {
+			for (IngredientShare ingredient : spec.ingredients()) {
+				Serializable ingredientType = nodeService.getProperty(CharactTestHelper.getOrCreateIng(nodeService, ingredient.inciName()),
+						PLMModel.PROP_ING_TYPE_V2);
+				if (ingredientType instanceof NodeRef ingredientTypeNodeRef) {
+					ingredientTypes.add(ingredientTypeNodeRef);
+				}
+			}
+		}
+		return new ArrayList<>(ingredientTypes);
 	}
 
 	/**
