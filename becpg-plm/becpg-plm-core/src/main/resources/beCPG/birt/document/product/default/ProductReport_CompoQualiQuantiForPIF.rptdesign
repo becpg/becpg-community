@@ -527,8 +527,8 @@
                 </structure>
                 <structure>
                     <property name="name">ingListQtyPerc</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
-                    <property name="dataType">float</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"] != null ? String(Math.round(dataSetRow["ingListQtyPerc"] * 1000000) / 1000000) : ""</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">ingListIsGMO</property>
