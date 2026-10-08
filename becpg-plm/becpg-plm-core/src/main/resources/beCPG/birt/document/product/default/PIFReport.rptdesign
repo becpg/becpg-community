@@ -716,7 +716,7 @@ parts.join(" / ");</expression>
                 <cell id="239">
                     <label id="240">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="becpg.report.pif.annex.gmpanimaltesting.title">ANNEX 7: GMP CERTIFICATES &amp; COMPLIANCE STATEMENTS</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.gmpanimaltesting.title">ANNEX 7: GMP CERTIFICATES, ANIMAL TESTING STATEMENTS &amp; COMPLIANCE STATEMENTS</text-property>
                     </label>
                 </cell>
                 <cell id="241">
