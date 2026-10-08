@@ -69,6 +69,38 @@ parts.join(" / ");</expression>
             <property name="dataSource">DataXml</property>
             <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{plStep;STRING;/@plStep}]]></xml-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifPhysicoChems" id="462">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">valueText</property>
+                    <expression name="expression">row["pclValue"] != null ? String(Math.round(row["pclValue"] * 1000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">miniText</property>
+                    <expression name="expression">row["pclMini"] != null ? String(Math.round(row["pclMini"] * 1000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">maxiText</property>
+                    <expression name="expression">row["pclMaxi"] != null ? String(Math.round(row["pclMaxi"] * 1000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMini;DOUBLE;/@pclMini},{pclMaxi;DOUBLE;/@pclMaxi}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifMicrobios" id="463">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">maxiText</property>
+                    <expression name="expression">row["mblMaxi"] != null ? String(Math.round(row["mblMaxi"] * 1000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioLists/microbioList]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblMaxi;DOUBLE;/@mblMaxi},{mblUnit;STRING;/@mblUnit},{mblTextCriteria;STRING;/@mblTextCriteria}]]></xml-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
@@ -1100,6 +1132,270 @@ parts.join(" / ");</expression>
                                                  <data id="507">
                                                      <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">plStep</property>
+                                                 </data>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
+
+                         <!-- Section 4: SPECIFICATIONS -->
+                         <grid id="510">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="511"/>
+                             <row id="512">
+                                 <cell id="513">
+                                     <label id="514">
+                                         <property name="style">UnderlinedSubTitle</property>
+                                         <text-property name="text" key="becpg.report.pif.section.specifications">4. SPECIFICATIONS</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <grid id="520">
+                             <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
+                             <column id="521"/>
+                             <row id="522">
+                                 <cell id="523">
+                                                 <label id="524">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.physicochem">Physico-chemical characteristics:</text-property>
+                                                 </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <table id="530">
+                             <property name="width">100%</property>
+                             <property name="dataSet">pifPhysicoChems</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">pclPhysicoChem</property>
+                                     <expression name="expression" type="javascript">dataSetRow["pclPhysicoChem"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">valueText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["valueText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">pclUnit</property>
+                                     <expression name="expression" type="javascript">dataSetRow["pclUnit"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">miniText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["miniText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">maxiText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["maxiText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <column id="531">
+                                 <property name="width">36%</property>
+                             </column>
+                             <column id="532">
+                                 <property name="width">16%</property>
+                             </column>
+                             <column id="533">
+                                 <property name="width">16%</property>
+                             </column>
+                             <column id="534">
+                                 <property name="width">16%</property>
+                             </column>
+                             <column id="535">
+                                 <property name="width">16%</property>
+                             </column>
+                             <header>
+                                 <row id="546">
+                                     <cell id="536">
+                                                 <label id="537">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.characteristic">Characteristic</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="538">
+                                                 <label id="539">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.value">Value</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="540">
+                                                 <label id="541">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.unit">Unit</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="542">
+                                                 <label id="543">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.mini">Min</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="544">
+                                                 <label id="545">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.maxi">Max</text-property>
+                                                 </label>
+                                     </cell>
+                                 </row>
+                             </header>
+                             <detail>
+                                 <row id="557">
+                                     <cell id="547">
+                                                 <data id="548">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">pclPhysicoChem</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="549">
+                                                 <data id="550">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">valueText</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="551">
+                                                 <data id="552">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">pclUnit</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="553">
+                                                 <data id="554">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">miniText</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="555">
+                                                 <data id="556">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">maxiText</property>
+                                                 </data>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
+
+                         <grid id="570">
+                             <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
+                             <column id="571"/>
+                             <row id="572">
+                                 <cell id="573">
+                                                 <label id="574">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.microbio">Microbiological criteria:</text-property>
+                                                 </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <table id="580">
+                             <property name="width">100%</property>
+                             <property name="dataSet">pifMicrobios</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">mblMicrobio</property>
+                                     <expression name="expression" type="javascript">dataSetRow["mblMicrobio"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">maxiText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["maxiText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">mblUnit</property>
+                                     <expression name="expression" type="javascript">dataSetRow["mblUnit"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">mblTextCriteria</property>
+                                     <expression name="expression" type="javascript">dataSetRow["mblTextCriteria"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <column id="581">
+                                 <property name="width">40%</property>
+                             </column>
+                             <column id="582">
+                                 <property name="width">15%</property>
+                             </column>
+                             <column id="583">
+                                 <property name="width">15%</property>
+                             </column>
+                             <column id="584">
+                                 <property name="width">30%</property>
+                             </column>
+                             <header>
+                                 <row id="593">
+                                     <cell id="585">
+                                                 <label id="586">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.criterion">Criterion</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="587">
+                                                 <label id="588">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.maxi">Max</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="589">
+                                                 <label id="590">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.unit">Unit</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="591">
+                                                 <label id="592">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.textcriteria">Text criterion</text-property>
+                                                 </label>
+                                     </cell>
+                                 </row>
+                             </header>
+                             <detail>
+                                 <row id="602">
+                                     <cell id="594">
+                                                 <data id="595">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">mblMicrobio</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="596">
+                                                 <data id="597">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">maxiText</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="598">
+                                                 <data id="599">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">mblUnit</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="600">
+                                                 <data id="601">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">mblTextCriteria</property>
                                                  </data>
                                      </cell>
                                  </row>
