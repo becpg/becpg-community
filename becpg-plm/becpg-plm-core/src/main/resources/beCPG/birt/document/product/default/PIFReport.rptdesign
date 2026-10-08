@@ -45,9 +45,21 @@ var v = row["versionLabelToShow"] != null ? " (" + row["versionLabelToShow"] + "
 c + v;</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">netContent</property>
+                    <expression name="expression">var parts = [];
+if (row["netVolume"] != null) {
+	parts.push(row["netVolume"] + " L");
+}
+if (row["netWeight"] != null) {
+	parts.push(row["netWeight"] + " kg");
+}
+parts.join(" / ");</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode},{netVolume;STRING;/netVolume},{periodAfterOpening;STRING;/periodAfterOpening},{regulatoryUseMode;STRING;/regulatoryUseMode/@translation},{regulatoryApplicationZones;STRING;/regulatoryApplicationZones/@translation},{regulatoryMucousContact;STRING;/regulatoryMucousContact},{subsidiaryRef;STRING;/subsidiaryRef}]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
@@ -592,6 +604,42 @@ c + v;</expression>
                     <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">subsidiaryRef</property>
+                    <expression name="expression" type="javascript">dataSetRow["subsidiaryRef"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">netContent</property>
+                    <expression name="expression" type="javascript">dataSetRow["netContent"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">regulatoryUseMode</property>
+                    <expression name="expression" type="javascript">dataSetRow["regulatoryUseMode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">regulatoryApplicationZones</property>
+                    <expression name="expression" type="javascript">dataSetRow["regulatoryApplicationZones"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">regulatoryMucousContact</property>
+                    <expression name="expression" type="javascript">if (dataSetRow["regulatoryMucousContact"] == "true") {
+	reportContext.getMessage("yes", reportContext.getLocale());
+} else if (dataSetRow["regulatoryMucousContact"] == "false") {
+	reportContext.getMessage("no", reportContext.getLocale());
+} else {
+	dataSetRow["regulatoryMucousContact"];
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">periodAfterOpening</property>
+                    <expression name="expression" type="javascript">dataSetRow["periodAfterOpening"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="301"/>
             <detail>
@@ -739,6 +787,36 @@ c + v;</expression>
                                      </data>
                                  </cell>
                              </row>
+
+                             <row id="400">
+                                 <cell id="401">
+                                     <label id="402">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.netcontent">Contenance nominale :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="403">
+                                     <data id="404">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">netContent</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="405">
+                                 <cell id="406">
+                                     <label id="407">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.responsibleperson">Personne responsable :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="408">
+                                     <data id="409">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">subsidiaryRef</property>
+                                     </data>
+                                 </cell>
+                             </row>
                          </grid>
 
                          <!-- Section 2: INFORMATIONS DE CONSOMMATION ET CONSERVATION -->
@@ -764,6 +842,66 @@ c + v;</expression>
                              <column id="372">
                                  <property name="width">70%</property>
                              </column>
+
+                             <row id="410">
+                                 <cell id="411">
+                                     <label id="412">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.usemode">Mode d'utilisation :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="413">
+                                     <data id="414">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">regulatoryUseMode</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="415">
+                                 <cell id="416">
+                                     <label id="417">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.applicationzones">Zones d'application :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="418">
+                                     <data id="419">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">regulatoryApplicationZones</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="420">
+                                 <cell id="421">
+                                     <label id="422">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.mucouscontact">Contact avec les muqueuses :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="423">
+                                     <data id="424">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">regulatoryMucousContact</property>
+                                     </data>
+                                 </cell>
+                             </row>
+
+                             <row id="425">
+                                 <cell id="426">
+                                     <label id="427">
+                                         <property name="style">rowHeaderUpper</property>
+                                         <text-property name="text" key="becpg.report.pif.label.periodafteropening">PAO (jours) :</text-property>
+                                     </label>
+                                 </cell>
+                                 <cell id="428">
+                                     <data id="429">
+                                         <property name="style">becpg-cell-data</property>
+                                         <property name="resultSetColumn">periodAfterOpening</property>
+                                     </data>
+                                 </cell>
+                             </row>
 
                              <row id="373">
                                  <cell id="374">
