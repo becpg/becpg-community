@@ -86,7 +86,7 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 	 * <p>soapProductBuilder.</p>
 	 * <p>
 	 * All the optional data lists are enabled: composition, physico-chemical values, specification,
-	 * score and toxicology.
+	 * score, toxicology, packaging, process, labeling, claims, microbiology, allergens and regulatory.
 	 *
 	 * @param destFolder a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 * @return a {@link fr.becpg.repo.sample.StandardSoapTestProduct.Builder} object
@@ -122,14 +122,16 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 
 	/**
 	 * Returns the builder of a cosmetic finished product holding all the data of a Product Information File, apart
-	 * from the annexes the customer provides.
+	 * from the annexes the customer provides. Every data list it uses is enabled (it uses neither score nor
+	 * specification); a script can switch any of them off on the returned builder.
 	 *
 	 * @param destFolder the folder the product, its raw materials and packaging materials are created in
 	 * @return the configured builder
 	 */
 	public StandardSoapTestProduct.Builder productInformationFileBuilder(final ScriptNode destFolder) {
 		return new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
-				.withDestFolder(destFolder.getNodeRef());
+				.withDestFolder(destFolder.getNodeRef()).withCompo(true).withPhysico(true).withToxicology(true).withPackaging(true)
+				.withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true).withAllergens(true).withRegulatory(true);
 	}
 
 	/**
@@ -156,7 +158,8 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 	private fr.becpg.repo.sample.StandardSoapTestProduct.Builder withAllSoapLists(
 			final fr.becpg.repo.sample.StandardSoapTestProduct.Builder builder, final ScriptNode destFolder) {
 		return builder.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(destFolder.getNodeRef())
-				.withCompo(true).withPhysico(true).withSpecification(true).withScore(true).withToxicology(true);
+				.withCompo(true).withPhysico(true).withSpecification(true).withScore(true).withToxicology(true).withPackaging(true)
+				.withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true).withAllergens(true).withRegulatory(true);
 	}
 
 }

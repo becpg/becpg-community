@@ -20,30 +20,24 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
-import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.ToxType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
-import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -67,15 +61,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ProductInformationFileTestProduct extends StandardBodyMilkTestProduct {
 
-	private static final String CHARACTS_PATH = "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:";
-	private static final String LISTS_PATH = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:";
-	private static final String PACK_MATERIALS_LIST = "pmMaterials";
 	private static final String PHYSICO_UNITS_LIST = "PhysicoUnits";
-	private static final String MICROBIO_UNITS_LIST = "MicrobioUnits";
-	private static final String ALLERGENS_LIST = "Allergens";
-	private static final String MICROBIOS_LIST = "Microbios";
 	private static final String PLANTS_LIST = "Plants";
-	private static final String PROCESS_STEPS_LIST = "ProcessSteps";
 	private static final String PRECAUTION_OF_USE_LIST = "PrecautionOfUse";
 	private static final String STORAGE_CONDITIONS_LIST = "StorageConditions";
 	private static final String SUBSIDIARIES_LIST = "Subsidiaries";
@@ -85,9 +72,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String SDS_NUMBER_SEPARATOR = "-";
 	private static final String RUN_SEPARATOR = " - ";
 	private static final String PLANT_SUFFIX = " plant";
-	private static final String INCI_LIST_RULE = "INCI list";
 	private static final String HIDE_INCI_FUNCTIONS_RULE = "Do not declare INCI functions";
-	private static final String RENDER_FORMULA = "render()";
 	private static final String CLAIM_MOISTURIZING_CODE = "MOISTURIZING_24H";
 	private static final String CLAIM_NATURAL_ORIGIN_CODE = "ISO_16128";
 	private static final String CLAIM_VEGAN_CODE = "VEGAN";
@@ -157,7 +142,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 
 	private static final String HEAVY_METALS = "Heavy metals (as Pb)";
 	private static final String PPM = "ppm";
-	private static final String CFU_PER_G = "CFU/g";
 	private static final String ABSENCE_IN_1_G = "Absence in 1 g";
 	private static final String LEAVE_ON = "LEAVE_ON";
 	private static final String ZONE_BODY = "BODY";
@@ -171,7 +155,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String USAGE_BODY_LOTION_CODE = "COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion";
 	private static final int PERIOD_AFTER_OPENING_DAYS = 365;
 	private static final String REPORT_LOCALE_ENGLISH = "en";
-	private static final String LABELING_LOCALE_FRENCH = "fr";
 	private static final String REPORT_KIND_COMPO_QUALI_QUANTI = "CompoQualiQuanti";
 	private static final String PIF_AGGREGATE_DEFINITION = "PIFReport.agg.json";
 	private static final int PIF_REPORT_TEMPLATE_COUNT = 2;
@@ -189,18 +172,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 
 	/** A physico-chemical characteristic with its unit, value and tolerance. */
 	private record PhysicoChemSpec(String name, String unit, double value, Double mini, Double maxi) {
-	}
-
-	/** A microbiological criterion: a maximum count, or a text criterion such as an absence. */
-	private record MicrobioSpec(String name, Double maxi, String textCriteria) {
-	}
-
-	/** A manufacturing process step and its description. */
-	private record ProcessStepSpec(String name, String description) {
-	}
-
-	/** A packaging material with its constitutive material, tare in grams and packaging level. */
-	private record PackagingSpec(String name, String material, double tare, PackagingLevel level) {
 	}
 
 	/** The classification of a safety data sheet: signal word, hazard statement codes and pictogram codes. */
@@ -239,11 +210,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			new RawMaterialSpec(CITRIC_ACID, 0.05, SUPPLIER_ACTIVES, "CN", "China", List.of(new IngredientShare("CITRIC ACID", 100d))));
 
 	/** Fragrance allergens of Regulation (EC) No 1223/2009 Annex III, as shares of the fragrance raw material. */
-	private static final List<IngredientShare> FRAGRANCE_ALLERGENS = List.of(new IngredientShare("Linalool", 1.5),
-			new IngredientShare("Limonene", 1d), new IngredientShare("Geraniol", 0.5), new IngredientShare("Citronellol", 0.5));
-
-	/** Labeling threshold of fragrance allergens in leave-on products, in percent. */
-	private static final double LEAVE_ON_ALLERGEN_THRESHOLD = 0.001d;
+	private static final List<AllergenShare> FRAGRANCE_ALLERGENS = List.of(new AllergenShare("Linalool", 1.5),
+			new AllergenShare("Limonene", 1d), new AllergenShare("Geraniol", 0.5), new AllergenShare("Citronellol", 0.5));
 
 	private static final List<PhysicoChemSpec> FINISHED_PRODUCT_SPECIFICATIONS = List.of(new PhysicoChemSpec("pH", "pH", 5.5, 5d, 6d),
 			new PhysicoChemSpec("Viscosity (Brookfield, 20 °C)", "mPa.s", 8000d, 6000d, 10000d),
@@ -266,10 +234,10 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	/** Suffix of the suppliers and supplier plants created in the destination folder, unique for each run. */
 	private final String runId;
 
-	private static final List<PackagingSpec> PACKAGING = List.of(new PackagingSpec("Bottle HDPE 200 mL", "HDPE", 22d, PackagingLevel.Primary),
-			new PackagingSpec("Flip-top cap PP 24-410", "PP", 4d, PackagingLevel.Primary),
-			new PackagingSpec("Self-adhesive label PP 120x60", "PP", 0.5, PackagingLevel.Primary),
-			new PackagingSpec("Corrugated case x12", "Corrugated cardboard", 180d, PackagingLevel.Secondary));
+	private static final List<PackagingSpec> PACKAGING = List.of(new PackagingSpec("Bottle HDPE 200 mL", "HDPE", 22d, PackagingLevel.Primary, 1d),
+			new PackagingSpec("Flip-top cap PP 24-410", "PP", 4d, PackagingLevel.Primary, 1d),
+			new PackagingSpec("Self-adhesive label PP 120x60", "PP", 0.5, PackagingLevel.Primary, 1d),
+			new PackagingSpec("Corrugated case x12", "Corrugated cardboard", 180d, PackagingLevel.Secondary, 1d / 12d));
 
 	/**
 	 * <p>Constructor for ProductInformationFileTestProduct.</p>
@@ -298,7 +266,9 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates the body milk finished product, its raw materials, packaging materials and characteristics.
+	 * Creates the body milk finished product, its raw materials, packaging materials and characteristics. Each data list
+	 * is only created when the builder enables it; the identity, consumer information, manufacturer and safety data
+	 * sheets are always set. The score and specification options are not used.
 	 *
 	 * @return the created finished product
 	 */
@@ -307,18 +277,19 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		registerIngredients();
 
 		FinishedProductData bodyMilk = FinishedProductData.build().withName(uniqueName(PRODUCT_NAME)).withLegalName(LEGAL_NAME)
-				.withUnit(ProductUnit.L).withQty(0.2d).withDensity(0.98d).withCompoList(createCompoList())
-				.withPackagingList(createPackagingList()).withProcessList(createProcessList()).withLabelClaimList(createClaimList())
-				.withLabelingRuleList(createLabelingRules());
-
+				.withUnit(ProductUnit.L).withQty(0.2d).withDensity(0.98d);
+		if (isWithCompo) {
+			bodyMilk.withCompoList(createCompoList());
+		}
+		addProductLists(bodyMilk);
 		fillIdentity(bodyMilk);
 		bodyMilk.setReportLocales(List.of(REPORT_LOCALE_ENGLISH));
-		bodyMilk.setRegulatoryList(createMarketList());
-		fillSpecifications(bodyMilk);
 		alfrescoRepository.create(destFolder, bodyMilk);
 		fillConsumerInformation(bodyMilk.getNodeRef());
 		fillRegulatoryUse(bodyMilk);
-		requestIngredientToxicityComputation();
+		if (isWithToxicology) {
+			requestIngredientToxicityComputation();
+		}
 		attachReportTemplates(bodyMilk.getNodeRef());
 
 		return bodyMilk;
@@ -410,8 +381,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		rawMaterial.setSupplierPlants(List.of(supplierPlant));
 		rawMaterial.setReportLocales(List.of(REPORT_LOCALE_ENGLISH));
 		addPhysicoChem(rawMaterial, new PhysicoChemSpec(HEAVY_METALS, PPM, 2d, null, 10d));
-		if (FRAGRANCE.equals(spec.name())) {
-			rawMaterial.setAllergenList(createFragranceAllergens());
+		if (isWithAllergens && FRAGRANCE.equals(spec.name())) {
+			rawMaterial.setAllergenList(createAllergenList());
 		}
 
 		NodeRef rawMaterialNodeRef = alfrescoRepository.create(destFolder, rawMaterial).getNodeRef();
@@ -432,35 +403,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 					.withIngredient(CharactTestHelper.getOrCreateIng(nodeService, ingredient.inciName())));
 		}
 		return ingList;
-	}
-
-	/**
-	 * Creates the fragrance allergens declared by the fragrance supplier.
-	 *
-	 * @return the allergen list of the fragrance raw material
-	 */
-	private List<AllergenListDataItem> createFragranceAllergens() {
-		List<AllergenListDataItem> allergenList = new ArrayList<>();
-		for (IngredientShare allergen : FRAGRANCE_ALLERGENS) {
-			allergenList.add(AllergenListDataItem.build().withAllergen(getOrCreateFragranceAllergen(allergen.inciName()))
-					.withQtyPerc(allergen.qtyPerc()).withVoluntary(true).withInVoluntary(false));
-		}
-		return allergenList;
-	}
-
-	/**
-	 * Gets or creates a fragrance allergen with its leave-on labeling threshold.
-	 *
-	 * @param name the allergen name
-	 * @return the allergen
-	 */
-	private NodeRef getOrCreateFragranceAllergen(String name) {
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
-		properties.put(PLMModel.PROP_ALLERGEN_CODE, name.toUpperCase(Locale.ROOT));
-		properties.put(PLMModel.PROP_ALLERGEN_TYPE, AllergenType.Minor.toString());
-		properties.put(PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD, LEAVE_ON_ALLERGEN_THRESHOLD);
-		return CharactTestHelper.getOrCreateNode(nodeService, CHARACTS_PATH + ALLERGENS_LIST, name, PLMModel.TYPE_ALLERGEN, properties);
 	}
 
 	/**
@@ -498,96 +440,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			pictograms.add(CharactTestHelper.getOrCreatePicto(nodeService, code));
 		}
 		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PICTOGRAMS, pictograms);
-	}
-
-	/**
-	 * Creates the packaging materials and the packaging lines: bottle, cap and label as primary packaging, case as
-	 * secondary packaging.
-	 *
-	 * @return the packaging list
-	 */
-	private List<PackagingListDataItem> createPackagingList() {
-		List<PackagingListDataItem> packagingList = new ArrayList<>();
-		for (PackagingSpec spec : PACKAGING) {
-			double qty = spec.level() == PackagingLevel.Secondary ? 1d / 12d : 1d;
-			packagingList.add(PackagingListDataItem.build().withQty(qty).withUnit(ProductUnit.P).withPkgLevel(spec.level())
-					.withProduct(createPackagingMaterial(spec)));
-		}
-		return packagingList;
-	}
-
-	/**
-	 * Creates a packaging material with its tare and constitutive material.
-	 *
-	 * @param spec the packaging material description
-	 * @return the created packaging material
-	 */
-	private NodeRef createPackagingMaterial(PackagingSpec spec) {
-		PackagingMaterialData packagingMaterial = PackagingMaterialData.build().withName(uniqueName(spec.name())).withQty(1d)
-				.withUnit(ProductUnit.P).withTare(spec.tare(), TareUnit.g).withPackMaterialList(List.of(PackMaterialListDataItem.build()
-						.withMaterial(getOrCreatePackMaterial(spec.material())).withPerc(100d).withPkgLevel(spec.level())));
-		packagingMaterial.setReportLocales(List.of(REPORT_LOCALE_ENGLISH));
-		return alfrescoRepository.create(destFolder, packagingMaterial).getNodeRef();
-	}
-
-	/**
-	 * Creates the manufacturing process steps, each one described.
-	 *
-	 * @return the process list
-	 */
-	private List<ProcessListDataItem> createProcessList() {
-		List<ProcessListDataItem> processList = new ArrayList<>();
-		for (ProcessStepSpec spec : MANUFACTURING_PROCESS) {
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, spec.name());
-			properties.put(ContentModel.PROP_DESCRIPTION, spec.description());
-			processList.add(ProcessListDataItem.build().withStep(
-					CharactTestHelper.getOrCreateNode(nodeService, CHARACTS_PATH + PROCESS_STEPS_LIST, spec.name(), MPMModel.TYPE_PROCESSSTEP, properties)));
-		}
-		return processList;
-	}
-
-	/**
-	 * Creates the claims the customer has to support in the claim annex. They are declared on the finished product
-	 * itself, so they are manual: formulation does not derive them from the raw materials.
-	 *
-	 * @return the claim list
-	 */
-	private List<LabelClaimListDataItem> createClaimList() {
-		return new ArrayList<>(List.of(createClaim(CLAIM_MOISTURIZING_CODE, CLAIM_MOISTURIZING, null),
-				createClaim(CLAIM_NATURAL_ORIGIN_CODE, CLAIM_NATURAL_ORIGIN, 97d), createClaim(CLAIM_VEGAN_CODE, CLAIM_VEGAN, null)));
-	}
-
-	/**
-	 * Creates a manual claim, claimed on the product.
-	 *
-	 * @param code the claim code
-	 * @param name the claim name
-	 * @param percentClaim the claimed percentage, or null when the claim carries none
-	 * @return the claim line
-	 */
-	private LabelClaimListDataItem createClaim(String code, String name, Double percentClaim) {
-		LabelClaimListDataItem claim = LabelClaimListDataItem.build().withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, code, name))
-				.withIsClaimed(true).withPercentClaim(percentClaim);
-		claim.setIsManual(true);
-		return claim;
-	}
-
-	/**
-	 * Creates the labeling rules of the INCI list: a flat list of INCI names by decreasing concentration. The INCI
-	 * functions stay on the ingredients but are not declared, so they do not group the list as food additive classes
-	 * would. The list is rendered in English for the PIF and in French; without explicit locales, it is only rendered in
-	 * the server default language.
-	 *
-	 * @return the labeling rules
-	 */
-	private List<LabelingRuleListDataItem> createLabelingRules() {
-		LabelingRuleListDataItem render = LabelingRuleListDataItem.build().withName(INCI_LIST_RULE).withFormula(RENDER_FORMULA)
-				.withLabelingRuleType(LabelingRuleType.Render);
-		render.setLocales(List.of(REPORT_LOCALE_ENGLISH, LABELING_LOCALE_FRENCH));
-		LabelingRuleListDataItem hideFunctions = LabelingRuleListDataItem.build().withName(HIDE_INCI_FUNCTIONS_RULE)
-				.withLabelingRuleType(LabelingRuleType.DoNotDeclare).withComponents(findFormulaIngredientTypes());
-		return List.of(render, hideFunctions);
 	}
 
 	/**
@@ -647,16 +499,106 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Sets the specifications of the finished product and its exposure scenario.
+	 * Adds the lists the builder enables: physico-chemical specifications, exposure scenario, and the optional lists
+	 * whose creation methods this product overrides.
 	 *
-	 * @param bodyMilk the finished product
+	 * @param bodyMilk the finished product, not created yet
 	 */
-	private void fillSpecifications(FinishedProductData bodyMilk) {
-		for (PhysicoChemSpec spec : FINISHED_PRODUCT_SPECIFICATIONS) {
-			addPhysicoChem(bodyMilk, spec);
+	private void addProductLists(FinishedProductData bodyMilk) {
+		if (isWithPhysico) {
+			createPhysicoChems(bodyMilk);
 		}
-		bodyMilk.setMicrobioList(createMicrobioList());
-		bodyMilk.setToxList(createLeaveOnToxList());
+		if (isWithToxicology) {
+			bodyMilk.setToxList(createToxList());
+		}
+		addOptionalLists(bodyMilk);
+	}
+
+	/**
+	 * Adds the physico-chemical specifications of the finished product, with their tolerances.
+	 *
+	 * @param product the finished product
+	 */
+	@Override
+	protected void createPhysicoChems(ProductData product) {
+		FINISHED_PRODUCT_SPECIFICATIONS.forEach(spec -> addPhysicoChem(product, spec));
+	}
+
+	/**
+	 * Creates the primary packaging (bottle, cap and label) and the secondary packaging (case of 12).
+	 *
+	 * @return the packaging list
+	 */
+	@Override
+	protected List<PackagingListDataItem> createPackagingList() {
+		return buildPackagingList(PACKAGING);
+	}
+
+	/**
+	 * Creates the manufacturing process steps of the emulsion.
+	 *
+	 * @return the process list
+	 */
+	@Override
+	protected List<ProcessListDataItem> createProcessList() {
+		return buildProcessList(MANUFACTURING_PROCESS);
+	}
+
+	/**
+	 * Creates the labeling rules of the INCI list: a flat list of INCI names by decreasing concentration. The INCI
+	 * functions stay on the ingredients but are not declared, so they do not group the list as food additive classes
+	 * would.
+	 *
+	 * @return the labeling rules
+	 */
+	@Override
+	protected List<LabelingRuleListDataItem> createLabelingRules() {
+		LabelingRuleListDataItem hideFunctions = LabelingRuleListDataItem.build().withName(HIDE_INCI_FUNCTIONS_RULE)
+				.withLabelingRuleType(LabelingRuleType.DoNotDeclare).withComponents(findFormulaIngredientTypes());
+		return new ArrayList<>(List.of(createInciRenderRule(), hideFunctions));
+	}
+
+	/**
+	 * Creates the claims the customer has to support in the claim annex.
+	 *
+	 * @return the claim list
+	 */
+	@Override
+	protected List<LabelClaimListDataItem> createClaimList() {
+		return new ArrayList<>(List.of(createClaim(CLAIM_MOISTURIZING_CODE, CLAIM_MOISTURIZING, null),
+				createClaim(CLAIM_NATURAL_ORIGIN_CODE, CLAIM_NATURAL_ORIGIN, 97d), createClaim(CLAIM_VEGAN_CODE, CLAIM_VEGAN, null)));
+	}
+
+	/**
+	 * Creates the microbiological limits of ISO 17516 for products other than those for children under 3, eye area
+	 * and mucous membranes.
+	 *
+	 * @return the microbiological list
+	 */
+	@Override
+	protected List<MicrobioListDataItem> createMicrobioList() {
+		return buildMicrobioList(MICROBIOLOGICAL_LIMITS);
+	}
+
+	/**
+	 * Creates the fragrance allergens declared by the fragrance supplier.
+	 *
+	 * @return the allergen list of the fragrance raw material
+	 */
+	@Override
+	protected List<AllergenListDataItem> createAllergenList() {
+		return buildAllergenList(FRAGRANCE_ALLERGENS);
+	}
+
+	/**
+	 * Creates the market of the product: body lotion sold in France and in the European Union.
+	 *
+	 * @return the regulatory list
+	 */
+	@Override
+	protected List<RegulatoryListDataItem> createMarketList() {
+		return buildMarketList(List.of(getOrCreateCountryRef(FRANCE_CODE, FRANCE), getOrCreateCountryRef(EU_CODE, EUROPEAN_UNION)),
+				List.of(getOrCreateUsageRef(USAGE_BODY_LOTION, USAGE_BODY_LOTION_CODE)));
 	}
 
 	/**
@@ -683,32 +625,12 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates the microbiological limits of ISO 17516 for products other than those for children under 3, eye area
-	 * and mucous membranes.
-	 *
-	 * @return the microbiological list
-	 */
-	private List<MicrobioListDataItem> createMicrobioList() {
-		List<MicrobioListDataItem> microbioList = new ArrayList<>();
-		for (MicrobioSpec spec : MICROBIOLOGICAL_LIMITS) {
-			MicrobioListDataItem item = new MicrobioListDataItem();
-			item.setMicrobio(getOrCreateListedCharact(spec.name(), PLMModel.TYPE_MICROBIO, MICROBIOS_LIST));
-			item.setUnit(getOrCreateUnit(MICROBIO_UNITS_LIST, CFU_PER_G));
-			item.setMaxi(spec.maxi());
-			if (spec.textCriteria() != null) {
-				item.setTextCriteria(new MLText(spec.textCriteria()));
-			}
-			microbioList.add(item);
-		}
-		return microbioList;
-	}
-
-	/**
 	 * Creates the exposure scenario of an adult applying a leave-on body lotion.
 	 *
 	 * @return the toxicology list
 	 */
-	private List<ToxListDataItem> createLeaveOnToxList() {
+	@Override
+	protected List<ToxListDataItem> createToxList() {
 		ToxListDataItem item = new ToxListDataItem();
 		item.setTox(CharactTestHelper.getOrCreateTox(nodeService, EXPOSURE_ADULT_LEAVE_ON_BODY, BODY_LOTION_DAILY_AMOUNT_MG, true, true,
 				List.of(ToxType.SkinIrritationLeaveOn, ToxType.Sensitization, ToxType.OcularIrritation, ToxType.SystemicIngredient)));
@@ -751,18 +673,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates the market of the product: body lotion sold in France and in the European Union.
-	 *
-	 * @return the regulatory list
-	 */
-	private List<RegulatoryListDataItem> createMarketList() {
-		RegulatoryListDataItem market = new RegulatoryListDataItem();
-		market.setRegulatoryCountriesRef(List.of(getOrCreateCountryRef(FRANCE_CODE, FRANCE), getOrCreateCountryRef(EU_CODE, EUROPEAN_UNION)));
-		market.setRegulatoryUsagesRef(List.of(getOrCreateUsageRef(USAGE_BODY_LOTION, USAGE_BODY_LOTION_CODE)));
-		return new ArrayList<>(List.of(market));
-	}
-
-	/**
 	 * Sets the regulatory use of the product (leave-on, body and hands) and its legal status on its market.
 	 *
 	 * @param bodyMilk the created finished product
@@ -775,8 +685,10 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		properties.put(PLMModel.PROP_REGULATORY_PROFESSIONAL_USE, false);
 		nodeService.addAspect(bodyMilk.getNodeRef(), PLMModel.ASPECT_REGULATORY_PRODUCT, properties);
 
-		for (RegulatoryListDataItem market : bodyMilk.getRegulatoryList()) {
-			nodeService.setProperty(market.getNodeRef(), PLMModel.PROP_REGULATORY_LEGAL_STATUS, LEGAL_STATUS_COSMETIC);
+		if (bodyMilk.getRegulatoryList() != null) {
+			for (RegulatoryListDataItem market : bodyMilk.getRegulatoryList()) {
+				nodeService.setProperty(market.getNodeRef(), PLMModel.PROP_REGULATORY_LEGAL_STATUS, LEGAL_STATUS_COSMETIC);
+			}
 		}
 	}
 
@@ -842,20 +754,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Gets or creates a characteristic of a system list.
-	 *
-	 * @param name the characteristic name
-	 * @param type the characteristic type
-	 * @param listName the name of the system list
-	 * @return the characteristic
-	 */
-	private NodeRef getOrCreateListedCharact(String name, QName type, String listName) {
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
-		return CharactTestHelper.getOrCreateNode(nodeService, CHARACTS_PATH + listName, name, type, properties);
-	}
-
-	/**
 	 * Gets or creates a characteristic of a system list whose description is the text printed in the reports.
 	 *
 	 * @param text the characteristic name and description
@@ -867,33 +765,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		NodeRef charact = getOrCreateListedCharact(text, type, listName);
 		nodeService.setProperty(charact, ContentModel.PROP_DESCRIPTION, text);
 		return charact;
-	}
-
-	/**
-	 * Gets or creates a unit of a system list, as the unit properties only accept the values of their list. No code is
-	 * set, so that an existing value is never given a code another value already holds.
-	 *
-	 * @param listName the name of the unit list
-	 * @param unit the unit
-	 * @return the unit, ready to be set on a property
-	 */
-	private String getOrCreateUnit(String listName, String unit) {
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_LV_VALUE, unit);
-		CharactTestHelper.getOrCreateNode(nodeService, LISTS_PATH + listName, unit, BeCPGModel.TYPE_LIST_VALUE, properties);
-		return unit;
-	}
-
-	/**
-	 * Gets or creates a packaging material of the system list.
-	 *
-	 * @param name the material name
-	 * @return the packaging material
-	 */
-	private NodeRef getOrCreatePackMaterial(String name) {
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_LV_VALUE, name);
-		return CharactTestHelper.getOrCreateNode(nodeService, LISTS_PATH + PACK_MATERIALS_LIST, name, PackModel.TYPE_PACKAGING_MATERIAL, properties);
 	}
 
 	/**

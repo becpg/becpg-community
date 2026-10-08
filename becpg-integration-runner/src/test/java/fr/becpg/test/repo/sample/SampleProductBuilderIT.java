@@ -67,7 +67,8 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testSoapWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 	}
@@ -76,7 +77,8 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testGreenScoreWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 	}
@@ -85,7 +87,8 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testBodyMilkWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new StandardBodyMilkTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 	}
@@ -93,7 +96,9 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	@Test
 	public void testProductInformationFileProduct() {
 		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
-				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).build().createTestProduct().getNodeRef());
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withToxicology(true)
+				.withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true).withAllergens(true)
+				.withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 
