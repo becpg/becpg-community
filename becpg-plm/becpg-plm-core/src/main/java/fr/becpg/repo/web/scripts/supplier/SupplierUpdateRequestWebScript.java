@@ -22,7 +22,9 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  * {@code POST /becpg/supplier/update-request} — a supplier asks for the update of
  * one of its validated sheets, or of its supplier record.
  *
- * <p>Body: {@code {"nodeRef": "workspace://SpacesStore/…", "reason": "…"}}.
+ * <p>Body: {@code {"nodeRef": "workspace://SpacesStore/…", "template": "workspace://SpacesStore/…", "reason": "…"}},
+ * the template being one the supplier may start — a supplier project template on
+ * which {@code GROUP_ExternalUser} holds a read permission.
  * Answers {@code {"project": "<nodeRef>", "entity": "<working copy nodeRef>"}}: the
  * caller deposits the new technical sheet on that working copy.</p>
  *
@@ -37,6 +39,8 @@ public class SupplierUpdateRequestWebScript extends AbstractWebScript {
 	private static final String PARAM_NODEREF = "nodeRef";
 
 	private static final String PARAM_REASON = "reason";
+
+	private static final String PARAM_TEMPLATE = "template";
 
 	private SupplierPortalService supplierPortalService;
 
@@ -75,6 +79,7 @@ public class SupplierUpdateRequestWebScript extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		NodeRef entityNodeRef;
+		NodeRef templateNodeRef;
 		String reason;
 		try {
 			JSONObject body = new JSONObject(req.getContent().getContent());
@@ -83,6 +88,11 @@ public class SupplierUpdateRequestWebScript extends AbstractWebScript {
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "A valid nodeRef is required");
 			}
 			entityNodeRef = new NodeRef(nodeRef);
+			String template = body.optString(PARAM_TEMPLATE, "");
+			if (!NodeRef.isNodeRef(template)) {
+				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "A valid project template is required");
+			}
+			templateNodeRef = new NodeRef(template);
 			reason = body.optString(PARAM_REASON, "");
 		} catch (JSONException e) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Expected a JSON body", e);
@@ -90,8 +100,9 @@ public class SupplierUpdateRequestWebScript extends AbstractWebScript {
 
 		NodeRef projectNodeRef;
 		try {
-			projectNodeRef = supplierPortalService.requestSupplierUpdate(entityNodeRef, reason);
+			projectNodeRef = supplierPortalService.requestSupplierUpdate(entityNodeRef, templateNodeRef, reason);
 		} catch (AccessDeniedException e) {
+			// Includes a template that is not open to suppliers.
 			throw new WebScriptException(Status.STATUS_FORBIDDEN, e.getMessage(), e);
 		} catch (IllegalArgumentException e) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, e.getMessage(), e);

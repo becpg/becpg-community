@@ -37,29 +37,33 @@ public interface SupplierPortalService {
 
 	/**
 	 * A supplier asks for the update of one of its validated sheets, or of its
-	 * own supplier record: starts the supplier project on it, exactly as « Send
-	 * to supplier » does, with the reason written on the project.
+	 * own supplier record: starts a supplier project on it, exactly as « Send to
+	 * supplier » does, with the reason written on the project. The whole
+	 * workflow runs again: the supplier goes back through the wizard.
 	 *
-	 * The caller must be one of the supplier's accounts; the entity must not be
-	 * a working copy, and no supplier project may already be open on it.
+	 * The caller must be one of the supplier's accounts, the template one of
+	 * {@link #findSupplierProjectTemplates()}, and no supplier project may already
+	 * be open on the entity.
 	 *
 	 * @param entityNodeRef the validated entity, or the supplier itself
+	 * @param templateNodeRef the project template the supplier picked
 	 * @param reason why the supplier asks, shown to the quality team
 	 * @return the project created
-	 * @throws org.alfresco.repo.security.permissions.AccessDeniedException when the caller is not an account of the supplier
+	 * @throws org.alfresco.repo.security.permissions.AccessDeniedException when the caller is not an account of the supplier, or the template is not open to suppliers
 	 * @throws IllegalStateException when a supplier project is already open on the entity
 	 * @throws IllegalArgumentException when the entity is a working copy or the reason is blank
 	 */
-	NodeRef requestSupplierUpdate(NodeRef entityNodeRef, String reason);
+	NodeRef requestSupplierUpdate(NodeRef entityNodeRef, NodeRef templateNodeRef, String reason);
 
 	/**
-	 * The project template a supplier's update request starts:
-	 * {@code beCPG.supplierPortal.updateRequest.projectTemplate} when it names an
-	 * existing node, the standard supplier referencing template otherwise.
+	 * The supplier project templates a supplier may start itself: enabled
+	 * templates carrying {@code bcpg:suppliersAspect} on which
+	 * {@code GROUP_ExternalUser} holds a read permission. That permission is the
+	 * whole configuration — no property, no extra field.
 	 *
-	 * @return the template, or null when neither exists
+	 * @return the templates, possibly empty
 	 */
-	NodeRef getUpdateRequestProjectTemplate();
+	List<NodeRef> findSupplierProjectTemplates();
 	
 	/**
 	 * <p>getSupplierNodeRef.</p>

@@ -401,12 +401,6 @@ public final class BeCPGModel {
 	public static final QName PROP_DOCUMENT_TYPE_CATEGORY = QName.createQName(BECPG_URI, "docTypeCategory");
 	/** Constant <code>PROP_DOCUMENT_TYPE_IS_MANDATORY</code> */
 	public static final QName PROP_DOCUMENT_TYPE_IS_MANDATORY = QName.createQName(BECPG_URI, "docTypeIsMandatory");
-	/** Constant <code>PROP_DOCUMENT_TYPE_SUPPLIER_UPDATE_MODE</code> */
-	public static final QName PROP_DOCUMENT_TYPE_SUPPLIER_UPDATE_MODE = QName.createQName(BECPG_URI, "docTypeSupplierUpdateMode");
-
-	/** Constant <code>PROP_DOCUMENT_SUPPLIER_DEPOSIT_DATE</code> */
-	public static final QName PROP_DOCUMENT_SUPPLIER_DEPOSIT_DATE = QName.createQName(BECPG_URI, "documentSupplierDepositDate");
-
 	/** Constant <code>PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE</code> */
 	public static final QName PROP_DOCUMENT_TYPE_EFFECTIVITY_TYPE = QName.createQName(BECPG_URI, "docTypeEffectivityType");
 	/** Constant <code>PROP_DOCUMENT_TYPE_AUTO_EXPIRATION_DELAY</code> */

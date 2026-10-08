@@ -44,7 +44,6 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.signature.SignatureProjectHelper;
 import fr.becpg.repo.supplier.SupplierPortalService;
-import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -67,7 +66,6 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String UPDATED_SUPPLIER_COMMENT = "Updated supplier comment";
 	private static final String TEST_CONCURRENT_SUPPLIER_NAME = "Junit Supplier concurrent project test";
 	private static final String TEST_CONCURRENT_SUPPLIER_PLANT_NAME = "Junit Supplier concurrent project plant test";
-	private static final String PREVENT_CONCURRENT_PROJECTS = "beCPG.sendToSupplier.preventConcurrentProjects";
 	private static final String TEST_UPDATE_REQUEST_SUPPLIER_NAME = "Junit Supplier update request test";
 	private static final String TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME = "Junit Supplier update request plant test";
 	private static final String TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME = "Junit Supplier update request other test";
@@ -92,9 +90,6 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ProjectService projectService;
-
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
 
 	@Test
 	public void testOpenSupplierProjectIsFoundFromTheOriginalEntity() {
@@ -122,14 +117,15 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 		});
 		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
 
+		NodeRef templateNodeRef = openTemplateToSuppliers();
 		NodeRef projectNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
-				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "New production site"));
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "New production site"));
 
 		assertNotNull("The request starts a supplier project", projectNodeRef);
 		assertEquals("The project carries the supplier's reason", true, inReadTx(() -> String.valueOf(
 				nodeService.getProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION)).contains("New production site")));
 		assertThrows("A second request while the first is open is refused", IllegalStateException.class,
-				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "Again")));
+				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Again")));
 	}
 
 	@Test
@@ -138,29 +134,44 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
 		createSupplierAccount(createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME), createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
 
+		NodeRef templateNodeRef = openTemplateToSuppliers();
 		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(TEST_SUPPLIER_EMAIL,
-				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "Not mine")));
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Not mine")));
 	}
 
 	@Test
-	public void testSecondSupplierProjectIsRefusedWhenConcurrentProjectsArePrevented() {
+	public void testOnlyTemplatesReadableByExternalUsersAreOpenToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.deletePermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER);
+			return null;
+		});
+		assertFalse("Without the permission, the template is not offered",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+
+		openTemplateToSuppliers();
+		assertTrue("Consumer for GROUP_ExternalUser opens it",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+	}
+
+	/** The configuration an administrator does: Consumer for GROUP_ExternalUser on the template. */
+	private NodeRef openTemplateToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.setPermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER, true);
+			return null;
+		});
+		return templateNodeRef;
+	}
+
+	@Test
+	public void testSecondSupplierProjectIsRefusedWhileOneIsOpen() {
 		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
 		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
 		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
 		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
 
-		inWriteTx(() -> {
-			systemConfigurationService.updateConfValue(PREVENT_CONCURRENT_PROJECTS, "true");
-			return null;
-		});
-		try {
-			assertThrows(IllegalStateException.class, () -> createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef));
-		} finally {
-			inWriteTx(() -> {
-				systemConfigurationService.resetConfValue(PREVENT_CONCURRENT_PROJECTS);
-				return null;
-			});
-		}
+		assertThrows(IllegalStateException.class, () -> createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef));
 	}
 
 	@Test

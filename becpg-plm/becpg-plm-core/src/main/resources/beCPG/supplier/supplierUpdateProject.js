@@ -3,10 +3,11 @@
  * entity the matched node belongs to.
  *
  * The matched node (`item`) is a document for the expiry rule and an entity for
- * the periodic review rule. The project template is the rule's
- * bcpg:nrProjectTpl. An entity that already has an open supplier project, or
- * whose last one was completed within the rule's delay (bcpg:nrTimeNumber
- * days), is left alone so that a daily rule never starts the same work twice.
+ * the periodic review rule. The project started is the supplier template
+ * open to suppliers (GROUP_ExternalUser may read it). An entity that already
+ * has an open supplier project, or whose last one was completed within the
+ * rule's delay (bcpg:nrTimeNumber days), is left alone so that a daily rule
+ * never starts the same work twice.
  */
 
 var DAY_MS = 24 * 60 * 60 * 1000;
@@ -42,9 +43,9 @@ function completedWithin(entity, days) {
 }
 
 function main() {
-	var templates = notification.assocs["bcpg:nrProjectTpl"];
-	if (templates == null || templates.length == 0) {
-		logger.warn("supplierUpdateProject.js: rule " + notification.name + " has no project template (bcpg:nrProjectTpl), nothing started");
+	var template = bSupplier.findSupplierProjectTemplate();
+	if (template == null) {
+		logger.warn("supplierUpdateProject.js: rule " + notification.name + " needs exactly one supplier project template open to GROUP_ExternalUser, nothing started");
 		return;
 	}
 
@@ -56,7 +57,7 @@ function main() {
 		return;
 	}
 
-	bSupplier.createSupplierProject([entity], templates[0], []);
+	bSupplier.createSupplierProject([entity], template, []);
 }
 
 main();

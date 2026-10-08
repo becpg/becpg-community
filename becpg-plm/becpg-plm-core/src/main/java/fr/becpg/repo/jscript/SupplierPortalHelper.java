@@ -467,6 +467,18 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
+	 * The supplier project template open to suppliers, when there is exactly one
+	 * — what an unattended rule starts. With none, or with several to choose
+	 * from, it answers null and the rule leaves the entity alone.
+	 *
+	 * @return the template, or null
+	 */
+	public ScriptNode findSupplierProjectTemplate() {
+		List<NodeRef> templates = supplierPortalService.findSupplierProjectTemplates();
+		return templates.size() == 1 ? new ActivitiScriptNode(templates.get(0), serviceRegistry) : null;
+	}
+
+	/**
 	 * Is a supplier project still open on this entity or on one of its branches?
 	 *
 	 * @param entity an entity, an entity branch or a supplier

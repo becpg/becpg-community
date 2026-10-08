@@ -25,6 +25,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -47,7 +48,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.admin.SupplierPortalInitRepoVisitor;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.authentication.SecurePasswordGenerator;
@@ -86,6 +86,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	/** License groups an internal account belongs to: such accounts must never become external users. */
 	private static final List<SystemGroup> INTERNAL_LICENSE_GROUPS = List.of(SystemGroup.LicenseReadNamed, SystemGroup.LicenseWriteNamed,
 			SystemGroup.LicenseReadConcurrent, SystemGroup.LicenseWriteConcurrent);
+
+	/** Permissions that let a group read a project template. */
+	private static final Set<String> SUPPLIER_READ_PERMISSIONS = Set.of(PermissionService.READ, PermissionService.CONSUMER,
+			PermissionService.CONTRIBUTOR, PermissionService.EDITOR, PermissionService.COORDINATOR, "Collaborator");
 
 	/** Project states that mean someone is still working on the entity. */
 	private static final Set<String> OPEN_PROJECT_STATES = Set.of(ProjectState.Planned.toString(), ProjectState.InProgress.toString(),
@@ -160,19 +164,12 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
 	}
 
-	private boolean preventConcurrentProjects() {
-		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.sendToSupplier.preventConcurrentProjects"));
-	}
-
 	/**
 	 * Refuses a second supplier project while one is still open on the entity.
 	 * A supplier project points at a branch, never at the original, so the
 	 * branches of the entity are checked as well as the entity itself.
 	 */
 	private void checkNoOpenProject(NodeRef entityNodeRef) {
-		if (!preventConcurrentProjects()) {
-			return;
-		}
 		String openProject = findOpenSupplierProject(entityNodeRef);
 		if (openProject != null) {
 			throw new IllegalStateException(I18NUtil.getMessage("message.supplier-project.already-open", openProject));
@@ -203,7 +200,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef requestSupplierUpdate(NodeRef entityNodeRef, String reason) {
+	public NodeRef requestSupplierUpdate(NodeRef entityNodeRef, NodeRef templateNodeRef, String reason) {
 		if ((reason == null) || reason.isBlank()) {
 			throw new IllegalArgumentException(I18NUtil.getMessage("message.supplier-update.reason-missing"));
 		}
@@ -219,13 +216,8 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			if ((caller == null) || !accounts.contains(caller)) {
 				throw new AccessDeniedException(I18NUtil.getMessage("message.supplier-update.not-account"));
 			}
-			String openProject = findOpenSupplierProject(entityNodeRef);
-			if (openProject != null) {
-				throw new IllegalStateException(I18NUtil.getMessage("message.supplier-project.already-open", openProject));
-			}
-			NodeRef templateNodeRef = getUpdateRequestProjectTemplate();
-			if (templateNodeRef == null) {
-				throw new IllegalStateException(I18NUtil.getMessage("message.supplier-update.no-template"));
+			if ((templateNodeRef == null) || !findSupplierProjectTemplates().contains(templateNodeRef)) {
+				throw new AccessDeniedException(I18NUtil.getMessage("message.supplier-update.template-not-open"));
 			}
 
 			NodeRef projectNodeRef = createSupplierProject(entityNodeRef, templateNodeRef, accounts);
@@ -238,19 +230,21 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef getUpdateRequestProjectTemplate() {
-		String configured = systemConfigurationService.confValue("beCPG.supplierPortal.updateRequest.projectTemplate");
-		if ((configured != null) && NodeRef.isNodeRef(configured.trim())) {
-			NodeRef templateNodeRef = new NodeRef(configured.trim());
-			if (nodeService.exists(templateNodeRef)) {
-				return templateNodeRef;
-			}
-			logger.warn("beCPG.supplierPortal.updateRequest.projectTemplate names a missing node, falling back to the standard template: "
-					+ configured);
-		}
-		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-				.withAspect(PLMModel.ASPECT_SUPPLIERS)
-				.andPropEquals(ContentModel.PROP_NAME, I18NUtil.getMessage(SupplierPortalInitRepoVisitor.SUPPLIER_PJT_TPL_NAME)).inDB().singleValue();
+	public List<NodeRef> findSupplierProjectTemplates() {
+		return AuthenticationUtil.runAsSystem(() -> BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+				.withAspect(BeCPGModel.ASPECT_ENTITY_TPL).withAspect(PLMModel.ASPECT_SUPPLIERS).inDB().list().stream()
+				.filter(this::isEnabledTemplate).filter(this::isOpenToSuppliers).toList());
+	}
+
+	private boolean isEnabledTemplate(NodeRef templateNodeRef) {
+		return !Boolean.FALSE.equals(nodeService.getProperty(templateNodeRef, BeCPGModel.PROP_ENTITY_TPL_ENABLED));
+	}
+
+	/** {@code GROUP_ExternalUser} may read it — set, or inherited from the folder. */
+	private boolean isOpenToSuppliers(NodeRef templateNodeRef) {
+		return permissionService.getAllSetPermissions(templateNodeRef).stream()
+				.anyMatch(permission -> EXTERNAL_USER_GROUP.equals(permission.getAuthority()) && permission.getAccessStatus() == AccessStatus.ALLOWED
+						&& SUPPLIER_READ_PERMISSIONS.contains(permission.getPermission()));
 	}
 
 	/** {@inheritDoc} */

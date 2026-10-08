@@ -629,7 +629,6 @@ PARTICULAR
 					<show id="bcpg:nrDateField" />
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
-					<show id="bcpg:nrProjectTpl" />
 					<show id="bcpg:nrDisabled" />
 
 					<show id="bcpg:nrNodeType" />
@@ -694,7 +693,6 @@ PARTICULAR
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrProjectTpl" set="notificationRule" />
 					<field id="bcpg:nrScriptMode" set="notificationRule">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" />
@@ -767,7 +765,6 @@ PARTICULAR
 					<show id="bcpg:nrDateField" />
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
-					<show id="bcpg:nrProjectTpl" />
 					<show id="bcpg:nrDisabled" />
 
 					<show id="bcpg:nrNodeType" />
@@ -832,7 +829,6 @@ PARTICULAR
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrProjectTpl" set="notificationRule" />
 					<field id="bcpg:nrScriptMode" set="notificationRule">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" />
@@ -981,7 +977,6 @@ PARTICULAR
 					<show id="bcpg:nrDateField" />
 					<show id="bcpg:nrScript" />
 					<show id="bcpg:nrScriptMode" />
-					<show id="bcpg:nrProjectTpl" />
 					<show id="bcpg:nrDisabled" />
 
 					<show id="bcpg:nrNodeType" />
@@ -1045,7 +1040,6 @@ PARTICULAR
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nrProjectTpl" set="notificationRule" />
 					<field id="bcpg:nrScriptMode" set="notificationRule">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" />

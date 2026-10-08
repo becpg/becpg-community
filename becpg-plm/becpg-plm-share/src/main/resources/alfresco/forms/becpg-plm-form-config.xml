@@ -3819,7 +3819,6 @@
                     <show id="bcpg:docTypeIsMandatory" />
                     <show id="bcpg:docTypeEffectivityType" />
                     <show id="bcpg:docTypeAutoExpirationDelay" force="true" />
-                    <show id="bcpg:docTypeSupplierUpdateMode" force="true" />
                     <show id="bcpg:docTypeFormula" force="true" />
                     <show id="bcpg:docTypeNameFormat" />
                     <show id="bcpg:docTypeLinkedTypes" force="true" />
@@ -3856,7 +3855,6 @@
                             <control-param name="unit">d</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:docTypeSupplierUpdateMode" set="documentType" />
                     <field id="bcpg:docTypeFormula" set="documentType" >
                         <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
                             <control-param name="rows">10</control-param>
@@ -3956,7 +3954,6 @@
                     <show id="bcpg:docTypeIsMandatory" />
                     <show id="bcpg:docTypeEffectivityType" />
                     <show id="bcpg:docTypeAutoExpirationDelay" force="true" />
-                    <show id="bcpg:docTypeSupplierUpdateMode" force="true" />
                     <show id="bcpg:docTypeNameFormat" />
                     <show id="bcpg:docTypeLinkedTypes" force="true" />
                     <show id="bcpg:docTypeLinkedHierarchy" force="true" />
@@ -3979,7 +3976,6 @@
                     <show id="bcpg:docTypeIsMandatory" />
                     <show id="bcpg:docTypeEffectivityType" />
                     <show id="bcpg:docTypeAutoExpirationDelay" force="true" />
-                    <show id="bcpg:docTypeSupplierUpdateMode" force="true" />
                     <show id="bcpg:docTypeFormula" force="true" />
                     <show id="bcpg:docTypeNameFormat" />
                     <show id="bcpg:docTypeLinkedTypes" force="true" />
@@ -4016,7 +4012,6 @@
                             <control-param name="unit">d</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:docTypeSupplierUpdateMode" set="documentType" />
                     <field id="bcpg:docTypeFormula" set="documentType" >
                         <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
                             <control-param name="rows">10</control-param>
@@ -4086,7 +4081,6 @@
                     <show id="bcpg:docTypeIsMandatory" />
                     <show id="bcpg:docTypeEffectivityType" />
                     <show id="bcpg:docTypeAutoExpirationDelay" force="true" />
-                    <show id="bcpg:docTypeSupplierUpdateMode" force="true" />
                     <show id="bcpg:docTypeFormula" force="true" />
                     <show id="bcpg:docTypeNameFormat" />
                     <show id="bcpg:docTypeLinkedTypes" force="true" />
@@ -4123,7 +4117,6 @@
                             <control-param name="unit">d</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:docTypeSupplierUpdateMode" set="documentType" />
                     <field id="bcpg:docTypeFormula" set="documentType" >
                         <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
                             <control-param name="rows">10</control-param>

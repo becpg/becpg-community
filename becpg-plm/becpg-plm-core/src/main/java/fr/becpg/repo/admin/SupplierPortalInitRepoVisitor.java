@@ -106,9 +106,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String SUPPLIER_UPDATE_SCRIPT = "supplierUpdateProject.js";
 
-	private static final String SUPPLIER_DEPOSIT_RECAP_SCRIPT = "supplierDepositRecap.js";
-
 	private static final String BECPG_MODEL_PREFIX = "@{" + BeCPGModel.BECPG_URI + "}";
+
+	/** Where the supplier portal files every supplier space, and so every supplier document. */
+	private static final String SUPPLIER_SITE_DOCUMENTS_PATH = "/app:company_home/st:sites/cm:supplier-portal//*";
 
 	@Autowired
 	private SiteService siteService;
@@ -274,7 +275,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		visitSupplierPortalCatalogs(companyHome);
 
-		visitSupplierNotifications(systemNodeRef, projectTplNodeRef, scriptResources);
+		visitSupplierNotifications(systemNodeRef, scriptResources);
 
 		return ret;
 
@@ -525,34 +526,39 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * them on, and a rule already there (same name) is never touched again.
 	 *
 	 * <ul>
-	 * <li>documents expiring within 30 days: start an update project on their entity;</li>
+	 * <li>documents expiring within 30 days: start a supplier project on their entity;</li>
 	 * <li>validated supplier products referenced more than a year ago: same;</li>
-	 * <li>documents a supplier deposited outside a task: daily recap.</li>
+	 * <li>documents changed in the supplier portal site: daily recap, a plain mail.</li>
 	 * </ul>
+	 *
+	 * <p>The project started is the supplier template open to suppliers (see
+	 * {@code SupplierPortalService.findSupplierProjectTemplates}); the rules carry no
+	 * template of their own.</p>
 	 */
-	private void visitSupplierNotifications(NodeRef systemNodeRef, NodeRef projectTplNodeRef, List<NodeRef> scriptResources) {
+	private void visitSupplierNotifications(NodeRef systemNodeRef, List<NodeRef> scriptResources) {
 		NodeRef notificationFolder = notificationFolder(systemNodeRef);
 		if (notificationFolder == null) {
 			logger.warn("No notification folder, the supplier update rules are not created");
 			return;
 		}
 		NodeRef updateScript = scriptNamed(scriptResources, SUPPLIER_UPDATE_SCRIPT);
-		NodeRef recapScript = scriptNamed(scriptResources, SUPPLIER_DEPOSIT_RECAP_SCRIPT);
 
 		Map<QName, Serializable> expiry = baseRule("supplierDocumentExpiryNotification", "Supplier documents expiring: update projects",
 				"cm:content", "cm:to", DateFilterType.To, 30);
 		expiry.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + BeCPGModel.ASPECT_DOCUMENT_ASPECT + "\\\"\"}");
-		createSupplierRule(notificationFolder, expiry, updateScript, ScriptMode.EACH, projectTplNodeRef);
+		createSupplierRule(notificationFolder, expiry, updateScript, ScriptMode.EACH);
 
 		Map<QName, Serializable> review = baseRule("supplierPeriodicReviewNotification", "Supplier products to review: update projects",
 				"bcpg:product", "bcpg:certificateDate", DateFilterType.Before, 365);
 		review.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + PLMModel.ASPECT_SUPPLIERS + "\\\" AND +" + BECPG_MODEL_PREFIX
 				+ "productState:\\\"Valid\\\"\"}");
-		createSupplierRule(notificationFolder, review, updateScript, ScriptMode.EACH, projectTplNodeRef);
+		createSupplierRule(notificationFolder, review, updateScript, ScriptMode.EACH);
 
-		Map<QName, Serializable> recap = baseRule("supplierDepositRecapNotification", "Documents deposited by suppliers outside a task",
-				"cm:content", "bcpg:documentSupplierDepositDate", DateFilterType.From, 1);
-		createSupplierRule(notificationFolder, recap, recapScript, ScriptMode.ALL, null);
+		Map<QName, Serializable> recap = baseRule("supplierDocumentRecapNotification", "Documents changed in the supplier portal",
+				"cm:content", "cm:modified", DateFilterType.From, 1);
+		recap.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + BeCPGModel.ASPECT_DOCUMENT_ASPECT + "\\\" AND +PATH:\\\""
+				+ SUPPLIER_SITE_DOCUMENTS_PATH + "\\\"\"}");
+		createSupplierRule(notificationFolder, recap, null, null);
 	}
 
 	private NodeRef notificationFolder(NodeRef systemNodeRef) {
@@ -589,20 +595,23 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		return properties;
 	}
 
-	private void createSupplierRule(NodeRef notificationFolder, Map<QName, Serializable> properties, NodeRef script, ScriptMode scriptMode,
-			NodeRef projectTplNodeRef) {
+	private void createSupplierRule(NodeRef notificationFolder, Map<QName, Serializable> properties, NodeRef script, ScriptMode scriptMode) {
 		String name = (String) properties.get(ContentModel.PROP_NAME);
-		if ((script == null) || (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, name) != null)) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, name) != null) {
 			return;
 		}
-		properties.put(nrQName("nrScriptMode"), scriptMode.toString());
+		if (scriptMode != null) {
+			properties.put(nrQName("nrScriptMode"), scriptMode.toString());
+		}
 		NodeRef rule = nodeService
 				.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST, properties)
 				.getChildRef();
-		associationService.update(rule, nrQName("nrScript"), script);
-		associationService.update(rule, nrQName("nrProjectTpl"), projectTplNodeRef);
+		if (script != null) {
+			associationService.update(rule, nrQName("nrScript"), script);
+		}
 		NodeRef referencingMgr = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr);
 		associationService.update(rule, nrQName("nrNotificationAuthorities"), referencingMgr);
 	}
+
 
 }
