@@ -42,12 +42,12 @@
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="compoListDirect" id="9991">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{compoListProduct;STRING;/@compoListProduct},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{compoListProduct;STRING;/@compoListProduct},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{depthLevel;STRING;/@depthLevel}]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingListDirect" id="9992">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{casNumber;STRING;/@casNumber},{ceNumber;STRING;/@ceNumber},{ecNumber;STRING;/@ecNumber},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
         </oda-data-set>
     </data-sets>
     <styles>
@@ -418,6 +418,11 @@
             <property name="dataSet">compoListDirect</property>
             <list-property name="boundDataColumns">
                 <structure>
+                    <property name="name">depthLevel</property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
                     <property name="name">erpCode</property>
                     <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
                     <property name="dataType">string</property>
@@ -433,9 +438,32 @@
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
+                    <property name="name">compoListQtyTotal</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["compoListQty"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">compoListPerc</property>
+                    <expression name="expression" type="javascript">row["compoListQty"] != null &amp;&amp; row["compoListQtyTotal"] > 0 ? String(Math.round(row["compoListQty"] / row["compoListQtyTotal"] * 100000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
                     <property name="name">compoListUnit</property>
                     <expression name="expression" type="javascript">dataSetRow["compoListUnit"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">row["depthLevel"] == null || row["depthLevel"] == "" || row["depthLevel"] == "1"</expression>
                 </structure>
             </list-property>
             <column id="12271">
@@ -481,7 +509,7 @@
                     <cell id="12279">
                         <property name="style">becpg-cell-header</property>
                         <label id="12280">
-                            <text-property name="text" key="quantityProportion">Quantité / Proportion</text-property>
+                            <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
                         </label>
                     </cell>
                 </row>
@@ -503,7 +531,7 @@
                     <cell id="12286">
                         <property name="style">becpg-cell-data</property>
                         <data id="12287">
-                            <property name="resultSetColumn">compoListQty</property>
+                            <property name="resultSetColumn">compoListPerc</property>
                         </data>
                     </cell>
                 </row>
@@ -526,86 +554,46 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
+                    <property name="name">ingListFunctionality</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListFunctionality"] != null ? dataSetRow["ingListFunctionality"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">casNumber</property>
+                    <expression name="expression" type="javascript">dataSetRow["casNumber"] != null ? dataSetRow["casNumber"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ecOrEinecsNumber</property>
+                    <expression name="expression" type="javascript">(dataSetRow["ceNumber"] != null &amp;&amp; dataSetRow["ceNumber"] != "" ? dataSetRow["ceNumber"] : (dataSetRow["ecNumber"] != null ? dataSetRow["ecNumber"] : "")).replace(/\s*,\s*/g, ", ")</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
                     <property name="name">ingListQtyPerc</property>
                     <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"] != null ? String(Math.round(dataSetRow["ingListQtyPerc"] * 1000000) / 1000000) : ""</expression>
                     <property name="dataType">string</property>
                 </structure>
-                <structure>
-                    <property name="name">ingListIsGMO</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) : (dataSetRow["ingListIsGMO"] != null ? dataSetRow["ingListIsGMO"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ingListIsIonized</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) : (dataSetRow["ingListIsIonized"] != null ? dataSetRow["ingListIsIonized"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">auxTech</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">support</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ingListGeoOrigin</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"] != null ? dataSetRow["ingListGeoOrigin"] : ""</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ingListGeoTransfo</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"] != null ? dataSetRow["ingListGeoTransfo"] : ""</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ingListBioOrigin</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"] != null ? dataSetRow["ingListBioOrigin"] : ""</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">ingListClaims</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListClaims"] != null ? dataSetRow["ingListClaims"] : ""</expression>
-                    <property name="dataType">string</property>
-                </structure>
             </list-property>
-            <column id="12301">
-                <property name="width">18%</property>
+            <column id="13100">
+                <property name="width">30%</property>
             </column>
-            <column id="12302">
-                <property name="width">10%</property>
+            <column id="13101">
+                <property name="width">25%</property>
             </column>
-            <column id="12303">
-                <property name="width">8%</property>
+            <column id="13102">
+                <property name="width">15%</property>
             </column>
-            <column id="12304">
-                <property name="width">8%</property>
+            <column id="13103">
+                <property name="width">15%</property>
             </column>
-            <column id="12305">
-                <property name="width">10%</property>
-            </column>
-            <column id="12306">
-                <property name="width">8%</property>
-            </column>
-            <column id="12307">
-                <property name="width">10%</property>
-            </column>
-            <column id="12308">
-                <property name="width">10%</property>
-            </column>
-            <column id="12309">
-                <property name="width">9%</property>
-            </column>
-            <column id="12310">
-                <property name="width">9%</property>
+            <column id="13104">
+                <property name="width">15%</property>
             </column>
             <header>
                 <row id="12292">
                     <property name="style">becpg-chapter-header</property>
                     <cell id="12293">
-                        <property name="colSpan">10</property>
+                        <property name="colSpan">5</property>
                         <property name="style">becpg-chapter-header</property>
                         <label id="12294">
                             <property name="style">becpg-chapter-header</property>
@@ -616,132 +604,72 @@
                 <row id="13002">
                     <property name="height">8pt</property>
                     <cell id="13003">
-                        <property name="colSpan">10</property>
+                        <property name="colSpan">5</property>
                     </cell>
                 </row>
-                <row id="12311">
-                    <cell id="12312">
+                <row id="13115">
+                    <cell id="13105">
                         <property name="style">becpg-cell-header</property>
-                        <label id="12313">
+                        <label id="13106">
                             <text-property name="text" key="ingredient">Ingrédient</text-property>
                         </label>
                     </cell>
-                    <cell id="12314">
+                    <cell id="13107">
                         <property name="style">becpg-cell-header</property>
-                        <label id="12315">
+                        <label id="13108">
+                            <text-property name="text" key="functionality">Fonctionnalité</text-property>
+                        </label>
+                    </cell>
+                    <cell id="13109">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="13110">
+                            <text-property name="text" key="numberCAS">numéro CAS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="13111">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="13112">
+                            <text-property name="text" key="numCE">N° CE / EINECS</text-property>
+                        </label>
+                    </cell>
+                    <cell id="13113">
+                        <property name="style">becpg-cell-header</property>
+                        <label id="13114">
                             <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12316">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12317">
-                            <text-property name="text" key="gmo">OGM</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12318">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12319">
-                            <text-property name="text" key="ionization">Ionisation</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12320">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12321">
-                            <text-property name="text" key="processingAid">Auxiliaire techno.</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12322">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12323">
-                            <text-property name="text" key="carrier">Support</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12324">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12325">
-                            <text-property name="text" key="geographicOrigin">Origine géo.</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12326">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12327">
-                            <text-property name="text" key="transformationCountry">Pays de transformation</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12328">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12329">
-                            <text-property name="text" key="organicOrigin">Origine bio.</text-property>
-                        </label>
-                    </cell>
-                    <cell id="12330">
-                        <property name="style">becpg-cell-header</property>
-                        <label id="12331">
-                            <text-property name="text" key="claims">Allégations</text-property>
                         </label>
                     </cell>
                 </row>
             </header>
             <detail>
-                <row id="12332">
-                    <cell id="12333">
+                <row id="13126">
+                    <cell id="13116">
                         <property name="style">becpg-cell-data-left</property>
-                        <data id="12334">
+                        <data id="13117">
                             <property name="resultSetColumn">ingListIng</property>
                         </data>
                     </cell>
-                    <cell id="12335">
+                    <cell id="13118">
                         <property name="style">becpg-cell-data</property>
-                        <data id="12336">
+                        <data id="13119">
+                            <property name="resultSetColumn">ingListFunctionality</property>
+                        </data>
+                    </cell>
+                    <cell id="13120">
+                        <property name="style">becpg-cell-data</property>
+                        <data id="13121">
+                            <property name="resultSetColumn">casNumber</property>
+                        </data>
+                    </cell>
+                    <cell id="13122">
+                        <property name="style">becpg-cell-data</property>
+                        <data id="13123">
+                            <property name="resultSetColumn">ecOrEinecsNumber</property>
+                        </data>
+                    </cell>
+                    <cell id="13124">
+                        <property name="style">becpg-cell-data</property>
+                        <data id="13125">
                             <property name="resultSetColumn">ingListQtyPerc</property>
-                        </data>
-                    </cell>
-                    <cell id="12337">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12338">
-                            <property name="resultSetColumn">ingListIsGMO</property>
-                        </data>
-                    </cell>
-                    <cell id="12339">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12340">
-                            <property name="resultSetColumn">ingListIsIonized</property>
-                        </data>
-                    </cell>
-                    <cell id="12341">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12342">
-                            <property name="resultSetColumn">auxTech</property>
-                        </data>
-                    </cell>
-                    <cell id="12343">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12344">
-                            <property name="resultSetColumn">support</property>
-                        </data>
-                    </cell>
-                    <cell id="12345">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12346">
-                            <property name="resultSetColumn">ingListGeoOrigin</property>
-                        </data>
-                    </cell>
-                    <cell id="12347">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12348">
-                            <property name="resultSetColumn">ingListGeoTransfo</property>
-                        </data>
-                    </cell>
-                    <cell id="12349">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12350">
-                            <property name="resultSetColumn">ingListBioOrigin</property>
-                        </data>
-                    </cell>
-                    <cell id="12351">
-                        <property name="style">becpg-cell-data</property>
-                        <data id="12352">
-                            <property name="resultSetColumn">ingListClaims</property>
                         </data>
                     </cell>
                 </row>
