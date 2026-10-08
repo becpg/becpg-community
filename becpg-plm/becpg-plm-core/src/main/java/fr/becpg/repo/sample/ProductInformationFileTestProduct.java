@@ -144,6 +144,13 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String SUPPLIER_ACTIVES = "Alpine Cosmetic Ingredients";
 	private static final String SUPPLIER_FRAGRANCE = "Grasse Fragrance House";
 
+	/** Postal address of each supplier and of its plant, independent from the origin of the raw materials it sells. */
+	private static final Map<String, String> SUPPLIER_ADDRESSES = Map.of(
+			SUPPLIER_AQUA, "8 avenue de l'Industrie, 67000 Strasbourg, France",
+			SUPPLIER_OLEO, "145 chemin des Oliviers, 13100 Aix-en-Provence, France",
+			SUPPLIER_ACTIVES, "Industriestrasse 21, 6020 Innsbruck, Austria",
+			SUPPLIER_FRAGRANCE, "52 route de Cannes, 06130 Grasse, France");
+
 	private static final String HEAVY_METALS = "Heavy metals (as Pb)";
 	private static final String PPM = "ppm";
 	private static final String CFU_PER_G = "CFU/g";
@@ -369,11 +376,11 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	 * @return the created raw material
 	 */
 	private NodeRef createRawMaterial(RawMaterialSpec spec) {
-		NodeRef supplierPlant = getOrCreateLocatedCharact(spec.supplier() + PLANT_SUFFIX, PLMModel.TYPE_PLANT, spec.originName());
+		NodeRef supplierPlant = getOrCreateLocatedCharact(spec.supplier() + PLANT_SUFFIX, PLMModel.TYPE_PLANT, SUPPLIER_ADDRESSES.get(spec.supplier()));
 		RawMaterialData rawMaterial = RawMaterialData.build().withName(uniqueName(spec.name())).withLegalName(spec.name()).withQty(100d)
 				.withUnit(ProductUnit.kg).withIngList(createIngList(spec.ingredients()))
 				.withGeoOrigins(List.of(CharactTestHelper.getOrCreateGeo(nodeService, spec.originCode(), spec.originName())));
-		rawMaterial.setSuppliers(List.of(getOrCreateLocatedCharact(spec.supplier(), PLMModel.TYPE_SUPPLIER, spec.originName())));
+		rawMaterial.setSuppliers(List.of(getOrCreateLocatedCharact(spec.supplier(), PLMModel.TYPE_SUPPLIER, SUPPLIER_ADDRESSES.get(spec.supplier()))));
 		rawMaterial.setSupplierPlants(List.of(supplierPlant));
 		rawMaterial.setReportLocales(List.of(REPORT_LOCALE_ENGLISH));
 		addPhysicoChem(rawMaterial, new PhysicoChemSpec(HEAVY_METALS, PPM, 2d, null, 10d));
@@ -802,16 +809,16 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Gets or creates a supplier or a plant located in a country, in the destination folder.
+	 * Gets or creates a supplier or a plant with its address, in the destination folder.
 	 *
 	 * @param name the supplier or plant name
 	 * @param type the supplier or plant type
-	 * @param country the country, used as address
+	 * @param address the postal address
 	 * @return the supplier or plant
 	 */
-	private NodeRef getOrCreateLocatedCharact(String name, QName type, String country) {
+	private NodeRef getOrCreateLocatedCharact(String name, QName type, String address) {
 		NodeRef charact = getOrCreateCharact(name + RUN_SEPARATOR + runId, type);
-		nodeService.setProperty(charact, PROP_LOCATION_ADDRESS1, country);
+		nodeService.setProperty(charact, PROP_LOCATION_ADDRESS1, address);
 		return charact;
 	}
 }
