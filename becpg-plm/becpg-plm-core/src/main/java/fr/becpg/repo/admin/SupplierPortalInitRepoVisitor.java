@@ -13,6 +13,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -27,6 +28,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -111,6 +113,9 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Where the supplier portal files every supplier space, and so every supplier document. */
 	private static final String SUPPLIER_SITE_DOCUMENTS_PATH = "/app:company_home/st:sites/cm:supplier-portal//*";
 
+	/** Suppliers' accounts: the group a template is opened to. */
+	private static final String EXTERNAL_USER_GROUP = PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser;
+
 	@Autowired
 	private SiteService siteService;
 
@@ -128,6 +133,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private PermissionService permissionService;
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -269,6 +278,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			associationService.update(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST, documentLibraryNodeRef);
 		}
 
+		visitTemplateOpenToSuppliers(projectTplNodeRef);
+
 		visitDefaultRawMaterialSpecification(entityTplsNodeRef);
 
 		visitDefaultTechnicalSheetType(companyHome);
@@ -279,6 +290,34 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		return ret;
 
+	}
+
+	/**
+	 * <p>Opens the default referencing template to suppliers: {@code GROUP_ExternalUser} gets
+	 * Consumer on it, which is what lets a supplier account start it from the portal (see
+	 * {@code SupplierPortalService.findSupplierProjectTemplates}).</p>
+	 *
+	 * <p>Only written when the template carries no entry at all for that group. An administrator
+	 * who wants the template closed sets a denied permission for the group, and the visitor
+	 * leaves it alone from then on; removing the entry would only see it granted again.</p>
+	 *
+	 * @param projectTplNodeRef the supplier project template, null when there is none
+	 */
+	private void visitTemplateOpenToSuppliers(NodeRef projectTplNodeRef) {
+		if ((projectTplNodeRef == null) || hasEntryFor(projectTplNodeRef, EXTERNAL_USER_GROUP)) {
+			return;
+		}
+		permissionService.setPermission(projectTplNodeRef, EXTERNAL_USER_GROUP, PermissionService.CONSUMER, true);
+		logger.info("Supplier portal: opened the referencing project template " + projectTplNodeRef + " to suppliers");
+	}
+
+	private boolean hasEntryFor(NodeRef nodeRef, String authority) {
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+			if (!permission.isInherited() && authority.equals(permission.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
