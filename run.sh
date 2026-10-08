@@ -98,6 +98,53 @@ deploy_java(){
 	echo "Done. Classes reloaded via hotswap volume mounts."
 }
 
+DEV_CORE_MODULES="becpg-core becpg-project/becpg-project-core becpg-designer/becpg-designer-core becpg-plm/becpg-plm-core"
+DEV_TEST_MODULE=becpg-integration-runner
+DEV_TEST_JAR_DIR=becpg-integration-runner/target/becpg-test-core/extensions
+DEV_CORE_LIB=/usr/local/tomcat/webapps/alfresco/WEB-INF/lib
+
+# Rebuilds the core modules only (no Share, no image), swaps them into the running core container
+# under the exact file names the image already holds, then restarts that container alone.
+# Java code and classpath resources are covered; AMP config/web files still need build_start.
+deploy_dev(){
+	CONTAINER=$BECPG_VERSION_PROFILE-becpg-1
+	if [ "$(docker inspect -f '{{.State.Running}}' $CONTAINER 2>/dev/null)" != "true" ]; then
+		echo "Container $CONTAINER is not running, use './run.sh build_start' first."
+		return 1
+	fi
+	START=$(date +%s)
+
+	if [ -d becpg-enterprise ]; then
+		REACTOR_DIR=becpg-enterprise
+		MODULE_PREFIX=../
+	else
+		REACTOR_DIR=.
+		MODULE_PREFIX=
+	fi
+	PROJECTS=$(for m in $DEV_CORE_MODULES $DEV_TEST_MODULE; do printf '%s%s,' "$MODULE_PREFIX" "$m"; done)
+	(cd $REACTOR_DIR && $MVN_EXEC package -q $EXTRA_ENV -pl "${PROJECTS%,}" -am -DskipTests=true \
+		-Djacoco.skip=true -Dcheckstyle.skip=true) || return 1
+
+	JARS="$(for m in $DEV_CORE_MODULES; do ls -t $m/target/$(basename $m)-*.jar | head -1; done) $(ls -t $DEV_TEST_JAR_DIR/$DEV_TEST_MODULE-*-tests.jar | head -1)"
+	for JAR in $JARS; do
+		NAME=$(basename $JAR)
+		if ! docker exec $CONTAINER test -f $DEV_CORE_LIB/$NAME; then
+			echo "$NAME is not deployed in $CONTAINER (version changed?), use './run.sh build_start'."
+			return 1
+		fi
+	done
+	for JAR in $JARS; do
+		docker cp -q $JAR $CONTAINER:$DEV_CORE_LIB/$(basename $JAR)
+	done
+
+	docker restart $CONTAINER > /dev/null
+	echo "Jars swapped, waiting for $CONTAINER to answer..."
+	until [ "$(curl -s -o /dev/null -w '%{http_code}' -m 2 http://localhost:8080/alfresco/service/becpg/check)" = "200" ]; do
+		sleep 1
+	done
+	echo "Core ready in $(( $(date +%s) - START ))s"
+}
+
 deploy_fast(){
 
 	#becpg-amp
@@ -309,6 +356,9 @@ case "$1" in
   deploy_fast)
     deploy_fast
     ;;  
+  deploy_dev)
+    deploy_dev
+    ;;
   purge)
     purge
     ;;
@@ -331,5 +381,5 @@ visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
   *)
-    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex|upload_test}"
+    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_dev|deploy_java [module]|visualvm|reindex|upload_test}"
 esac
