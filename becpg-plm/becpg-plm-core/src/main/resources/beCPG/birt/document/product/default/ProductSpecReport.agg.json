@@ -1,7 +1,7 @@
 {
   "header": {
     "logo": "becpg-logo.png",
-    "title": "SLabel.specificationSheet",
+    "title": "becpg.report.productspec.title",
     "subtitle": "${legalName}",
     "date": "${cm:modified?date}",
     "startNumberingAt": 1
@@ -36,12 +36,12 @@
   "annexes": [
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
-      "title": "SLabel.annexRawMaterials",
+      "title": "becpg.report.productspec.annex.rawmaterials.title",
       "scope": "COMPO_CHILDREN",
       "recurse": true,
       "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
       "componentHeading": true,
-      "emptyPlaceholder": "SLabel.annexRawMaterialsEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.rawmaterials.placeholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
       "required": true,
@@ -49,11 +49,11 @@
     },
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
-      "title": "SLabel.annexPrimaryPackaging",
+      "title": "becpg.report.productspec.annex.primarypackaging.title",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
       "componentHeading": true,
-      "emptyPlaceholder": "SLabel.annexPrimaryPackagingEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.primarypackaging.placeholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
       "required": true,
@@ -61,11 +61,11 @@
     },
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
-      "title": "SLabel.annexSecondaryPackaging",
+      "title": "becpg.report.productspec.annex.secondarypackaging.title",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Secondary",
       "componentHeading": true,
-      "emptyPlaceholder": "SLabel.annexSecondaryPackagingEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.secondarypackaging.placeholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
       "required": true,
@@ -73,28 +73,28 @@
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=Photos",
-      "title": "SLabel.annexPhotos",
+      "title": "becpg.report.productspec.annex.photos.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.annexPhotosEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.photos.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf", "image/png", "image/jpeg"]
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=QualityDocuments",
-      "title": "SLabel.annexQualityDocuments",
+      "title": "becpg.report.productspec.annex.qualitydocuments.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.annexQualityDocumentsEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.qualitydocuments.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=Subcontractors",
-      "title": "SLabel.annexSubcontractors",
+      "title": "becpg.report.productspec.annex.subcontractors.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.annexSubcontractorsEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.productspec.annex.subcontractors.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     }

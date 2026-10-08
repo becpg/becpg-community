@@ -6918,7 +6918,7 @@ dataSetRow["name"]
                 <cell id="103">
                     <label id="104">
                         <property name="style">toc-header</property>
-                        <text-property name="text" key="SLabel.tableOfContents">TABLE OF CONTENT</text-property>
+                        <text-property name="text" key="becpg.report.productspec.toc.title">TABLE OF CONTENT</text-property>
                     </label>
                 </cell>
             </row>
@@ -6937,7 +6937,7 @@ dataSetRow["name"]
                 <cell id="204">
                     <label id="205">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.productName">TECHNICAL SPECIFICATIONS of the ITEM</text-property>
+                        <text-property name="text" key="becpg.report.productspec.summary.title">TECHNICAL SPECIFICATIONS of the ITEM</text-property>
                     </label>
                 </cell>
                 <cell id="206">
@@ -6953,7 +6953,7 @@ dataSetRow["name"]
                 <cell id="209">
                     <label id="210">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexRawMaterials">ANNEX 1: TECHNICAL SPECIFICATIONS – RAW MATERIALS</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.rawmaterials.title">ANNEX 1: TECHNICAL SPECIFICATIONS – RAW MATERIALS</text-property>
                     </label>
                 </cell>
                 <cell id="211">
@@ -6968,7 +6968,7 @@ dataSetRow["name"]
                 <cell id="214">
                     <label id="215">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexPrimaryPackaging">ANNEX 2: TECHNICAL SPECIFICATIONS – PRIMARY PACKAGING</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.primarypackaging.title">ANNEX 2: TECHNICAL SPECIFICATIONS – PRIMARY PACKAGING</text-property>
                     </label>
                 </cell>
                 <cell id="216">
@@ -6983,7 +6983,7 @@ dataSetRow["name"]
                 <cell id="219">
                     <label id="220">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexSecondaryPackaging">ANNEX 3: TECHNICAL SPECIFICATIONS – SECONDARY PACKAGING</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.secondarypackaging.title">ANNEX 3: TECHNICAL SPECIFICATIONS – SECONDARY PACKAGING</text-property>
                     </label>
                 </cell>
                 <cell id="221">
@@ -6998,7 +6998,7 @@ dataSetRow["name"]
                 <cell id="224">
                     <label id="225">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexPhotos">ANNEX 4: PHOTOS</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.photos.title">ANNEX 4: PHOTOS</text-property>
                     </label>
                 </cell>
                 <cell id="226">
@@ -7013,7 +7013,7 @@ dataSetRow["name"]
                 <cell id="229">
                     <label id="230">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexQualityDocuments">ANNEX 5: QUALITY DOCUMENTS</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.qualitydocuments.title">ANNEX 5: QUALITY DOCUMENTS</text-property>
                     </label>
                 </cell>
                 <cell id="231">
@@ -7028,7 +7028,7 @@ dataSetRow["name"]
                 <cell id="234">
                     <label id="235">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.annexSubcontractors">ANNEX 6: LIST OF THE AUTHORISED SUBCONTRACTOR</text-property>
+                        <text-property name="text" key="becpg.report.productspec.annex.subcontractors.title">ANNEX 6: LIST OF THE AUTHORISED SUBCONTRACTOR</text-property>
                     </label>
                 </cell>
                 <cell id="236">

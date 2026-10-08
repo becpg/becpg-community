@@ -186,7 +186,7 @@ c + v;</expression>
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text" key="SLabel.pifReportTitle">DOSSIER D'INFORMATION PRODUIT (DIP)</text-property>
+                                <text-property name="text" key="becpg.report.pif.title">DOSSIER D'INFORMATION PRODUIT (DIP)</text-property>
                             </label>
                             <data id="3333">
                                 <property name="style">becpg-header-title</property>
@@ -247,7 +247,7 @@ c + v;</expression>
                                         <property name="style">becpg-meta-cell-label</property>
                                         <property name="textAlign">right</property>
                                          <label id="3406">
-                                             <text-property name="text" key="created">Créé le :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.created">Créé le :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="7261">
@@ -276,7 +276,7 @@ c + v;</expression>
                                          <property name="style">becpg-meta-cell-label</property>
                                          <property name="textAlign">right</property>
                                          <label id="1520">
-                                             <text-property name="text" key="modified">Modifié le :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.modified">Modifié le :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="1516">
@@ -307,7 +307,7 @@ c + v;</expression>
                                          <property name="style">becpg-meta-cell-label</property>
                                          <property name="textAlign">right</property>
                                          <label id="1521">
-                                             <text-property name="text" key="codeWithColon">Code beCPG :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.code">Code beCPG :</text-property>
                                          </label>
                                      </cell>
                                      <cell id="1517">
@@ -333,7 +333,7 @@ c + v;</expression>
                                          <property name="style">becpg-meta-cell-label</property>
                                          <property name="textAlign">right</property>
                                          <label id="788">
-                                             <text-property name="text" key="version">Version :</text-property>
+                                             <text-property name="text" key="becpg.report.pif.header.version">Version :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="789">
@@ -370,7 +370,7 @@ c + v;</expression>
                     <property name="style">becpg-chapter-header</property>
                     <label id="104">
                         <property name="style">becpg-chapter-header</property>
-                        <text-property name="text" key="SLabel.tableOfContents">TABLE DES MATIÈRES</text-property>
+                        <text-property name="text" key="becpg.report.pif.toc.title">TABLE DES MATIÈRES</text-property>
                     </label>
                 </cell>
             </row>
@@ -392,7 +392,7 @@ c + v;</expression>
                 <cell id="204">
                     <label id="205">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
+                        <text-property name="text" key="becpg.report.pif.summary.title">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
                     </label>
                 </cell>
                 <cell id="206">
@@ -410,7 +410,7 @@ c + v;</expression>
                 <cell id="209">
                     <label id="210">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.compoqualiquanti.title">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
                     </label>
                 </cell>
                 <cell id="211">
@@ -428,7 +428,7 @@ c + v;</expression>
                 <cell id="214">
                     <label id="215">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.rawmaterials.title">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
                     </label>
                 </cell>
                 <cell id="216">
@@ -446,7 +446,7 @@ c + v;</expression>
                 <cell id="219">
                     <label id="220">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.primarypackaging.title">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT</text-property>
                     </label>
                 </cell>
                 <cell id="221">
@@ -464,7 +464,7 @@ c + v;</expression>
                 <cell id="224">
                     <label id="225">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT (DSE / CPSR)</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.cpsr.title">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT (DSE / CPSR)</text-property>
                     </label>
                 </cell>
                 <cell id="226">
@@ -482,7 +482,7 @@ c + v;</expression>
                 <cell id="229">
                     <label id="230">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.stabilitymicro.title">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
                     </label>
                 </cell>
                 <cell id="231">
@@ -500,7 +500,7 @@ c + v;</expression>
                 <cell id="234">
                     <label id="235">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.claimefficacy.title">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
                     </label>
                 </cell>
                 <cell id="236">
@@ -518,7 +518,7 @@ c + v;</expression>
                 <cell id="239">
                     <label id="240">
                         <property name="style">becpg-toc-title</property>
-                        <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATIONS DE CONFORMITÉ</text-property>
+                        <text-property name="text" key="becpg.report.pif.annex.gmpanimaltesting.title">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATIONS DE CONFORMITÉ</text-property>
                     </label>
                 </cell>
                 <cell id="241">
@@ -606,7 +606,7 @@ c + v;</expression>
                                     <property name="style">becpg-chapter-header</property>
                                     <label id="308">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="SLabel.pifProductName">INFORMATIONS PRODUIT</text-property>
+                                        <text-property name="text" key="becpg.report.pif.summary.title">INFORMATIONS PRODUIT</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -620,7 +620,7 @@ c + v;</expression>
                                 <cell id="313">
                                      <label id="314">
                                          <property name="style">UnderlinedSubTitle</property>
-                                         <text-property name="text" key="SLabel.pifSection1Title">DÉSIGNATION</text-property>
+                                         <text-property name="text" key="becpg.report.pif.section.identity">DÉSIGNATION</text-property>
                                      </label>
                                  </cell>
                              </row>
@@ -639,7 +639,7 @@ c + v;</expression>
                                  <cell id="324">
                                      <label id="325">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelCommercialName">Dénomination commerciale :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.commercialname">Dénomination commerciale :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="326">
@@ -654,7 +654,7 @@ c + v;</expression>
                                  <cell id="329">
                                      <label id="330">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelCode">Code &amp; Version :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.code">Code &amp; Version :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="331">
@@ -669,7 +669,7 @@ c + v;</expression>
                                  <cell id="334">
                                      <label id="335">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelLegalName">Dénomination légale :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.legalname">Dénomination légale :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="336">
@@ -684,7 +684,7 @@ c + v;</expression>
                                  <cell id="339">
                                      <label id="340">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelEan">GTIN/EAN UVC :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.ean">GTIN/EAN UVC :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="341">
@@ -699,7 +699,7 @@ c + v;</expression>
                                  <cell id="344">
                                      <label id="345">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelDescription">Description :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.description">Description :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="346">
@@ -714,7 +714,7 @@ c + v;</expression>
                                  <cell id="349">
                                      <label id="350">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelIntendedUse">Usage prévu &amp; Conseils d'emploi :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.intendeduse">Usage prévu &amp; Conseils d'emploi :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="351">
@@ -729,7 +729,7 @@ c + v;</expression>
                                  <cell id="354">
                                      <label id="355">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelHierarchy">Catégorie de produit :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.hierarchy">Catégorie de produit :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="356">
@@ -750,7 +750,7 @@ c + v;</expression>
                                  <cell id="363">
                                      <label id="364">
                                          <property name="style">UnderlinedSubTitle</property>
-                                         <text-property name="text" key="SLabel.pifSection2Title">INFORMATIONS DE CONSOMMATION ET CONSERVATION</text-property>
+                                         <text-property name="text" key="becpg.report.pif.section.regulatory">INFORMATIONS DE CONSOMMATION ET CONSERVATION</text-property>
                                      </label>
                                  </cell>
                              </row>
@@ -769,7 +769,7 @@ c + v;</expression>
                                  <cell id="374">
                                      <label id="375">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelStorageConditions">Conditions de stockage :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.storageconditions">Conditions de stockage :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="376">
@@ -784,7 +784,7 @@ c + v;</expression>
                                  <cell id="379">
                                      <label id="380">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelPrecautions">Précautions d'emploi :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.precautions">Précautions d'emploi :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="381">
@@ -799,7 +799,7 @@ c + v;</expression>
                                  <cell id="384">
                                      <label id="385">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelProductState">Statut du produit :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.productstate">Statut du produit :</text-property>
                                      </label>
                                  </cell>
                                  <cell id="386">
@@ -814,7 +814,7 @@ c + v;</expression>
                                  <cell id="389">
                                      <label id="390">
                                          <property name="style">rowHeaderUpper</property>
-                                         <text-property name="text" key="SLabel.pifLabelModified">Dernière modification :</text-property>
+                                         <text-property name="text" key="becpg.report.pif.label.modified">Dernière modification :</text-property>
                                     </label>
                                 </cell>
                                 <cell id="391">

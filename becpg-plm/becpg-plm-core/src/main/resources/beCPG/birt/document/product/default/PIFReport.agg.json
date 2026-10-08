@@ -1,7 +1,7 @@
 {
   "header": {
     "logo": "becpg-logo.png",
-    "title": "SLabel.pifReportTitle",
+    "title": "becpg.report.pif.title",
     "subtitle": "${legalName}",
     "date": "${cm:modified?date}",
     "startNumberingAt": 1
@@ -36,16 +36,16 @@
   "annexes": [
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=CompoQualiQuanti",
-      "title": "SLabel.pifAnnexCompoQualiQuanti",
+      "title": "becpg.report.pif.annex.compoqualiquanti.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.pif.annex.compoqualiquanti.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
-      "title": "SLabel.pifAnnexRawMaterials",
+      "title": "becpg.report.pif.annex.rawmaterials.title",
       "scope": "COMPO_CHILDREN",
       "recurse": true,
       "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
@@ -57,7 +57,7 @@
     },
     {
       "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
-      "title": "SLabel.pifAnnexPrimaryPackaging",
+      "title": "becpg.report.pif.annex.primarypackaging.title",
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
       "componentHeading": true,
@@ -68,37 +68,37 @@
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=CPSR",
-      "title": "SLabel.pifAnnexCPSR",
+      "title": "becpg.report.pif.annex.cpsr.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexCPSREmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.pif.annex.cpsr.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=StabilityMicro",
-      "title": "SLabel.pifAnnexStabilityMicro",
+      "title": "becpg.report.pif.annex.stabilitymicro.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexStabilityMicroEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.pif.annex.stabilitymicro.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=ClaimEfficacy",
-      "title": "SLabel.pifAnnexClaimEfficacy",
+      "title": "becpg.report.pif.annex.claimefficacy.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexClaimEfficacyEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.pif.annex.claimefficacy.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
       "annexIdResolver": "bcpg:documentTypeRef|cm:name=GMPAnimalTesting",
-      "title": "SLabel.pifAnnexGMPAnimalTesting",
+      "title": "becpg.report.pif.annex.gmpanimaltesting.title",
       "scope": "ENTITY",
       "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexGMPAnimalTestingEmptyPlaceholder",
+      "emptyPlaceholder": "becpg.report.pif.annex.gmpanimaltesting.placeholder",
       "required": true,
       "mimeTypes": ["application/pdf"]
     }
