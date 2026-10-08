@@ -68,6 +68,9 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String TEST_CONCURRENT_SUPPLIER_NAME = "Junit Supplier concurrent project test";
 	private static final String TEST_CONCURRENT_SUPPLIER_PLANT_NAME = "Junit Supplier concurrent project plant test";
 	private static final String PREVENT_CONCURRENT_PROJECTS = "beCPG.sendToSupplier.preventConcurrentProjects";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_NAME = "Junit Supplier update request test";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME = "Junit Supplier update request plant test";
+	private static final String TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME = "Junit Supplier update request other test";
 
 	@Autowired
 	private SupplierPortalService supplierPortalService;
@@ -106,6 +109,37 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 		assertNotNull("The project works on a branch, it must still be found from the original",
 				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+	}
+
+	@Test
+	public void testSupplierAccountCanRequestTheUpdateOfItsSheetOnce() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+		// `createSupplierAccount` does not link an account that already exists: link it here.
+		inWriteTx(() -> {
+			associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(supplierAccountNodeRef));
+			return null;
+		});
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		NodeRef projectNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "New production site"));
+
+		assertNotNull("The request starts a supplier project", projectNodeRef);
+		assertEquals("The project carries the supplier's reason", true, inReadTx(() -> String.valueOf(
+				nodeService.getProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION)).contains("New production site")));
+		assertThrows("A second request while the first is open is refused", IllegalStateException.class,
+				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "Again")));
+	}
+
+	@Test
+	public void testUpdateRequestIsRefusedToAnAccountOfAnotherSupplier() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME);
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierAccount(createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME), createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, "Not mine")));
 	}
 
 	@Test

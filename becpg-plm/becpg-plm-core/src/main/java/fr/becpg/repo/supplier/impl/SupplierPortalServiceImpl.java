@@ -18,7 +18,9 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -45,6 +47,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.admin.SupplierPortalInitRepoVisitor;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.authentication.SecurePasswordGenerator;
@@ -60,6 +63,7 @@ import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.supplier.SupplierPortalPolicy;
 import fr.becpg.repo.supplier.SupplierPortalService;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -135,6 +139,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	@Autowired
+	private CommentService commentService;
+
 	/**
 	 * <p>projectNameTpl.</p>
 	 *
@@ -192,6 +199,58 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			}
 		}
 		return null;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public NodeRef requestSupplierUpdate(NodeRef entityNodeRef, String reason) {
+		if ((reason == null) || reason.isBlank()) {
+			throw new IllegalArgumentException(I18NUtil.getMessage("message.supplier-update.reason-missing"));
+		}
+		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+			throw new IllegalArgumentException(I18NUtil.getMessage("message.supplier-update.working-copy"));
+		}
+		String user = AuthenticationUtil.getFullyAuthenticatedUser();
+
+		return AuthenticationUtil.runAsSystem(() -> {
+			NodeRef supplierNodeRef = checkSupplierNodeRef(entityNodeRef, true);
+			List<NodeRef> accounts = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			NodeRef caller = personService.getPersonOrNull(user);
+			if ((caller == null) || !accounts.contains(caller)) {
+				throw new AccessDeniedException(I18NUtil.getMessage("message.supplier-update.not-account"));
+			}
+			String openProject = findOpenSupplierProject(entityNodeRef);
+			if (openProject != null) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier-project.already-open", openProject));
+			}
+			NodeRef templateNodeRef = getUpdateRequestProjectTemplate();
+			if (templateNodeRef == null) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier-update.no-template"));
+			}
+
+			NodeRef projectNodeRef = createSupplierProject(entityNodeRef, templateNodeRef, accounts);
+			String text = I18NUtil.getMessage("message.supplier-update.comment", user, reason.strip());
+			nodeService.setProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION, text);
+			commentService.createComment(projectNodeRef, "", text, false);
+			return projectNodeRef;
+		});
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public NodeRef getUpdateRequestProjectTemplate() {
+		String configured = systemConfigurationService.confValue("beCPG.supplierPortal.updateRequest.projectTemplate");
+		if ((configured != null) && NodeRef.isNodeRef(configured.trim())) {
+			NodeRef templateNodeRef = new NodeRef(configured.trim());
+			if (nodeService.exists(templateNodeRef)) {
+				return templateNodeRef;
+			}
+			logger.warn("beCPG.supplierPortal.updateRequest.projectTemplate names a missing node, falling back to the standard template: "
+					+ configured);
+		}
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+				.withAspect(PLMModel.ASPECT_SUPPLIERS)
+				.andPropEquals(ContentModel.PROP_NAME, I18NUtil.getMessage(SupplierPortalInitRepoVisitor.SUPPLIER_PJT_TPL_NAME)).inDB().singleValue();
 	}
 
 	/** {@inheritDoc} */

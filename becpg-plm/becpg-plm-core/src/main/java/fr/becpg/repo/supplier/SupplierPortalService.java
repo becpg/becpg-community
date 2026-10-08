@@ -34,6 +34,32 @@ public interface SupplierPortalService {
 	 * @return the name of the first open project found, or null when there is none
 	 */
 	String findOpenSupplierProject(NodeRef entityNodeRef);
+
+	/**
+	 * A supplier asks for the update of one of its validated sheets, or of its
+	 * own supplier record: starts the supplier project on it, exactly as « Send
+	 * to supplier » does, with the reason written on the project.
+	 *
+	 * The caller must be one of the supplier's accounts; the entity must not be
+	 * a working copy, and no supplier project may already be open on it.
+	 *
+	 * @param entityNodeRef the validated entity, or the supplier itself
+	 * @param reason why the supplier asks, shown to the quality team
+	 * @return the project created
+	 * @throws org.alfresco.repo.security.permissions.AccessDeniedException when the caller is not an account of the supplier
+	 * @throws IllegalStateException when a supplier project is already open on the entity
+	 * @throws IllegalArgumentException when the entity is a working copy or the reason is blank
+	 */
+	NodeRef requestSupplierUpdate(NodeRef entityNodeRef, String reason);
+
+	/**
+	 * The project template a supplier's update request starts:
+	 * {@code beCPG.supplierPortal.updateRequest.projectTemplate} when it names an
+	 * existing node, the standard supplier referencing template otherwise.
+	 *
+	 * @return the template, or null when neither exists
+	 */
+	NodeRef getUpdateRequestProjectTemplate();
 	
 	/**
 	 * <p>getSupplierNodeRef.</p>
