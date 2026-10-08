@@ -101,6 +101,33 @@ parts.join(" / ");</expression>
             <property name="dataSource">DataXml</property>
             <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioLists/microbioList]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblMaxi;DOUBLE;/@mblMaxi},{mblUnit;STRING;/@mblUnit},{mblTextCriteria;STRING;/@mblTextCriteria}]]></xml-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifIngLabeling" id="464">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">illValueToShow</property>
+                    <expression name="expression">row["illManualValue"] != null &amp;&amp; row["illManualValue"] != "" ? row["illManualValue"] : row["illValue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{languageCode;STRING;/@languageCode},{illValue;STRING;/illValue},{illManualValue;STRING;/illManualValue}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifClaims" id="465">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">claimValueText</property>
+                    <expression name="expression">row["lclClaimValueTranslation"] != null &amp;&amp; row["lclClaimValueTranslation"] != "" ? row["lclClaimValueTranslation"] : row["lclClaimValue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">percentClaimText</property>
+                    <expression name="expression">row["lclPercentClaim"] != null ? String(Math.round(row["lclPercentClaim"] * 1000) / 1000) : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclLabelClaim;STRING;/@lclLabelClaim},{lclClaimValue;STRING;/@lclClaimValue},{lclClaimValueTranslation;STRING;/@lclClaimValueTranslation},{lclPercentClaim;DOUBLE;/@lclPercentClaim}]]></xml-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
@@ -1513,6 +1540,176 @@ parts.join(" / ");</expression>
                                                  <data id="601">
                                                      <property name="resultSetColumn">mblTextCriteria</property>
                                                  </data>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
+
+                         <!-- Section 5: LABELING AND CLAIMS -->
+                         <grid id="650">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="651"/>
+                             <row id="652">
+                                 <cell id="653">
+                                     <label id="654">
+                                         <property name="style">UnderlinedSubTitle</property>
+                                         <text-property name="text" key="becpg.report.pif.section.labeling">5. LABELING AND CLAIMS</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <grid id="660">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="661"/>
+                             <row id="662">
+                                 <property name="style">becpg-chapter-header</property>
+                                 <cell id="663">
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="664">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.inci">INGREDIENTS LIST (INCI)</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <table id="670">
+                             <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
+                             <property name="dataSet">pifIngLabeling</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">languageCode</property>
+                                     <expression name="expression" type="javascript">dataSetRow["languageCode"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">illValueToShow</property>
+                                     <expression name="expression" type="javascript">dataSetRow["illValueToShow"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <list-property name="filter">
+                                 <structure>
+                                     <property name="operator">is-true</property>
+                                     <expression name="expr" type="javascript">row["languageCode"] != null &amp;&amp; row["languageCode"].toLowerCase() == reportContext.getLocale().toString().toLowerCase()</expression>
+                                 </structure>
+                             </list-property>
+                             <column id="671"/>
+                             <detail>
+                                 <row id="672">
+                                     <cell id="673">
+                                         <property name="style">becpg-cell-data-left</property>
+                                         <text id="674">
+                                             <property name="contentType">html</property>
+                                             <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["illValueToShow"]</VALUE-OF>]]></text-property>
+                                         </text>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
+
+                         <grid id="700">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="701"/>
+                             <row id="702">
+                                 <property name="style">becpg-chapter-header</property>
+                                 <cell id="703">
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="704">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.claims">CLAIMED EFFECTS</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <table id="710">
+                             <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
+                             <property name="dataSet">pifClaims</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">lclLabelClaim</property>
+                                     <expression name="expression" type="javascript">dataSetRow["lclLabelClaim"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">lclClaimValue</property>
+                                     <expression name="expression" type="javascript">dataSetRow["lclClaimValue"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">claimValueText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["claimValueText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">percentClaimText</property>
+                                     <expression name="expression" type="javascript">dataSetRow["percentClaimText"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <list-property name="filter">
+                                 <structure>
+                                     <property name="operator">is-true</property>
+                                     <expression name="expr" type="javascript">row["lclClaimValue"] == "true" || row["lclClaimValue"] == "certified" || row["lclClaimValue"] == "suitable"</expression>
+                                 </structure>
+                             </list-property>
+                             <column id="711">
+                                 <property name="width">60%</property>
+                             </column>
+                             <column id="712">
+                                 <property name="width">20%</property>
+                             </column>
+                             <column id="713">
+                                 <property name="width">20%</property>
+                             </column>
+                             <header>
+                                 <row id="714">
+                                     <cell id="715">
+                                         <property name="style">becpg-cell-header</property>
+                                         <label id="716">
+                                             <text-property name="text" key="becpg.report.pif.label.claim">Claim</text-property>
+                                         </label>
+                                     </cell>
+                                     <cell id="717">
+                                         <property name="style">becpg-cell-header</property>
+                                         <label id="718">
+                                             <text-property name="text" key="becpg.report.pif.label.claimvalue">Status</text-property>
+                                         </label>
+                                     </cell>
+                                     <cell id="719">
+                                         <property name="style">becpg-cell-header</property>
+                                         <label id="720">
+                                             <text-property name="text" key="becpg.report.pif.label.percentclaim">Claimed %</text-property>
+                                         </label>
+                                     </cell>
+                                 </row>
+                             </header>
+                             <detail>
+                                 <row id="721">
+                                     <cell id="722">
+                                         <property name="style">becpg-cell-dynamic-header-left</property>
+                                         <data id="723">
+                                             <property name="resultSetColumn">lclLabelClaim</property>
+                                         </data>
+                                     </cell>
+                                     <cell id="724">
+                                         <property name="style">becpg-cell-data-center</property>
+                                         <data id="725">
+                                             <property name="resultSetColumn">claimValueText</property>
+                                         </data>
+                                     </cell>
+                                     <cell id="726">
+                                         <property name="style">becpg-cell-data-center</property>
+                                         <data id="727">
+                                             <property name="resultSetColumn">percentClaimText</property>
+                                         </data>
                                      </cell>
                                  </row>
                              </detail>
