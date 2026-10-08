@@ -144,8 +144,6 @@ parts.join(" / ");</expression>
             <property name="fontWeight">bold</property>
             <property name="color">#FFFFFF</property>
             <property name="textAlign">center</property>
-            <property name="paddingTop">5pt</property>
-            <property name="paddingBottom">5pt</property>
         </style>
         <style name="UnderlinedSubTitle" id="6">
             <property name="fontFamily">"arial"</property>
@@ -195,6 +193,100 @@ parts.join(" / ");</expression>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
             <property name="borderBottomColor">#E0E0E0</property>
+        </style>
+        <style name="becpg-cell-header" id="620">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">center</property>
+            <property name="verticalAlign">middle</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+        </style>
+        <style name="becpg-cell-dynamic-header-left" id="621">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+        </style>
+        <style name="becpg-cell-data-left" id="622">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">left</property>
+            <property name="verticalAlign">middle</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+        </style>
+        <style name="becpg-cell-data-center" id="623">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+            <property name="verticalAlign">middle</property>
+            <property name="paddingLeft">3pt</property>
+            <property name="paddingRight">3pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
         </style>
     </styles>
     <page-setup>
@@ -1019,8 +1111,25 @@ parts.join(" / ");</expression>
                              </row>
                          </grid>
 
+                         <grid id="630">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="631"/>
+                             <row id="632">
+                                 <property name="style">becpg-chapter-header</property>
+                                 <cell id="633">
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="634">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.plants">MANUFACTURING SITES</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
                          <table id="480">
                              <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
                              <property name="dataSet">pifPlants</property>
                              <list-property name="boundDataColumns">
                                  <structure>
@@ -1051,23 +1160,20 @@ parts.join(" / ");</expression>
                              <header>
                                  <row id="484">
                                      <cell id="485">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="486">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.plant">Site de fabrication :</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="487">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="488">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.plantaddress">Adresse :</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="489">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="490">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.plantcertifications">Certifications :</text-property>
                                                  </label>
                                      </cell>
@@ -1076,26 +1182,42 @@ parts.join(" / ");</expression>
                              <detail>
                                  <row id="491">
                                      <cell id="492">
+                                                 <property name="style">becpg-cell-dynamic-header-left</property>
                                                  <data id="493">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">name</property>
                                                  </data>
                                      </cell>
                                      <cell id="494">
+                                                 <property name="style">becpg-cell-data-left</property>
                                                  <data id="495">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">locationAddress1</property>
                                                  </data>
                                      </cell>
                                      <cell id="496">
+                                                 <property name="style">becpg-cell-data-left</property>
                                                  <data id="497">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">plantCertifications</property>
                                                  </data>
                                      </cell>
                                  </row>
                              </detail>
                          </table>
+
+                         <grid id="640">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="641"/>
+                             <row id="642">
+                                 <property name="style">becpg-chapter-header</property>
+                                 <cell id="643">
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="644">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.process">MANUFACTURING PROCESS</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
 
                          <table id="500">
                              <property name="width">100%</property>
@@ -1118,10 +1240,9 @@ parts.join(" / ");</expression>
                              <header>
                                  <row id="502">
                                      <cell id="503">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="504">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
-                                                     <text-property name="text" key="becpg.report.pif.label.processsteps">Étapes du procédé de fabrication :</text-property>
+                                                     <text-property name="text" key="becpg.report.pif.label.step">Étapes du procédé de fabrication :</text-property>
                                                  </label>
                                      </cell>
                                  </row>
@@ -1129,8 +1250,8 @@ parts.join(" / ");</expression>
                              <detail>
                                  <row id="505">
                                      <cell id="506">
+                                                 <property name="style">becpg-cell-data-left</property>
                                                  <data id="507">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">plStep</property>
                                                  </data>
                                      </cell>
@@ -1155,21 +1276,23 @@ parts.join(" / ");</expression>
 
                          <grid id="520">
                              <property name="width">100%</property>
-                             <property name="marginTop">6pt</property>
+                             <property name="marginTop">10pt</property>
                              <column id="521"/>
                              <row id="522">
+                                 <property name="style">becpg-chapter-header</property>
                                  <cell id="523">
-                                                 <label id="524">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
-                                                     <text-property name="text" key="becpg.report.pif.label.physicochem">Physico-chemical characteristics:</text-property>
-                                                 </label>
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="524">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.physicochem">PHYSICO-CHEMICAL CHARACTERISTICS</text-property>
+                                     </label>
                                  </cell>
                              </row>
                          </grid>
 
                          <table id="530">
                              <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
                              <property name="dataSet">pifPhysicoChems</property>
                              <list-property name="boundDataColumns">
                                  <structure>
@@ -1216,37 +1339,32 @@ parts.join(" / ");</expression>
                              <header>
                                  <row id="546">
                                      <cell id="536">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="537">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.characteristic">Characteristic</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="538">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="539">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.value">Value</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="540">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="541">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.unit">Unit</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="542">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="543">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.mini">Min</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="544">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="545">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.maxi">Max</text-property>
                                                  </label>
                                      </cell>
@@ -1255,32 +1373,32 @@ parts.join(" / ");</expression>
                              <detail>
                                  <row id="557">
                                      <cell id="547">
+                                                 <property name="style">becpg-cell-dynamic-header-left</property>
                                                  <data id="548">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">pclPhysicoChem</property>
                                                  </data>
                                      </cell>
                                      <cell id="549">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="550">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">valueText</property>
                                                  </data>
                                      </cell>
                                      <cell id="551">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="552">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">pclUnit</property>
                                                  </data>
                                      </cell>
                                      <cell id="553">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="554">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">miniText</property>
                                                  </data>
                                      </cell>
                                      <cell id="555">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="556">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">maxiText</property>
                                                  </data>
                                      </cell>
@@ -1290,21 +1408,23 @@ parts.join(" / ");</expression>
 
                          <grid id="570">
                              <property name="width">100%</property>
-                             <property name="marginTop">6pt</property>
+                             <property name="marginTop">10pt</property>
                              <column id="571"/>
                              <row id="572">
+                                 <property name="style">becpg-chapter-header</property>
                                  <cell id="573">
-                                                 <label id="574">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
-                                                     <text-property name="text" key="becpg.report.pif.label.microbio">Microbiological criteria:</text-property>
-                                                 </label>
+                                     <property name="style">becpg-chapter-header</property>
+                                     <label id="574">
+                                         <property name="style">becpg-chapter-header</property>
+                                         <text-property name="text" key="becpg.report.pif.table.microbio">MICROBIOLOGICAL CRITERIA</text-property>
+                                     </label>
                                  </cell>
                              </row>
                          </grid>
 
                          <table id="580">
                              <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
                              <property name="dataSet">pifMicrobios</property>
                              <list-property name="boundDataColumns">
                                  <structure>
@@ -1343,30 +1463,26 @@ parts.join(" / ");</expression>
                              <header>
                                  <row id="593">
                                      <cell id="585">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="586">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.criterion">Criterion</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="587">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="588">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.maxi">Max</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="589">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="590">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.unit">Unit</text-property>
                                                  </label>
                                      </cell>
                                      <cell id="591">
+                                                 <property name="style">becpg-cell-header</property>
                                                  <label id="592">
-                                                     <property name="style">rowHeaderUpper</property>
-                                                     <property name="textAlign">left</property>
                                                      <text-property name="text" key="becpg.report.pif.label.textcriteria">Text criterion</text-property>
                                                  </label>
                                      </cell>
@@ -1375,26 +1491,26 @@ parts.join(" / ");</expression>
                              <detail>
                                  <row id="602">
                                      <cell id="594">
+                                                 <property name="style">becpg-cell-dynamic-header-left</property>
                                                  <data id="595">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">mblMicrobio</property>
                                                  </data>
                                      </cell>
                                      <cell id="596">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="597">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">maxiText</property>
                                                  </data>
                                      </cell>
                                      <cell id="598">
+                                                 <property name="style">becpg-cell-data-center</property>
                                                  <data id="599">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">mblUnit</property>
                                                  </data>
                                      </cell>
                                      <cell id="600">
+                                                 <property name="style">becpg-cell-data-left</property>
                                                  <data id="601">
-                                                     <property name="style">becpg-cell-data</property>
                                                      <property name="resultSetColumn">mblTextCriteria</property>
                                                  </data>
                                      </cell>
