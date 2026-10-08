@@ -176,6 +176,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuantiForPIF.rptdesign";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME = PlmRepoConsts.PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF;
+	/**
+	 * Extraction preferences of the PIF: the process steps are extracted with their description and the subsidiary,
+	 * standing for the responsible person, with its address. They only apply to the extraction of the PIF.
+	 */
+	private static final String PIF_REPORT_PARAMETERS = "{\"prefs\":{\"assocsToExtract\":\"mpm:plStep,bcpg:subsidiaryRef\"}}";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -2148,6 +2153,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						pifTplInfo.setSystemTpl(false);
 						pifTplInfo.setResources(pifResources);
 						pifTplInfo.setSupportedLocale(supportedLocale);
+						pifTplInfo.setTextParameter(PIF_REPORT_PARAMETERS);
 
 						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
 						if (pifReportName == null || pifReportName.isEmpty()) {
