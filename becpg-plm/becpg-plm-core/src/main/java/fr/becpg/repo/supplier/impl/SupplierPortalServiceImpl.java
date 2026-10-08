@@ -83,6 +83,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	private static final List<SystemGroup> INTERNAL_LICENSE_GROUPS = List.of(SystemGroup.LicenseReadNamed, SystemGroup.LicenseWriteNamed,
 			SystemGroup.LicenseReadConcurrent, SystemGroup.LicenseWriteConcurrent);
 
+	/** Project states that mean someone is still working on the entity. */
+	private static final Set<String> OPEN_PROJECT_STATES = Set.of(ProjectState.Planned.toString(), ProjectState.InProgress.toString(),
+			ProjectState.OnHold.toString());
+
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SupplierPortalServiceImpl.class);
 
@@ -149,6 +153,47 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
 	}
 
+	private boolean preventConcurrentProjects() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.sendToSupplier.preventConcurrentProjects"));
+	}
+
+	/**
+	 * Refuses a second supplier project while one is still open on the entity.
+	 * A supplier project points at a branch, never at the original, so the
+	 * branches of the entity are checked as well as the entity itself.
+	 */
+	private void checkNoOpenProject(NodeRef entityNodeRef) {
+		if (!preventConcurrentProjects()) {
+			return;
+		}
+		String openProject = findOpenSupplierProject(entityNodeRef);
+		if (openProject != null) {
+			throw new IllegalStateException(I18NUtil.getMessage("message.supplier-project.already-open", openProject));
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String findOpenSupplierProject(NodeRef entityNodeRef) {
+		NodeRef originNodeRef = entityNodeRef;
+		NodeRef branchFrom = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+		if (branchFrom != null) {
+			originNodeRef = branchFrom;
+		}
+		List<NodeRef> candidates = new ArrayList<>();
+		candidates.add(originNodeRef);
+		candidates.addAll(associationService.getSourcesAssocs(originNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY));
+
+		for (NodeRef candidate : candidates) {
+			for (NodeRef projectNodeRef : associationService.getSourcesAssocs(candidate, ProjectModel.ASSOC_PROJECT_ENTITY)) {
+				if (OPEN_PROJECT_STATES.contains((String) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE))) {
+					return (String) nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME);
+				}
+			}
+		}
+		return null;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String getProjectNameTpl() {
@@ -170,6 +215,8 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		boolean checkAccounts = (supplierAccountNodeRefs == null) || supplierAccountNodeRefs.isEmpty();
 
 		NodeRef supplierNodeRef = checkSupplierNodeRef(entityNodeRef, checkAccounts);
+
+		checkNoOpenProject(entityNodeRef);
 
 		if (checkAccounts) {
 			supplierAccountNodeRefs = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);

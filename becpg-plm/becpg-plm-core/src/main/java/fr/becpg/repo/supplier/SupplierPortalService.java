@@ -25,6 +25,15 @@ public interface SupplierPortalService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	NodeRef createSupplierProject(NodeRef entityNodeRef, NodeRef projectTemplateNodeRef, List<NodeRef> supplierAccountNodeRefs);
+
+	/**
+	 * Is a supplier project still open (Planned, InProgress, OnHold) on this
+	 * entity, on the entity it was branched from, or on one of its branches?
+	 *
+	 * @param entityNodeRef an entity, an entity branch or a supplier
+	 * @return the name of the first open project found, or null when there is none
+	 */
+	String findOpenSupplierProject(NodeRef entityNodeRef);
 	
 	/**
 	 * <p>getSupplierNodeRef.</p>

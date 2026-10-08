@@ -467,6 +467,16 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
+	 * Is a supplier project still open on this entity or on one of its branches?
+	 *
+	 * @param entity an entity, an entity branch or a supplier
+	 * @return true when a Planned, InProgress or OnHold supplier project points at it
+	 */
+	public boolean hasOpenProject(ScriptNode entity) {
+		return (entity != null) && (supplierPortalService.findOpenSupplierProject(entity.getNodeRef()) != null);
+	}
+
+	/**
 	 * <p>isInProjectFolder.</p>
 	 *
 	 * @param documentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object

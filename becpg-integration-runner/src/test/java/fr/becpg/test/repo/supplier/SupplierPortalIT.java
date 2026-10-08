@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.signature.SignatureProjectHelper;
 import fr.becpg.repo.supplier.SupplierPortalService;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -64,6 +65,9 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String TEST_COMMENT_SUPPLIER_PLANT_NAME = "Junit Supplier comment plant test";
 	private static final String SUPPLIER_COMMENT = "Supplier comment";
 	private static final String UPDATED_SUPPLIER_COMMENT = "Updated supplier comment";
+	private static final String TEST_CONCURRENT_SUPPLIER_NAME = "Junit Supplier concurrent project test";
+	private static final String TEST_CONCURRENT_SUPPLIER_PLANT_NAME = "Junit Supplier concurrent project plant test";
+	private static final String PREVENT_CONCURRENT_PROJECTS = "beCPG.sendToSupplier.preventConcurrentProjects";
 
 	@Autowired
 	private SupplierPortalService supplierPortalService;
@@ -85,6 +89,45 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+
+	@Test
+	public void testOpenSupplierProjectIsFoundFromTheOriginalEntity() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		assertNull("A product without project has no open supplier project",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		assertNotNull("The project works on a branch, it must still be found from the original",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+	}
+
+	@Test
+	public void testSecondSupplierProjectIsRefusedWhenConcurrentProjectsArePrevented() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue(PREVENT_CONCURRENT_PROJECTS, "true");
+			return null;
+		});
+		try {
+			assertThrows(IllegalStateException.class, () -> createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef));
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue(PREVENT_CONCURRENT_PROJECTS);
+				return null;
+			});
+		}
+	}
 
 	@Test
 	public void testSupplierPortal() {
