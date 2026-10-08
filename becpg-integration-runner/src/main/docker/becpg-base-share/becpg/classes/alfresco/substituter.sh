@@ -97,5 +97,7 @@ else
    sed -i -e "s|<origin><\/origin>|<origin><\/origin>|" /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 fi
 
-
-bash -c "$@"
+# exec, so that Tomcat replaces this shell as PID 1 and receives the SIGTERM sent by
+# 'docker stop' or Kubernetes. Without it the shell swallows the signal and Share is
+# killed at the end of the grace period instead of shutting down.
+exec bash -c "$@"
