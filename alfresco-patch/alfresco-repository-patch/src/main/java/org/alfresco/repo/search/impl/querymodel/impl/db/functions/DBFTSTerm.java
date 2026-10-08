@@ -46,6 +46,7 @@ import org.alfresco.repo.search.impl.querymodel.impl.db.DBQueryBuilderPredicateP
 import org.alfresco.repo.search.impl.querymodel.impl.db.ParentSupport;
 import org.alfresco.repo.search.impl.querymodel.impl.db.PropertySupport;
 import org.alfresco.repo.search.impl.querymodel.impl.db.TypeSupport;
+import org.alfresco.repo.search.impl.querymodel.impl.db.UUIDSupport;
 import org.alfresco.repo.search.impl.querymodel.impl.functions.FTSTerm;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -93,6 +94,12 @@ public class DBFTSTerm extends FTSTerm implements DBQueryBuilderComponent {
 			parentSupport.setDbid(DBQuery.getDbid(id, nodeDAO, tenantService));
 			parentSupport.setCommandType(DBQueryBuilderPredicatePartCommandType.EQUALS);
 			builderSupport = parentSupport;
+		} else if (propArg.getPropertyName().equals(QueryConstants.FIELD_ID)) {
+			// beCPG: match the node itself, as cmis:objectId does in the CMIS engine
+			UUIDSupport uuidSupport = new UUIDSupport();
+			uuidSupport.setUuid(DBQuery.getUUID(term));
+			uuidSupport.setCommandType(DBQueryBuilderPredicatePartCommandType.EQUALS);
+			builderSupport = uuidSupport;
 		} else if (propArg.getPropertyName().equals(QueryConstants.FIELD_TYPE)) {
 			TypeSupport typeSupport = new TypeSupport();
 			typeSupport.setQnameIds(DBQuery.findTypeIds(term, namespaceService, dictionaryService, qnameDAO, false));
