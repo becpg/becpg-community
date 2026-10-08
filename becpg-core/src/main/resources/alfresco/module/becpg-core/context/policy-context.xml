@@ -154,6 +154,7 @@
 	
 	<bean id="documentAspectPolicy" class="fr.becpg.repo.entity.policy.DocumentAspectPolicy" parent="abstractBeCPGPolicy">
 	  <property name="associationService" ref="associationService"/>
+	  <property name="authorityService" ref="authorityService"/>
     </bean>
     
     <!-- SurveyQuestion -->

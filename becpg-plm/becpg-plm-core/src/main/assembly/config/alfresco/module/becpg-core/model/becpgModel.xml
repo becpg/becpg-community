@@ -1181,6 +1181,18 @@
 			</parameter>
 		</constraint>
 		
+		<!-- What a supplier may do with a document of this type outside a task; unset keeps the historical behaviour -->
+		<constraint name="bcpg:docTypeSupplierUpdateModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Free</value>
+					<value>Notify</value>
+					<value>Validate</value>
+					<value>OnRequest</value>
+				</list>
+			</parameter>
+		</constraint>
+
 		<constraint name="bcpg:documentEffectivityTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -2593,6 +2605,13 @@
 				<property name="bcpg:docTypeAutoExpirationDelay">
 					<type>d:int</type>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:docTypeSupplierUpdateMode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:docTypeSupplierUpdateModes" />
+					</constraints>
 				</property>
 				<property name="bcpg:docTypeFormula">
 					<type>d:text</type>
@@ -4653,6 +4672,18 @@
 					</source>
 					<target>
 						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<!-- Project template a notification script starts, when it starts one -->
+				<association name="bcpg:nrProjectTpl">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -7693,6 +7724,14 @@
 				</property>
 				<property name="bcpg:documentIsMandatory">
 					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<!-- Set when a supplier deposits the document outside a task, for the daily recap -->
+				<property name="bcpg:documentSupplierDepositDate">
+					<type>d:datetime</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>

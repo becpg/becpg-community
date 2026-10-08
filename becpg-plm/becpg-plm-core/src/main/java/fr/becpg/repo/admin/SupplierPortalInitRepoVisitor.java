@@ -2,6 +2,7 @@ package fr.becpg.repo.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -34,12 +35,16 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
+import fr.becpg.repo.notification.data.RecurringTimeType;
+import fr.becpg.repo.notification.data.ScriptMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.VersionFilterType;
 
 /**
  * <p>SupplierPortalInitRepoVisitor class.</p>
@@ -98,6 +103,12 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/** <code>bcpg:docTypeLinkedTypes</code> — what makes a document type synchronised. */
 	private static final QName PROP_DOC_TYPE_LINKED_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "docTypeLinkedTypes");
+
+	private static final String SUPPLIER_UPDATE_SCRIPT = "supplierUpdateProject.js";
+
+	private static final String SUPPLIER_DEPOSIT_RECAP_SCRIPT = "supplierDepositRecap.js";
+
+	private static final String BECPG_MODEL_PREFIX = "@{" + BeCPGModel.BECPG_URI + "}";
 
 	@Autowired
 	private SiteService siteService;
@@ -262,6 +273,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitDefaultTechnicalSheetType(companyHome);
 
 		visitSupplierPortalCatalogs(companyHome);
+
+		visitSupplierNotifications(systemNodeRef, projectTplNodeRef, scriptResources);
 
 		return ret;
 
@@ -505,6 +518,91 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	public Integer initOrder() {
 		return 4;
+	}
+
+	/**
+	 * Ships the supplier update rules, <b>disabled</b>: an administrator turns
+	 * them on, and a rule already there (same name) is never touched again.
+	 *
+	 * <ul>
+	 * <li>documents expiring within 30 days: start an update project on their entity;</li>
+	 * <li>validated supplier products referenced more than a year ago: same;</li>
+	 * <li>documents a supplier deposited outside a task: daily recap.</li>
+	 * </ul>
+	 */
+	private void visitSupplierNotifications(NodeRef systemNodeRef, NodeRef projectTplNodeRef, List<NodeRef> scriptResources) {
+		NodeRef notificationFolder = notificationFolder(systemNodeRef);
+		if (notificationFolder == null) {
+			logger.warn("No notification folder, the supplier update rules are not created");
+			return;
+		}
+		NodeRef updateScript = scriptNamed(scriptResources, SUPPLIER_UPDATE_SCRIPT);
+		NodeRef recapScript = scriptNamed(scriptResources, SUPPLIER_DEPOSIT_RECAP_SCRIPT);
+
+		Map<QName, Serializable> expiry = baseRule("supplierDocumentExpiryNotification", "Supplier documents expiring: update projects",
+				"cm:content", "cm:to", DateFilterType.To, 30);
+		expiry.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + BeCPGModel.ASPECT_DOCUMENT_ASPECT + "\\\"\"}");
+		createSupplierRule(notificationFolder, expiry, updateScript, ScriptMode.EACH, projectTplNodeRef);
+
+		Map<QName, Serializable> review = baseRule("supplierPeriodicReviewNotification", "Supplier products to review: update projects",
+				"bcpg:product", "bcpg:certificateDate", DateFilterType.Before, 365);
+		review.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + PLMModel.ASPECT_SUPPLIERS + "\\\" AND +" + BECPG_MODEL_PREFIX
+				+ "productState:\\\"Valid\\\"\"}");
+		createSupplierRule(notificationFolder, review, updateScript, ScriptMode.EACH, projectTplNodeRef);
+
+		Map<QName, Serializable> recap = baseRule("supplierDepositRecapNotification", "Documents deposited by suppliers outside a task",
+				"cm:content", "bcpg:documentSupplierDepositDate", DateFilterType.From, 1);
+		createSupplierRule(notificationFolder, recap, recapScript, ScriptMode.ALL, null);
+	}
+
+	private NodeRef notificationFolder(NodeRef systemNodeRef) {
+		NodeRef characts = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		NodeRef lists = characts == null ? null : nodeService.getChildByName(characts, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
+		return lists == null ? null : nodeService.getChildByName(lists, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
+	}
+
+	private NodeRef scriptNamed(List<NodeRef> scriptResources, String name) {
+		return scriptResources.stream().filter(script -> name.equals(nodeService.getProperty(script, ContentModel.PROP_NAME))).findFirst()
+				.orElse(null);
+	}
+
+	private static QName nrQName(String localName) {
+		return QName.createQName(BeCPGModel.BECPG_URI, localName);
+	}
+
+	private static Map<QName, Serializable> baseRule(String name, String subject, String nodeType, String dateField, DateFilterType timeType,
+			int days) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(nrQName("nrSubject"), subject);
+		properties.put(nrQName("nrNodeType"), nodeType);
+		properties.put(nrQName("nrDateField"), dateField);
+		properties.put(nrQName("nrTimeType"), timeType);
+		properties.put(nrQName("nrTimeNumber"), days);
+		properties.put(nrQName("nrRecurringTimeType"), RecurringTimeType.Day);
+		properties.put(nrQName("nrFrequency"), 1);
+		properties.put(nrQName("nrFrequencyStartDate"), new Date());
+		properties.put(nrQName("nrVersionFilter"), VersionFilterType.NONE);
+		properties.put(nrQName("nrForceNotification"), false);
+		properties.put(nrQName("nrDisabled"), true);
+		properties.put(BeCPGModel.PROP_COLOR, "#cfe2f3");
+		return properties;
+	}
+
+	private void createSupplierRule(NodeRef notificationFolder, Map<QName, Serializable> properties, NodeRef script, ScriptMode scriptMode,
+			NodeRef projectTplNodeRef) {
+		String name = (String) properties.get(ContentModel.PROP_NAME);
+		if ((script == null) || (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, name) != null)) {
+			return;
+		}
+		properties.put(nrQName("nrScriptMode"), scriptMode.toString());
+		NodeRef rule = nodeService
+				.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST, properties)
+				.getChildRef();
+		associationService.update(rule, nrQName("nrScript"), script);
+		associationService.update(rule, nrQName("nrProjectTpl"), projectTplNodeRef);
+		NodeRef referencingMgr = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr);
+		associationService.update(rule, nrQName("nrNotificationAuthorities"), referencingMgr);
 	}
 
 }
