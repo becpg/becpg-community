@@ -61,6 +61,14 @@ parts.join(" / ");</expression>
             <property name="dataSource">DataXml</property>
             <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode},{netVolume;STRING;/netVolume},{periodAfterOpening;STRING;/periodAfterOpening},{regulatoryUseMode;STRING;/regulatoryUseMode/@translation},{regulatoryApplicationZones;STRING;/regulatoryApplicationZones/@translation},{regulatoryMucousContact;STRING;/regulatoryMucousContact},{subsidiaryRef;STRING;/subsidiaryRef}]]></xml-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifPlants" id="460">
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/plants/plant]#:#{name;STRING;/name},{locationAddress1;STRING;/locationAddress1},{plantCertifications;STRING;/plantCertifications}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="pifProcessSteps" id="461">
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{plStep;STRING;/@plStep}]]></xml-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
@@ -963,6 +971,140 @@ parts.join(" / ");</expression>
                                 </cell>
                             </row>
                         </grid>
+
+                         <!-- Section 3: MANUFACTURING -->
+                         <grid id="470">
+                             <property name="width">100%</property>
+                             <property name="marginTop">10pt</property>
+                             <column id="471"/>
+                             <row id="472">
+                                 <cell id="473">
+                                     <label id="474">
+                                         <property name="style">UnderlinedSubTitle</property>
+                                         <text-property name="text" key="becpg.report.pif.section.manufacturing">3. FABRICATION</text-property>
+                                     </label>
+                                 </cell>
+                             </row>
+                         </grid>
+
+                         <table id="480">
+                             <property name="width">100%</property>
+                             <property name="dataSet">pifPlants</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">name</property>
+                                     <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">locationAddress1</property>
+                                     <expression name="expression" type="javascript">dataSetRow["locationAddress1"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                                 <structure>
+                                     <property name="name">plantCertifications</property>
+                                     <expression name="expression" type="javascript">dataSetRow["plantCertifications"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <column id="481">
+                                 <property name="width">30%</property>
+                             </column>
+                             <column id="482">
+                                 <property name="width">40%</property>
+                             </column>
+                             <column id="483">
+                                 <property name="width">30%</property>
+                             </column>
+                             <header>
+                                 <row id="484">
+                                     <cell id="485">
+                                                 <label id="486">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plant">Site de fabrication :</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="487">
+                                                 <label id="488">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plantaddress">Adresse :</text-property>
+                                                 </label>
+                                     </cell>
+                                     <cell id="489">
+                                                 <label id="490">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.plantcertifications">Certifications :</text-property>
+                                                 </label>
+                                     </cell>
+                                 </row>
+                             </header>
+                             <detail>
+                                 <row id="491">
+                                     <cell id="492">
+                                                 <data id="493">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">name</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="494">
+                                                 <data id="495">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">locationAddress1</property>
+                                                 </data>
+                                     </cell>
+                                     <cell id="496">
+                                                 <data id="497">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">plantCertifications</property>
+                                                 </data>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
+
+                         <table id="500">
+                             <property name="width">100%</property>
+                             <property name="marginTop">6pt</property>
+                             <property name="dataSet">pifProcessSteps</property>
+                             <list-property name="boundDataColumns">
+                                 <structure>
+                                     <property name="name">plStep</property>
+                                     <expression name="expression" type="javascript">dataSetRow["plStep"]</expression>
+                                     <property name="dataType">string</property>
+                                 </structure>
+                             </list-property>
+                             <list-property name="filter">
+                                 <structure>
+                                     <property name="operator">is-not-null</property>
+                                     <expression name="expr" type="javascript">row["plStep"]</expression>
+                                 </structure>
+                             </list-property>
+                             <column id="501"/>
+                             <header>
+                                 <row id="502">
+                                     <cell id="503">
+                                                 <label id="504">
+                                                     <property name="style">rowHeaderUpper</property>
+                                                     <property name="textAlign">left</property>
+                                                     <text-property name="text" key="becpg.report.pif.label.processsteps">Étapes du procédé de fabrication :</text-property>
+                                                 </label>
+                                     </cell>
+                                 </row>
+                             </header>
+                             <detail>
+                                 <row id="505">
+                                     <cell id="506">
+                                                 <data id="507">
+                                                     <property name="style">becpg-cell-data</property>
+                                                     <property name="resultSetColumn">plStep</property>
+                                                 </data>
+                                     </cell>
+                                 </row>
+                             </detail>
+                         </table>
 
                     </cell>
                 </row>
