@@ -1,6 +1,13 @@
 services:
   becpg:
     environment:
+      # A '#' line inside the folded CATALINA_OPTS block below is not a YAML comment: it would
+      # reach the JVM as an argument and stop the core from starting. Keep comments up here.
+      #
+      # beCPG OLAP / Saiku (#24931). url.public is what the BROWSER opens: OlapServiceImpl
+      # appends ?ticket= to it. url.internal is what ALFRESCO calls server to server;
+      # 172.17.0.1 is the Docker host as seen from the container. The user must belong to
+      # GROUP_OlapUser for the menu to show up in Share.
       CATALINA_OPTS: >-
         -Xmx4G
         -Duser.language=fr
@@ -15,10 +22,6 @@ services:
         -Djava.rmi.server.hostname=127.0.0.1
         -DbeCPG.licence.showWarning=true
         -Dtomcat.util.scan.StandardJarScanFilter.jarsToSkip=*
-        # beCPG OLAP / Saiku (#24931). url.public is what the BROWSER opens: OlapServiceImpl
-        # appends ?ticket= to it. url.internal is what ALFRESCO calls server to server;
-        # 172.17.0.1 is the Docker host as seen from the container. The user must belong to
-        # GROUP_OlapUser for the menu to show up in Share.
         -Dbecpg.olap.enabled=true
         -Dbecpg.olap.url.public=http://localhost:8085/saiku
         -Dbecpg.olap.url.internal=http://172.17.0.1:8085/saiku
