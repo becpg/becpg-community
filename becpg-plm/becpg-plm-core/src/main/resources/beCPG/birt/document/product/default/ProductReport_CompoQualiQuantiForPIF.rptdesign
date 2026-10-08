@@ -47,7 +47,7 @@
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingListDirect" id="9992">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{casNumber;STRING;/@casNumber},{ceNumber;STRING;/@ceNumber},{ecNumber;STRING;/@ecNumber},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListFlags;STRING;/@ingListFlags},{casNumber;STRING;/@casNumber},{ceNumber;STRING;/@ceNumber},{ecNumber;STRING;/@ecNumber},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
         </oda-data-set>
     </data-sets>
     <styles>
@@ -550,7 +550,7 @@
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">ingListIng</property>
-                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIng"] + (dataSetRow["ingListFlags"] != null &amp;&amp; String(dataSetRow["ingListFlags"]).indexOf("NANO") &gt;= 0 ? " (nano)" : "")</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
