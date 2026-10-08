@@ -100,6 +100,9 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final QName ASPECT_SDS = QName.createQName(GHSModel.GHS_URI, "sdsAspect");
 	private static final QName PROP_SDS_SHEET_NUMBER = QName.createQName(GHSModel.GHS_URI, "sdsSheetNumber");
 	private static final QName PROP_SDS_SHEET_EFFECTIVE_DATE = QName.createQName(GHSModel.GHS_URI, "sdsSheetEffectiveDate");
+	private static final QName PROP_SDS_SIGNAL_WORD = QName.createQName(GHSModel.GHS_URI, "sdsSignalWord");
+	private static final QName ASSOC_SDS_HAZARD_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsHazardStatements");
+	private static final QName ASSOC_SDS_PICTOGRAMS = QName.createQName(GHSModel.GHS_URI, "sdsPictograms");
 
 	public static final String PRODUCT_NAME = "🧴 Moisturizing Body Milk - PIF sample";
 	public static final String LEGAL_NAME = "Moisturizing body milk";
@@ -193,6 +196,19 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 
 	private record PackagingSpec(String name, String material, double tare, PackagingLevel level) {
 	}
+
+	private record HazardSpec(String signalWord, List<String> hazardStatements, List<String> pictograms) {
+	}
+
+	private static final String WARNING = "Warning";
+	private static final String GHS02_FLAME = "GHS02";
+	private static final String GHS07_EXCLAMATION_MARK = "GHS07";
+
+	/** Classification of the safety data sheets of the hazardous raw materials, consistent with their ingredients. */
+	private static final Map<String, HazardSpec> RAW_MATERIAL_HAZARDS = Map.of(
+			FRAGRANCE, new HazardSpec(WARNING, List.of("H226", "H317"), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
+			PRESERVATIVE, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)),
+			CITRIC_ACID, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)));
 
 	private static final List<RawMaterialSpec> FORMULA = List.of(
 			new RawMaterialSpec(WATER, 77.45, SUPPLIER_AQUA, "FR", "France", List.of(new IngredientShare("AQUA", 100d))),
@@ -322,7 +338,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		setIngredientToxicology("GLYCERIN", 1000d, 10d);
 		setIngredientToxicology("CAPRYLYL GLYCOL", 300d, 50d);
 		setIngredientToxicology("ETHYLHEXYLGLYCERIN", 50d, 50d);
-		setIngredientToxicology("PARFUM", 100d, 100d);
+		setIngredientToxicology("PARFUM", 500d, 100d);
 	}
 
 	/**
@@ -441,7 +457,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Adds the reference of the supplier safety data sheet to a raw material.
+	 * Adds the supplier safety data sheet to a raw material: its reference, and its classification when the raw
+	 * material is hazardous.
 	 *
 	 * @param rawMaterialNodeRef the raw material
 	 * @param name the raw material name the sheet number derives from
@@ -451,6 +468,29 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		properties.put(PROP_SDS_SHEET_NUMBER, SDS_NUMBER_PREFIX + name.toUpperCase(Locale.ROOT).replaceAll(SDS_NUMBER_SEPARATORS, SDS_NUMBER_SEPARATOR));
 		properties.put(PROP_SDS_SHEET_EFFECTIVE_DATE, new Date());
 		nodeService.addAspect(rawMaterialNodeRef, ASPECT_SDS, properties);
+		if (RAW_MATERIAL_HAZARDS.containsKey(name)) {
+			addHazardClassification(rawMaterialNodeRef, RAW_MATERIAL_HAZARDS.get(name));
+		}
+	}
+
+	/**
+	 * Sets the signal word, the hazard statements and the pictograms of a safety data sheet.
+	 *
+	 * @param rawMaterialNodeRef the raw material holding the safety data sheet
+	 * @param hazard the classification of the sheet
+	 */
+	private void addHazardClassification(NodeRef rawMaterialNodeRef, HazardSpec hazard) {
+		nodeService.setProperty(rawMaterialNodeRef, PROP_SDS_SIGNAL_WORD, hazard.signalWord());
+		List<NodeRef> hazardStatements = new ArrayList<>();
+		for (String code : hazard.hazardStatements()) {
+			hazardStatements.add(CharactTestHelper.getOrCreateH(nodeService, code));
+		}
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_HAZARD_STATEMENTS, hazardStatements);
+		List<NodeRef> pictograms = new ArrayList<>();
+		for (String code : hazard.pictograms()) {
+			pictograms.add(CharactTestHelper.getOrCreatePicto(nodeService, code));
+		}
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PICTOGRAMS, pictograms);
 	}
 
 	/**
