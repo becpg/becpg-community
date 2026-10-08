@@ -119,7 +119,7 @@ public class BecpgRegulatoryClientTest {
 
 		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_USE_MODE));
 		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_APPLICATION_ZONES));
-		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_TARGET_POPULATIONS));
+		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_TARGET_POPULATION));
 		assertTrue(params.getFilteredProperties().contains(PLMModel.PROP_REGULATORY_LEGAL_STATUS));
 	}
 

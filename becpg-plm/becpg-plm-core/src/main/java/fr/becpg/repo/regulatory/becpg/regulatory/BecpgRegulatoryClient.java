@@ -66,7 +66,7 @@ public class BecpgRegulatoryClient {
 	/** Product attributes that select the applicable limits: use mode, body zones, exposure, population, serving. */
 	private static final Set<QName> PRODUCT_ATTRIBUTES = Set.of(ContentModel.PROP_SYS_NAME, PLMModel.PROP_REGULATORY_USE_MODE,
 			PLMModel.PROP_REGULATORY_APPLICATION_ZONES, PLMModel.PROP_REGULATORY_MUCOUS_CONTACT, PLMModel.PROP_REGULATORY_EXPOSURE_ROUTES,
-			PLMModel.PROP_REGULATORY_TARGET_POPULATIONS, PLMModel.PROP_REGULATORY_PROFESSIONAL_USE, PLMModel.PROP_PRODUCT_SERVING_SIZE,
+			PLMModel.PROP_REGULATORY_TARGET_POPULATION, PLMModel.PROP_REGULATORY_PROFESSIONAL_USE, PLMModel.PROP_PRODUCT_SERVING_SIZE,
 			PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT);
 
 	/** Markets to check: usages, countries and the legal status of the product on them. */
