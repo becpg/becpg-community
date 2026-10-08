@@ -310,6 +310,28 @@
 		</property>
 	</bean>
 
+	<!-- Override the Alfresco CMIS dictionaries so that they are built on first use, not at each startup -->
+
+	<bean id="OpenCMISDictionaryService" class="fr.becpg.repo.dictionary.LazyCMISDictionaryService" init-method="init">
+		<property name="cmisMapping" ref="OpenCMISMapping" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="singletonCache" ref="openCMISRegistryCache" />
+		<property name="propertyLuceneBuilderMapping" ref="OpenCMISPropertyLuceneBuilderMapping" />
+		<property name="propertyAccessorMapping" ref="OpenCMISPropertyAccessorMapping" />
+		<property name="tenantService" ref="tenantService" />
+	</bean>
+
+	<bean id="OpenCMISDictionaryService1.1" class="fr.becpg.repo.dictionary.LazyCMISDictionaryService" init-method="init">
+		<property name="cmisMapping" ref="OpenCMISMapping1.1" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+		<property name="singletonCache" ref="openCMISRegistryCache" />
+		<property name="propertyLuceneBuilderMapping" ref="OpenCMISPropertyLuceneBuilderMapping1.1" />
+		<property name="propertyAccessorMapping" ref="OpenCMISPropertyAccessorMapping1.1" />
+		<property name="tenantService" ref="tenantService" />
+	</bean>
+
  <!--  Site role precedence - higher number - more important role -->
 	<bean id="siteRoleComparator" class="org.alfresco.repo.site.RoleComparatorImpl" init-method="init">
 		<property name="rolePrecedence">

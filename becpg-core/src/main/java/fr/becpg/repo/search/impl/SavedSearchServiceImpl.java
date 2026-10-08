@@ -167,7 +167,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 	@Override
 	public List<SavedSearch> findSavedSearch(SavedSearch filter) {
 		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SAVED_SEARCH)
-				.andPropQuery(BeCPGModel.PROP_SAVED_SEARCH_TYPE, filter.getSearchType()).inDB();
+				.andPropEquals(BeCPGModel.PROP_SAVED_SEARCH_TYPE, filter.getSearchType()).inDB();
 
 		//I asume that there is few results
 		return query.list().stream().map(id -> alfrescoRepository.findOne(id)).filter(s -> (s.getSiteId() == null)

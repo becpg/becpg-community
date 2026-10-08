@@ -211,7 +211,7 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			QName type = QName.createQName("bcpg:rawMaterial", namespaceService);
 
-			// andIDs forced in DB: the DB-AFTS engine does not support the ID field, the filter is applied as a post-filter
+			// andIDs forced in DB: the ID field is matched by the database engine itself
 			List<NodeRef> included = BeCPGQueryBuilder.createQuery().ofType(type).andIDs(Set.of(raw1, raw2)).inDB().list();
 			assertTrue(included.contains(raw1));
 			assertTrue(included.contains(raw2));

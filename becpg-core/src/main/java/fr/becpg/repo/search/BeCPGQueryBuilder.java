@@ -47,7 +47,6 @@ import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
@@ -560,14 +559,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	/**
 	 * <p>
-	 * inDB.
+	 * Runs the query against the database only, through the transactional metadata query engine (DB-AFTS).
 	 * </p>
 	 *
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
-		cmisLanguage();
+		ftsLanguage();
 		return this;
 	}
 
@@ -581,18 +580,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder inDBIfPossible() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
 		ftsLanguage();
-		return this;
-	}
-
-	/**
-	 * <p>
-	 * cmisLanguage.
-	 * </p>
-	 *
-	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
-	 */
-	public BeCPGQueryBuilder cmisLanguage() {
-		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
 		return this;
 	}
 
@@ -1211,10 +1198,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		StringBuilder runnedQuery = new StringBuilder();
 
-		if (isCmis()) {
-			return buildCmisQuery();
-		}
-
 		if (parentNodeRef != null) {
 			runnedQuery.append(mandatory(getCondParent(parentNodeRef)));
 		} else if (membersPath != null) {
@@ -1318,11 +1301,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!nullOrUnsetProps.isEmpty()) {
 			for (QName tmpQName : nullOrUnsetProps) {
-				runnedQuery.append(mandatory(getCondIsNullOrIsUnsetValue(tmpQName)));
+				runnedQuery.append(mandatory(getCondIsNullOrUnset(tmpQName)));
 			}
 		}
 
-		if (!ids.isEmpty() && !isDbIdPostFilter()) {
+		if (!ids.isEmpty()) {
 			if (ids.size() == 1) {
 				runnedQuery.append(mandatory(getCondEqualID(ids.iterator().next())));
 			} else {
@@ -1340,7 +1323,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		if (!notIds.isEmpty() && !isDbIdPostFilter()) {
+		if (!notIds.isEmpty()) {
 			for (NodeRef tmpNodeRef : notIds) {
 				runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
 			}
@@ -1410,273 +1393,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>buildCmisQuery.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	private String buildCmisQuery() {
-		StringBuilder runnedQuery = new StringBuilder();
-		StringBuilder orderBy = new StringBuilder();
-		StringBuilder whereClause = new StringBuilder();
-
-		runnedQuery.append("SELECT  * FROM ");
-		if ((type == null) || ContentModel.TYPE_CONTENT.equals(type)) {
-			runnedQuery.append("cmis:document as D");
-		} else if (ContentModel.TYPE_FOLDER.equals(type)) {
-			runnedQuery.append("cmis:folder as D");
-		} else {
-			runnedQuery.append(type.toPrefixString(namespaceService)).append(" as D");
-		}
-
-		if (parentNodeRef != null) {
-			whereClause.append(" AND IN_FOLDER( D,'").append(parentNodeRef).append("')");
-		} else if (membersPath != null) {
-			throw new IllegalStateException("members not supported for CMIS search");
-		} else if (path != null) {
-			throw new IllegalStateException("path not supported for CMIS search");
-		} else if (inSite != null) {
-			throw new IllegalStateException("site not supported for CMIS search");
-		}
-
-		if (!types.isEmpty()) {
-			throw new IllegalStateException("only one type supported for CMIS search");
-		}
-
-		if (!excludedTypes.isEmpty()) {
-			throw new IllegalStateException("only one type supported for CMIS search");
-		}
-
-		if (!excludedAspects.isEmpty()) {
-			throw new IllegalStateException("excludedAspects supported not for CMIS search");
-		}
-
-		if (!notNullProps.isEmpty()) {
-			for (QName tmpQName : notNullProps) {
-				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NOT NULL");
-			}
-		}
-
-		if (!nullOrUnsetProps.isEmpty()) {
-			for (QName tmpQName : nullOrUnsetProps) {
-				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NULL");
-			}
-
-		}
-
-		if (!nullProps.isEmpty()) {
-			for (QName tmpQName : nullProps) {
-				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NULL");
-			}
-		}
-
-		if (!ids.isEmpty()) {
-			if (ids.size() == 1) {
-				whereClause.append(" AND D.cmis:objectId = '").append(ids.iterator().next()).append("'");
-			} else {
-				whereClause.append(" AND D.cmis:objectId IN (");
-				boolean first = true;
-				for (NodeRef tmpNodeRef : ids) {
-					if (!first) {
-						whereClause.append(", ");
-					}
-					whereClause.append("'").append(tmpNodeRef).append("'");
-					first = false;
-				}
-				whereClause.append(")");
-			}
-		}
-
-		if (!notIds.isEmpty()) {
-			for (NodeRef tmpNodeRef : notIds) {
-				whereClause.append(" AND D.cmis:objectId <> '").append(tmpNodeRef).append("'");
-			}
-		}
-
-		if (!propQueriesMap.isEmpty()) {
-
-			for (Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" LIKE '%").append(propQueryEntry.getValue())
-						.append("%'");
-			}
-		}
-
-		if (!propQueriesEqualMap.isEmpty()) {
-			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '")
-						.append(sanitizeProperty(propQueryEntry.getValue())).append("'");
-			}
-		}
-
-		if (!excludedPropQueriesMap.isEmpty()) {
-			for (Map.Entry<QName, List<String>> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				for (String query : propQueryEntry.getValue()) {
-					whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(query).append("'");
-				}
-			}
-		}
-
-		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenQueriesMap.entrySet()) {
-
-			String first = propQueryEntry.getValue().getFirst();
-			String second = propQueryEntry.getValue().getSecond();
-			if (!"MIN".equals(first)) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" >= ").append(first).append("");
-			}
-			if (!"MAX".equals(second)) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <= ").append(second).append("");
-			}
-		}
-
-		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {
-
-			String first = propQueryEntry.getValue().getFirst();
-			String second = propQueryEntry.getValue().getSecond();
-			if (!"MIN".equals(first)) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" >= ").append(first).append("");
-			}
-			if (!"MAX".equals(second)) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <= ").append(second).append("");
-			}
-
-			whereClause.append(" OR ").append(getCmisPrefix(propQueryEntry.getKey())).append(" IS NULL");
-		}
-
-		if (!ftsQueries.isEmpty()) {
-			throw new IllegalStateException("fts contains not supported yet");
-		}
-
-		if ((sortProps != null) && !sortProps.isEmpty()) {
-			orderBy.append(" ORDER BY");
-			for (Map.Entry<String, Boolean> kv : sortProps.entrySet()) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
-				}
-				orderBy.append(" ").append(getCmisPrefix(QName.createQName(kv.getKey().replaceFirst("@", ""))))
-						.append(Boolean.TRUE.equals(kv.getValue()) ? " ASC" : " DESC");
-			}
-		}
-
-		String ret = whereClause.toString();
-
-		if (ret.startsWith(" AND")) {
-			ret = ret.replaceFirst(" AND", "");
-		}
-
-		if (ret.length() > 0) {
-			ret = " WHERE " + ret;
-		}
-
-		if (!aspects.isEmpty()) {
-			for (QName tmpQName : aspects) {
-				runnedQuery.append(" JOIN ").append(tmpQName.toPrefixString(namespaceService)).append(" as ").append(tmpQName.getLocalName())
-						.append(" on D.cmis:objectId = ").append(tmpQName.getLocalName()).append(".cmis:objectId");
-			}
-		}
-
-		return runnedQuery.toString() + ret + orderBy.toString();
-
-	}
-
-	/**
-	 * <p>sanitizeProperty.</p>
-	 *
-	 * @param prop a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String sanitizeProperty(String prop) {
-		return prop.replaceAll("(?<!\\\\)'", "\\\\'");
-	}
-
-	/**
-	 * <p>getCmisPrefix.</p>
-	 *
-	 * @param tmpQName a {@link org.alfresco.service.namespace.QName} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String getCmisPrefix(QName tmpQName) {
-		String ret = tmpQName.toPrefixString(namespaceService);
-		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
-
-		QName aspect = def != null ? def.getContainerClass().getName() : null;
-		if ((def != null) && def.getContainerClass().isAspect() && (aspect != null) && !aspect.isMatch(ContentModel.ASPECT_AUDITABLE)) {
-			this.aspects.add(aspect);
-			ret = aspect.getLocalName() + "." + ret;
-		} else {
-			if (tmpQName.equals(ContentModel.PROP_NAME)) {
-				ret = "cmis:name";
-			} else if (tmpQName.equals(ContentModel.PROP_CREATED)) {
-				ret = "cmis:creationDate";
-			} else if (tmpQName.equals(ContentModel.PROP_CREATOR)) {
-				ret = "cmis:createdBy";
-			} else if (tmpQName.equals(ContentModel.PROP_MODIFIED)) {
-				ret = "cmis:lastModificationDate";
-			} else if (tmpQName.equals(ContentModel.PROP_MODIFIER)) {
-				ret = "cmis:lastModifiedBy";
-			}
-			ret = "D." + ret;
-		}
-
-		return ret;
-	}
-
-	/**
-	 * <p>isCmis.</p>
-	 *
-	 * @return a boolean
-	 */
-	private boolean isCmis() {
-		return SearchService.LANGUAGE_CMIS_ALFRESCO.equals(language);
-	}
-
-	/**
 	 * <p>
-	 * Returns {@code true} when ID based filters ({@code andID}/{@code andNotID}) must be applied as a Java post-filter
-	 * on the result set instead of being pushed into the query.
+	 * Builds the "null or unset" condition for the engine that runs the query.
 	 * </p>
 	 * <p>
-	 * The Alfresco database query engine (DB-AFTS) does not support the special {@code ID} field: such a clause is parsed
-	 * as a {@code cm:ID} property and fails with {@code No prop def for ...ID}. The CMIS engine handles it natively through
-	 * {@code cmis:objectId} and Solr supports the {@code ID} field, so post-filtering is only required for transactional
-	 * (database) FTS queries.
+	 * The database engine rejects {@code ISUNSET}, but its {@code ISNULL} already matches a missing property as well as
+	 * a null one, so it alone covers both cases there.
 	 * </p>
 	 *
-	 * @return a boolean
+	 * @param propQName the property to test
+	 * @return the query condition
 	 */
-	private boolean isDbIdPostFilter() {
-		if (isCmis()) {
-			return false;
-		}
+	private String getCondIsNullOrUnset(QName propQName) {
 		if (queryConsistancy == QueryConsistency.TRANSACTIONAL) {
-			return true;
+			return getCondIsNullValue(propQName);
 		}
-		if (queryConsistancy == QueryConsistency.TRANSACTIONAL_IF_POSSIBLE) {
-			// TRANSACTIONAL_IF_POSSIBLE only runs against the database when the searched type is not indexed in Solr;
-			// otherwise it runs against Solr where the ID field is natively supported and can stay in the query.
-			return (type != null) && isExcludedFromIndex(type);
-		}
-		return false;
-	}
-
-	/**
-	 * <p>
-	 * Filters out the nodes that do not match the configured {@code ID} based filters.
-	 * </p>
-	 *
-	 * @param nodes the nodes returned by the search engine
-	 * @return the nodes kept after applying the include ({@code ids}) and exclude ({@code notIds}) filters
-	 */
-	private List<NodeRef> applyIdPostFilter(List<NodeRef> nodes) {
-		List<NodeRef> filtered = new ArrayList<>(nodes.size());
-		for (NodeRef node : nodes) {
-			if (!ids.isEmpty() && !ids.contains(node)) {
-				continue;
-			}
-			if (notIds.contains(node)) {
-				continue;
-			}
-			filtered.add(node);
-		}
-		return filtered;
+		return getCondIsNullOrIsUnsetValue(propQName);
 	}
 
 	/**
@@ -1792,12 +1524,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setLimit(Integer.MAX_VALUE);
 			sp.setMaxItems(Integer.MAX_VALUE);
 		} else {
-			int effectiveMaxResults = maxResults;
-			if (isDbIdPostFilter() && !notIds.isEmpty() && (maxResults <= (Integer.MAX_VALUE - notIds.size()))) {
-				effectiveMaxResults = maxResults + notIds.size();
-			}
-			sp.setLimit(effectiveMaxResults);
-			sp.setMaxItems(effectiveMaxResults);
+			sp.setLimit(maxResults);
+			sp.setMaxItems(maxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
 		}
 
@@ -1807,7 +1535,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setMaxPermissionChecks(page * RepoConsts.MAX_RESULTS_1000);
 		}
 
-		if ((sort != null) && !isCmis()) {
+		if (sort != null) {
 			for (Map.Entry<String, Boolean> kv : sort.entrySet()) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
@@ -1843,18 +1571,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (result != null) {
 				result.close();
 			}
-		}
-
-		if (isDbIdPostFilter() && (!ids.isEmpty() || !notIds.isEmpty())) {
-			nodes = applyIdPostFilter(nodes);
-			if ((maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) && (nodes.size() > maxResults)) {
-				nodes = new ArrayList<>(nodes.subList(0, maxResults));
-				hasMore = true;
-			} else {
-				hasMore = false;
-			}
-			totalFirst = nodes.size();
-			totalSecond = hasMore ? null : nodes.size();
 		}
 
 		return asPagingResults(nodes, hasMore, new Pair<>(totalFirst, totalSecond));
@@ -1962,11 +1678,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					logger.warn("Count size was limited by: " + result.getResultSetMetaData().getLimitedBy());
 				}
 
-				if (isDbIdPostFilter() && (!ids.isEmpty() || !notIds.isEmpty())) {
-					ret = (long) applyIdPostFilter(result.getNodeRefs()).size();
-				} else {
-					ret = result.getNumberFound();
-				}
+				ret = result.getNumberFound();
 			}
 		} finally {
 			if (result != null) {

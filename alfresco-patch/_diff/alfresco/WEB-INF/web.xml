@@ -177,11 +177,6 @@
    </filter-mapping>
 
    <filter-mapping>
-      <filter-name>WebDAV Authentication Filter</filter-name>
-      <url-pattern>/cmisatom/*</url-pattern>
-   </filter-mapping>
-
-   <filter-mapping>
       <filter-name>beCPG Solr Multitenant Filter</filter-name>
       <url-pattern>/service/api/solr/*</url-pattern>
    </filter-mapping>
@@ -371,49 +366,8 @@
    </servlet>
    -->
 
-    <servlet>
-        <servlet-name>cmisws10</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
-        <init-param>
-            <param-name>cmisVersion</param-name>
-            <param-value>1.0</param-value>
-        </init-param>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>cmisws11</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
-        <init-param>
-            <param-name>cmisVersion</param-name>
-            <param-value>1.1</param-value>
-        </init-param>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>cmisatom10</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.atompub.CmisAtomPubServlet</servlet-class>
-        <init-param>
-            <param-name>callContextHandler</param-name>
-            <param-value>org.apache.chemistry.opencmis.server.shared.BasicAuthCallContextHandler</param-value>
-        </init-param>
-        <init-param>
-            <param-name>cmisVersion</param-name>
-            <param-value>1.0</param-value>
-        </init-param>
-        <load-on-startup>8</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>cmisbrowser</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.browser.CmisBrowserBindingServlet</servlet-class>
-        <init-param>
-            <param-name>callContextHandler</param-name>
-            <param-value>org.apache.chemistry.opencmis.server.shared.BasicAuthCallContextHandler</param-value>
-        </init-param>
-        <load-on-startup>8</load-on-startup>
-    </servlet>
+    <!-- No CMIS binding (Web Services, AtomPub, Browser): beCPG does not serve CMIS, and the Web Services
+         servlets alone cost about two seconds at each startup. -->
 
 
    <servlet>
@@ -472,21 +426,6 @@
    </servlet-mapping>
    -->
    
-   <servlet-mapping>
-      <servlet-name>cmisws10</servlet-name>
-      <url-pattern>/cmisws/*</url-pattern>
-   </servlet-mapping>
-
-   <servlet-mapping>
-      <servlet-name>cmisatom10</servlet-name>
-      <url-pattern>/cmisatom/*</url-pattern>
-   </servlet-mapping>
-
-   <servlet-mapping>
-      <servlet-name>cmisbrowser</servlet-name>
-      <url-pattern>/cmisbrowser/*</url-pattern>
-   </servlet-mapping>
-
    <servlet-mapping>
       <servlet-name>publicapiServlet</servlet-name>
       <url-pattern>/api/*</url-pattern>
