@@ -2,6 +2,7 @@ package fr.becpg.repo.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -26,6 +28,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -34,12 +37,16 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
+import fr.becpg.repo.notification.data.RecurringTimeType;
+import fr.becpg.repo.notification.data.ScriptMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.VersionFilterType;
 
 /**
  * <p>SupplierPortalInitRepoVisitor class.</p>
@@ -99,6 +106,16 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** <code>bcpg:docTypeLinkedTypes</code> — what makes a document type synchronised. */
 	private static final QName PROP_DOC_TYPE_LINKED_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "docTypeLinkedTypes");
 
+	private static final String SUPPLIER_UPDATE_SCRIPT = "supplierUpdateProject.js";
+
+	private static final String BECPG_MODEL_PREFIX = "@{" + BeCPGModel.BECPG_URI + "}";
+
+	/** Where the supplier portal files every supplier space, and so every supplier document. */
+	private static final String SUPPLIER_SITE_DOCUMENTS_PATH = "/app:company_home/st:sites/cm:supplier-portal//*";
+
+	/** Suppliers' accounts: the group a template is opened to. */
+	private static final String EXTERNAL_USER_GROUP = PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser;
+
 	@Autowired
 	private SiteService siteService;
 
@@ -116,6 +133,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private PermissionService permissionService;
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -257,14 +278,46 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			associationService.update(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST, documentLibraryNodeRef);
 		}
 
+		visitTemplateOpenToSuppliers(projectTplNodeRef);
+
 		visitDefaultRawMaterialSpecification(entityTplsNodeRef);
 
 		visitDefaultTechnicalSheetType(companyHome);
 
 		visitSupplierPortalCatalogs(companyHome);
 
+		visitSupplierNotifications(systemNodeRef, scriptResources);
+
 		return ret;
 
+	}
+
+	/**
+	 * <p>Opens the default referencing template to suppliers: {@code GROUP_ExternalUser} gets
+	 * Consumer on it, which is what lets a supplier account start it from the portal (see
+	 * {@code SupplierPortalService.findSupplierProjectTemplates}).</p>
+	 *
+	 * <p>Only written when the template carries no entry at all for that group. An administrator
+	 * who wants the template closed sets a denied permission for the group, and the visitor
+	 * leaves it alone from then on; removing the entry would only see it granted again.</p>
+	 *
+	 * @param projectTplNodeRef the supplier project template, null when there is none
+	 */
+	private void visitTemplateOpenToSuppliers(NodeRef projectTplNodeRef) {
+		if ((projectTplNodeRef == null) || hasEntryFor(projectTplNodeRef, EXTERNAL_USER_GROUP)) {
+			return;
+		}
+		permissionService.setPermission(projectTplNodeRef, EXTERNAL_USER_GROUP, PermissionService.CONSUMER, true);
+		logger.info("Supplier portal: opened the referencing project template " + projectTplNodeRef + " to suppliers");
+	}
+
+	private boolean hasEntryFor(NodeRef nodeRef, String authority) {
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+			if (!permission.isInherited() && authority.equals(permission.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -506,5 +559,98 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	public Integer initOrder() {
 		return 4;
 	}
+
+	/**
+	 * Ships the supplier update rules, <b>disabled</b>: an administrator turns
+	 * them on, and a rule already there (same name) is never touched again.
+	 *
+	 * <ul>
+	 * <li>documents expiring within 30 days: start a supplier project on their entity;</li>
+	 * <li>validated supplier products referenced more than a year ago: same;</li>
+	 * <li>documents changed in the supplier portal site: daily recap, a plain mail.</li>
+	 * </ul>
+	 *
+	 * <p>The project started is the supplier template open to suppliers (see
+	 * {@code SupplierPortalService.findSupplierProjectTemplates}); the rules carry no
+	 * template of their own.</p>
+	 */
+	private void visitSupplierNotifications(NodeRef systemNodeRef, List<NodeRef> scriptResources) {
+		NodeRef notificationFolder = notificationFolder(systemNodeRef);
+		if (notificationFolder == null) {
+			logger.warn("No notification folder, the supplier update rules are not created");
+			return;
+		}
+		NodeRef updateScript = scriptNamed(scriptResources, SUPPLIER_UPDATE_SCRIPT);
+
+		Map<QName, Serializable> expiry = baseRule("supplierDocumentExpiryNotification", "Supplier documents expiring: update projects",
+				"cm:content", "cm:to", DateFilterType.To, 30);
+		expiry.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + BeCPGModel.ASPECT_DOCUMENT_ASPECT + "\\\"\"}");
+		createSupplierRule(notificationFolder, expiry, updateScript, ScriptMode.EACH);
+
+		Map<QName, Serializable> review = baseRule("supplierPeriodicReviewNotification", "Supplier products to review: update projects",
+				"bcpg:product", "bcpg:certificateDate", DateFilterType.Before, 365);
+		review.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + PLMModel.ASPECT_SUPPLIERS + "\\\" AND +" + BECPG_MODEL_PREFIX
+				+ "productState:\\\"Valid\\\"\"}");
+		createSupplierRule(notificationFolder, review, updateScript, ScriptMode.EACH);
+
+		Map<QName, Serializable> recap = baseRule("supplierDocumentRecapNotification", "Documents changed in the supplier portal",
+				"cm:content", "cm:modified", DateFilterType.From, 1);
+		recap.put(nrQName("nrConditions"), "{\"query\":\"+ASPECT:\\\"" + BeCPGModel.ASPECT_DOCUMENT_ASPECT + "\\\" AND +PATH:\\\""
+				+ SUPPLIER_SITE_DOCUMENTS_PATH + "\\\"\"}");
+		createSupplierRule(notificationFolder, recap, null, null);
+	}
+
+	private NodeRef notificationFolder(NodeRef systemNodeRef) {
+		NodeRef characts = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		NodeRef lists = characts == null ? null : nodeService.getChildByName(characts, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
+		return lists == null ? null : nodeService.getChildByName(lists, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
+	}
+
+	private NodeRef scriptNamed(List<NodeRef> scriptResources, String name) {
+		return scriptResources.stream().filter(script -> name.equals(nodeService.getProperty(script, ContentModel.PROP_NAME))).findFirst()
+				.orElse(null);
+	}
+
+	private static QName nrQName(String localName) {
+		return QName.createQName(BeCPGModel.BECPG_URI, localName);
+	}
+
+	private static Map<QName, Serializable> baseRule(String name, String subject, String nodeType, String dateField, DateFilterType timeType,
+			int days) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(nrQName("nrSubject"), subject);
+		properties.put(nrQName("nrNodeType"), nodeType);
+		properties.put(nrQName("nrDateField"), dateField);
+		properties.put(nrQName("nrTimeType"), timeType);
+		properties.put(nrQName("nrTimeNumber"), days);
+		properties.put(nrQName("nrRecurringTimeType"), RecurringTimeType.Day);
+		properties.put(nrQName("nrFrequency"), 1);
+		properties.put(nrQName("nrFrequencyStartDate"), new Date());
+		properties.put(nrQName("nrVersionFilter"), VersionFilterType.NONE);
+		properties.put(nrQName("nrForceNotification"), false);
+		properties.put(nrQName("nrDisabled"), true);
+		properties.put(BeCPGModel.PROP_COLOR, "#cfe2f3");
+		return properties;
+	}
+
+	private void createSupplierRule(NodeRef notificationFolder, Map<QName, Serializable> properties, NodeRef script, ScriptMode scriptMode) {
+		String name = (String) properties.get(ContentModel.PROP_NAME);
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, name) != null) {
+			return;
+		}
+		if (scriptMode != null) {
+			properties.put(nrQName("nrScriptMode"), scriptMode.toString());
+		}
+		NodeRef rule = nodeService
+				.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST, properties)
+				.getChildRef();
+		if (script != null) {
+			associationService.update(rule, nrQName("nrScript"), script);
+		}
+		NodeRef referencingMgr = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr);
+		associationService.update(rule, nrQName("nrNotificationAuthorities"), referencingMgr);
+	}
+
 
 }

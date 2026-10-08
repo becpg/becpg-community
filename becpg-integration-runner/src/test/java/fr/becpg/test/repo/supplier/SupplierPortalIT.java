@@ -64,6 +64,11 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String TEST_COMMENT_SUPPLIER_PLANT_NAME = "Junit Supplier comment plant test";
 	private static final String SUPPLIER_COMMENT = "Supplier comment";
 	private static final String UPDATED_SUPPLIER_COMMENT = "Updated supplier comment";
+	private static final String TEST_CONCURRENT_SUPPLIER_NAME = "Junit Supplier concurrent project test";
+	private static final String TEST_CONCURRENT_SUPPLIER_PLANT_NAME = "Junit Supplier concurrent project plant test";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_NAME = "Junit Supplier update request test";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME = "Junit Supplier update request plant test";
+	private static final String TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME = "Junit Supplier update request other test";
 
 	@Autowired
 	private SupplierPortalService supplierPortalService;
@@ -85,6 +90,89 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Test
+	public void testOpenSupplierProjectIsFoundFromTheOriginalEntity() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		assertNull("A product without project has no open supplier project",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		assertNotNull("The project works on a branch, it must still be found from the original",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+	}
+
+	@Test
+	public void testSupplierAccountCanRequestTheUpdateOfItsSheetOnce() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+		// `createSupplierAccount` does not link an account that already exists: link it here.
+		inWriteTx(() -> {
+			associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(supplierAccountNodeRef));
+			return null;
+		});
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		NodeRef templateNodeRef = openTemplateToSuppliers();
+		NodeRef projectNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "New production site"));
+
+		assertNotNull("The request starts a supplier project", projectNodeRef);
+		assertEquals("The project carries the supplier's reason", true, inReadTx(() -> String.valueOf(
+				nodeService.getProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION)).contains("New production site")));
+		assertThrows("A second request while the first is open is refused", IllegalStateException.class,
+				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Again")));
+	}
+
+	@Test
+	public void testUpdateRequestIsRefusedToAnAccountOfAnotherSupplier() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME);
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierAccount(createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME), createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+
+		NodeRef templateNodeRef = openTemplateToSuppliers();
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Not mine")));
+	}
+
+	@Test
+	public void testOnlyTemplatesReadableByExternalUsersAreOpenToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.deletePermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER);
+			return null;
+		});
+		assertFalse("Without the permission, the template is not offered",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+
+		openTemplateToSuppliers();
+		assertTrue("Consumer for GROUP_ExternalUser opens it",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+	}
+
+	/** The configuration an administrator does: Consumer for GROUP_ExternalUser on the template. */
+	private NodeRef openTemplateToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.setPermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER, true);
+			return null;
+		});
+		return templateNodeRef;
+	}
+
+	@Test
+	public void testSecondSupplierProjectIsRefusedWhileOneIsOpen() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		assertThrows(IllegalStateException.class, () -> createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef));
+	}
 
 	@Test
 	public void testSupplierPortal() {
