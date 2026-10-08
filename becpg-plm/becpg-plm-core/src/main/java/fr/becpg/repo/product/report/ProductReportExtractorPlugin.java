@@ -303,6 +303,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private NutritionFactsPanelRenderer nutritionFactsPanelRenderer;
 
+	private IngredientIdentityReportWriter ingredientIdentityReportWriter;
+
 	@Autowired
 	/**
 	 * <p>Constructor for ProductReportExtractorPlugin.</p>
@@ -341,6 +343,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Autowired
 	public void setNutritionFactsPanelRenderer(NutritionFactsPanelRenderer nutritionFactsPanelRenderer) {
 		this.nutritionFactsPanelRenderer = nutritionFactsPanelRenderer;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ingredientIdentityReportWriter</code>, injected by setter so that the
+	 * extractors deriving from this one keep their constructor.</p>
+	 *
+	 * @param ingredientIdentityReportWriter a {@link fr.becpg.repo.product.report.IngredientIdentityReportWriter} object
+	 */
+	@Autowired
+	public void setIngredientIdentityReportWriter(IngredientIdentityReportWriter ingredientIdentityReportWriter) {
+		this.ingredientIdentityReportWriter = ingredientIdentityReportWriter;
 	}
 
 	static {
@@ -1650,10 +1663,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				if (dataListItem.getIng() != null) {
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
-					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
-					if (ingCEECode != null) {
-						ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
-					}
+					ingredientIdentityReportWriter.write(dataListItem.getIng(), ingListElt);
 					loadDataListItemAttributes(dataListItem, ingListElt, context);
 				}
 			}
