@@ -1088,12 +1088,14 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
-					<value>INFANT_6_12M</value>
-					<value>UNDER_3Y</value>
-					<value>UNDER_6Y</value>
-					<value>UNDER_12Y</value>
-					<value>UNDER_14Y</value>
-					<value>UNDER_16Y</value>
+					<value>FROM_BIRTH</value>
+					<value>FROM_6M</value>
+					<value>FROM_3Y</value>
+					<value>FROM_6Y</value>
+					<value>FROM_12Y</value>
+					<value>FROM_14Y</value>
+					<value>FROM_16Y</value>
+					<value>ADULT</value>
 					<value>PREGNANT</value>
 				</list>
 			</parameter>
@@ -7498,10 +7500,10 @@
 						<constraint ref="bcpg:regulatoryExposureRoutes" />
 					</constraints>
 				</property>
-				<property name="bcpg:regulatoryTargetPopulations">
+				<property name="bcpg:regulatoryTargetPopulation">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<multiple>true</multiple>
+					<default>ADULT</default>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>

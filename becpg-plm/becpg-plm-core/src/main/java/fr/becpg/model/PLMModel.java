@@ -959,8 +959,8 @@ public interface PLMModel {
 	QName PROP_REGULATORY_MUCOUS_CONTACT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryMucousContact");
 	/** Constant <code>PROP_REGULATORY_EXPOSURE_ROUTES</code> */
 	QName PROP_REGULATORY_EXPOSURE_ROUTES = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryExposureRoutes");
-	/** Constant <code>PROP_REGULATORY_TARGET_POPULATIONS</code> */
-	QName PROP_REGULATORY_TARGET_POPULATIONS = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryTargetPopulations");
+	/** Constant <code>PROP_REGULATORY_TARGET_POPULATION</code> */
+	QName PROP_REGULATORY_TARGET_POPULATION = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryTargetPopulation");
 	/** Constant <code>PROP_REGULATORY_PROFESSIONAL_USE</code> */
 	QName PROP_REGULATORY_PROFESSIONAL_USE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryProfessionalUse");
 	/** Constant <code>PROP_REGULATORY_LEGAL_STATUS</code>: legal status of the product on the markets of a regulatory line */
