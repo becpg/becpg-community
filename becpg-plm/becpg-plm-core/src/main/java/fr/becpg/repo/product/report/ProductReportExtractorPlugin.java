@@ -1550,6 +1550,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param dataListsElt a {@link org.dom4j.Element} object
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
 	 */
+	/**
+	 * Writes the labeling threshold of an allergen on its allergen line, so that a report can tell whether the allergen
+	 * has to be labeled, such as a fragrance allergen above 0.001 % in a leave-on cosmetic product.
+	 *
+	 * @param allergenNodeRef the allergen
+	 * @param allergenListElt the allergen line element
+	 */
+	private void addRegulatoryThreshold(NodeRef allergenNodeRef, Element allergenListElt) {
+		Double threshold = (Double) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+		if (threshold != null) {
+			allergenListElt.addAttribute(PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD.getLocalName(), threshold.toString());
+		}
+	}
+
 	private void loadAllergenLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getAllergenList() != null) && !productData.getAllergenList().isEmpty()) {
 			Element allergenListsElt = dataListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
@@ -1566,6 +1580,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataListItemAttributes(dataListItem, allergenListElt, context);
 
 					String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+					addRegulatoryThreshold(dataListItem.getAllergen(), allergenListElt);
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
 					String displayMode = "";
 
