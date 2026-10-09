@@ -265,8 +265,23 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.5.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.6</version>
+					<version>3.8.0</version>
 					<executions>
 						<execution>
 							<id>build-amp-file</id>
@@ -276,7 +291,9 @@
 							</goals>
 							<configuration>
 								<appendAssemblyId>false</appendAssemblyId>
-								<descriptor>src/main/assembly/amp.xml</descriptor>
+								<descriptors>
+									<descriptor>src/main/assembly/amp.xml</descriptor>
+								</descriptors>
 							</configuration>
 						</execution>
 					</executions>
@@ -285,6 +302,14 @@
 							<groupId>org.alfresco.maven.plugin</groupId>
 							<artifactId>alfresco-maven-plugin</artifactId>
 							<version>${alfresco.sdk.version}</version>
+							<exclusions>
+								<!-- alfresco-mmt bundles an old copy of commons-compress that shadows the one
+								     plexus-archiver needs; packaging an AMP does not use the MMT -->
+								<exclusion>
+									<groupId>org.alfresco</groupId>
+									<artifactId>alfresco-mmt</artifactId>
+								</exclusion>
+							</exclusions>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -292,7 +317,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.5.0</version>
 					<configuration>
 						<encoding>UTF-8</encoding>
 						<propertiesEncoding>ISO-8859-1</propertiesEncoding>
@@ -329,13 +354,16 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.4.2</version>
+					<version>3.5.1</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.5.4</version>
+					<!-- Stay on 3.5.x: 3.6 dropped the JUnit 4 providers and runs the ITs through the JUnit
+					     Platform vintage engine, which loses the results reported by BeCPGTestRunner (a failing
+					     remote IT was counted as passed). -->
+					<version>3.5.6</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -359,7 +387,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.5.4</version>
+							<version>3.5.6</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -367,7 +395,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.11.0</version>
 				</plugin>
 
 				<plugin>
@@ -451,7 +479,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>3.3.1</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -469,7 +497,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.4</version>
+				<version>3.6.0</version>
 				<configuration>
 					<runOrder>alphabetical</runOrder>
 				</configuration>
@@ -478,7 +506,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.3</version>
+				<version>3.12.0</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -486,13 +514,13 @@
 		    <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.6.2</version>
 			</plugin>	
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>3.16.0</version>
 				<configuration>
 					<release>21</release>
 					<compilerArgs>
@@ -505,13 +533,13 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>5.1.0.4751</version>
+				<version>5.8.0.7211</version>
 			</plugin>
 			
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-site-plugin</artifactId>
-			    <version>3.21.0</version>
+			    <version>3.22.0</version>
 			</plugin>
 		</plugins>
 		
@@ -549,7 +577,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.5.4</version>
+            <version>3.6.0</version>
             <configuration>
                 <!-- No specific executions required, just the goal for site phase aggregation -->
                 <aggregate>true</aggregate>
@@ -560,7 +588,7 @@
          <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.3</version>
+                <version>3.12.0</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -591,6 +619,7 @@
 		<dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-core</artifactId>
+		    <version>5.24.0</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
