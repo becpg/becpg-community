@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -32,121 +34,141 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.PropertyCheck;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
- * This implementation provides an XPath based {@link NodeLocator} which uses the transactionally-safe and fully XPath-supporting
- * {@link SearchService#selectNodes(org.alfresco.service.cmr.repository.NodeRef, String, org.alfresco.service.cmr.search.QueryParameterDefinition[], org.alfresco.service.namespace.NamespacePrefixResolver, boolean)
- * selectNodes} API instead of the index-based, partial {@link SearchService#LANGUAGE_XPATH XPath search language} used by the
- * {@link org.alfresco.repo.nodelocator.XPathNodeLocator default implementation}.
- *
+ * This {@link NodeLocator} identifies a node from an XPath provided via the <code>xpath</code> parameter.
+ * <p>
+ * beCPG - this implementation uses the transactionally-safe and fully XPath-supporting
+ * {@link SearchService#selectNodes(NodeRef, String, QueryParameterDefinition[], org.alfresco.service.namespace.NamespacePrefixResolver, boolean) selectNodes} API instead of the index-based, partial {@link SearchService#LANGUAGE_XPATH XPath search language} used by the Alfresco default implementation.
+ * 
+ * @author Nick Smith
  * @author Axel Faust
+ * @since 4.0
  */
-public class XPathNodeLocator extends AbstractNodeLocator implements InitializingBean {
+public class XPathNodeLocator extends AbstractNodeLocator implements InitializingBean
+{
+    public static final String NAME = "xpath";
+    public static final String QUERY_KEY = "query";
+    public static final String STORE_TYPE_KEY = "store_type";
+    public static final String STORE_ID_KEY = "store_id";
 
-	public static final String NAME = "xpath";
-	public static final String QUERY_KEY = "query";
-	public static final String STORE_TYPE_KEY = "store_type";
-	public static final String STORE_ID_KEY = "store_id";
+    // beCPG
+    protected NamespaceService namespaceService;
+    // beCPG
+    protected NodeService nodeService;
+    protected SearchService searchService;
+    protected StoreRef defaultStore;
 
-	protected NamespaceService namespaceService;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterPropertiesSet()
+    {
+        // beCPG
+        PropertyCheck.mandatory(this, "namespaceService", this.namespaceService);
+        PropertyCheck.mandatory(this, "nodeService", this.nodeService);
+        PropertyCheck.mandatory(this, "searchService", this.searchService);
+        PropertyCheck.mandatory(this, "defaultStore", this.defaultStore);
+    }
 
-	protected NodeService nodeService;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodeRef getNode(final NodeRef source, final Map<String, Serializable> params)
+    {
+        // beCPG - convert the parameters instead of casting them
+        final String query = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(QUERY_KEY));
+        ParameterCheck.mandatoryString("query", query);
+        final StoreRef store;
+        if (source != null)
+        {
+            store = source.getStoreRef();
+        }
+        else
+        {
+            final String storeType = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(STORE_TYPE_KEY));
+            final String storeId = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(STORE_ID_KEY));
+            if (storeType != null && storeId != null)
+            {
+                store = new StoreRef(storeType, storeId);
+            }
+            else
+            {
+                store = this.defaultStore;
+            }
+        }
 
-	protected SearchService searchService;
+        // beCPG - resolve the XPath against the node service instead of the search index
+        final NodeRef rootNode = this.nodeService.getRootNode(store);
+        final List<NodeRef> nodes = this.searchService.selectNodes(rootNode, query, new QueryParameterDefinition[0], this.namespaceService, true);
+        if (!nodes.isEmpty())
+        {
+            return nodes.get(0);
+        }
+        return null;
+    }
 
-	protected StoreRef defaultStore;
-
-	/**
-	 *
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void afterPropertiesSet() {
-		PropertyCheck.mandatory(this, "namespaceService", this.namespaceService);
-		PropertyCheck.mandatory(this, "nodeService", this.nodeService);
-		PropertyCheck.mandatory(this, "searchService", this.searchService);
-		PropertyCheck.mandatory(this, "defaultStore", this.defaultStore);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodeRef getNode(final NodeRef source, final Map<String, Serializable> params) {
-		final String query = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(QUERY_KEY));
-		ParameterCheck.mandatoryString("query", query);
-		final StoreRef store;
-		if (source != null) {
-			store = source.getStoreRef();
-		} else {
-			final String storeType = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(STORE_TYPE_KEY));
-			final String storeId = DefaultTypeConverter.INSTANCE.convert(String.class, params.get(STORE_ID_KEY));
-			if (storeType != null && storeId != null) {
-				store = new StoreRef(storeType, storeId);
-			} else {
-				store = this.defaultStore;
-			}
-		}
-
-		final NodeRef rootNode = this.nodeService.getRootNode(store);
-		final List<NodeRef> nodes = this.searchService.selectNodes(rootNode, query, new QueryParameterDefinition[0], this.namespaceService, true);
-		if (!nodes.isEmpty()) {
-			return nodes.get(0);
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<ParameterDefinition> getParameterDefinitions()
     {
         List<ParameterDefinition> paramDefs = new ArrayList<ParameterDefinition>(2);
-		paramDefs.add(new ParameterDefinitionImpl(QUERY_KEY, DataTypeDefinition.TEXT, true, "Query"));
-		paramDefs.add(new ParameterDefinitionImpl(STORE_TYPE_KEY, DataTypeDefinition.TEXT, false, "Store Type"));
-		paramDefs.add(new ParameterDefinitionImpl(STORE_ID_KEY, DataTypeDefinition.TEXT, false, "Store Id"));
-		return paramDefs;
-	}
+        paramDefs.add(new ParameterDefinitionImpl(QUERY_KEY, DataTypeDefinition.TEXT, true, "Query"));
+        paramDefs.add(new ParameterDefinitionImpl(STORE_TYPE_KEY, DataTypeDefinition.TEXT, false, "Store Type"));
+        paramDefs.add(new ParameterDefinitionImpl(STORE_ID_KEY, DataTypeDefinition.TEXT, false, "Store Id"));
+        return paramDefs;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName()
+    {
+        return NAME;
+    }
 
-	/**
-	 * @param namespaceService
-	 *            the namespaceService to set
-	 */
-	public void setNamespaceService(final NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
+    /**
+     * beCPG
+     * 
+     * @param namespaceService
+     *            the namespaceService to set
+     */
+    public void setNamespaceService(final NamespaceService namespaceService)
+    {
+        this.namespaceService = namespaceService;
+    }
 
-	/**
-	 * @param nodeService
-	 *            the nodeService to set
-	 */
-	public void setNodeService(final NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
+    /**
+     * beCPG
+     * 
+     * @param nodeService
+     *            the nodeService to set
+     */
+    public void setNodeService(final NodeService nodeService)
+    {
+        this.nodeService = nodeService;
+    }
 
-	/**
-	 * @param searchService
-	 *            the searchService to set
-	 */
-	public void setSearchService(final SearchService searchService) {
-		this.searchService = searchService;
-	}
+    /**
+     * @param searchService
+     *            the searchService to set
+     */
+    public void setSearchService(final SearchService searchService)
+    {
+        this.searchService = searchService;
+    }
 
-	/**
-	 * @param defaultStoreStr
-	 *            the defaultStoreStr to set
-	 */
-	public void setDefaultStore(final String defaultStoreStr) {
-		this.defaultStore = new StoreRef(defaultStoreStr);
-	}
+    /**
+     * @param defaultStoreStr
+     *            the defaultStoreStr to set
+     */
+    public void setDefaultStore(final String defaultStoreStr)
+    {
+        this.defaultStore = new StoreRef(defaultStoreStr);
+    }
 }

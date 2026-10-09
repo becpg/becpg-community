@@ -29,11 +29,18 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -75,25 +82,17 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.EqualsHelper;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONObject;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.extensions.surf.util.AbstractLifecycleBean;
 
 /**
- * <p>CommentServiceImpl class.</p>
- *
  * @author Neil Mc Erlean
  * @since 4.0
  */
 // TODO consolidate this and ScriptCommentService and the implementations of comments.* web scripts.
-public class CommentServiceImpl extends AbstractLifecycleBean implements CommentService, 
-        NodeServicePolicies.BeforeDeleteNodePolicy, 
+public class CommentServiceImpl extends AbstractLifecycleBean implements CommentService,
+        NodeServicePolicies.BeforeDeleteNodePolicy,
         NodeServicePolicies.OnUpdatePropertiesPolicy
 {
-    private static Log logger = LogFactory.getLog(CommentServiceImpl.class);  
+    private static Log logger = LogFactory.getLog(CommentServiceImpl.class);
 
     /**
      * Naming convention for Share comment model. fm:forum contains fm:topic
@@ -102,7 +101,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
     private static final String COMMENTS_TOPIC_NAME = "Comments";
 
     private static final String CANNED_QUERY_GET_CHILDREN = "commentsGetChildrenCannedQueryFactory";
-    
+
     // Injected services
     private NodeService nodeService;
     private ContentService contentService;
@@ -113,110 +112,59 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
     private PermissionService permissionService;
     private LockService lockService;
     private DictionaryService dictionaryService;
-    
+
     private NamedObjectRegistry<CannedQueryFactory<? extends Object>> cannedQueryRegistry;
 
-	/**
-	 * <p>Setter for the field <code>siteService</code>.</p>
-	 *
-	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object
-	 */
-	public void setSiteService(SiteService siteService)
+    public void setSiteService(SiteService siteService)
     {
-		this.siteService = siteService;
-	}
+        this.siteService = siteService;
+    }
 
-	/**
-	 * <p>Setter for the field <code>activityService</code>.</p>
-	 *
-	 * @param activityService a {@link org.alfresco.service.cmr.activities.ActivityService} object
-	 */
-	public void setActivityService(ActivityService activityService)
+    public void setActivityService(ActivityService activityService)
     {
-		this.activityService = activityService;
-	}
-    
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
-	 */
-	public void setNodeService(NodeService nodeService)
+        this.activityService = activityService;
+    }
+
+    public void setNodeService(NodeService nodeService)
     {
         this.nodeService = nodeService;
     }
 
-	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
-	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
-	 */
-	public void setContentService(ContentService contentService)
+    public void setContentService(ContentService contentService)
     {
         this.contentService = contentService;
     }
-    
-    /**
-     * <p>Setter for the field <code>cannedQueryRegistry</code>.</p>
-     *
-     * @param cannedQueryRegistry a {@link org.alfresco.util.registry.NamedObjectRegistry} object
-     */
+
     public void setCannedQueryRegistry(NamedObjectRegistry<CannedQueryFactory<? extends Object>> cannedQueryRegistry)
     {
-		this.cannedQueryRegistry = cannedQueryRegistry;
-	}
+        this.cannedQueryRegistry = cannedQueryRegistry;
+    }
 
-    /**
-     * <p>Setter for the field <code>policyComponent</code>.</p>
-     *
-     * @param policyComponent a {@link org.alfresco.repo.policy.PolicyComponent} object
-     */
     public void setPolicyComponent(PolicyComponent policyComponent)
     {
         this.policyComponent = policyComponent;
     }
 
-    /**
-     * <p>Setter for the field <code>behaviourFilter</code>.</p>
-     *
-     * @param behaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
-     */
     public void setBehaviourFilter(BehaviourFilter behaviourFilter)
     {
         this.behaviourFilter = behaviourFilter;
     }
 
-    /**
-     * <p>Setter for the field <code>permissionService</code>.</p>
-     *
-     * @param permissionService a {@link org.alfresco.service.cmr.security.PermissionService} object
-     */
     public void setPermissionService(PermissionService permissionService)
     {
         this.permissionService = permissionService;
     }
 
-    /**
-     * <p>Setter for the field <code>lockService</code>.</p>
-     *
-     * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
-     */
     public void setLockService(LockService lockService)
     {
         this.lockService = lockService;
     }
 
-    /**
-     * <p>Setter for the field <code>dictionaryService</code>.</p>
-     *
-     * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
-     */
     public void setDictionaryService(DictionaryService dictionaryService)
     {
         this.dictionaryService = dictionaryService;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void onBootstrap(ApplicationEvent event)
     {
@@ -226,46 +174,46 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         {
             if (this.nodeService == null)
             {
-                this.nodeService = (NodeService)ctx.getBean("NodeService");
+                this.nodeService = (NodeService) ctx.getBean("NodeService");
             }
             if (this.contentService == null)
             {
-                this.contentService = (ContentService)ctx.getBean("ContentService");
+                this.contentService = (ContentService) ctx.getBean("ContentService");
             }
             if (this.siteService == null)
             {
-                this.siteService = (SiteService)ctx.getBean("SiteService");
+                this.siteService = (SiteService) ctx.getBean("SiteService");
             }
             if (this.activityService == null)
             {
-                this.activityService = (ActivityService)ctx.getBean("activityService");
+                this.activityService = (ActivityService) ctx.getBean("activityService");
             }
             if (this.cannedQueryRegistry == null)
             {
-                this.cannedQueryRegistry = (NamedObjectRegistry<CannedQueryFactory<? extends Object>>)ctx.getBean("commentsCannedQueryRegistry");
+                this.cannedQueryRegistry = (NamedObjectRegistry<CannedQueryFactory<? extends Object>>) ctx.getBean("commentsCannedQueryRegistry");
             }
             if (this.policyComponent == null)
             {
-                this.policyComponent = (PolicyComponent)ctx.getBean("policyComponent");
+                this.policyComponent = (PolicyComponent) ctx.getBean("policyComponent");
             }
             if (this.behaviourFilter == null)
             {
-                this.behaviourFilter = (BehaviourFilter)ctx.getBean("policyBehaviourFilter");
+                this.behaviourFilter = (BehaviourFilter) ctx.getBean("policyBehaviourFilter");
             }
             if (this.permissionService == null)
             {
-                this.permissionService = (PermissionService)ctx.getBean("PermissionService");
+                this.permissionService = (PermissionService) ctx.getBean("PermissionService");
             }
             if (this.lockService == null)
             {
-                this.lockService = (LockService)ctx.getBean("LockService");
+                this.lockService = (LockService) ctx.getBean("LockService");
             }
             if (this.dictionaryService == null)
             {
-                this.dictionaryService = (DictionaryService)ctx.getBean("DictionaryService");
+                this.dictionaryService = (DictionaryService) ctx.getBean("DictionaryService");
             }
         }
-        
+
         this.policyComponent.bindClassBehaviour(
                 NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
                 ForumModel.TYPE_POST,
@@ -276,33 +224,30 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
                 new JavaBehaviour(this, "beforeDeleteNode"));
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void onShutdown(ApplicationEvent event)
-    {
-    }
+    {}
 
-    /** {@inheritDoc} */
     @Override
     public NodeRef getDiscussableAncestor(NodeRef descendantNodeRef)
     {
         // For "Share comments" i.e. fm:post nodes created via the Share commenting UI, the containment structure is as follows:
         // fm:discussable
-        //    - fm:forum
-        //        - fm:topic
-        //            - fm:post
+        // - fm:forum
+        // - fm:topic
+        // - fm:post
         // For other fm:post nodes the ancestor structure may be slightly different. (cf. Share discussions, which don't have 'forum')
         //
         // In order to ensure that we only return the discussable ancestor relevant to Share comments, we'll climb the
         // containment tree in a controlled manner.
         // We could navigate up looking for the first fm:discussable ancestor, but that might not find the correct node - it could,
         // for example, find a parent folder which was discussable.
-        
+
         NodeRef result = null;
         if (nodeService.getType(descendantNodeRef).equals(ForumModel.TYPE_POST))
         {
             NodeRef topicNode = nodeService.getPrimaryParent(descendantNodeRef).getParentRef();
-            
+
             if (nodeService.getType(topicNode).equals(ForumModel.TYPE_TOPIC))
             {
                 ChildAssociationRef forumToTopicChildAssocRef = nodeService.getPrimaryParent(topicNode);
@@ -310,11 +255,11 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
                 if (forumToTopicChildAssocRef.getQName().equals(FORUM_TO_TOPIC_ASSOC_QNAME))
                 {
                     NodeRef forumNode = forumToTopicChildAssocRef.getParentRef();
-                    
+
                     if (nodeService.getType(forumNode).equals(ForumModel.TYPE_FORUM))
                     {
                         NodeRef discussableNode = nodeService.getPrimaryParent(forumNode).getParentRef();
-    
+
                         if (nodeService.hasAspect(discussableNode, ForumModel.ASPECT_DISCUSSABLE))
                         {
                             result = discussableNode;
@@ -323,24 +268,23 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
                 }
             }
         }
-        
+
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PagingResults<NodeRef> listComments(NodeRef discussableNode, PagingRequest paging)
     {
-    	NodeRef commentsFolder = getShareCommentsTopic(discussableNode);
-    	if(commentsFolder != null)
-    	{
-    		List<Pair<QName,Boolean>> sort = new ArrayList<Pair<QName,Boolean>>();
-    		sort.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED, false));
+        NodeRef commentsFolder = getShareCommentsTopic(discussableNode);
+        if (commentsFolder != null)
+        {
+            List<Pair<QName, Boolean>> sort = new ArrayList<Pair<QName, Boolean>>();
+            sort.add(new Pair<QName, Boolean>(ContentModel.PROP_CREATED, false));
 
-	        // Run the canned query
-	        GetChildrenCannedQueryFactory getChildrenCannedQueryFactory = (GetChildrenCannedQueryFactory)cannedQueryRegistry.getNamedObject(CANNED_QUERY_GET_CHILDREN);
-	        GetChildrenCannedQuery cq = (GetChildrenCannedQuery)getChildrenCannedQueryFactory.getCannedQuery(commentsFolder, null, null, null, null, sort, paging);
-            
+            // Run the canned query
+            GetChildrenCannedQueryFactory getChildrenCannedQueryFactory = (GetChildrenCannedQueryFactory) cannedQueryRegistry.getNamedObject(CANNED_QUERY_GET_CHILDREN);
+            GetChildrenCannedQuery cq = (GetChildrenCannedQuery) getChildrenCannedQueryFactory.getCannedQuery(commentsFolder, null, null, null, null, sort, paging);
+
             // Execute the canned query
             final CannedQueryResults<NodeRef> results = cq.execute();
 
@@ -369,8 +313,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
                 page.add(comment);
             }
 
-            return new PagingResults<NodeRef>()
-            {
+            return new PagingResults<NodeRef>() {
                 @Override
                 public String getQueryExecutionId()
                 {
@@ -401,160 +344,162 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
             return new EmptyPagingResults<NodeRef>();
         }
     }
-    
-    /** {@inheritDoc} */
+
     @Override
     public NodeRef getShareCommentsTopic(NodeRef discussableNode)
     {
         NodeRef result = null;
-        
+
         if (nodeService.hasAspect(discussableNode, ForumModel.ASPECT_DISCUSSABLE))
         {
             // We navigate down the "Share comments" containment model, which is based on the more general forum model,
             // but with certain naming conventions.
             List<ChildAssociationRef> fora = nodeService.getChildAssocs(discussableNode, ForumModel.ASSOC_DISCUSSION, ForumModel.ASSOC_DISCUSSION, true);
-            
+
             // There should only be one such assoc.
-            if ( !fora.isEmpty())
+            if (!fora.isEmpty())
             {
                 final NodeRef firstForumNode = fora.get(0).getChildRef();
                 List<ChildAssociationRef> topics = nodeService.getChildAssocs(firstForumNode, ContentModel.ASSOC_CONTAINS, FORUM_TO_TOPIC_ASSOC_QNAME, true);
-                
+
                 // Likewise, only one.
-                if ( !topics.isEmpty())
+                if (!topics.isEmpty())
                 {
                     final NodeRef firstTopicNode = topics.get(0).getChildRef();
                     result = firstTopicNode;
                 }
             }
         }
-        
+
         return result;
     }
 
-//    private ScriptNode createCommentsFolder(ScriptNode node)
-//    {
-//        final NodeRef nodeRef = node.getNodeRef();
-//        
-//        NodeRef commentsFolder = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>()
-//        {
-//            public NodeRef doWork() throws Exception
-//            {
-//                NodeRef commentsFolder = null;
-//                
-//                // ALF-5240: turn off auditing round the discussion node creation to prevent
-//                // the source document from being modified by the first user leaving a comment
-//                behaviourFilter.disableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
-//                
-//                try
-//                {
-//                    nodeService.addAspect(nodeRef, QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "discussable"), null);
-//                    List<ChildAssociationRef> assocs = nodeService.getChildAssocs(nodeRef, QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "discussion"), RegexQNamePattern.MATCH_ALL);
-//                    if (assocs.size() != 0)
-//                    {
-//                        NodeRef forumFolder = assocs.get(0).getChildRef();
-//                        
-//                        Map<QName, Serializable> props = new HashMap<QName, Serializable>(1, 1.0f);
-//                        props.put(ContentModel.PROP_NAME, COMMENTS_TOPIC_NAME);
-//                        commentsFolder = nodeService.createNode(
-//                                forumFolder,
-//                                ContentModel.ASSOC_CONTAINS, 
-//                                QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, COMMENTS_TOPIC_NAME), 
-//                                QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "topic"),
-//                                props).getChildRef();
-//                    }
-//                }
-//                finally
-//                {
-//                    behaviourFilter.enableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
-//                }
-//                
-//                return commentsFolder;
-//            }
-//    
-//        }, AuthenticationUtil.getSystemUserName()); 
-//        
-//        return new ScriptNode(commentsFolder, serviceRegistry, getScope());
-//    }
-    
+    // private ScriptNode createCommentsFolder(ScriptNode node)
+    // {
+    // final NodeRef nodeRef = node.getNodeRef();
+    //
+    // NodeRef commentsFolder = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>()
+    // {
+    // public NodeRef doWork() throws Exception
+    // {
+    // NodeRef commentsFolder = null;
+    //
+    // // ALF-5240: turn off auditing round the discussion node creation to prevent
+    // // the source document from being modified by the first user leaving a comment
+    // behaviourFilter.disableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
+    //
+    // try
+    // {
+    // nodeService.addAspect(nodeRef, QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "discussable"), null);
+    // List<ChildAssociationRef> assocs = nodeService.getChildAssocs(nodeRef, QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "discussion"), RegexQNamePattern.MATCH_ALL);
+    // if (assocs.size() != 0)
+    // {
+    // NodeRef forumFolder = assocs.get(0).getChildRef();
+    //
+    // Map<QName, Serializable> props = new HashMap<QName, Serializable>(1, 1.0f);
+    // props.put(ContentModel.PROP_NAME, COMMENTS_TOPIC_NAME);
+    // commentsFolder = nodeService.createNode(
+    // forumFolder,
+    // ContentModel.ASSOC_CONTAINS,
+    // QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, COMMENTS_TOPIC_NAME),
+    // QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "topic"),
+    // props).getChildRef();
+    // }
+    // }
+    // finally
+    // {
+    // behaviourFilter.enableBehaviour(nodeRef, ContentModel.ASPECT_AUDITABLE);
+    // }
+    //
+    // return commentsFolder;
+    // }
+    //
+    // }, AuthenticationUtil.getSystemUserName());
+    //
+    // return new ScriptNode(commentsFolder, serviceRegistry, getScope());
+    // }
+
     private String getSiteId(final NodeRef nodeRef)
     {
-        String siteId = AuthenticationUtil.runAsSystem(new RunAsWork<String>()
-        {
-			@Override
-			public String doWork() throws Exception
-			{
-				return siteService.getSiteShortName(nodeRef);
-			}
+        String siteId = AuthenticationUtil.runAsSystem(new RunAsWork<String>() {
+            @Override
+            public String doWork() throws Exception
+            {
+                return siteService.getSiteShortName(nodeRef);
+            }
         });
 
         return siteId;
     }
 
-	//beCPG
-	static final String PROJECT_URI = "http://www.bcpg.fr/model/project/1.0";
-	static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
-	static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
-	static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
-	static final QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
+    // beCPG - project datalist items (tasks, deliverables) have no meaningful cm:name
+    static final String PROJECT_URI = "http://www.bcpg.fr/model/project/1.0";
+    static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
+    static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
+    static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
+    static final QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
 
     @SuppressWarnings("unchecked")
-	private JSONObject getActivityData(String siteId, final NodeRef nodeRef)
+    private JSONObject getActivityData(String siteId, final NodeRef nodeRef)
     {
-        if(siteId != null)
+        if (siteId != null)
         {
-			// create an activity (with some Share-specific parts)
-			JSONObject json = new JSONObject();
+            // create an activity (with some Share-specific parts)
+            JSONObject json = new JSONObject();
+            // beCPG - use the task name / deliverable description as the activity title
+            json.put("title", getActivityTitle(nodeRef));
+            try
+            {
+                StringBuilder sb = new StringBuilder("document-details?nodeRef=");
+                sb.append(URLEncoder.encode(nodeRef.toString(), "UTF-8"));
+                json.put("page", sb.toString());
+                // MNT-11667 "createComment" method creates activity for users who are not supposed to see the file
+                json.put("nodeRef", nodeRef.toString());
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                logger.warn("Unable to urlencode page for create comment activity");
+            }
 
-			String title = "";
-			String url = "document-details?nodeRef=";
-			QName itemType = nodeService.getType(nodeRef);
-			if (TYPE_TASK_LIST.equals(itemType)) {
-				title = (String) nodeService.getProperty(nodeRef, PROP_TL_TASK_NAME);
-			} else if (TYPE_DELIVERABLE_LIST.equals(itemType)) {
-				title = (String) nodeService.getProperty(nodeRef, PROP_DL_DESCRIPTION);
-
-			} else {
-				title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-			}
-
-			json.put("title", title);
-			try {
-				StringBuilder sb = new StringBuilder(url);
-				sb.append(URLEncoder.encode(nodeRef.toString(), "UTF-8"));
-				json.put("page", sb.toString());
-				// MNT-11667 "createComment" method creates activity for users
-				// who are not supposed to see the file
-				json.put("nodeRef", nodeRef.toString());
-			} catch (UnsupportedEncodingException e) {
-				logger.warn("Unable to urlencode page for create comment activity");
-			}
-
-			return json;
-		}
+            return json;
+        }
         else
         {
-        	logger.warn("Unable to determine site in which node " + nodeRef + " resides.");
-        	return null;
+            logger.warn("Unable to determine site in which node " + nodeRef + " resides.");
+            return null;
         }
     }
-    
-	private void postActivity(String siteId, String activityType, JSONObject activityData)
+
+    // beCPG
+    private String getActivityTitle(NodeRef nodeRef)
     {
-		if(activityData != null)
-		{
-			activityService.postActivity(activityType, siteId, "comments", activityData.toString());
-		}
+        QName itemType = nodeService.getType(nodeRef);
+        if (TYPE_TASK_LIST.equals(itemType))
+        {
+            return (String) nodeService.getProperty(nodeRef, PROP_TL_TASK_NAME);
+        }
+        else if (TYPE_DELIVERABLE_LIST.equals(itemType))
+        {
+            return (String) nodeService.getProperty(nodeRef, PROP_DL_DESCRIPTION);
+        }
+        return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
     }
 
-    /** {@inheritDoc} */
-	@Override
+    private void postActivity(String siteId, String activityType, JSONObject activityData)
+    {
+        if (activityData != null)
+        {
+            activityService.postActivity(activityType, siteId, "comments", activityData.toString());
+        }
+    }
+
+    @Override
     public NodeRef createComment(final NodeRef discussableNode, String title, String comment, boolean suppressRollups)
     {
-    	if(comment == null)
-    	{
-    		throw new IllegalArgumentException("Must provide a non-null comment");
-    	}
+        if (comment == null)
+        {
+            throw new IllegalArgumentException("Must provide a non-null comment");
+        }
 
         // There is no CommentService, so we have to create the node structure by hand.
         // This is what happens within e.g. comment.put.json.js when comments are submitted via the REST API.
@@ -568,7 +513,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         }
         // Forum node is created automatically by DiscussableAspect behaviour.
         NodeRef forumNode = nodeService.getChildAssocs(discussableNode, ForumModel.ASSOC_DISCUSSION, QName.createQName(NamespaceService.FORUMS_MODEL_1_0_URI, "discussion")).get(0).getChildRef();
-        
+
         final List<ChildAssociationRef> existingTopics = nodeService.getChildAssocs(forumNode, ContentModel.ASSOC_CONTAINS, FORUM_TO_TOPIC_ASSOC_QNAME);
         NodeRef topicNode = null;
         if (existingTopics.isEmpty())
@@ -590,7 +535,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         writer.setEncoding("UTF-8");
         writer.putContent(comment);
 
-    	// determine the siteId and activity data of the comment NodeRef
+        // determine the siteId and activity data of the comment NodeRef
         String siteId = getSiteId(discussableNode);
         JSONObject activityData = getActivityData(siteId, discussableNode);
 
@@ -599,15 +544,14 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         return postNode;
     }
 
-    /** {@inheritDoc} */
     public void updateComment(NodeRef commentNodeRef, String title, String comment)
     {
-    	QName nodeType = nodeService.getType(commentNodeRef);
-    	if(!nodeType.equals(ForumModel.TYPE_POST))
-    	{
-    		throw new IllegalArgumentException("Node to update is not a comment node.");
-    	}
-        
+        QName nodeType = nodeService.getType(commentNodeRef);
+        if (!nodeType.equals(ForumModel.TYPE_POST))
+        {
+            throw new IllegalArgumentException("Node to update is not a comment node.");
+        }
+
         try
         {
             ContentWriter writer = contentService.getWriter(commentNodeRef, ContentModel.PROP_CONTENT, true);
@@ -619,11 +563,11 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
             Throwable cause = cioe.getCause();
             if (cause instanceof AccessDeniedException)
             {
-                throw (AccessDeniedException)cause;
+                throw (AccessDeniedException) cause;
             }
             else if (cause instanceof NodeLockedException)
             {
-                throw (NodeLockedException)cause;
+                throw (NodeLockedException) cause;
             }
             else
             {
@@ -631,63 +575,61 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
             }
         }
 
-    	if(title != null)
-    	{
-    		nodeService.setProperty(commentNodeRef, ContentModel.PROP_TITLE, title);
-    	}
+        if (title != null)
+        {
+            nodeService.setProperty(commentNodeRef, ContentModel.PROP_TITLE, title);
+        }
 
-    	// determine the siteId and activity data of the comment NodeRef
+        // determine the siteId and activity data of the comment NodeRef
         String siteId = getSiteId(commentNodeRef);
         NodeRef discussableNodeRef = getDiscussableAncestor(commentNodeRef);
-        if(discussableNodeRef != null)
+        if (discussableNodeRef != null)
         {
-        	JSONObject activityData = getActivityData(siteId, discussableNodeRef);
+            JSONObject activityData = getActivityData(siteId, discussableNodeRef);
 
-        	postActivity(siteId, "org.alfresco.comments.comment-updated", activityData);
+            postActivity(siteId, "org.alfresco.comments.comment-updated", activityData);
         }
         else
         {
-        	logger.warn("Unable to determine discussable node for the comment with nodeRef " + commentNodeRef + ", not posting an activity");
+            logger.warn("Unable to determine discussable node for the comment with nodeRef " + commentNodeRef + ", not posting an activity");
         }
     }
 
-    /** {@inheritDoc} */
     public void deleteComment(NodeRef commentNodeRef)
     {
-    	QName nodeType = nodeService.getType(commentNodeRef);
-    	if(!nodeType.equals(ForumModel.TYPE_POST))
-    	{
-    		throw new IllegalArgumentException("Node to delete is not a comment node.");
-    	}
+        QName nodeType = nodeService.getType(commentNodeRef);
+        if (!nodeType.equals(ForumModel.TYPE_POST))
+        {
+            throw new IllegalArgumentException("Node to delete is not a comment node.");
+        }
 
-    	// determine the siteId and activity data of the comment NodeRef (do this before removing the comment NodeRef)
+        // determine the siteId and activity data of the comment NodeRef (do this before removing the comment NodeRef)
         String siteId = getSiteId(commentNodeRef);
         NodeRef discussableNodeRef = getDiscussableAncestor(commentNodeRef);
         JSONObject activityData = null;
-        if(discussableNodeRef != null)
+        if (discussableNodeRef != null)
         {
-        	activityData = getActivityData(siteId, discussableNodeRef);
+            activityData = getActivityData(siteId, discussableNodeRef);
         }
 
-    	nodeService.deleteNode(commentNodeRef);
+        nodeService.deleteNode(commentNodeRef);
 
-    	if(activityData != null)
-    	{
-    		postActivity(siteId, "org.alfresco.comments.comment-deleted", activityData);
-    	}
+        if (activityData != null)
+        {
+            postActivity(siteId, "org.alfresco.comments.comment-deleted", activityData);
+        }
         else
         {
-        	logger.warn("Unable to determine discussable node for the comment with nodeRef " + commentNodeRef + ", not posting an activity");
+            logger.warn("Unable to determine discussable node for the comment with nodeRef " + commentNodeRef + ", not posting an activity");
         }
     }
 
     // TODO review against ACE-5437 (eg. introduce CommentInfo as part of the CommentService)
-    /** {@inheritDoc} */
     public Map<String, Boolean> getCommentPermissions(NodeRef discussableNode, NodeRef commentNodeRef)
     {
         boolean canEdit = false;
         boolean canDelete = false;
-        
+
         // belts-and-braces
         NodeRef discussableNodeRef = getDiscussableAncestor(commentNodeRef);
         if (discussableNodeRef.equals(discussableNode))
@@ -709,7 +651,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
 
     private boolean canEditPermission(NodeRef commentNodeRef)
     {
-        String creator = (String)nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR);
+        String creator = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR);
         Serializable owner = nodeService.getProperty(commentNodeRef, ContentModel.PROP_OWNER);
         String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 
@@ -753,7 +695,6 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         return (isWorkingCopy || isLocked);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void onUpdateProperties(NodeRef commentNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after)
     {
@@ -788,7 +729,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
             }
 
             boolean canEdit = canEditPermission(commentNodeRef);
-            if (! canEdit)
+            if (!canEdit)
             {
                 throw new AccessDeniedException("Cannot edit comment");
             }
@@ -829,7 +770,6 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
         return results;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void beforeDeleteNode(final NodeRef commentNodeRef)
     {
@@ -845,7 +785,7 @@ public class CommentServiceImpl extends AbstractLifecycleBean implements Comment
                 throw new NodeLockedException(discussableNodeRef);
             }
 
-            if (! canDelete)
+            if (!canDelete)
             {
                 throw new AccessDeniedException("Cannot delete comment");
             }

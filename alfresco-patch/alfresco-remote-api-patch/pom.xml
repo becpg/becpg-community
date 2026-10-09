@@ -51,6 +51,7 @@
 							                <artifact>org.alfresco:alfresco-remote-api</artifact>
 							                <excludes>
 							                        <exclude>org/alfresco/repo/web/scripts/content/ContentStreamer**</exclude>
+							                        <exclude>org/alfresco/repo/web/scripts/TenantRepositoryContainer**</exclude>
 							                        <exclude>org/alfresco/repo/web/scripts/comments/CommentsPost**</exclude>
 							                        <exclude>org/alfresco/rest/api/impl/PeopleImpl**</exclude>
 							                        <exclude>org/alfresco/repo/webdav/WebDAVMethod**</exclude>

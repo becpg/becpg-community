@@ -59,15 +59,16 @@
 										<exclude>org/alfresco/repo/workflow/activiti/script/ActivitiScriptBase**</exclude>
 										<exclude>org/alfresco/repo/forum/CommentServiceImpl**</exclude>
 										<exclude>org/alfresco/repo/node/integrity/AssocSourceMultiplicityIntegrityEvent**</exclude>
-										<exclude>org/alfresco/repo/node/getchildren/GetChildrenCannedQuery**</exclude>
+										<exclude>org/alfresco/repo/node/getchildren/GetChildrenCannedQuery.class</exclude>
+										<exclude>org/alfresco/repo/node/getchildren/GetChildrenCannedQuery$*</exclude>
+										<exclude>org/alfresco/repo/node/getchildren/GetChildrenCannedQueryFactory**</exclude>
+										<exclude>org/alfresco/repo/search/impl/querymodel/impl/db/NodePermissionAssessor**</exclude>
 										<exclude>org/alfresco/repo/security/sync/ChainingUserRegistrySynchronizer**</exclude>
 										<exclude>org/alfresco/repo/security/sync/ldap/LDAPUserRegistry**</exclude>
 										<exclude>org/alfresco/repo/action/executer/MailActionExecuter**</exclude>
 										<exclude>org/alfresco/repo/action/executer/ScriptActionExecuter**</exclude>
 										<exclude>org/alfresco/repo/activities/feed/FeedTaskProcessor**</exclude>
 										<exclude>org/alfresco/repo/activities/feed/EmailUserNotifier**</exclude>
-										<exclude>org/alfresco/repo/activities/feed/RepoCtx**</exclude>
-										<exclude>org/alfresco/repo/rendition/RenditionServiceImpl**</exclude>
 										<exclude>org/alfresco/repo/rendition/RenditionNodeManager**</exclude>
 										<exclude>org/alfresco/repo/thumbnail/ThumbnailRegistry**</exclude>
 										<exclude>org/alfresco/repo/search/impl/querymodel/impl/db/functions/DBFTSRange**</exclude>
