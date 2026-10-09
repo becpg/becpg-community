@@ -122,7 +122,7 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "New production site"));
 
 		assertNotNull("The request starts a supplier project", projectNodeRef);
-		assertEquals("The project carries the supplier's reason", true, inReadTx(() -> String.valueOf(
+		assertTrue("The project carries the supplier's reason", inReadTx(() -> String.valueOf(
 				nodeService.getProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION)).contains("New production site")));
 		assertThrows("A second request while the first is open is refused", IllegalStateException.class,
 				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Again")));
