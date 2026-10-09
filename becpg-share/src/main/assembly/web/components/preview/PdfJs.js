@@ -420,7 +420,8 @@
        */
       onComponentsLoaded: function PdfJs_onComponentsLoaded()
       {
-         this.workerSrc = Alfresco.constants.URL_CONTEXT + 'res/components/preview/pdfjs/pdf.worker' +  (Alfresco.constants.DEBUG ? '.js' : '-min.js');
+         // Share ships pdf.worker.js only: there is no minified worker to switch to outside debug mode
+         this.workerSrc = Alfresco.constants.URL_CONTEXT + 'res/components/preview/pdfjs/pdf.worker.js';
          // Find the name of pdf.js resource file (4.2 specific)
          var scriptElements = document.getElementsByTagName('script');
          for (var i = 0, il = scriptElements.length; i < il; i++)
