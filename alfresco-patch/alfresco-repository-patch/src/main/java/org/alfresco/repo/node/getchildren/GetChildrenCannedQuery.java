@@ -543,7 +543,7 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             }
             else if (pv1 instanceof NodeRef)
             {
-                result = (((NodeRef)pv1).toString()).compareTo(((NodeRef)pv1).toString());
+                result = (((NodeRef)pv1).toString()).compareTo(((NodeRef)pv2).toString());
             }
             
             else
