@@ -2,7 +2,7 @@
  * #%L
  * Alfresco Repository
  * %%
- * Copyright (C) 2005 - 2023 Alfresco Software Limited
+ * Copyright (C) 2005 - 2026 Alfresco Software Limited
  * %%
  * This file is part of the Alfresco software. 
  * If the software was purchased under a paid Alfresco license, the terms of 
@@ -41,8 +41,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -188,6 +186,7 @@ public abstract class AbstractNodeDAOImpl implements NodeDAO, BatchingDAO
      */
     private ParentAssocsCache parentAssocsCache;
     private int parentAssocsCacheSize;
+    // beCPG: default limit factor when the property is not set
     private int parentAssocsCacheLimitFactor = 8;
     private int parentAssocsCacheConcurrencyLevel;
 
@@ -3569,6 +3568,22 @@ public abstract class AbstractNodeDAOImpl implements NodeDAO, BatchingDAO
     }
 
     @Override
+    public void getChildAssocs(
+            Long parentNodeId,
+            QName assocTypeQName,
+            QName assocQName,
+            boolean ascending,
+            ChildAssocRefQueryCallback resultsCallback)
+    {
+        selectChildAssocs(
+                parentNodeId,
+                assocTypeQName,
+                assocQName,
+                ascending,
+                new ChildAssocRefBatchingQueryCallback(resultsCallback));
+    }
+
+    @Override
     public void getChildAssocs(Long parentNodeId, Set<QName> assocTypeQNames, ChildAssocRefQueryCallback resultsCallback)
     {
         switch (assocTypeQNames.size())
@@ -3960,7 +3975,7 @@ public abstract class AbstractNodeDAOImpl implements NodeDAO, BatchingDAO
         Long childNodeId = lostNodePair.getFirst();
         NodeRef lostNodeRef = lostNodePair.getSecond();
 
-        // Remove existing primary parent assoc to avoid duplicate primary paths
+        // beCPG: remove the existing primary parent assoc to avoid duplicate primary paths (#32648)
         ChildAssocEntity existingPrimaryAssoc = getPrimaryParentAssocImpl(childNodeId);
         if (existingPrimaryAssoc != null)
         {
@@ -4221,18 +4236,13 @@ public abstract class AbstractNodeDAOImpl implements NodeDAO, BatchingDAO
     }
 
     /**
-     * A Map-like class for storing ParentAssocsInfos. It prunes its oldest ParentAssocsInfo entries not only when a capacity is reached, but also when a total number of cached parents is reached, as this is what dictates the overall memory usage.
+     * @return Returns a node's parent associations
      */
     private ParentAssocsInfo getParentAssocsCached(Long nodeId)
     {
         Node node = getNodeNotNull(nodeId, false);
-        Pair<Long, String> cacheKey = new Pair<Long, String>(nodeId, node.getTransaction().getChangeTxnId());
-        ParentAssocsInfo value = parentAssocsCache.get(cacheKey);
-        if (value == null)
-        {
-            value = loadParentAssocs(node.getNodeVersionKey());
-            parentAssocsCache.put(cacheKey, value);
-        }
+        Pair<Long, String> cacheKey = new Pair<>(nodeId, node.getTransaction().getChangeTxnId());
+        ParentAssocsInfo value = parentAssocsCache.get(cacheKey, () -> loadParentAssocs(node.getNodeVersionKey()));
 
         // We have already validated on loading that we have a list in sync with the child node, so if the list is still
         // empty we have an integrity problem
@@ -4919,6 +4929,13 @@ public abstract class AbstractNodeDAOImpl implements NodeDAO, BatchingDAO
             QName assocTypeQName,
             QName assocQName,
             int maxResults,
+            ChildAssocRefQueryCallback resultsCallback);
+
+    protected abstract void selectChildAssocs(
+            Long parentNodeId,
+            QName assocTypeQName,
+            QName assocQName,
+            boolean ascending,
             ChildAssocRefQueryCallback resultsCallback);
 
     protected abstract void selectChildAssocs(
