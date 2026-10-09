@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.domain.node.NodeDAO;
@@ -60,14 +63,12 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.alfresco.util.Pair;
 import org.alfresco.util.ParameterCheck;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * DAO to manage ACL persistence
- *
+ * 
  * Note: based on earlier AclDaoComponentImpl
- *
+ * 
  * @author Andy Hind, janv
  * @since 3.4
  */
@@ -80,7 +81,7 @@ public class AclDAOImpl implements AclDAO
     private NodeDAO nodeDAO;
     private TenantService tenantService;
     private SimpleCache<Serializable, AccessControlList> aclCache;
-    
+
     private enum WriteMode
     {
         /**
@@ -113,41 +114,21 @@ public class AclDAOImpl implements AclDAO
         COPY_ONLY, CREATE_AND_INHERIT;
     }
 
-    /**
-     * <p>Setter for the field <code>qnameDAO</code>.</p>
-     *
-     * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object
-     */
     public void setQnameDAO(QNameDAO qnameDAO)
     {
         this.qnameDAO = qnameDAO;
     }
 
-    /**
-     * <p>Setter for the field <code>tenantService</code>.</p>
-     *
-     * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object
-     */
     public void setTenantService(TenantService tenantService)
     {
         this.tenantService = tenantService;
     }
 
-    /**
-     * <p>Setter for the field <code>aclCrudDAO</code>.</p>
-     *
-     * @param aclCrudDAO a {@link org.alfresco.repo.domain.permissions.AclCrudDAO} object
-     */
     public void setAclCrudDAO(AclCrudDAO aclCrudDAO)
     {
         this.aclCrudDAO = aclCrudDAO;
     }
 
-    /**
-     * <p>Setter for the field <code>nodeDAO</code>.</p>
-     *
-     * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
-     */
     public void setNodeDAO(NodeDAO nodeDAO)
     {
         this.nodeDAO = nodeDAO;
@@ -155,22 +136,25 @@ public class AclDAOImpl implements AclDAO
 
     /**
      * Set the ACL cache
-     *
-     * @param aclCache a {@link org.alfresco.repo.cache.SimpleCache} object
+     * 
      */
     public void setAclCache(SimpleCache<Serializable, AccessControlList> aclCache)
     {
         this.aclCache = aclCache;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long createAccessControlList()
     {
         return createAccessControlList(getDefaultProperties()).getId();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AccessControlListProperties getDefaultProperties()
     {
@@ -181,7 +165,9 @@ public class AclDAOImpl implements AclDAO
         return properties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Acl createAccessControlList(AccessControlListProperties properties)
     {
@@ -223,7 +209,9 @@ public class AclDAOImpl implements AclDAO
         return createAccessControlList(properties, null, null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Acl createAccessControlList(AccessControlListProperties properties, List<AccessControlEntry> aces, Long inherited)
     {
@@ -300,7 +288,7 @@ public class AclDAOImpl implements AclDAO
         acl.setAclChangeSetId(getCurrentChangeSetId());
         acl.setRequiresVersion(false);
 
-        Acl createdAcl = (AclEntity)aclCrudDAO.createAcl(acl);
+        Acl createdAcl = (AclEntity) aclCrudDAO.createAcl(acl);
         long created = createdAcl.getId();
 
         List<Ace> toAdd = new ArrayList<Ace>();
@@ -363,20 +351,20 @@ public class AclDAOImpl implements AclDAO
         List<Ace> inherited = null;
         List<Integer> positions = null;
 
-        if ((mode == WriteMode.ADD_INHERITED) || (mode == WriteMode.INSERT_INHERITED) || (mode == WriteMode.CHANGE_INHERITED) || (mode == WriteMode.CREATE_AND_INHERIT ))
+        if ((mode == WriteMode.ADD_INHERITED) || (mode == WriteMode.INSERT_INHERITED) || (mode == WriteMode.CHANGE_INHERITED) || (mode == WriteMode.CREATE_AND_INHERIT))
         {
             inherited = new ArrayList<Ace>();
             positions = new ArrayList<Integer>();
 
             // get aces for acl (via acl member)
             List<AclMember> members;
-            if(parent != null)
+            if (parent != null)
             {
                 members = aclCrudDAO.getAclMembersByAcl(parent);
             }
             else
             {
-                members = Collections.<AclMember>emptyList(); 
+                members = Collections.<AclMember> emptyList();
             }
 
             for (AclMember member : members)
@@ -400,8 +388,7 @@ public class AclDAOImpl implements AclDAO
     }
 
     /**
-     * Make a whole tree of ACLs copy on write if required Includes adding and removing ACEs which can be optimised
-     * slightly for copy on write (no need to add and then remove)
+     * Make a whole tree of ACLs copy on write if required Includes adding and removing ACEs which can be optimised slightly for copy on write (no need to add and then remove)
      */
     private void getWritable(
             final Long id, final Long parent, Set<Long> visitedAcls,
@@ -445,6 +432,7 @@ public class AclDAOImpl implements AclDAO
 
     /**
      * COW for an individual ACL
+     * 
      * @return - an AclChange
      */
     private AclChange getWritable(
@@ -556,7 +544,7 @@ public class AclDAOImpl implements AclDAO
             newAcl.setVersioned(Boolean.TRUE);
             newAcl.setRequiresVersion(Boolean.FALSE);
 
-            AclEntity createdAcl = (AclEntity)aclCrudDAO.createAcl(newAcl);
+            AclEntity createdAcl = (AclEntity) aclCrudDAO.createAcl(newAcl);
             long created = createdAcl.getId();
 
             // Create new membership entries - excluding those in the given pattern
@@ -568,7 +556,7 @@ public class AclDAOImpl implements AclDAO
 
             if (members.size() > 0)
             {
-                List<Pair<Long,Integer>> aceIdsWithDepths = new ArrayList<Pair<Long,Integer>>(members.size());
+                List<Pair<Long, Integer>> aceIdsWithDepths = new ArrayList<Pair<Long, Integer>>(members.size());
 
                 for (AclMember member : members)
                 {
@@ -718,7 +706,7 @@ public class AclDAOImpl implements AclDAO
     {
         if ((inherited != null) && (inherited.size() > 0))
         {
-            List<Pair<Long,Integer>> aceIdsWithDepths = new ArrayList<Pair<Long,Integer>>(inherited.size());
+            List<Pair<Long, Integer>> aceIdsWithDepths = new ArrayList<Pair<Long, Integer>>(inherited.size());
             for (int i = 0; i < inherited.size(); i++)
             {
                 Ace add = inherited.get(i);
@@ -746,7 +734,9 @@ public class AclDAOImpl implements AclDAO
         addInherited(acl, inherited, positions, depth);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> deleteAccessControlEntries(final String authority)
     {
@@ -776,15 +766,15 @@ public class AclDAOImpl implements AclDAO
                 Long aclMemberId = member.getId();
                 Long aclId = member.getAclId();
                 Long aceId = member.getAceId();
-                
+
                 boolean hasAnotherTenantNodes = false;
                 if (AuthenticationUtil.isMtEnabled())
                 {
                     // ALF-3563
-                    
+
                     // Retrieve dependent nodes
                     List<Long> nodeIds = aclCrudDAO.getADMNodesByAcl(aclId, -1);
-                    
+
                     if (nodeIds.size() > 0)
                     {
                         for (Long nodeId : nodeIds)
@@ -813,14 +803,14 @@ public class AclDAOImpl implements AclDAO
                         }
                     }
                 }
-                
+
                 if (!hasAnotherTenantNodes)
                 {
                     AclUpdateEntity list = aclCrudDAO.getAclForUpdate(aclId);
                     aclChanges.add(new AclChangeImpl(aclId, aclId, list.getAclType(), list.getAclType()));
                     acls.add(list);
                     membersToDelete.add(aclMemberId);
-                    aces.add((Long)aceId);
+                    aces.add((Long) aceId);
                 }
             }
 
@@ -865,7 +855,9 @@ public class AclDAOImpl implements AclDAO
         return aclChanges;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteAclForNode(long aclId)
     {
@@ -893,7 +885,9 @@ public class AclDAOImpl implements AclDAO
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> deleteAccessControlList(final Long id)
     {
@@ -932,7 +926,7 @@ public class AclDAOImpl implements AclDAO
                 Acl unusedInherited = null;
                 for (AclChange change : acls)
                 {
-                    if (change.getBefore()!= null && change.getBefore().equals(inherited.getId()))
+                    if (change.getBefore() != null && change.getBefore().equals(inherited.getId()))
                     {
                         unusedInherited = aclCrudDAO.getAcl(change.getAfter());
                     }
@@ -963,7 +957,7 @@ public class AclDAOImpl implements AclDAO
                 }
                 else
                 {
-                    // delete 'inherited' acl 
+                    // delete 'inherited' acl
                     aclCrudDAO.deleteAcl(inherited.getId());
                 }
             }
@@ -996,7 +990,9 @@ public class AclDAOImpl implements AclDAO
         return acls;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> deleteLocalAccessControlEntries(Long id)
     {
@@ -1008,7 +1004,9 @@ public class AclDAOImpl implements AclDAO
         return changes;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> deleteInheritedAccessControlEntries(Long id)
     {
@@ -1020,7 +1018,9 @@ public class AclDAOImpl implements AclDAO
         return changes;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> deleteAccessControlEntries(Long id, AccessControlEntry pattern)
     {
@@ -1030,29 +1030,34 @@ public class AclDAOImpl implements AclDAO
         return changes;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Acl getAcl(Long id)
     {
         return aclCrudDAO.getAcl(id);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AccessControlListProperties getAccessControlListProperties(Long id)
     {
-        ParameterCheck.mandatory("id", id);                 // Prevent unboxing failures
+        ParameterCheck.mandatory("id", id); // Prevent unboxing failures
         return aclCrudDAO.getAcl(id);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setCheckAclConsistency()
     {
         aclCrudDAO.setCheckAclConsistency();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AccessControlList getAccessControlList(Long id)
     {
@@ -1062,7 +1067,7 @@ public class AclDAOImpl implements AclDAO
         {
             return null;
         }
-        AccessControlList aclCached = aclCache.get((Serializable)properties);
+        AccessControlList aclCached = aclCache.get((Serializable) properties);
         if (aclCached != null)
         {
             return aclCached;
@@ -1075,14 +1080,14 @@ public class AclDAOImpl implements AclDAO
 
         List<AccessControlEntry> entries = new ArrayList<AccessControlEntry>(results.size());
         for (Map<String, Object> result : results)
-            // for (AclMemberEntity member : members)
+        // for (AclMemberEntity member : members)
         {
             Boolean aceIsAllowed = (Boolean) result.get("allowed");
             Integer aceType = (Integer) result.get("applies");
             String authority = (String) result.get("authority");
             Long permissionId = (Long) result.get("permissionId");
             Integer position = (Integer) result.get("pos");
-            //Long result_aclmemId = (Long) result.get("aclmemId"); // not used here
+            // Long result_aclmemId = (Long) result.get("aclmemId"); // not used here
 
             SimpleAccessControlEntry sacEntry = new SimpleAccessControlEntry();
             sacEntry.setAccessStatus(aceIsAllowed ? AccessStatus.ALLOWED : AccessStatus.DENIED);
@@ -1106,23 +1111,26 @@ public class AclDAOImpl implements AclDAO
 
         Collections.sort(entries);
         acl.setEntries(entries);
-        
+
         // Cache it for next time
-        aclCache.put((Serializable)properties, acl);
+        aclCache.put((Serializable) properties, acl);
 
         return acl;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Long getInheritedAccessControlList(Long id)
     {
-        if (id == null) {
+        // beCPG - tolerate a null or missing ACL instead of throwing a NullPointerException
+        if (id == null)
+        {
             return null;
         }
         AclUpdateEntity acl = aclCrudDAO.getAclForUpdate(id);
-        //beCPG
-        if (acl==null || acl.getAclType() == ACLType.OLD)
+        if (acl == null || acl.getAclType() == ACLType.OLD)
         {
             return null;
         }
@@ -1157,7 +1165,9 @@ public class AclDAOImpl implements AclDAO
         return inheritedAclId;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> mergeInheritedAccessControlList(Long inherited, Long target)
     {
@@ -1190,7 +1200,7 @@ public class AclDAOImpl implements AclDAO
                     {
                         final String searchAclId = inheritedAcl.getAclId();
 
-                        Long actualInheritor = (Long)aclCrudDAO.getLatestAclByGuid(searchAclId);
+                        Long actualInheritor = (Long) aclCrudDAO.getLatestAclByGuid(searchAclId);
 
                         inheritedAcl = aclCrudDAO.getAcl(actualInheritor);
                         if (inheritedAcl == null)
@@ -1261,7 +1271,9 @@ public class AclDAOImpl implements AclDAO
         return changes;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> setAccessControlEntry(final Long id, final AccessControlEntry ace)
     {
@@ -1308,7 +1320,9 @@ public class AclDAOImpl implements AclDAO
         return changes;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> enableInheritance(Long id, Long parent)
     {
@@ -1330,7 +1344,7 @@ public class AclDAOImpl implements AclDAO
         case SHARED:
             // TODO support a list of children and casacade if given
             throw new IllegalArgumentException(
-            "Shared acls should be replace by creating a definig ACL, wiring it up for inhertitance, and then applying inheritance to any children. It can not be done by magic ");
+                    "Shared acls should be replace by creating a definig ACL, wiring it up for inhertitance, and then applying inheritance to any children. It can not be done by magic ");
         case DEFINING:
         case LAYERED:
         default:
@@ -1355,7 +1369,9 @@ public class AclDAOImpl implements AclDAO
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<AclChange> disableInheritance(Long id, boolean setInheritedOnAcl)
     {
@@ -1513,7 +1529,9 @@ public class AclDAOImpl implements AclDAO
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Acl getAclCopy(Long toCopy, Long toInheritFrom, ACLCopyMode mode)
     {
@@ -1530,14 +1548,18 @@ public class AclDAOImpl implements AclDAO
         return aclCrudDAO.getAcl(id);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Long> getADMNodesByAcl(long aclEntityId, int maxResults)
     {
         return aclCrudDAO.getADMNodesByAcl(aclEntityId, maxResults);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Acl createLayeredAcl(Long indirectedAcl)
     {
@@ -1595,18 +1617,9 @@ public class AclDAOImpl implements AclDAO
                 entry.setAceType(ace.getAceType());
                 entry.setAuthority(authority.getAuthority());
 
-                /* NOTE: currently unused - intended for possible future enhancement
-                if (ace.getContextId() != null)
-                {
-                    AceContext aceContext = aclCrudDAO.getAceContext(ace.getContextId());
-
-                    SimpleAccessControlEntryContext context = new SimpleAccessControlEntryContext();
-                    context.setClassContext(aceContext.getClassContext());
-                    context.setKVPContext(aceContext.getKvpContext());
-                    context.setPropertyContext(aceContext.getPropertyContext());
-                    entry.setContext(context);
-                }
-                 */
+                /* NOTE: currently unused - intended for possible future enhancement if (ace.getContextId() != null) { AceContext aceContext = aclCrudDAO.getAceContext(ace.getContextId());
+                 * 
+                 * SimpleAccessControlEntryContext context = new SimpleAccessControlEntryContext(); context.setClassContext(aceContext.getClassContext()); context.setKVPContext(aceContext.getKvpContext()); context.setPropertyContext(aceContext.getPropertyContext()); entry.setContext(context); } */
 
                 Permission perm = aclCrudDAO.getPermission(ace.getPermissionId());
                 QName permTypeQName = qnameDAO.getQName(perm.getTypeQNameId()).getSecond(); // Has an ID so must exist
@@ -1624,6 +1637,7 @@ public class AclDAOImpl implements AclDAO
     private static final String RESOURCE_KEY_ACL_CHANGE_SET_COMMIT_TIME_MS = "acl.change.commit.set.time.ms";
 
     private UpdateChangeSetListener updateChangeSetListener = new UpdateChangeSetListener();
+
     /**
      * Wrapper to update the current changeset to get the change time correct
      * 
@@ -1652,7 +1666,6 @@ public class AclDAOImpl implements AclDAO
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Long getCurrentChangeSetCommitTime()
     {
@@ -1660,8 +1673,7 @@ public class AclDAOImpl implements AclDAO
     }
 
     /**
-     * Support to get the current ACL change set and bind this to the transaction. So we only make one new version of an
-     * ACL per change set. If something is in the current change set we can update it.
+     * Support to get the current ACL change set and bind this to the transaction. So we only make one new version of an ACL per change set. If something is in the current change set we can update it.
      */
     private long getCurrentChangeSetId()
     {
@@ -1714,7 +1726,7 @@ public class AclDAOImpl implements AclDAO
             String result_authority = (String) result.get("authority");
             Long result_permissionId = (Long) result.get("permissionId");
             Integer result_position = (Integer) result.get("pos");
-            //Long result_aclmemId = (Long) result.get("aclmemId"); // not used
+            // Long result_aclmemId = (Long) result.get("aclmemId"); // not used
 
             if (pattern.getAccessStatus() != null)
             {
@@ -1802,7 +1814,8 @@ public class AclDAOImpl implements AclDAO
         }
 
         /**
-         * @param after Long
+         * @param after
+         *            Long
          */
         public void setAfter(Long after)
         {
@@ -1810,7 +1823,8 @@ public class AclDAOImpl implements AclDAO
         }
 
         /**
-         * @param before Long
+         * @param before
+         *            Long
          */
         public void setBefore(Long before)
         {
@@ -1823,7 +1837,8 @@ public class AclDAOImpl implements AclDAO
         }
 
         /**
-         * @param typeAfter ACLType
+         * @param typeAfter
+         *            ACLType
          */
         public void setTypeAfter(ACLType typeAfter)
         {
@@ -1836,7 +1851,8 @@ public class AclDAOImpl implements AclDAO
         }
 
         /**
-         * @param typeBefore ACLType
+         * @param typeBefore
+         *            ACLType
          */
         public void setTypeBefore(ACLType typeBefore)
         {
@@ -1854,7 +1870,9 @@ public class AclDAOImpl implements AclDAO
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void renameAuthority(String before, String after)
     {
@@ -1862,7 +1880,9 @@ public class AclDAOImpl implements AclDAO
         aclCache.clear();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fixSharedAcl(Long shared, Long defining)
     {
@@ -1870,7 +1890,7 @@ public class AclDAOImpl implements AclDAO
         {
             throw new IllegalArgumentException("Null defining acl");
         }
-        
+
         if (shared == null)
         {
             throw new IllegalArgumentException("Null shared acl");
@@ -1880,9 +1900,8 @@ public class AclDAOImpl implements AclDAO
     }
 
     /* (non-Javadoc)
-     * @see org.alfresco.repo.domain.permissions.AclDAO#getMaxChangeSetCommitTime()
-     */
-    /** {@inheritDoc} */
+     * 
+     * @see org.alfresco.repo.domain.permissions.AclDAO#getMaxChangeSetCommitTime() */
     @Override
     public Long getMaxChangeSetCommitTime()
     {
@@ -1890,9 +1909,8 @@ public class AclDAOImpl implements AclDAO
     }
 
     /* (non-Javadoc)
-     * @see org.alfresco.repo.domain.permissions.AclDAO#getMaxChangeSetIdByCommitTime(long)
-     */
-    /** {@inheritDoc} */
+     * 
+     * @see org.alfresco.repo.domain.permissions.AclDAO#getMaxChangeSetIdByCommitTime(long) */
     @Override
     public Long getMaxChangeSetIdByCommitTime(long maxCommitTime)
     {
