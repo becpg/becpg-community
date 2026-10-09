@@ -210,7 +210,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		String user = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		return AuthenticationUtil.runAsSystem(() -> {
-			NodeRef supplierNodeRef = checkSupplierNodeRef(entityNodeRef, true);
+			NodeRef supplierNodeRef = checkSupplierNodeRef(entityNodeRef, false);
 			List<NodeRef> accounts = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			NodeRef caller = personService.getPersonOrNull(user);
 			if ((caller == null) || !accounts.contains(caller)) {
