@@ -33,10 +33,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
@@ -68,15 +73,11 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.AlfrescoCollator;
 import org.alfresco.util.Pair;
 import org.alfresco.util.ParameterCheck;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
  * GetChildren canned query
- *
- * To get paged list of children of a parent node filtered by child type.
- * Also optionally filtered and/or sorted by one or more properties (up to three).
+ * 
+ * To get paged list of children of a parent node filtered by child type. Also optionally filtered and/or sorted by one or more properties (up to three).
  *
  * @author janv
  * @since 4.0
@@ -84,49 +85,30 @@ import org.springframework.extensions.surf.util.I18NUtil;
 public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeRef>
 {
     private Log logger = LogFactory.getLog(getClass());
-    
-    private static final String QUERY_NAMESPACE = "alfresco.node";
-    private static final String QUERY_SELECT_GET_CHILDREN_WITH_PROPS = "select_GetChildrenCannedQueryWithProps";
-    private static final String QUERY_SELECT_GET_CHILDREN_WITHOUT_PROPS = "select_GetChildrenCannedQueryWithoutProps";
-    
-    /** Constant <code>MAX_FILTER_SORT_PROPS=3</code> */
+
+    protected static final String QUERY_NAMESPACE = "alfresco.node";
+    protected static final String QUERY_SELECT_GET_CHILDREN_WITH_PROPS = "select_GetChildrenCannedQueryWithProps";
+    protected static final String QUERY_SELECT_GET_CHILDREN_WITHOUT_PROPS = "select_GetChildrenCannedQueryWithoutProps";
+
     public static final int MAX_FILTER_SORT_PROPS = 3;
-    
+
     // note: special qnames - originally from Share DocLib default config (however, we do not support arbitrary "fts-alfresco" special sortable fields)
-    /** Constant <code>SORT_QNAME_CONTENT_SIZE</code> */
     public static final QName SORT_QNAME_CONTENT_SIZE = QName.createQName("http://www.alfresco.org/model/content/1.0", "content.size");
-    /** Constant <code>SORT_QNAME_CONTENT_MIMETYPE</code> */
     public static final QName SORT_QNAME_CONTENT_MIMETYPE = QName.createQName("http://www.alfresco.org/model/content/1.0", "content.mimetype");
-    /** Constant <code>SORT_QNAME_NODE_TYPE</code> */
     public static final QName SORT_QNAME_NODE_TYPE = QName.createQName("", "TYPE");
-    /** Constant <code>SORT_QNAME_NODE_IS_FOLDER</code> */
     public static final QName SORT_QNAME_NODE_IS_FOLDER = QName.createQName("", "IS_FOLDER"); // ALF-13968
 
-    /** Constant <code>FILTER_QNAME_NODE_IS_PRIMARY</code> */
     public static final QName FILTER_QNAME_NODE_IS_PRIMARY = QName.createQName("", "IS_PRIMARY");
-    
-    
-    private NodeDAO nodeDAO;
-    private QNameDAO qnameDAO;
-    private CannedQueryDAO cannedQueryDAO;
-    private NodePropertyHelper nodePropertyHelper;
-    private TenantService tenantService;
+
+    protected NodeDAO nodeDAO;
+    protected QNameDAO qnameDAO;
+    protected CannedQueryDAO cannedQueryDAO;
+    protected NodePropertyHelper nodePropertyHelper;
+    protected TenantService tenantService;
     protected NodeService nodeService;
-    
+
     private boolean applyPostQueryPermissions = false; // if true, the permissions will be applied post-query (else should be applied as part of the "queryAndFilter")
-    
-    /**
-     * <p>Constructor for GetChildrenCannedQuery.</p>
-     *
-     * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
-     * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object
-     * @param cannedQueryDAO a {@link org.alfresco.repo.domain.query.CannedQueryDAO} object
-     * @param nodePropertyHelper a {@link org.alfresco.repo.domain.node.NodePropertyHelper} object
-     * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object
-     * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
-     * @param methodSecurity a {@link org.alfresco.repo.security.permissions.impl.acegi.MethodSecurityBean} object
-     * @param params a {@link org.alfresco.query.CannedQueryParameters} object
-     */
+
     public GetChildrenCannedQuery(
             NodeDAO nodeDAO,
             QNameDAO qnameDAO,
@@ -138,51 +120,35 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             CannedQueryParameters params)
     {
         super(params, methodSecurity);
-        
+
         this.nodeDAO = nodeDAO;
         this.qnameDAO = qnameDAO;
         this.cannedQueryDAO = cannedQueryDAO;
         this.nodePropertyHelper = nodePropertyHelper;
         this.tenantService = tenantService;
         this.nodeService = nodeService;
-        
+
         if ((params.getSortDetails() != null) && (params.getSortDetails().getSortPairs().size() > 0))
         {
             applyPostQueryPermissions = true;
         }
-        
+
         // TODO refactor (only apply post query if sorted - as above)
-        GetChildrenCannedQueryParams paramBean = (GetChildrenCannedQueryParams)params.getParameterBean();
-        if ((paramBean.getFilterProps()!= null) && (paramBean.getFilterProps().size() > 0))
+        GetChildrenCannedQueryParams paramBean = (GetChildrenCannedQueryParams) params.getParameterBean();
+        if ((paramBean.getFilterProps() != null) && (paramBean.getFilterProps().size() > 0))
         {
             applyPostQueryPermissions = true;
         }
     }
-    
-    /**
-     * <p>getFilterSortChildQuery.</p>
-     *
-     * @param children a {@link java.util.List} object
-     * @param filterProps a {@link java.util.List} object
-     * @param paramBean a {@link org.alfresco.repo.node.getchildren.GetChildrenCannedQueryParams} object
-     * @return a {@link org.alfresco.repo.node.getchildren.GetChildrenCannedQuery.FilterSortChildQueryCallback} object
-     */
+
     protected FilterSortChildQueryCallback getFilterSortChildQuery(final List<FilterSortNode> children, final List<FilterProp> filterProps, GetChildrenCannedQueryParams paramBean)
     {
         Set<QName> inclusiveAspects = paramBean.getInclusiveAspects();
         Set<QName> exclusiveAspects = paramBean.getExclusiveAspects();
-        
+
         return new DefaultFilterSortChildQueryCallback(children, filterProps, inclusiveAspects, exclusiveAspects);
     }
-    
-    /**
-     * <p>getUnsortedChildQueryCallback.</p>
-     *
-     * @param rawResult a {@link java.util.List} object
-     * @param requestedCount a int
-     * @param paramBean a {@link org.alfresco.repo.node.getchildren.GetChildrenCannedQueryParams} object
-     * @return a {@link org.alfresco.repo.node.getchildren.GetChildrenCannedQuery.UnsortedChildQueryCallback} object
-     */
+
     protected UnsortedChildQueryCallback getUnsortedChildQueryCallback(final List<NodeRef> rawResult, final int requestedCount, GetChildrenCannedQueryParams paramBean)
     {
         Set<QName> inclusiveAspects = paramBean.getInclusiveAspects();
@@ -190,15 +156,14 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         return new DefaultUnsortedChildQueryCallback(rawResult, requestedCount, inclusiveAspects, exclusiveAspects);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected List<NodeRef> queryAndFilter(CannedQueryParameters parameters)
     {
         Long start = (logger.isDebugEnabled() ? System.currentTimeMillis() : null);
-        
+
         // Get parameters
-        GetChildrenCannedQueryParams paramBean = (GetChildrenCannedQueryParams)parameters.getParameterBean();
-        
+        GetChildrenCannedQueryParams paramBean = (GetChildrenCannedQueryParams) parameters.getParameterBean();
+
         // Get parent node
         NodeRef parentRef = paramBean.getParentRef();
         ParameterCheck.mandatory("nodeRef", parentRef);
@@ -208,13 +173,13 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             throw new InvalidNodeRefException("Parent node does not exist: " + parentRef, parentRef);
         }
         Long parentNodeId = nodePair.getFirst();
-        
+
         // Set query params - note: currently using SortableChildEntity to hold (supplemental-) query params
         FilterSortNodeEntity params = new FilterSortNodeEntity();
-        
+
         // Set parent node id
         params.setParentNodeId(parentNodeId);
-        
+
         // Get filter details
         Set<QName> childNodeTypeQNames = paramBean.getChildTypeQNames();
         Set<QName> assocTypeQNames = paramBean.getAssocTypeQNames();
@@ -223,11 +188,11 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         filterProps.addAll(paramBean.getFilterProps()); // clone (to allow special handling for isPrimary)
 
         String pattern = paramBean.getPattern();
-        
+
         // Get sort details
         CannedQuerySortDetails sortDetails = parameters.getSortDetails();
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final List<Pair<QName, SortOrder>> sortPairs = (List)sortDetails.getSortPairs();
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        final List<Pair<QName, SortOrder>> sortPairs = (List) sortDetails.getSortPairs();
 
         if (filterProps.size() > 0)
         {
@@ -237,9 +202,9 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             for (FilterProp filter : filterProps)
             {
                 if ((filter instanceof FilterPropBoolean) &&
-                    ((FilterPropBoolean)filter).getPropName().equals(FILTER_QNAME_NODE_IS_PRIMARY))
+                        ((FilterPropBoolean) filter).getPropName().equals(FILTER_QNAME_NODE_IS_PRIMARY))
                 {
-                    isPrimary = ((FilterPropBoolean)filter).getPropVal();
+                    isPrimary = ((FilterPropBoolean) filter).getPropVal();
                     break;
                 }
                 idx++;
@@ -257,138 +222,142 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         for (Pair<QName, SortOrder> sort : sortPairs)
         {
             QName sortQName = sort.getFirst();
-            if(! sortFilterProps.contains(sortQName))
+            if (!sortFilterProps.contains(sortQName))
             {
-               sortFilterProps.add(sortQName);
+                sortFilterProps.add(sortQName);
             }
         }
         for (FilterProp filter : filterProps)
         {
             QName filterQName = filter.getPropName();
-            if(! sortFilterProps.contains(filterQName))
+            if (!sortFilterProps.contains(filterQName))
             {
-               sortFilterProps.add(filterQName);
+                sortFilterProps.add(filterQName);
             }
         }
-        
+
         int filterSortPropCnt = sortFilterProps.size();
-        
+
         if (filterSortPropCnt > MAX_FILTER_SORT_PROPS)
         {
-            throw new AlfrescoRuntimeException("GetChildren: exceeded maximum number filter/sort properties: (max="+MAX_FILTER_SORT_PROPS+", actual="+filterSortPropCnt);
+            throw new AlfrescoRuntimeException("GetChildren: exceeded maximum number filter/sort properties: (max=" + MAX_FILTER_SORT_PROPS + ", actual=" + filterSortPropCnt);
         }
-        
+
         filterSortPropCnt = setFilterSortParams(sortFilterProps, params);
-        
-        
-        List<NodeRef> result = new ArrayList<>(0);
-        
+
+        List<NodeRef> result = new ArrayList<>();
+
         try
         {
-	        if ((childNodeTypeQNames != null) && (childNodeTypeQNames.size() > 0))
-	        {
-	            // Set child node type qnames (additional filter - performed by DB query)
-	            Set<Long> childNodeTypeQNameIds = qnameDAO.convertQNamesToIds(childNodeTypeQNames, false);
-	            if (childNodeTypeQNameIds.size() > 0)
-	            {
-	                params.setChildNodeTypeQNameIds(new ArrayList<Long>(childNodeTypeQNameIds));
-	            }
-	            else
-	            {
-	                // short-circuit - return no results - given node type qname(s) do not exist
-	                return result;
-	            }
-	        }
-	
-	        if ((assocTypeQNames != null)  && (assocTypeQNames.size() > 0))
-	        {
-	            // Set assoc type qnames (additional filter - performed by DB query)
-	            Set<Long> assocTypeQNameIds = qnameDAO.convertQNamesToIds(assocTypeQNames, false);
-	            if (assocTypeQNameIds.size() > 0)
-	            {
-	                params.setAssocTypeQNameIds(assocTypeQNameIds);
-	            }
-	            else
-	            {
-	                // short-circuit - return no results - given assoc type qname(s) do not exist
-	                return result;
-	            }
-	        }
-	
-	        if (pattern != null)
-	        {
-	            // TODO, check that we should be tied to the content model in this way. Perhaps a configurable property
-	            // name against which compare the pattern?
-	            Pair<Long, QName> nameQName = qnameDAO.getQName(ContentModel.PROP_NAME);
-	            if(nameQName == null)
-	            {
-	                throw new AlfrescoRuntimeException("Unable to determine qname id of name property");
-	            }
-	            params.setNamePropertyQNameId(nameQName.getFirst());
-	            params.setPattern(pattern);
-	        }
-	        
-	        if (filterSortPropCnt > 0)
-	        {
-	            // filtered and/or sorted - note: permissions will be applied post query
-	            final List<FilterSortNode> children = new ArrayList<FilterSortNode>(100);
-	            final FilterSortChildQueryCallback c = getFilterSortChildQuery(children, filterProps, paramBean);
-	            FilterSortResultHandler resultHandler = new FilterSortResultHandler(c);
-	            cannedQueryDAO.executeQuery(QUERY_NAMESPACE, QUERY_SELECT_GET_CHILDREN_WITH_PROPS, params, 0, Integer.MAX_VALUE, resultHandler);
-	            resultHandler.done();
-	            
-	            if (sortPairs.size() > 0)
-	            {
-	            	Long startSort = (logger.isDebugEnabled() ? System.currentTimeMillis() : null);
-	            	
-	                // sort
-	                Collections.sort(children, new PropComparatorAsc(sortPairs));
-	                
-	                if (startSort != null)
-	                {
-	                    logger.debug("Post-query sort: "+children.size()+" in "+(System.currentTimeMillis()-startSort)+" msecs");
-	                }
-	            }
-	            
-	            result = new ArrayList<NodeRef>(children.size());
-	            for (FilterSortNode child : children)
-	            {
-	                result.add(tenantService.getBaseName(child.getNodeRef()));
-	            }
-	        }
-	        else
-	        {
-	            // unsorted (apart from any implicit order) - note: permissions are applied during result handling to allow early cutoff
-	            
-	            final int requestedCount = parameters.getResultsRequired();
-	            
-	            final List<NodeRef> rawResult = new ArrayList<NodeRef>(Math.min(1000, requestedCount));
-	            UnsortedChildQueryCallback callback = getUnsortedChildQueryCallback(rawResult, requestedCount, paramBean);
-	            UnsortedResultHandler resultHandler = new UnsortedResultHandler(callback);
-	            cannedQueryDAO.executeQuery(QUERY_NAMESPACE, QUERY_SELECT_GET_CHILDREN_WITHOUT_PROPS, params, 0, Integer.MAX_VALUE, resultHandler);
-	            resultHandler.done();
-	            
-	            // permissions have been applied
-	            result = PermissionCheckedValueMixin.create(rawResult);
-	        }
+            if ((childNodeTypeQNames != null) && (childNodeTypeQNames.size() > 0))
+            {
+                // Set child node type qnames (additional filter - performed by DB query)
+                Set<Long> childNodeTypeQNameIds = qnameDAO.convertQNamesToIds(childNodeTypeQNames, false);
+                if (childNodeTypeQNameIds.size() > 0)
+                {
+                    params.setChildNodeTypeQNameIds(new ArrayList<Long>(childNodeTypeQNameIds));
+                }
+                else
+                {
+                    // short-circuit - return no results - given node type qname(s) do not exist
+                    return result;
+                }
+            }
+
+            if ((assocTypeQNames != null) && (assocTypeQNames.size() > 0))
+            {
+                // Set assoc type qnames (additional filter - performed by DB query)
+                Set<Long> assocTypeQNameIds = qnameDAO.convertQNamesToIds(assocTypeQNames, false);
+                if (assocTypeQNameIds.size() > 0)
+                {
+                    params.setAssocTypeQNameIds(assocTypeQNameIds);
+                }
+                else
+                {
+                    // short-circuit - return no results - given assoc type qname(s) do not exist
+                    return result;
+                }
+            }
+
+            if (pattern != null)
+            {
+                // TODO, check that we should be tied to the content model in this way. Perhaps a configurable property
+                // name against which compare the pattern?
+                Pair<Long, QName> nameQName = qnameDAO.getQName(ContentModel.PROP_NAME);
+                if (nameQName == null)
+                {
+                    throw new AlfrescoRuntimeException("Unable to determine qname id of name property");
+                }
+                params.setNamePropertyQNameId(nameQName.getFirst());
+                params.setPattern(pattern);
+            }
+
+            result = executeQuery(filterProps, sortPairs, params, paramBean, filterSortPropCnt);
         }
         finally
         {
-	        if (start != null)
-	        {
-	            logger.debug("Base query "+(filterSortPropCnt > 0 ? "(sort=y, perms=n)" : "(sort=n, perms=y)")+": "+result.size()+" in "+(System.currentTimeMillis()-start)+" msecs");
-	        }
+            if (start != null)
+            {
+                logger.debug("Base query " + (filterSortPropCnt > 0 ? "(sort=y, perms=n)" : "(sort=n, perms=y)") + ": " + result.size() + " in " + (System.currentTimeMillis() - start) + " msecs");
+            }
         }
-        
         return result;
     }
-    
+
+    protected List<NodeRef> executeQuery(List<FilterProp> filterProps, List<Pair<QName, SortOrder>> sortPairs, FilterSortNodeEntity params, GetChildrenCannedQueryParams paramBean, int filterSortPropCnt)
+    {
+        if (filterSortPropCnt > 0)
+        {
+            // filtered and/or sorted - note: permissions will be applied post query
+            final List<FilterSortNode> children = new ArrayList<>(100);
+            final FilterSortChildQueryCallback c = getFilterSortChildQuery(children, filterProps, paramBean);
+            FilterSortResultHandler resultHandler = new FilterSortResultHandler(c);
+            cannedQueryDAO.executeQuery(QUERY_NAMESPACE, QUERY_SELECT_GET_CHILDREN_WITH_PROPS, params, 0, Integer.MAX_VALUE, resultHandler);
+            resultHandler.done();
+
+            if (sortPairs.size() > 0)
+            {
+                Long startSort = (logger.isDebugEnabled() ? System.currentTimeMillis() : null);
+
+                // sort
+                Collections.sort(children, new PropComparatorAsc(sortPairs));
+
+                if (startSort != null)
+                {
+                    logger.debug("Post-query sort: " + children.size() + " in " + (System.currentTimeMillis() - startSort) + " msecs");
+                }
+            }
+
+            List<NodeRef> result = new ArrayList<>(children.size());
+            for (FilterSortNode child : children)
+            {
+                result.add(tenantService.getBaseName(child.getNodeRef()));
+            }
+            return result;
+        }
+        else
+        {
+            // unsorted (apart from any implicit order) - note: permissions are applied during result handling to allow early cutoff
+
+            final int requestedCount = parameters.getResultsRequired();
+
+            final List<NodeRef> rawResult = new ArrayList<>(Math.min(1000, requestedCount));
+            UnsortedChildQueryCallback callback = getUnsortedChildQueryCallback(rawResult, requestedCount, paramBean);
+            UnsortedResultHandler resultHandler = new UnsortedResultHandler(callback);
+            cannedQueryDAO.executeQuery(QUERY_NAMESPACE, QUERY_SELECT_GET_CHILDREN_WITHOUT_PROPS, params, 0, Integer.MAX_VALUE, resultHandler);
+            resultHandler.done();
+
+            // permissions have been applied
+            return PermissionCheckedValueMixin.create(rawResult);
+        }
+    }
+
     // Set filter/sort props (between 0 and 3)
     private int setFilterSortParams(List<QName> filterSortProps, FilterSortNodeEntity params)
     {
         int cnt = 0;
         int propCnt = 0;
-        
+
         for (QName filterSortProp : filterSortProps)
         {
             if (AuditablePropertiesEntity.getAuditablePropertyQNames().contains(filterSortProp))
@@ -419,85 +388,84 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
                     else
                     {
                         // belts and braces
-                        throw new AlfrescoRuntimeException("GetChildren: unexpected - cannot set sort parameter: "+cnt);
+                        throw new AlfrescoRuntimeException("GetChildren: unexpected - cannot set sort parameter: " + cnt);
                     }
-                    
+
                     propCnt++;
                 }
                 else
                 {
-                    logger.warn("Skipping filter/sort param - cannot find: "+filterSortProp);
+                    logger.warn("Skipping filter/sort param - cannot find: " + filterSortProp);
                     break;
                 }
             }
-            
+
             cnt++;
         }
-        
+
         return cnt;
     }
-    
+
     private Long getQNameId(QName sortPropQName)
     {
         if (sortPropQName.equals(SORT_QNAME_CONTENT_SIZE) || sortPropQName.equals(SORT_QNAME_CONTENT_MIMETYPE))
         {
             sortPropQName = ContentModel.PROP_CONTENT;
         }
-        
+
         Pair<Long, QName> qnamePair = qnameDAO.getQName(sortPropQName);
         return (qnamePair == null ? null : qnamePair.getFirst());
     }
-    
-    /** {@inheritDoc} */
+
     @Override
     protected boolean isApplyPostQuerySorting()
     {
         // note: sorted as part of the query impl (using SortableNode results)
         return false;
     }
-    
+
     private class PropComparatorAsc implements Comparator<FilterSortNode>
     {
         private List<Pair<QName, SortOrder>> sortProps;
         private Collator collator;
-        
+
         public PropComparatorAsc(List<Pair<QName, SortOrder>> sortProps)
         {
             this.sortProps = sortProps;
             // try to overrider collator comparison rules
-            this.collator = AlfrescoCollator.getInstance(I18NUtil.getContentLocale()); 
+            this.collator = AlfrescoCollator.getInstance(I18NUtil.getContentLocale());
         }
-        
+
         public int compare(FilterSortNode n1, FilterSortNode n2)
         {
             return compareImpl(n1, n2, sortProps);
         }
-        
+
         private int compareImpl(FilterSortNode node1In, FilterSortNode node2In, List<Pair<QName, SortOrder>> sortProps)
         {
             Object pv1 = null;
             Object pv2 = null;
-            
-            QName sortPropQName = (QName)sortProps.get(0).getFirst();
+
+            QName sortPropQName = (QName) sortProps.get(0).getFirst();
             boolean sortAscending = (sortProps.get(0).getSecond() == SortOrder.ASCENDING);
-            
+
             FilterSortNode node1 = node1In;
-            FilterSortNode node2 = node2In; 
-            
+            FilterSortNode node2 = node2In;
+
             if (sortAscending == false)
             {
                 node1 = node2In;
                 node2 = node1In;
             }
-            
+
             int result = 0;
-            
+
             pv1 = node1.getVal(sortPropQName);
             pv2 = node2.getVal(sortPropQName);
-            
+
             if (pv1 == null)
             {
-                if(pv2 == null && sortProps.size() > 1)
+                if (pv2 == null && sortProps.size() > 1)
                 {
                     return compareImpl(node1In, node2In, sortProps.subList(1, sortProps.size()));
                 }
@@ -510,58 +478,56 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             {
                 return 1;
             }
-            
+
             if (pv1 instanceof String)
             {
-                result = collator.compare((String)pv1, (String)pv2); // TODO use collation keys (re: performance)
+                result = collator.compare((String) pv1, (String) pv2); // TODO use collation keys (re: performance)
             }
             else if (pv1 instanceof Date)
             {
-                result = (((Date)pv1).compareTo((Date)pv2));
+                result = (((Date) pv1).compareTo((Date) pv2));
             }
             else if (pv1 instanceof Long)
             {
-                result = (((Long)pv1).compareTo((Long)pv2));
+                result = (((Long) pv1).compareTo((Long) pv2));
             }
             else if (pv1 instanceof Integer)
             {
-                result = (((Integer)pv1).compareTo((Integer)pv2));
+                result = (((Integer) pv1).compareTo((Integer) pv2));
             }
             else if (pv1 instanceof QName)
             {
-                result = (((QName)pv1).compareTo((QName)pv2));
+                result = (((QName) pv1).compareTo((QName) pv2));
             }
             else if (pv1 instanceof Boolean)
             {
-                result = (((Boolean)pv1).compareTo((Boolean)pv2));
+                result = (((Boolean) pv1).compareTo((Boolean) pv2));
             }
-            
-            //beCPG
+            // beCPG: numeric and node reference properties are sortable too
             else if (pv1 instanceof Double)
             {
-                result = (((Double)pv1).compareTo((Double)pv2));
+                result = (((Double) pv1).compareTo((Double) pv2));
             }
             else if (pv1 instanceof NodeRef)
             {
-                result = (((NodeRef)pv1).toString()).compareTo(((NodeRef)pv1).toString());
+                result = pv1.toString().compareTo(pv2.toString());
             }
-            
             else
             {
-                // TODO other comparisons
+                // beCPG: an unsupported sort type leaves the order unchanged instead of failing the query
                 return 0;
             }
-            
+
             if ((result == 0) && (sortProps.size() > 1))
             {
                 return compareImpl(node1In, node2In, sortProps.subList(1, sortProps.size()));
             }
-            
+
             return result;
         }
     }
-    
-    private boolean includeAspects(NodeRef nodeRef, Set<QName> inclusiveAspects, Set<QName> exclusiveAspects)
+
+    protected boolean includeAspects(NodeRef nodeRef, Set<QName> inclusiveAspects, Set<QName> exclusiveAspects)
     {
         if (inclusiveAspects == null && exclusiveAspects == null)
         {
@@ -569,11 +535,11 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         }
 
         Set<QName> nodeAspects = nodeService.getAspects(nodeRef);
-        if (inclusiveAspects != null) 
+        if (inclusiveAspects != null)
         {
             Set<QName> includedIntersect = new HashSet<QName>(nodeAspects);
             includedIntersect.retainAll(inclusiveAspects);
-            if (includedIntersect.isEmpty()) 
+            if (includedIntersect.isEmpty())
             {
                 return false;
             }
@@ -588,9 +554,9 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             }
         }
         return true;
-        
+
     }
-    
+
     // note: currently inclusive and OR-based
     private boolean includeFilter(Map<QName, Serializable> propVals, List<FilterProp> filterProps)
     {
@@ -601,125 +567,138 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             {
                 if ((filterProp instanceof FilterPropString) && (propVal instanceof String))
                 {
-                    String val = (String)propVal;
-                    String filter = (String)filterProp.getPropVal();
-                    
-                    switch ((FilterTypeString)filterProp.getFilterType())
+                    String val = (String) propVal;
+                    String filter = (String) filterProp.getPropVal();
+
+                    switch ((FilterTypeString) filterProp.getFilterType())
                     {
-                        case STARTSWITH:
-                            if (val.startsWith(filter))
-                            {
-                                return true;
-                            }
+                    case STARTSWITH:
+                        if (val.startsWith(filter))
+                        {
+                            return true;
+                        }
                         break;
-                        case STARTSWITH_IGNORECASE:
-                            if (val.toLowerCase().startsWith(filter.toLowerCase()))
-                            {
-                                return true;
-                            }
-                            break;
-                        case EQUALS:
-                            if (val.equals(filter))
-                            {
-                                return true;
-                            }
+                    case STARTSWITH_IGNORECASE:
+                        if (val.toLowerCase().startsWith(filter.toLowerCase()))
+                        {
+                            return true;
+                        }
                         break;
-                        case EQUALS_IGNORECASE:
-                            if (val.equalsIgnoreCase(filter))
-                            {
-                                return true;
-                            }
-                            break;
-                        case ENDSWITH:
-                            if (val.endsWith(filter))
-                            {
-                                return true;
-                            }
-                            break;
-                        case ENDSWITH_IGNORECASE:
-                            if (val.toLowerCase().endsWith(filter.toLowerCase()))
-                            {
-                                return true;
-                            }
-                            break;
-                        case MATCHES:
-                            if (val.matches(filter))
-                            {
-                                return true;
-                            }
-                            break;
-                        case MATCHES_IGNORECASE:
-                            if (val.toLowerCase().matches(filter.toLowerCase()))
-                            {
-                                return true;
-                            }
-                            break;
-                        default:
+                    case EQUALS:
+                        if (val.equals(filter))
+                        {
+                            return true;
+                        }
+                        break;
+                    case EQUALS_IGNORECASE:
+                        if (val.equalsIgnoreCase(filter))
+                        {
+                            return true;
+                        }
+                        break;
+                    case ENDSWITH:
+                        if (val.endsWith(filter))
+                        {
+                            return true;
+                        }
+                        break;
+                    case ENDSWITH_IGNORECASE:
+                        if (val.toLowerCase().endsWith(filter.toLowerCase()))
+                        {
+                            return true;
+                        }
+                        break;
+                    case MATCHES:
+                        if (val.matches(filter))
+                        {
+                            return true;
+                        }
+                        break;
+                    case MATCHES_IGNORECASE:
+                        if (val.toLowerCase().matches(filter.toLowerCase()))
+                        {
+                            return true;
+                        }
+                        break;
+                    default:
                     }
                 }
             }
-            
+
             if ((filterProp instanceof FilterPropBoolean) && (propVal instanceof Boolean))
             {
-                Boolean val = (Boolean)propVal;
-                Boolean filter = (Boolean)filterProp.getPropVal();
-                
+                Boolean val = (Boolean) propVal;
+                Boolean filter = (Boolean) filterProp.getPropVal();
+
                 return (val == filter);
             }
         }
-        
+
         return false;
     }
-    
-    /** {@inheritDoc} */
+
     @Override
     protected boolean isApplyPostQueryPermissions()
     {
         return applyPostQueryPermissions; // true if sorted (if unsorted then permissions are applied as part of the query impl)
     }
-    
-    /** {@inheritDoc} */
+
     @Override
     protected List<NodeRef> applyPostQueryPermissions(List<NodeRef> results, int requestedCount)
     {
         Long start = (logger.isDebugEnabled() ? System.currentTimeMillis() : null);
-        
+
         int requestTotalCountMax = getParameters().getTotalResultCountMax();
         int maxChecks = (((requestTotalCountMax > 0) && (requestTotalCountMax > requestedCount)) ? requestTotalCountMax : requestedCount);
         int cnt = results.size();
-        
+
         int toIdx = (maxChecks > cnt ? cnt : maxChecks);
-        
+
         // note: assume user has read access to most/majority of the items hence pre-load up to max checks
         preload(results.subList(0, toIdx));
-        
+
         List<NodeRef> ret = super.applyPostQueryPermissions(results, requestedCount);
-        
+
         if (start != null)
         {
-            logger.debug("Post-query perms: "+ret.size()+" in "+(System.currentTimeMillis()-start)+" msecs");
+            logger.debug("Post-query perms: " + ret.size() + " in " + (System.currentTimeMillis() - start) + " msecs");
         }
-        
+
         return ret;
     }
-    
+
     private void preload(List<NodeRef> nodeRefs)
     {
         Long start = (logger.isTraceEnabled() ? System.currentTimeMillis() : null);
-        
+
         nodeDAO.cacheNodes(nodeRefs);
-        
+
         if (start != null)
         {
-            logger.trace("Pre-load: "+nodeRefs.size()+" in "+(System.currentTimeMillis()-start)+" msecs");
+            logger.trace("Pre-load: " + nodeRefs.size() + " in " + (System.currentTimeMillis() - start) + " msecs");
         }
     }
 
     protected interface FilterSortChildQueryCallback
     {
-        boolean handle(FilterSortNode node);
+        void handle(FilterSortNode node);
+
+        default int remainingNeeded()
+        {
+            return Integer.MAX_VALUE;
+        }
+
+        default boolean needsMore()
+        {
+            return remainingNeeded() > 0;
+        }
+
+        default boolean doesntNeedMore()
+        {
+            return !needsMore();
+        }
     }
-    
+
     protected class DefaultFilterSortChildQueryCallback implements FilterSortChildQueryCallback
     {
         private List<FilterSortNode> children;
@@ -743,31 +722,28 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         }
 
         @Override
-        public boolean handle(FilterSortNode node)
+        public void handle(FilterSortNode node)
         {
-            if(include(node))
+            if (include(node))
             {
                 children.add(node);
             }
-
-            // More results
-            return true;
         }
-        
+
         protected boolean include(FilterSortNode node)
         {
             // filter, if needed
-            return(!applyFilter || includeFilter(node.getPropVals(), filterProps)) && includeAspects(node.getNodeRef(), inclusiveAspects, exclusiveAspects);
+            return (!applyFilter || includeFilter(node.getPropVals(), filterProps)) && includeAspects(node.getNodeRef(), inclusiveAspects, exclusiveAspects);
         }
     }
-    
+
     protected class DefaultUnsortedChildQueryCallback implements UnsortedChildQueryCallback
     {
         private List<NodeRef> rawResult;
         private int requestedCount;
         private Set<QName> inclusiveAspects;
         private Set<QName> exclusiveAspects;
-        
+
         public DefaultUnsortedChildQueryCallback(final List<NodeRef> rawResult, final int requestedCount, Set<QName> inclusiveAspects, Set<QName> exclusiveAspects)
         {
             this.rawResult = rawResult;
@@ -779,7 +755,7 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         @Override
         public boolean handle(NodeRef nodeRef)
         {
-            if(include(nodeRef))
+            if (include(nodeRef))
             {
                 rawResult.add(tenantService.getBaseName(nodeRef));
             }
@@ -793,163 +769,229 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             return includeAspects(nodeRef, inclusiveAspects, exclusiveAspects);
         }
     }
-    
+
     protected interface UnsortedChildQueryCallback
     {
         boolean handle(NodeRef nodeRef);
     }
-    
+
     protected class FilterSortResultHandler implements CannedQueryDAO.ResultHandler<FilterSortNodeEntity>
     {
         private final FilterSortChildQueryCallback resultsCallback;
-        private boolean more = true;
-        
+
         private static final int BATCH_SIZE = 256 * 4;
-        private final List<FilterSortNodeEntity> results;
-        
-        private FilterSortResultHandler(FilterSortChildQueryCallback resultsCallback)
+        private final List<FilterSortNodeEntity> currentBatch;
+        private final Set<Long> seenNodeIds = new HashSet<>();
+
+        public FilterSortResultHandler(FilterSortChildQueryCallback resultsCallback)
         {
             this.resultsCallback = resultsCallback;
-            
-            results = new LinkedList<FilterSortNodeEntity>(); 
+
+            currentBatch = new ArrayList<>(BATCH_SIZE);
         }
-        
+
+        @Override
         public boolean handleResult(FilterSortNodeEntity result)
         {
             // Do nothing if no further results are required
-            if (!more)
+            if (resultsCallback.doesntNeedMore())
             {
                 return false;
             }
-            
-            if (results.size() >= BATCH_SIZE)
+
+            if (shouldFlushBatch(result))
             {
-                // batch
                 preloadNodes();
                 filterSort();
             }
-            
-            results.add(result);
-            
-            return more;
+
+            currentBatch.add(result);
+
+            return resultsCallback.needsMore();
         }
-        
+
+        /**
+         * Flushes only at a node boundary so that all rows for the same node (e.g. multiple locale rows for a d:mltext property, kept contiguous by the SQL ORDER BY childNode.id) are grouped in the same batch.
+         */
+        private boolean shouldFlushBatch(FilterSortNodeEntity incoming)
+        {
+            int size = currentBatch.size();
+            if (size == 0)
+            {
+                return false;
+            }
+            boolean thresholdReached = size >= BATCH_SIZE
+                    || size >= resultsCallback.remainingNeeded();
+            return thresholdReached
+                    && !incoming.getId().equals(currentBatch.get(size - 1).getId());
+        }
+
         public void done()
         {
-            if (results.size() >= 0)
+            if (currentBatch.size() >= 0)
             {
                 // finish batch
                 preloadNodes();
                 filterSort();
             }
         }
-        
+
         private void preloadNodes()
         {
-        	List<NodeRef> nodeRefs = new ArrayList<>(results.size());
-            for (FilterSortNodeEntity result : results)
+            Set<Long> uniqueInBatch = new HashSet<>(currentBatch.size());
+            List<NodeRef> nodeRefs = new ArrayList<>(currentBatch.size());
+            for (FilterSortNodeEntity result : currentBatch)
             {
-                nodeRefs.add(result.createNodeRef());
+                if (!seenNodeIds.contains(result.getId()) && uniqueInBatch.add(result.getId()))
+                {
+                    nodeRefs.add(result.createNodeRef());
+                }
             }
-            
-            preload(nodeRefs);
+
+            if (!nodeRefs.isEmpty())
+            {
+                preload(nodeRefs);
+            }
         }
-            
+
+        /**
+         * Groups rows by node ID so that d:mltext properties with multiple locale values (one SQL row per locale from the LEFT JOIN on alf_node_properties) are aggregated into a single MLText, then emits one callback per node.
+         */
         private void filterSort()
         {
-            for (FilterSortNodeEntity result : results)
+            Map<Long, List<FilterSortNodeEntity>> nodeGroups = groupByNodeId();
+
+            for (Map.Entry<Long, List<FilterSortNodeEntity>> nodeGroup : nodeGroups.entrySet())
             {
-                NodeRef nodeRef = result.createNodeRef();
-                
-                Map<NodePropertyKey, NodePropertyValue> propertyValues = new HashMap<NodePropertyKey, NodePropertyValue>(3);
-                
-                NodePropertyEntity prop1 = result.getProp1();
-                if (prop1 != null)
+                seenNodeIds.add(nodeGroup.getKey());
+                List<FilterSortNodeEntity> rows = nodeGroup.getValue();
+                FilterSortNodeEntity firstRow = rows.getFirst();
+                NodeRef nodeRef = firstRow.createNodeRef();
+
+                Map<QName, Serializable> propVals = buildNodeProperties(rows, firstRow, nodeRef);
+
+                resultsCallback.handle(new FilterSortNode(nodeRef, propVals));
+                if (resultsCallback.doesntNeedMore())
                 {
-                    propertyValues.put(prop1.getKey(), prop1.getValue());
-                }
-                
-                NodePropertyEntity prop2 = result.getProp2();
-                if (prop2 != null)
-                {
-                    propertyValues.put(prop2.getKey(), prop2.getValue());
-                }
-                
-                NodePropertyEntity prop3 = result.getProp3();
-                if (prop3 != null)
-                {
-                    propertyValues.put(prop3.getKey(), prop3.getValue());
-                }
-                
-                Map<QName, Serializable> propVals = nodePropertyHelper.convertToPublicProperties(propertyValues);
-                
-                // Add referenceable / spoofed properties (including spoofed name if null)
-                ReferenceablePropertiesEntity.addReferenceableProperties(result.getId(), nodeRef, propVals);
-                
-                // special cases
-                
-                // MLText (eg. cm:title, cm:description, ...)
-                for (Map.Entry<QName, Serializable> entry : propVals.entrySet())
-                {
-                    if (entry.getValue() instanceof MLText)
-                    {
-                        propVals.put(entry.getKey(), DefaultTypeConverter.INSTANCE.convert(String.class, (MLText)entry.getValue()));
-                    }
-                }
-                
-                // ContentData (eg. cm:content.size, cm:content.mimetype)
-                ContentData contentData = (ContentData)propVals.get(ContentModel.PROP_CONTENT);
-                if (contentData != null)
-                {
-                    propVals.put(SORT_QNAME_CONTENT_SIZE, contentData.getSize());
-                    propVals.put(SORT_QNAME_CONTENT_MIMETYPE, contentData.getMimetype());
-                }
-                
-                // Auditable props (eg. cm:creator, cm:created, cm:modifier, cm:modified, ...)
-                AuditablePropertiesEntity auditableProps = result.getAuditablePropertiesEntity();
-                if (auditableProps != null)
-                {
-                    for (Map.Entry<QName, Serializable> entry : auditableProps.getAuditableProperties().entrySet())
-                    {
-                        propVals.put(entry.getKey(), entry.getValue());
-                    }
-                }
-                
-                // Node type
-                Long nodeTypeQNameId = result.getTypeQNameId();
-                if (nodeTypeQNameId != null)
-                {
-                    Pair<Long, QName> pair = qnameDAO.getQName(nodeTypeQNameId);
-                    if (pair != null)
-                    {
-                        propVals.put(SORT_QNAME_NODE_TYPE, pair.getSecond());
-                    }
-                }
-                
-                // Call back
-                boolean more = resultsCallback.handle(new FilterSortNode(nodeRef, propVals));
-                if (!more)
-                {
-                    this.more = false;
                     break;
                 }
             }
-            
-            results.clear();
+
+            currentBatch.clear();
+        }
+
+        private Map<Long, List<FilterSortNodeEntity>> groupByNodeId()
+        {
+            Map<Long, List<FilterSortNodeEntity>> nodeGroups = new LinkedHashMap<>();
+            for (FilterSortNodeEntity result : currentBatch)
+            {
+                Long nodeId = result.getId();
+                if (!seenNodeIds.contains(nodeId))
+                {
+                    nodeGroups.computeIfAbsent(nodeId, k -> new ArrayList<>(2)).add(result);
+                }
+            }
+            return nodeGroups;
+        }
+
+        private Map<QName, Serializable> buildNodeProperties(
+                List<FilterSortNodeEntity> rows, FilterSortNodeEntity firstRow, NodeRef nodeRef)
+        {
+            Map<NodePropertyKey, NodePropertyValue> rawProps = mergeLocaleProperties(rows);
+            Map<QName, Serializable> propVals = nodePropertyHelper.convertToPublicProperties(rawProps);
+
+            ReferenceablePropertiesEntity.addReferenceableProperties(firstRow.getId(), nodeRef, propVals);
+            resolveMLTextValues(propVals);
+            addContentDataSortProps(propVals);
+            addAuditableProps(propVals, firstRow);
+            addNodeTypeProp(propVals, firstRow);
+
+            return propVals;
+        }
+
+        /**
+         * Merges property key/value pairs from all locale rows so that NodePropertyHelper can construct a complete MLText per property.
+         */
+        private Map<NodePropertyKey, NodePropertyValue> mergeLocaleProperties(
+                List<FilterSortNodeEntity> rows)
+        {
+            Map<NodePropertyKey, NodePropertyValue> props = new HashMap<>(3 * rows.size());
+            for (FilterSortNodeEntity row : rows)
+            {
+                collectProp(props, row.getProp1());
+                collectProp(props, row.getProp2());
+                collectProp(props, row.getProp3());
+            }
+            return props;
+        }
+
+        private void collectProp(Map<NodePropertyKey, NodePropertyValue> target,
+                NodePropertyEntity prop)
+        {
+            if (prop != null)
+            {
+                target.put(prop.getKey(), prop.getValue());
+            }
+        }
+
+        private void resolveMLTextValues(Map<QName, Serializable> propVals)
+        {
+            for (Map.Entry<QName, Serializable> entry : propVals.entrySet())
+            {
+                if (entry.getValue() instanceof MLText)
+                {
+                    propVals.put(entry.getKey(),
+                            DefaultTypeConverter.INSTANCE.convert(String.class, (MLText) entry.getValue()));
+                }
+            }
+        }
+
+        private void addContentDataSortProps(Map<QName, Serializable> propVals)
+        {
+            ContentData contentData = (ContentData) propVals.get(ContentModel.PROP_CONTENT);
+            if (contentData != null)
+            {
+                propVals.put(SORT_QNAME_CONTENT_SIZE, contentData.getSize());
+                propVals.put(SORT_QNAME_CONTENT_MIMETYPE, contentData.getMimetype());
+            }
+        }
+
+        private void addAuditableProps(Map<QName, Serializable> propVals,
+                FilterSortNodeEntity row)
+        {
+            AuditablePropertiesEntity auditableProps = row.getAuditablePropertiesEntity();
+            if (auditableProps != null)
+            {
+                propVals.putAll(auditableProps.getAuditableProperties());
+            }
+        }
+
+        private void addNodeTypeProp(Map<QName, Serializable> propVals,
+                FilterSortNodeEntity row)
+        {
+            Long nodeTypeQNameId = row.getTypeQNameId();
+            if (nodeTypeQNameId != null)
+            {
+                Pair<Long, QName> pair = qnameDAO.getQName(nodeTypeQNameId);
+                if (pair != null)
+                {
+                    propVals.put(SORT_QNAME_NODE_TYPE, pair.getSecond());
+                }
+            }
         }
     }
-    
+
     protected class FilterSortNode
     {
         private NodeRef nodeRef;
         private Map<QName, Serializable> propVals; // subset of nodes properties - used for filtering and/or sorting
-        
+
         public FilterSortNode(NodeRef nodeRef, Map<QName, Serializable> propVals)
         {
             this.nodeRef = nodeRef;
             this.propVals = propVals;
         }
-        
+
         @Override
         public String toString()
         {
@@ -960,34 +1002,34 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
         {
             return nodeRef;
         }
-        
+
         public Serializable getVal(QName prop)
         {
             return propVals.get(prop);
         }
-        
+
         public Map<QName, Serializable> getPropVals()
         {
             return propVals;
         }
     }
-    
+
     private class UnsortedResultHandler implements CannedQueryDAO.ResultHandler<NodeEntity>
     {
         private final UnsortedChildQueryCallback resultsCallback;
-        
+
         private boolean more = true;
-        
+
         private static final int BATCH_SIZE = 256 * 4;
         private final List<NodeRef> nodeRefs;
-        
+
         private UnsortedResultHandler(UnsortedChildQueryCallback resultsCallback)
         {
             this.resultsCallback = resultsCallback;
-            
-            nodeRefs = new LinkedList<NodeRef>(); 
+
+            nodeRefs = new LinkedList<NodeRef>();
         }
-        
+
         public boolean handleResult(NodeEntity result)
         {
             // Do nothing if no further results are required
@@ -995,27 +1037,27 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
             {
                 return false;
             }
-            
+
             NodeRef nodeRef = result.getNodeRef();
-            
+
             if (nodeRefs.size() >= BATCH_SIZE)
             {
                 // batch
                 preloadAndApplyPermissions();
             }
-            
+
             nodeRefs.add(nodeRef);
-            
+
             return more;
         }
-        
+
         private void preloadAndApplyPermissions()
         {
             preload(nodeRefs);
-            
+
             // TODO track total time for incremental permission checks ... and cutoff (eg. based on some config)
             List<NodeRef> results = applyPostQueryPermissions(nodeRefs, nodeRefs.size());
-            
+
             for (NodeRef nodeRef : results)
             {
                 // Call back
@@ -1026,10 +1068,10 @@ public class GetChildrenCannedQuery extends AbstractCannedQueryPermissions<NodeR
                     break;
                 }
             }
-            
+
             nodeRefs.clear();
         }
-        
+
         public void done()
         {
             if (nodeRefs.size() >= 0)

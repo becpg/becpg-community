@@ -124,13 +124,13 @@
         
         
          <!-- Alfresco 7.2 -->
-		<alfresco.platform.version>26.1.0</alfresco.platform.version>
-		<alfresco.share.docker.version>26.1.0</alfresco.share.docker.version>
-        <alfresco.share.version>26.1.0.45</alfresco.share.version>
-        <alfresco-repository.version>26.1.0.61</alfresco-repository.version>
-		<alfresco-remote-api.version>26.1.0.61</alfresco-remote-api.version>
-		<alfresco-data-model.version>26.1.0.61</alfresco-data-model.version>
-		<alfresco-core.version>26.1.0.61</alfresco-core.version>
+		<alfresco.platform.version>26.2.0</alfresco.platform.version>
+		<alfresco.share.docker.version>26.2.1</alfresco.share.docker.version>
+        <alfresco.share.version>26.2.1.2</alfresco.share.version>
+        <alfresco-repository.version>26.2.0.96</alfresco-repository.version>
+		<alfresco-remote-api.version>26.2.0.96</alfresco-remote-api.version>
+		<alfresco-data-model.version>26.2.0.96</alfresco-data-model.version>
+		<alfresco-core.version>26.2.0.96</alfresco-core.version>
 		<spring-surf.version>10.4</spring-surf.version>
 	    <spring-webscripts.version>10.2</spring-webscripts.version>
 	    <spring-webscripts-share.version>10.3</spring-webscripts-share.version>

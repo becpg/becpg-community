@@ -2,7 +2,7 @@
  * #%L
  * Alfresco Repository
  * %%
- * Copyright (C) 2005 - 2023 Alfresco Software Limited
+ * Copyright (C) 2005 - 2026 Alfresco Software Limited
  * %%
  * This file is part of the Alfresco software.
  * If the software was purchased under a paid Alfresco license, the terms of
@@ -27,112 +27,85 @@ package org.alfresco.repo.security.authentication.identityservice;
 
 import java.io.Serializable;
 
+import net.sf.acegisecurity.Authentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.management.subsystems.ActivateableBean;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationException;
-import org.alfresco.repo.security.authentication.identityservice.IdentityServiceFacade.AuthorizationGrant;
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceFacade.IdentityServiceFacadeException;
-import org.alfresco.repo.security.authentication.identityservice.user.OIDCUserInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 
-import net.sf.acegisecurity.Authentication;
-
 /**
+ * Authenticates a user against the Identity Service (Keycloak / OAuth2 Authorization Server).
  *
- * Authenticates a user against Identity Service (Keycloak/Authorization Server).
- * {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceFacade} is used to verify provided user credentials. User is set as the current user if the
- * user credentials are valid.
- * <br>
- * The {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceAuthenticationComponent#identityServiceFacade} can be null in which case this authenticator
- * will just fall through to the next one in the chain.
- *
- * @author matthieu
+ * <p>
+ * Delegates the actual credential-validation work to a {@link UserTokenProvider} so the component remains agnostic of how the token is obtained: a {@link DirectUserTokenProvider} hits the IdP on every call, while a {@link CachingUserTokenProvider} transparently caches previously validated tokens. If no provider is wired (e.g., {@code identity-service.authentication.enable-username-password-authentication=false}) this authenticator falls through to the next one in the chain by throwing.
+ * </p>
  */
 public class IdentityServiceAuthenticationComponent extends AbstractAuthenticationComponent implements ActivateableBean
 {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentityServiceAuthenticationComponent.class);
+
+    // beCPG: marks the users authenticated by the Identity Service
     private static final QName PROP_IS_SSO_USER = QName.createQName("http://www.bcpg.fr/model/becpg/1.0", "isSsoUser");
-	/** client used to authenticate user credentials against Authorization Server **/
-    private IdentityServiceFacade identityServiceFacade;
-    /** enabled flag for the identity service subsystem**/
+
+    /** Provider of validated user tokens (direct-to-IdP or caching, opaque to this component). */
+    private UserTokenProvider userTokenProvider;
+    /** Enabled flag for the identity-service subsystem. */
     private boolean active;
-
-    private IdentityServiceJITProvisioningHandler jitProvisioningHandler;
-
     private boolean allowGuestLogin;
 
-    /**
-     * <p>Setter for the field <code>identityServiceFacade</code>.</p>
-     *
-     * @param identityServiceFacade a {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceFacade} object
-     */
-    public void setIdentityServiceFacade(IdentityServiceFacade identityServiceFacade)
+    public void setUserTokenProvider(UserTokenProvider userTokenProvider)
     {
-        this.identityServiceFacade = identityServiceFacade;
+        this.userTokenProvider = userTokenProvider;
     }
 
-    /**
-     * <p>Setter for the field <code>allowGuestLogin</code>.</p>
-     *
-     * @param allowGuestLogin a boolean
-     */
     public void setAllowGuestLogin(boolean allowGuestLogin)
     {
         this.allowGuestLogin = allowGuestLogin;
     }
 
     /**
-     * <p>Setter for the field <code>jitProvisioningHandler</code>.</p>
-     *
-     * @param jitProvisioningHandler a {@link org.alfresco.repo.security.authentication.identityservice.IdentityServiceJITProvisioningHandler} object
+     * beCPG: flags the person as an SSO user and refuses a disabled person, which the Identity Service alone would let in.
      */
-    public void setJitProvisioningHandler(IdentityServiceJITProvisioningHandler jitProvisioningHandler)
-    {
-        this.jitProvisioningHandler = jitProvisioningHandler;
-    }
-    
-    /** {@inheritDoc} */
     @Override
-	public Authentication setCurrentUser(String userName, UserNameValidationMode validationMode) {
-    	TransactionSupportUtil.bindResource("BeCPGUserPolicy.disable", true);
-		Authentication auth = super.setCurrentUser(userName, validationMode);
-		NodeRef personNodeRef = getPersonService().getPerson(userName);
-		Serializable isSsoUser = getNodeService().getProperty(personNodeRef, PROP_IS_SSO_USER);
-		if (isSsoUser == null || !(boolean) isSsoUser) {
-			getNodeService().setProperty(personNodeRef, PROP_IS_SSO_USER, true);
-		}
-		if (getNodeService().hasAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
-			throw new AuthenticationException("User not authenticated because it is disabled.");
-		}
-		return auth;
-	}
+    public Authentication setCurrentUser(String userName, UserNameValidationMode validationMode)
+    {
+        TransactionSupportUtil.bindResource("BeCPGUserPolicy.disable", true);
+        Authentication auth = super.setCurrentUser(userName, validationMode);
+        NodeRef personNodeRef = getPersonService().getPerson(userName);
+        Serializable isSsoUser = getNodeService().getProperty(personNodeRef, PROP_IS_SSO_USER);
+        if (isSsoUser == null || !(boolean) isSsoUser)
+        {
+            getNodeService().setProperty(personNodeRef, PROP_IS_SSO_USER, true);
+        }
+        if (getNodeService().hasAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED))
+        {
+            throw new AuthenticationException("User not authenticated because it is disabled.");
+        }
+        return auth;
+    }
 
-    /** {@inheritDoc} */
     @Override
     public void authenticateImpl(String userName, char[] password) throws AuthenticationException
     {
-        if (identityServiceFacade == null)
+        if (userTokenProvider == null)
         {
-            if (logger.isDebugEnabled())
-            {
-            	logger.debug("IdentityServiceFacade was not set, possibly due to the 'identity-service.authentication.enable-username-password-authentication=false' property.");
-            }
+            LOG.debug("UserTokenProvider was not set, possibly due to the 'identity-service.authentication.enable-username-password-authentication=false' property.");
 
-            throw new AuthenticationException("User not authenticated because IdentityServiceFacade was not set.");
+            throw new AuthenticationException("User not authenticated because UserTokenProvider was not set.");
         }
 
         try
         {
-            // Attempt to verify user credentials
-            IdentityServiceFacade.AccessTokenAuthorization accessTokenAuthorization = identityServiceFacade.authorize(AuthorizationGrant.password(userName, String.valueOf(password)));
-
-            String normalizedUsername = jitProvisioningHandler.extractUserInfoAndCreateUserIfNeeded(accessTokenAuthorization.getAccessToken().getTokenValue())
-                        .map(OIDCUserInfo::username)
-                        .orElseThrow(() -> new AuthenticationException("Failed to extract username from token and user info endpoint."));
+            final UserToken token = userTokenProvider.getUserToken(new UserTokenRequest(userName, password));
             // Verification was successful so treat as authenticated user
-            setCurrentUser(normalizedUsername);
+            setCurrentUser(token.normalizedUsername());
         }
         catch (IdentityServiceFacadeException e)
         {
@@ -144,24 +117,17 @@ public class IdentityServiceAuthenticationComponent extends AbstractAuthenticati
         }
     }
 
-    /**
-     * <p>Setter for the field <code>active</code>.</p>
-     *
-     * @param active a boolean
-     */
     public void setActive(boolean active)
     {
         this.active = active;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isActive()
     {
         return active;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean implementationAllowsGuestLogin()
     {
