@@ -27,9 +27,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.workflow.WorkflowService;
-import org.alfresco.service.cmr.workflow.WorkflowTask;
-import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -43,6 +40,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.workflow.WorkflowTaskFinder;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
@@ -57,9 +55,10 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntitySecurityWebScript.class);
 
-	private WorkflowService workflowService;
 
 	private WorkflowPackageComponent workflowPackageComponent;
+
+	private WorkflowTaskFinder workflowTaskFinder;
 
 	private EntityListDAO entityListDAO;
 
@@ -109,20 +108,21 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		return findEntity(req);
 	}
 
-	/**
-	 * <p>Setter for the field <code>workflowService</code>.</p>
-	 *
-	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
-	 */
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>workflowPackageComponent</code>.</p>
 	 *
 	 * @param workflowPackageComponent a {@link org.alfresco.repo.workflow.WorkflowPackageComponent} object.
 	 */
+	/**
+	 * <p>Setter for the field <code>workflowTaskFinder</code>.</p>
+	 *
+	 * @param workflowTaskFinder a {@link fr.becpg.repo.workflow.WorkflowTaskFinder} object
+	 */
+	public void setWorkflowTaskFinder(WorkflowTaskFinder workflowTaskFinder) {
+		this.workflowTaskFinder = workflowTaskFinder;
+	}
+
 	public void setWorkflowPackageComponent(WorkflowPackageComponent workflowPackageComponent) {
 		this.workflowPackageComponent = workflowPackageComponent;
 	}
@@ -207,29 +207,8 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			return false;
 		}
 
-		// Check assigned tasks
-		List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(currentUser, WorkflowTaskState.IN_PROGRESS);
-
-		boolean hasMatchingTask = assignedTasks.stream().anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
-
-		if (hasMatchingTask) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("User " + currentUser + " has assigned tasks for entity: " + entityNodeRef);
-			}
-			return true;
-		}
-
-		// Check pooled tasks
-		List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(currentUser);
-		hasMatchingTask = pooledTasks.stream().anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
-
-		if (hasMatchingTask) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("User " + currentUser + " has pooled tasks for entity: " + entityNodeRef);
-			}
-		}
-
-		return hasMatchingTask;
+		// Same question, same answer, one place: see WorkflowTaskFinder.
+		return workflowTaskFinder.hasTaskOn(currentUser, contentWorkflowIds, null);
 	}
 
 	/**

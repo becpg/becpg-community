@@ -1,0 +1,176 @@
+<#--
+  Drawing shared by the score markings rendered on the server, one template per scale. They draw
+  what score-badge.js draws on screen, so that a technical sheet prints the very mark a user sees
+  in the score list.
+
+  These are neutral drawings of the scale, not the artwork of the schemes: a scheme under licence
+  or trademark is only printed with its official logo by its licence holder, who uploads it as a
+  badge of the score definition.
+
+  Units are points, as everywhere in the markings: see svg-lib.ftlx.
+-->
+<#import "svg-lib.ftlx" as svg>
+
+<#assign WHITE = "#ffffff">
+<#assign INK = "#333333">
+<#assign MUTED = "#666666">
+
+<#assign LETTER_CLASSES = ["A", "B", "C", "D", "E"]>
+<#assign LETTER_COLOURS = {"A": "#00853f", "B": "#64bf21", "C": "#ffc800", "D": "#ff7600", "E": "#ff0100"}>
+
+<#--
+  Each mark keeps its own look, as on screen: a consumer recognises a scheme by its drawing, not
+  by its letter. A theme naming its own classes grades on a scale of its own.
+-->
+<#assign THEMES = {
+	"ANIMALWELFARE": {"layout": "tag", "colours": {"A": "#00694e", "B": "#3f9c6d", "C": "#8cc06a", "D": "#e0a02c", "E": "#b0763a"}},
+	"NUTRIGRADE": {"layout": "tag", "colours": {"A": "#00853f", "B": "#64bf21", "C": "#f0a30a", "D": "#d0021b", "E": "#d0021b"}, "classes": ["A", "B", "C", "D"]},
+	"FLORINDEX": {"layout": "strip", "colours": {"A": "#1f6f4a", "B": "#5aa469", "C": "#c8b560", "D": "#c98a3c", "E": "#a8503a"}},
+	"PPWR": {"layout": "strip", "colours": {"A": "#00853f", "B": "#64bf21", "C": "#ffc800", "NR": "#ff0100"}, "classes": ["A", "B", "C", "NR"]}
+}>
+
+<#-- Name each mark is printed under. Most are proper names, the same in every language. -->
+<#assign TITLES = {
+	"NUTRISCORE": "NUTRI-SCORE",
+	"GREENSCORE": "GREEN-SCORE",
+	"NUTRIGRADE": "NUTRI-GRADE",
+	"ANIMALWELFARE": "BIEN-ÊTRE ANIMAL",
+	"FLORINDEX": "FLORINDEX",
+	"PPWR": "PPWR",
+	"PLANETSCORE": "PLANET-SCORE",
+	"PLANETSCORE_PESTICIDES": "PESTICIDES",
+	"PLANETSCORE_BIODIVERSITE": "BIODIVERSITÉ",
+	"PLANETSCORE_CLIMAT": "CLIMAT",
+	"HSR": "HEALTH STAR RATING",
+	"NOVA": "NOVA",
+	"SIGA": "SIGA",
+	"YUKA": "YUKA",
+	"FSAOFCOM": "FSA-OFCOM",
+	"EF31": "PEF",
+	"ECOBALYSE": "ECOBALYSE",
+	"REPCITEO": "REP",
+	"SPICE": "SPICE"
+}>
+
+<#-- A named grade carries no order, its colour only tells the verdict apart. -->
+<#assign GRADE_COLOURS = {
+	"EXCELLENT": "#00853f", "TRÈS BON": "#00853f", "BON": "#64bf21", "GOOD": "#64bf21",
+	"MOYEN": "#ffc800", "MEDIOCRE": "#ff7600", "MÉDIOCRE": "#ff7600", "POOR": "#ff7600",
+	"MAUVAIS": "#ff0100", "BAD": "#ff0100",
+	"1": "#00853f", "2": "#64bf21", "3": "#ff7600", "4": "#ff0100",
+	"PLATINUM": "#6f7d8c", "GOLD": "#c9a227", "SILVER": "#9aa4ad", "BRONZE": "#a1663a",
+	"HFSS": "#d0021b", "NONHFSS": "#00853f"
+}>
+<#assign GRADE_DEFAULT = "#4a4a4a">
+
+<#assign TITLE_SIZE = 7>
+<#assign TITLE_H = 11>
+
+<#function titleOf code>
+	<#return TITLES[code!""]!(code!"")>
+</#function>
+
+<#function themeOf code>
+	<#local theme = THEMES[code!""]!{}>
+	<#return {
+		"layout": theme.layout!"strip",
+		"colours": theme.colours!LETTER_COLOURS,
+		"classes": theme.classes!LETTER_CLASSES
+	}>
+</#function>
+
+<#function gradeColour grade>
+	<#return GRADE_COLOURS[(grade!"")?upper_case]!GRADE_DEFAULT>
+</#function>
+
+<#-- A class longer than one character shrinks to stay inside its square. -->
+<#function classSize letter base>
+	<#return (letter?length gt 1)?then((base / letter?length)?round + 2, base)>
+</#function>
+
+<#-- Width a bold text of that size takes, which is what a pill or a plate is sized on. -->
+<#function textWidth text size>
+	<#return (text?length * size * svg.HEAVY_GLYPH_RATIO)?ceiling>
+</#function>
+
+<#-- The name of the mark, centred over its drawing. -->
+<#macro title x text>
+	<@svg.centredText x=x middle=TITLE_H / 2 text=text size=TITLE_SIZE fill=INK/>
+</#macro>
+
+<#-- Width of the scale laid flat. -->
+<#function stripWidth classes cell grown>
+	<#return classes?size * cell + (grown - cell)>
+</#function>
+
+<#--
+  The scale laid out flat, every class shown and the reached one grown and outlined, which is how
+  the Nutri-Score and the Green-Score are printed.
+-->
+<#macro letterStrip x top theme reached cell=17 grown=25>
+	<#local left = x>
+	<#list theme.classes as letter>
+		<#local current = letter == reached>
+		<#local size = current?then(grown, cell)>
+		<#local y = top + (grown - size) / 2>
+		<rect x="${left}" y="${y}" width="${size}" height="${size}" rx="3" fill="${theme.colours[letter]!GRADE_DEFAULT}"<#if current> stroke="${INK}" stroke-width="1.5"<#else> opacity="0.45"</#if>/>
+		<@svg.centredText x=left + size / 2 middle=y + size / 2 text=letter size=classSize(letter, current?then(16, 11)) fill=WHITE/>
+		<#local left = left + size>
+	</#list>
+</#macro>
+
+<#--
+  A single plate bearing the caption, the class and the scale as pips underneath: the marks that
+  stamp one tag rather than a strip read this way.
+-->
+<#macro letterTag x top theme reached caption size=62>
+	<rect x="${x + 1}" y="${top + 1}" width="${size - 2}" height="${size - 2}" rx="9" fill="${theme.colours[reached]!GRADE_DEFAULT}"/>
+	<@svg.centredText x=x + size / 2 middle=top + 12 text=caption size=svg.fittedSize(caption, size - 8, 6) fill=WHITE/>
+	<@svg.centredText x=x + size / 2 middle=top + 32 text=reached size=classSize(reached, 26) fill=WHITE/>
+	<#local pip = 7>
+	<#local left = x + (size - theme.classes?size * pip) / 2>
+	<#list theme.classes as letter>
+		<#local current = letter == reached>
+		<circle cx="${left + pip / 2}" cy="${top + 52}" r="${current?then(3, 2)}" fill="${WHITE}"<#if !current> opacity="0.45"</#if>/>
+		<#local left = left + pip>
+	</#list>
+</#macro>
+
+<#-- Width of a gauge. -->
+<#assign GAUGE_STEP = 16>
+<#assign GAUGE_W = LETTER_CLASSES?size * GAUGE_STEP + 2>
+<#assign GAUGE_H = 24>
+
+<#--
+  The whole A to E range as a colour bar, with a cursor astride the level reached and the letter
+  under it: the axes of the Planet-score read this way.
+-->
+<#macro gauge x top reached>
+	<#local bar = 8>
+	<#local barTop = top + 7>
+	<#list LETTER_CLASSES as letter>
+		<#local cellX = x + 1 + letter?index * GAUGE_STEP>
+		<#if letter?is_first>
+		<rect x="${cellX}" y="${barTop}" width="${GAUGE_STEP}" height="${bar}" rx="4" fill="${LETTER_COLOURS[letter]}"/>
+		<rect x="${cellX + 4}" y="${barTop}" width="${GAUGE_STEP - 4}" height="${bar}" fill="${LETTER_COLOURS[letter]}"/>
+		<#elseif letter?is_last>
+		<rect x="${cellX}" y="${barTop}" width="${GAUGE_STEP}" height="${bar}" rx="4" fill="${LETTER_COLOURS[letter]}"/>
+		<rect x="${cellX}" y="${barTop}" width="${GAUGE_STEP - 4}" height="${bar}" fill="${LETTER_COLOURS[letter]}"/>
+		<#else>
+		<rect x="${cellX}" y="${barTop}" width="${GAUGE_STEP}" height="${bar}" fill="${LETTER_COLOURS[letter]}"/>
+		</#if>
+	</#list>
+	<#local index = LETTER_CLASSES?seq_index_of(reached)>
+	<#if (index gte 0)>
+		<#local centre = x + 1 + index * GAUGE_STEP + GAUGE_STEP / 2>
+		<polygon points="${centre},${barTop - 1} ${centre - 4},${barTop - 6} ${centre + 4},${barTop - 6}" fill="${INK}"/>
+		<rect x="${centre - 6}" y="${barTop - 1}" width="12" height="${bar + 2}" rx="3" fill="none" stroke="${INK}" stroke-width="2"/>
+		<@svg.centredText x=centre middle=top + GAUGE_H - 4 text=reached size=8 fill=INK/>
+	</#if>
+</#macro>
+
+<#-- A rounded plate bearing a short wording, the colour carrying the verdict. -->
+<#macro pill x top width height fill text size=12>
+	<rect x="${x + 1}" y="${top + 1}" width="${width - 2}" height="${height - 2}" rx="4" fill="${fill}"/>
+	<@svg.centredText x=x + width / 2 middle=top + height / 2 text=text size=size fill=WHITE/>
+</#macro>

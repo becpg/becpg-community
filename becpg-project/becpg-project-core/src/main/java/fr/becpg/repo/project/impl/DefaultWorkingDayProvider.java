@@ -57,4 +57,15 @@ public class DefaultWorkingDayProvider implements WorkingDayProvider {
         return calendar.getTime();
     }
     
+
+    /**
+     * <p>Identifies this provider in a log line, so a planning warning says which rules applied.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
+    @Override
+    public String toString() {
+        return "default calendar (week ends off)";
+    }
+
 }

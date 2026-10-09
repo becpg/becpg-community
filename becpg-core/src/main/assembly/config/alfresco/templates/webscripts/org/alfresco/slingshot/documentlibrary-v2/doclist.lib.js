@@ -144,9 +144,9 @@ function doclist_main()
    var pathRegex;
    if (allSites)
    {
-      // escape the forward slash characters in the qname path
+      // escape the regular expression metacharacters of the qname path, forward slashes included
       // TODO: replace with java.lang.String regex match for performance
-      var pathMatch = new String(parsedArgs.rootNode.qnamePath).replace(/\//g, '\\/') + "\\/.*\\/cm:documentLibrary\\/.*";
+      var pathMatch = new String(parsedArgs.rootNode.qnamePath).replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + "\\/.*\\/cm:documentLibrary\\/.*";
       pathRegex = new RegExp(pathMatch, "gi");
       if (logger.isLoggingEnabled())
          logger.log("doclist.lib.js - will match results using regex: " + pathMatch);

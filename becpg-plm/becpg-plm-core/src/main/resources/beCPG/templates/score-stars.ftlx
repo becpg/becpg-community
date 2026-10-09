@@ -1,0 +1,64 @@
+<#--
+  A rating in stars, the Health Star Rating being the case: five stars filled by half star steps
+  up to the rating, which is stated beside them.
+
+  The model is a ScoreMarking under "score": its rating is the number of stars.
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign MAX_STARS = 5>
+<#assign STAR = 16>
+<#assign GAP = 2>
+<#assign PAD = 3>
+<#assign GOLD = "#f2a900">
+<#assign EMPTY = "#d9d9d9">
+
+<#assign rating = [[((score.rating()!0) * 2)?round / 2, 0]?max, MAX_STARS]?min>
+<#assign ratingText = score.value()!rating?string>
+<#assign titleText = lib.titleOf(score.code())>
+<#assign STARS_W = MAX_STARS * STAR + (MAX_STARS - 1) * GAP>
+<#assign VALUE_W = 26>
+<#assign W = [STARS_W + VALUE_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+<#assign H = lib.TITLE_H + STAR + 2 * PAD>
+
+<#-- A five pointed star inscribed in a square of side "size" -->
+<#function starPoints x y size>
+	<#local points = "">
+	<#list 0..9 as i>
+		<#local radius = (i % 2 == 0)?then(size / 2, size / 5)>
+		<#local angle = -1.5707963 + i * 0.6283185>
+		<#local px = x + size / 2 + radius * cosOf(angle)>
+		<#local py = y + size / 2 + radius * sinOf(angle) + size * 0.05>
+		<#local points = points + (i == 0)?then("", " ") + (px * 100)?round / 100 + "," + (py * 100)?round / 100>
+	</#list>
+	<#return points>
+</#function>
+
+<#-- Cosine and sine by their series: FreeMarker has no trigonometry, five terms are plenty here -->
+<#function sinOf a>
+	<#local a2 = a * a>
+	<#return a * (1 - a2 / 6 * (1 - a2 / 20 * (1 - a2 / 42 * (1 - a2 / 72 * (1 - a2 / 110)))))>
+</#function>
+<#function cosOf a>
+	<#local a2 = a * a>
+	<#return 1 - a2 / 2 * (1 - a2 / 12 * (1 - a2 / 30 * (1 - a2 / 56 * (1 - a2 / 90))))>
+</#function>
+
+<@svg.document width=W height=H>
+	<defs>
+		<#list 1..MAX_STARS as n>
+		<clipPath id="halfStar${n}"><rect x="${PAD + (n - 1) * (STAR + GAP)}" y="${lib.TITLE_H + PAD}" width="${STAR / 2}" height="${STAR}"/></clipPath>
+		</#list>
+	</defs>
+	<@lib.title x=W / 2 text=titleText/>
+	<#list 1..MAX_STARS as n>
+		<#assign left = PAD + (n - 1) * (STAR + GAP)>
+		<#assign points = starPoints(left, lib.TITLE_H + PAD, STAR)>
+		<polygon points="${points}" fill="${(rating gte n)?then(GOLD, EMPTY)}"/>
+		<#if (rating lt n) && (rating gte n - 0.5)>
+		<polygon points="${points}" fill="${GOLD}" clip-path="url(#halfStar${n})"/>
+		</#if>
+	</#list>
+	<@svg.centredText x=PAD + STARS_W + VALUE_W / 2 middle=lib.TITLE_H + PAD + STAR / 2 text=ratingText size=11 fill=lib.INK/>
+</@svg.document>

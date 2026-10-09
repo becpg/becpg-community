@@ -20,6 +20,13 @@
 	<description>List corresponding entities</description>
 	<url>/becpg/remote/entity/list?path={path}</url>
 	<url>/becpg/remote/entity/list?query={query}</url>
+	<!-- appendParent (optional, default false): also serialize the parentage of each row in the JSON
+	     format - "parent" (nodeRef id of the primary parent), "path" (prefixed path of that parent)
+	     and, for a bcpg:entityListItem, "entityId" (nodeRef id of the entity owning the datalist,
+	     e.g. the pjt:project of a pjt:taskList row). Left out, the output is unchanged.
+	     maxResults (optional): window size, clamped to beCPG.remote.maxResults.limit unless
+	     beCPG.remote.maxResults.hardLimit has been raised above it. -->
+	<url>/becpg/remote/entity/list?query={query}&amp;appendParent={appendParent?}&amp;maxResults={maxResults?}</url>
 	<format default="xml">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>

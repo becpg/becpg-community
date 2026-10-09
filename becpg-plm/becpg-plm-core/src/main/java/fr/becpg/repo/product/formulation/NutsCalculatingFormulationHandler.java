@@ -4,10 +4,12 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -18,15 +20,20 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.labelclaim.LabelClaimItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.formulation.nutrient.NutrientToleranceCriteria;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.SupplementalIngredientMarking;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
@@ -123,10 +130,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				}
 
-				calculateNutListDataItem(formulatedProduct, reconstituant, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
+				Set<NodeRef> claimedNutRefs = extractClaimedNutRefs(formulatedProduct);
+
+				calculateNutListDataItem(formulatedProduct, reconstituant, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()),
+						claimedNutRefs);
 				computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA,
 						"message.formulate.nutList.error");
-				calculateNutListDataItem(formulatedProduct, reconstituant, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
+				calculateNutListDataItem(formulatedProduct, reconstituant, true, formulatedProduct.hasCompoListEl(new VariantFilters<>()),
+						claimedNutRefs);
 			}
 		}
 
@@ -140,8 +151,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @param reconstituant a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param onlyFormulaNutrient a boolean
 	 * @param hasCompo a boolean
+	 * @param claimedNutRefs the set of nutrient nodeRefs subject to an active claim on the product
 	 */
-	private void calculateNutListDataItem(ProductData formulatedProduct, ProductData reconstituant, boolean onlyFormulaNutrient, boolean hasCompo) {
+	private void calculateNutListDataItem(ProductData formulatedProduct, ProductData reconstituant, boolean onlyFormulaNutrient, boolean hasCompo,
+			Set<NodeRef> claimedNutRefs) {
 		formulatedProduct.getNutList().forEach(n -> {
 			if (n.getNut() != null) {
 				NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(n.getNut());
@@ -262,7 +275,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						n.setMethod(NUT_FORMULATED);
 					}
 
-					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n);
+					boolean isClaimed = (n.getNut() != null) && claimedNutRefs.contains(n.getNut());
+					RegulationFormulationHelper.extractRoundedValue(formulatedProduct, nut.getNutCode(), n,
+							NutrientToleranceCriteria.ofLine(isClaimed, isAddedNutrient(n)));
 
 					if (transientFormulation) {
 						n.setTransient(true);
@@ -273,12 +288,51 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	}
 
+	/**
+	 * Tells whether the formulator marked the nutrient line as added to the product (fortification),
+	 * which the Canadian regulation assesses without any tolerance. A line not saved yet carries no
+	 * marking.
+	 *
+	 * @param nutListItem the nutrient line
+	 * @return {@code true} when the line is marked as a supplemental ingredient
+	 */
+	private boolean isAddedNutrient(NutListDataItem nutListItem) {
+		if ((nutListItem.getNodeRef() == null) || !nodeService.exists(nutListItem.getNodeRef())) {
+			return false;
+		}
+		return SupplementalIngredientMarking.isMarked(nodeService.getProperty(nutListItem.getNodeRef(), ReportModel.PROP_REPORT_KINDS));
+	}
+
+	/**
+	 * Collects the nutrients ({@code bcpg:nut} nodeRefs) that are subject to an active claim on the product.
+	 * A claim is active when its list item is claimed ({@link LabelClaimListDataItem#getIsClaimed()}); the
+	 * concerned nutrients are read from the claim's generic {@code bcpg:labelClaimLinkedCharacts} association.
+	 * These nutrients get the claim-specific tolerances (EU Table 3) during rounding.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return the set of claimed nutrient nodeRefs, never {@code null}
+	 */
+	private Set<NodeRef> extractClaimedNutRefs(ProductData formulatedProduct) {
+		Set<NodeRef> claimedNutRefs = new HashSet<>();
+		if (formulatedProduct.getLabelClaimList() != null) {
+			for (LabelClaimListDataItem labelClaimListItem : formulatedProduct.getLabelClaimList()) {
+				if (Boolean.TRUE.equals(labelClaimListItem.getIsClaimed()) && (labelClaimListItem.getLabelClaim() != null)) {
+					LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimListItem.getLabelClaim());
+					if ((labelClaim != null) && (labelClaim.getLinkedCharacts() != null)) {
+						claimedNutRefs.addAll(labelClaim.getLinkedCharacts());
+					}
+				}
+			}
+		}
+		return claimedNutRefs;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
-				|| ((formulatedProduct.getNutList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST)));
-
+				|| ((formulatedProduct.getNutList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST))
+				|| isLogisticUnitWithoutList(formulatedProduct, PLMModel.TYPE_NUTLIST));
 	}
 
 	/**

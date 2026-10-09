@@ -15,7 +15,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.AllocationHelper;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -70,12 +71,15 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 	/** {@inheritDoc} */
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 		
 		for (NodeRef entityNodeRef : searchResults) {
+			if (!nodeService.exists(entityNodeRef)) {
+				continue;
+			}
 			QName entityType = nodeService.getType(entityNodeRef);
 			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
 
@@ -103,7 +107,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * <p>extractAllocations.</p>
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
 	 * @param metadataFields a {@link java.util.List} object
 	 * @param cache a {@link java.util.Map} object
 	 * @param rownum a int
@@ -112,8 +116,8 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 * @return a int
 	 */
-	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
+	private int extractAllocations(NodeRef productNodeRef, Sheet sheet, List<AttributeExtractorStructure> metadataFields,
+			ExcelExportCache cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		if (permissionService.hasPermission(productNodeRef, "Read") == AccessStatus.ALLOWED) {
 

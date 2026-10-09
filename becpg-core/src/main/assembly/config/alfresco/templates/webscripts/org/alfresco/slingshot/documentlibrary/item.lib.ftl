@@ -11,6 +11,20 @@
 
 <#macro dateFormat date=""><#if date?is_date>${xmldate(date)}</#if></#macro>
 
+<#-- Entity state properties, ordered as in the search results so that both display the same badge -->
+<#assign entityStateProperties = ["bcpg:productState", "bcpg:supplierState", "bcpg:clientState", "bcpg:documentState",
+                                  "bcpg:productCollectionState", "ecm:ecoState", "pjt:projectState", "qa:batchState",
+                                  "qa:ncState", "qa:qcState"]>
+
+<#function entityState node>
+   <#list entityStateProperties as entityStateProperty>
+      <#if (node.properties[entityStateProperty]!"")?has_content>
+         <#return node.properties[entityStateProperty]>
+      </#if>
+   </#list>
+   <#return "">
+</#function>
+
 <#macro itemJSON item>
    <#escape x as jsonUtils.encodeJSONString(x)>
       <#local node = item.node>
@@ -46,6 +60,10 @@
     "externalLinkTarget":"${node.properties["bcpg:externalLinkTarget"]!""}",
 </#if>   
    "isLink": ${(item.isLink!false)?string},   
+<#local state = entityState(node)>
+<#if state?has_content>
+   "entityState": "${state}",
+</#if>
 <#if item.linkedNode??>
    "linkedNodeRef": "${item.linkedNode.nodeRef?string}",
 </#if>

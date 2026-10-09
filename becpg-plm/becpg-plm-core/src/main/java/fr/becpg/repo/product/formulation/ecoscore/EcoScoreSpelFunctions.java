@@ -1,6 +1,6 @@
 package fr.becpg.repo.product.formulation.ecoscore;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,7 +104,9 @@ public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 
 		public Map<NodeRef, Double> extractAllocation(ProductData productData) {
 			Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-			return AllocationHelper.extractAllocations(productData, new HashMap<>(), productNetWeight, alfrescoRepository);
+			Map<NodeRef, Double> allocations = AllocationHelper.extractAllocations(productData, new LinkedHashMap<>(), productNetWeight,
+					alfrescoRepository);
+			return AllocationHelper.sortByAllocationDesc(allocations);
 
 		}
 

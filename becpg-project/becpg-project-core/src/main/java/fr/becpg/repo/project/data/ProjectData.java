@@ -1354,6 +1354,15 @@ public class ProjectData extends BeCPGDataObject
 		return true;
 	}
 
+	/**
+	 * Data lists are printed by size only: serializing them in full is expensive on large
+	 * projects for a value that is almost always discarded, and TaskListDataItem holds
+	 * references to other tasks that may form cycles.
+	 */
+	private static String listSize(List<?> list) {
+		return list != null ? list.size() + " item(s)" : "null";
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
@@ -1363,8 +1372,9 @@ public class ProjectData extends BeCPGDataObject
 				+ legends + ", overdue=" + overdue + ", score=" + score + ", created=" + created + ", modified=" + modified + ", creator=" + creator
 				+ ", modifier=" + modifier + ", projectManager=" + projectManager + ", budgetedCost=" + budgetedCost + ", work=" + work
 				+ ", loggedTime=" + loggedTime + ", formulatedDate=" + formulatedDate + ", reformulateCount=" + reformulateCount + ", taskList="
-				+ taskList + ", deliverableList=" + deliverableList + ", scoreList=" + scoreList + ", logTimeList=" + logTimeList + ", budgetList="
-				+ budgetList + ", invoiceList=" + invoiceList + ", expenseList=" + expenseList + "]";
+				+ listSize(taskList) + ", deliverableList=" + listSize(deliverableList) + ", scoreList=" + listSize(scoreList) + ", logTimeList="
+				+ listSize(logTimeList) + ", budgetList=" + listSize(budgetList) + ", invoiceList=" + listSize(invoiceList) + ", expenseList="
+				+ listSize(expenseList) + "]";
 	}
 
 }

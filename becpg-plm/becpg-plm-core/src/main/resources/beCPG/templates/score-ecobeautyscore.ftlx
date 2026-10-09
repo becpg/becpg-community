@@ -1,0 +1,46 @@
+<#--
+  EcoBeautyScore environmental label of cosmetics: the name of the scheme over the A to E scale,
+  every grade shown and the reached one grown and outlined, as the consortium prints it.
+
+  This is a faithful drawing, not the official artwork: a customer holding the label files can
+  upload them as badges of the score definition, which Share then shows instead.
+
+  The model is a ScoreMarking under "score": its class is the grade reached.
+-->
+<#import "svg-lib.ftlx" as svg>
+
+<#assign GRADES = ["A", "B", "C", "D", "E"]>
+<#assign COLOURS = {"A": "#00813f", "B": "#5bb146", "C": "#f4c20d", "D": "#ee7d22", "E": "#e2231a"}>
+<#assign FRAME = "#1e5b3c">
+<#assign WHITE = "#ffffff">
+
+<#assign CELL = 22>
+<#assign GROWN = 32>
+<#assign PAD = 8>
+<#assign TITLE_H = 20>
+<#assign CAPTION_H = score.caption()???then(11, 0)>
+<#assign W = GRADES?size * CELL + (GROWN - CELL) + 2 * PAD>
+<#assign H = TITLE_H + GROWN + CAPTION_H + 2 * PAD>
+<#assign reached = (score.scoreClass()!"")?upper_case>
+
+<@svg.document width=W height=H>
+	<rect x="0.75" y="0.75" width="${W - 1.5}" height="${H - 1.5}" rx="9" fill="${WHITE}" stroke="${FRAME}" stroke-width="1.5"/>
+
+	<#-- the name of the scheme, "Eco" and "Score" framing the drop of "Beauty" -->
+	<text x="${W / 2}" y="${svg.centredBaseline(PAD + TITLE_H / 2, 11)}" text-anchor="middle" font-size="11" font-weight="bold" fill="${FRAME}">Eco<tspan fill="${COLOURS.B}">Beauty</tspan>Score</text>
+
+	<#assign x = PAD>
+	<#assign top = PAD + TITLE_H>
+	<#list GRADES as grade>
+		<#assign current = grade == reached>
+		<#assign size = current?then(GROWN, CELL)>
+		<#assign y = top + (GROWN - size) / 2>
+		<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${current?then(7, 4)}" fill="${COLOURS[grade]}"<#if current> stroke="${FRAME}" stroke-width="1.5"<#else> opacity="0.45"</#if>/>
+		<@svg.centredText x=x + size / 2 middle=y + size / 2 text=grade size=current?then(19, 12) fill=WHITE/>
+		<#assign x = x + size>
+	</#list>
+
+	<#if score.caption()??>
+	<@svg.centredText x=W / 2 middle=top + GROWN + 3 + CAPTION_H / 2 text=score.caption() size=6.5 fill=FRAME weight="normal"/>
+	</#if>
+</@svg.document>

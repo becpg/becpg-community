@@ -567,6 +567,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 			sortNodeRefs(nodeRefs);
 
+			Map<String, DynListEntry> systemListEntries = new LinkedHashMap<>();
+
 			for (NodeRef nodeRef : nodeRefs) {
 				if (serviceRegistry.getNodeService().exists(nodeRef)
 						&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
@@ -594,7 +596,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 							entry.setValues(mlText);
 							entry.setIsDeleted((Boolean) serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED));
 
-							allowedValues.put(key, entry);
+							putSystemListEntry(systemListEntries, entry);
 						}
 
 					}
@@ -609,6 +611,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				}
 			}
 
+			allowedValues.putAll(systemListEntries);
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("allowedValues.size() : " + allowedValues.size());
 				logger.debug("allowed values: " + allowedValues.toString());
@@ -617,6 +621,21 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			logger.warn("Please reload constraint once tenant created: " + e.getMessage());
 		} finally {
 			MLPropertyInterceptor.setMLAware(wasMLAware);
+		}
+	}
+
+	/**
+	 * Adds an entry of a system list, keyed by its code. When several list values share the same code,
+	 * a deleted one never replaces an active one, so that the code stays selectable while one of its
+	 * list values is still active.
+	 *
+	 * @param systemListEntries the entries already read from the system list
+	 * @param entry the entry to add
+	 */
+	static void putSystemListEntry(Map<String, DynListEntry> systemListEntries, DynListEntry entry) {
+		DynListEntry existingEntry = systemListEntries.get(entry.getCode());
+		if ((existingEntry == null) || Boolean.TRUE.equals(existingEntry.getIsDeleted()) || !Boolean.TRUE.equals(entry.getIsDeleted())) {
+			systemListEntries.put(entry.getCode(), entry);
 		}
 	}
 

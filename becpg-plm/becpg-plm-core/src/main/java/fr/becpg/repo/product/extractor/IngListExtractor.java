@@ -60,13 +60,13 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 		if (!(RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()))) {
 
-			Map<String, Object> totalRow = new HashMap<>(20);
+			Map<String, Object> totalRow = HashMap.newHashMap(20);
 
 			totalRow.put(PROP_TYPE, TYPE_TOTAL);
 			totalRow.put(PROP_LEAF, true);
 
-			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-			Map<String, Boolean> userAccess = new HashMap<>(5);
+			Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+			Map<String, Boolean> userAccess = HashMap.newHashMap(5);
 
 			permissions.put("userAccess", userAccess);
 			userAccess.put("delete", false);
@@ -79,7 +79,7 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 			totalRow.put(PROP_PERMISSIONS, permissions);
 
-			Map<String, Object> totalNodeDataRow = new HashMap<>(20);
+			Map<String, Object> totalNodeDataRow = HashMap.newHashMap(20);
 
 			Double totalQtyPerc = 0d;
 			Double totalQtyPercWithYield = 0d;
@@ -150,7 +150,7 @@ public class IngListExtractor extends MultiLevelExtractor {
 	 * @return a {@link java.lang.Object} object
 	 */
 	private Object createColumn(String metadata, String displayValue, Object value) {
-		HashMap<String, Object> tmp = new HashMap<>(3);
+		HashMap<String, Object> tmp = HashMap.newHashMap(3);
 		tmp.put("metadata", metadata);
 		tmp.put("displayValue", displayValue);
 		tmp.put("value", value);

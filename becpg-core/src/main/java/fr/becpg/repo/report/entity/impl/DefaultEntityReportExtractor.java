@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
@@ -68,18 +70,22 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.helper.XMLTextHelper;
@@ -96,19 +102,6 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
 
-import fr.becpg.repo.cache.BeCPGCacheService;
-import fr.becpg.repo.entity.EntitySystemService;
-import fr.becpg.model.ReportModel;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
-import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.StoreRef;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.HashSet;
-
 /**
  * <p>DefaultEntityReportExtractor class.</p>
  *
@@ -123,6 +116,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	/** Constant <code>TAG_ENTITY="entity"</code> */
 	public static final String TAG_ENTITY = "entity";
+
+	/** Attribute naming the namespace prefix of a property or association element. */
+	public static final String ATTR_PREFIX = "prefix";
 
 	/** Constant <code>TAG_DATALISTS="dataLists"</code> */
 	protected static final String TAG_DATALISTS = "dataLists";
@@ -174,6 +170,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>REPORT_LOGO_ID="report_logo"</code> */
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	/** Constant <code>TAG_COMMENTS="comments"</code> */
+	private static final String CHECKPOINT_END_DATALIST = "end_datalist_";
+
 	private static final String TAG_COMMENTS = "comments";
 	/** Constant <code>TAG_COMMENT="comment"</code> */
 	private static final String TAG_COMMENT = "comment";
@@ -347,6 +345,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected EntitySystemService entitySystemService;
+	
+	@Autowired
+	protected RepoService repoService;
 
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
@@ -369,7 +370,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected NodeRef getFromCacheListFolderNodeRef(String listPath) {
 		return beCPGCacheService.getFromCache(DefaultEntityReportExtractor.class.getName(), "reportListCacheKey" + listPath, () -> {
-			NodeRef systemFolderNodeRef = entitySystemService.getSystemEntity(nodeService.getRootNode(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE), RepoConsts.PATH_SYSTEM);
+			NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 			NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 			return entitySystemService.getSystemEntityDataList(listsFolder, listPath);
 		});
@@ -537,21 +538,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
 
-		List<Element> elements = imgsElt.elements(TAG_IMAGE);
-		int cnt = elements != null ? elements.size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (NodeRef imgNodeRef : associationService.getChildAssocs(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS)) {
 
-				String imgId = String.format(PRODUCT_IMG_ID, cnt);
-				String name = (String) nodeService.getProperty(imagesFolderNodeRef, ContentModel.PROP_NAME);
-				if (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
+				String imgId = null;
+				String name = (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME);
+				if (name != null && (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault())))) {
 					imgId = REPORT_LOGO_ID;
 				}
-				if (extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes)) {
-					cnt++;
-				}
+				extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
 			}
 		}
 
@@ -672,6 +669,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				return false;
 			}
 			context.getExtractedImages().add(imgNodeRef);
+
+			if (imgId == null) {
+				imgId = findOrGenerateImageId(imgNodeRef, context);
+			}
+
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
@@ -705,6 +707,29 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return false;
 	}
 
+	private String findOrGenerateImageId(NodeRef imgNodeRef, DefaultExtractorContext context) {
+		for (EntityImageInfo info : context.getReportData().getImages()) {
+			if (Objects.equals(info.getImageNodeRef(), imgNodeRef)) {
+				return info.getId();
+			}
+		}
+		int cnt = context.getReportData().getImages().size();
+		String imgId;
+		do {
+			imgId = String.format(PRODUCT_IMG_ID, cnt++);
+		} while (isImageIdUsed(imgId, context.getReportData().getImages()));
+		return imgId;
+	}
+
+	private boolean isImageIdUsed(String id, Set<EntityImageInfo> images) {
+		for (EntityImageInfo info : images) {
+			if (Objects.equals(info.getId(), id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * <p>extractImage.</p>
 	 *
@@ -734,30 +759,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	// render target assocs (plants...special cases)
 	/**
-	 * Helper method to check if a specific association should be extracted based on preferences and whether the current node is the root.
-	 *
-	 * @param preferenceValue the raw preference value string (e.g. from assocsToExtract)
-	 * @param prefixedAssocName the prefix string of the association name
-	 * @param isRoot true if the current node is the root entity of the report
-	 * @return true if the association should be extracted
-	 */
-	protected boolean shouldExtractAssoc(String preferenceValue, String prefixedAssocName, boolean isRoot) {
-		if (preferenceValue == null || preferenceValue.isEmpty()) {
-			return false;
-		}
-		for (String s : preferenceValue.split(",")) {
-			String token = s.trim();
-			if (token.equals(prefixedAssocName)) {
-				return true;
-			}
-			if (isRoot && token.equals("entity_" + prefixedAssocName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * <p>loadTargetAssoc.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
@@ -782,9 +783,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					extractAssoc = true;
 				}
 			} else {
-				boolean isRoot = (context.getRootNodeRef() != null && entityNodeRef.equals(context.getRootNodeRef()));
-				String assocsPref = context.getPrefValue("assocsToExtract", assocsToExtract());
-				if (shouldExtractAssoc(assocsPref, prefixedAssocName, isRoot)) {
+				if (context.prefsContainsAssoc("assocsToExtract", assocsToExtract(), prefixedAssocName, entityNodeRef)) {
 					extractAssoc = true;
 				}
 			}
@@ -798,10 +797,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage(), prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				Element imgsElt = entityElt.element(TAG_IMAGES);
+				Element imgsElt = resolveEntityImagesElement(entityElt);
 				if (imgsElt != null) {
-					List<Element> selectNodes = imgsElt.elements(TAG_IMAGE);
-					int cnt = selectNodes != null ? selectNodes.size() : 1;
+					int cnt = imgsElt.elements(TAG_IMAGE).size();
 
 					for (NodeRef nodeRef : nodeRefs) {
 						if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -815,6 +813,27 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 		return isExtracted;
+	}
+
+	/**
+	 * Resolves the images element the association images have to be appended to.
+	 *
+	 * They always belong to the root entity, whichever element is currently being loaded: a data
+	 * list item element carries no images element of its own, so looking one up locally would
+	 * silently drop every image extracted from that item.
+	 *
+	 * @param entityElt the element currently being loaded
+	 * @return the images element of the root entity, or null when there is none
+	 */
+	private Element resolveEntityImagesElement(Element entityElt) {
+		Document document = entityElt.getDocument();
+		if (document != null) {
+			Element rootElt = document.getRootElement();
+			if ((rootElt != null) && TAG_ENTITY.equals(rootElt.getName())) {
+				return rootElt.element(TAG_IMAGES);
+			}
+		}
+		return entityElt.element(TAG_IMAGES);
 	}
 
 	/**
@@ -1190,15 +1209,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				boolean extractNodeRefAssoc = false;
-				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString())) {
-					String prefixString = propertyDef.getName().toPrefixString(namespaceService);
-					boolean isRoot = (context.getRootNodeRef() != null && nodeRef.equals(context.getRootNodeRef()));
-					String assocsPref = context.getPrefValue("assocsToExtract", assocsToExtract());
-					extractNodeRefAssoc = shouldExtractAssoc(assocsPref, prefixString, isRoot);
-				}
-
-				if (extractNodeRefAssoc) {
+				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContainsAssoc("assocsToExtract",
+						assocsToExtract(), propertyDef.getName().toPrefixString(namespaceService), nodeRef)) {
 
 					NodeRef dNodeRef = (NodeRef) property.getValue();
 
@@ -1583,39 +1595,64 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				continue;
 			}
 
-			if (context != null && !context.getExtractedNodes().contains(nodeRef)) {
-
-				context.getExtractedNodes().add(nodeRef);
-				QName qName = nodeService.getType(nodeRef);
-
-				Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
-				appendPrefix(qName, nodeElt);
-
-				EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
-				if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
-					((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
-				} else {
-
-					if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
-						List<QName> hiddentAttributes = new ArrayList<>();
-						hiddentAttributes.addAll(hiddenNodeAttributes);
-						hiddentAttributes.addAll(hiddenDataListItemAttributes);
-
-						loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
-					} else {
-						loadNodeAttributes(nodeRef, nodeElt, true, context);
-					}
-					if (extractDataList) {
-
-						Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
-						loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
-					}
-				}
-				assocElt.add(nodeElt);
-				context.cacheProductData(cacheKey, nodeElt);
-
-				context.getExtractedNodes().remove(nodeRef);
+			if (context == null) {
+				continue;
 			}
+
+			if (context.getExtractedNodes().contains(nodeRef)) {
+				appendCutAssocName(assocElt, assocDef, nodeRef);
+				continue;
+			}
+
+			context.getExtractedNodes().add(nodeRef);
+			QName qName = nodeService.getType(nodeRef);
+
+			Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
+			appendPrefix(qName, nodeElt);
+
+			EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
+			if (extractDataList && (extractor != null) && (extractor instanceof DefaultEntityReportExtractor)) {
+				((DefaultEntityReportExtractor) extractor).extractEntity(nodeRef, nodeElt, context);
+			} else {
+
+				if (entityDictionaryService.isSubClass(qName, BeCPGModel.TYPE_CHARACT)) {
+					List<QName> hiddentAttributes = new ArrayList<>();
+					hiddentAttributes.addAll(hiddenNodeAttributes);
+					hiddentAttributes.addAll(hiddenDataListItemAttributes);
+
+					loadAttributes(nodeRef, nodeElt, true, hiddentAttributes, context);
+				} else {
+					loadNodeAttributes(nodeRef, nodeElt, true, context);
+				}
+				if (extractDataList) {
+
+					Element dataListsElt = nodeElt.addElement(TAG_DATALISTS);
+					loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
+				}
+			}
+			assocElt.add(nodeElt);
+			context.cacheProductData(cacheKey, nodeElt);
+
+			context.getExtractedNodes().remove(nodeRef);
+		}
+	}
+
+	/**
+	 * Renders the target name when the extraction of an association has to be cut.
+	 *
+	 * A node already being extracted higher in the stack is skipped to avoid an infinite loop, the
+	 * most common case being an entity template referencing itself through bcpg:entityTplRef. The
+	 * cut used to leave an empty element behind, so the name is rendered instead, the very way a
+	 * non-extracted association is rendered.
+	 *
+	 * @param assocElt the association element being filled
+	 * @param assocDef the association definition
+	 * @param nodeRef the target node whose extraction is cut
+	 */
+	private void appendCutAssocName(Element assocElt, AssociationDefinition assocDef, NodeRef nodeRef) {
+		String name = extractName(assocDef.getTargetClass().getName(), nodeRef);
+		if ((name != null) && !name.isEmpty()) {
+			assocElt.addCDATA(XMLTextHelper.writeCData(name));
 		}
 	}
 
@@ -1653,7 +1690,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param cDATAElt a {@link org.dom4j.Element} object.
 	 */
 	protected void appendPrefix(QName propertyQName, Element cDATAElt) {
-		cDATAElt.addAttribute("prefix", entityDictionaryService.toPrefixString(propertyQName).split(":")[0]);
+		cDATAElt.addAttribute(ATTR_PREFIX, entityDictionaryService.toPrefixString(propertyQName).split(":")[0]);
 	}
 
 	// Check that images has not been update
@@ -1721,12 +1758,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				int dlNodes = countNodes(addedElt);
 				String dlXml = addedElt.asXML();
 				int dlSize = dlXml == null ? 0 : dlXml.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_nodes_" + dlNodes + "_size_" + dlSize);
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_nodes_" + dlNodes + "_size_" + dlSize);
 			} else {
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_empty");
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_empty");
 			}
 		} else {
-			StopWatchSupport.addCheckpoint("end_datalist_" + key);
+			StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key);
 		}
 	}
 

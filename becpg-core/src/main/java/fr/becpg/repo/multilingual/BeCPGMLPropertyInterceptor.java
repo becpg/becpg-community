@@ -189,7 +189,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> properties = (Map<QName, Serializable>) invocation.proceed();
             Map<QName, Serializable> convertedProperties = null;
             if (properties != null) {
-                convertedProperties = new HashMap<>(properties.size() * 2);
+                convertedProperties = HashMap.newHashMap(properties.size());
                 // Check each return value type
                 for (Map.Entry<QName, Serializable> entry : properties.entrySet())
                 {
@@ -531,7 +531,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef nodeRef,
             NodeRef pivotNodeRef)
     {
-        Map<QName, Serializable> convertedProperties = new HashMap<>(newProperties.size() * 2);
+        Map<QName, Serializable> convertedProperties = HashMap.newHashMap(newProperties.size());
         for (Map.Entry<QName, Serializable> entry : newProperties.entrySet())
         {
              QName propertyQName = entry.getKey();

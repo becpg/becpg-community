@@ -78,8 +78,14 @@
                             list : null,
                             
                             maxResults: 50,
-                            
-                            scores: null  
+
+                            scores: null,
+
+                            /**
+                             * Requirements carried by the scores instead of the product reqCtrlList,
+                             * used by a change unit whose simulated product is not persisted.
+                             */
+                            localRequirements: false
 
                         },
 
@@ -145,6 +151,10 @@
                                     var type = (splits.length > 2 ? splits[2] : undefined);
                                     var dataType = splits[1].charAt(0).toUpperCase() + splits[1].slice(1);
                                     instance.filterId = (type === "all" && dataType === "All" ? "all" : "filterform");
+                                    instance.localFilter = {
+                                        reqType : (type === "all" || dataType == "Regulatorycodes" ? null : type),
+                                        reqDataType : (dataType === "All" || dataType == "Regulatorycodes" ? null : dataType)
+                                    };
                                     
                                     if(dataType == "Regulatorycodes" && type!=null) {
                                         instance.filterData =  "{\"prop_bcpg_regulatoryCode\":\"=" + type.replace(/@/gi," ").replace(/\$/gi,"-") +"\"}";
@@ -355,7 +365,9 @@
 
                                 var buttonClass = "score-" + spriteIndex;
 
-                                var totalForbidden = scores.totalForbidden;
+                                var isChangeUnit = this.options.localRequirements,
+                                    totalForbidden = isChangeUnit ? scores.newForbiddenCount : scores.totalForbidden,
+                                    ctrlCount = isChangeUnit ? scores.newCtrlCount : scores.ctrlCount;
                                 instance.widgets.showNotificationsButton.removeClass("loading");
 
                                 for (var idx = 1; idx <= 20; idx++) {
@@ -380,8 +392,8 @@
                                 }
 
                                 if (totalForbidden !== undefined && totalForbidden !== null && totalForbidden > 0) {
-                                    instance.widgets.showNotificationsButton.set("title", instance.msg("tooltip.notifications-button",
-                                            totalForbidden));
+                                    instance.widgets.showNotificationsButton.set("title", instance.msg(isChangeUnit
+                                            ? "tooltip.change-unit.new-forbidden" : "tooltip.notifications-button", totalForbidden));
 
                                     var errorSpan = Dom.getFirstChildBy(instance.options.containerDiv, function(el) {
                                         return el.className.indexOf("warning") > -1;
@@ -398,27 +410,27 @@
                                 }
 
                                 // if we have some constraints in res
-                                if (scores.ctrlCount !== undefined && scores.ctrlCount != null
-                                        && scores.ctrlCount.length > 0) {
+                                if (ctrlCount !== undefined && ctrlCount != null
+                                        && ctrlCount.length > 0) {
                                     // Parses each array mapped to dataType
                                     html += "<div class=\"dataTypeList\"><div class=\"title\">"
-                                            + instance.msg("label.constraints.violations")
+                                            + instance.msg(isChangeUnit ? "label.change-unit.new-violations" : "label.constraints.violations")
                                             + "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "
                                             + instance.id +REQFILTER_EVENTCLASS + "\" href=\"#\">" + instance.msg("label.constraints.view-all")
                                             + "</a></span></div>";
 
                                     html += "<div class=\"rclFilterElt\"><div>";
 
-                                    for ( var dataType in scores.ctrlCount) {
+                                    for ( var dataType in ctrlCount) {
                                         var scoreInfo = "";
-                                        var dataTypeName = Object.keys(scores.ctrlCount[dataType])[0];
+                                        var dataTypeName = Object.keys(ctrlCount[dataType])[0];
                                         html += "<div class=\"div-" + dataTypeName.toString().toLowerCase()
                                                 + "\"><span class=\"span-" + dataTypeName.toString().toLowerCase()
                                                 + "\"><a class=\"req-filter " + instance.id + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
                                                 + instance.msg("label.constraints." + dataTypeName.toString().toLowerCase())
                                                 + scoreInfo + "</a></span><ul>";
 
-                                        var types = scores.ctrlCount[dataType];
+                                        var types = ctrlCount[dataType];
                                         
                                     
 
@@ -468,13 +480,197 @@
                                 }
 
                             }
+                            if (scores && scores.previous) {
+                                html = this.renderPreviousScores(scores) + html;
+                                if (isGridContext) {
+                                    this.renderChangeSummary(scores);
+                                }
+                            }
+
                             if(Dom.get(instance.id + "-scoresDiv")!=null){
                                 Dom.get(instance.id + "-scoresDiv").innerHTML = html;
                             }
-                            
-                            if(!instance.widgets.notificationsDataTable){
+
+                            if(!instance.widgets.notificationsDataTable && !this.options.localRequirements){
                                 instance.createDataTable();
                             }
+                        },
+
+                        /**
+                         * Summary of the product before the change order, shown on top of the panel.
+                         *
+                         * @method renderPreviousScores
+                         * @param scores {object} the scores of a change unit
+                         * @return {string} the HTML of the summary
+                         */
+                        renderPreviousScores : function ProductNotifications_renderPreviousScores(scores) {
+                            var previous = scores.previous;
+                            return '<div class="change-unit-previous">'
+                                    + $html(this.msg("label.change-unit.before", Math.floor(previous.global || 0), previous.totalForbidden || 0))
+                                    + '</div>';
+                        },
+
+                        /**
+                         * Shows next to the gauge what the change order changes: the alerts it
+                         * introduces, the alerts it resolves and the completion it gains or loses.
+                         *
+                         * @method renderChangeSummary
+                         * @param scores {object} the scores of a change unit
+                         */
+                        renderChangeSummary : function ProductNotifications_renderChangeSummary(scores) {
+                            var summarySpan = Dom.getElementsByClassName("change-unit-delta", "span", this.options.containerDiv)[0];
+
+                            if (!summarySpan) {
+                                summarySpan = document.createElement("span");
+                                summarySpan.className = "change-unit-delta";
+                                this.options.containerDiv.appendChild(summarySpan);
+                            }
+                            summarySpan.title = this.msg("label.change-unit.before", Math.floor(scores.previous.global || 0),
+                                    scores.previous.totalForbidden || 0);
+                            summarySpan.innerHTML = this.renderChangeSummaryHtml(scores);
+                        },
+
+                        /**
+                         * @method renderChangeSummaryHtml
+                         * @param scores {object} the scores of a change unit
+                         * @return {string} the new alerts, the resolved alerts and the completion change
+                         */
+                        renderChangeSummaryHtml : function ProductNotifications_renderChangeSummaryHtml(scores) {
+                            var parts = [],
+                                completionDelta = Math.floor(scores.global || 0) - Math.floor(scores.previous.global || 0);
+
+                            if (scores.newCount > 0) {
+                                parts.push('<span class="delta-worse">' + $html(this.msg("label.change-unit.summary.new", scores.newCount)) + '</span>');
+                            }
+                            if (scores.resolvedCount > 0) {
+                                parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.resolved", scores.resolvedCount))
+                                        + '</span>');
+                            }
+                            if (scores.lessSevereCount > 0) {
+                                parts.push('<span class="delta-better">' + $html(this.msg("label.change-unit.summary.less-severe", scores.lessSevereCount))
+                                        + '</span>');
+                            }
+                            if (completionDelta !== 0) {
+                                parts.push('<span class="' + (completionDelta > 0 ? "delta-better" : "delta-worse") + '">' + (completionDelta > 0 ? "+" : "")
+                                        + completionDelta + '%</span>');
+                            }
+                            if (parts.length === 0) {
+                                return '<span class="delta-none">' + $html(this.msg("label.change-unit.summary.none")) + '</span>';
+                            }
+                            return parts.join(" ");
+                        },
+
+                        /**
+                         * Renders the requirements carried by the scores: what the change order
+                         * introduces, then what it resolves, then, folded, what the product already had.
+                         *
+                         * @method renderLocalRequirements
+                         */
+                        renderLocalRequirements : function ProductNotifications_renderLocalRequirements() {
+                            var scores = this.options.scores || {},
+                                requirements = scores.requirements || [],
+                                newRequirements = [],
+                                existingRequirements = [],
+                                newCount = scores.newCount || 0,
+                                resolvedCount = scores.resolvedCount || 0,
+                                existingCount = (scores.requirementsCount || 0) - newCount,
+                                html = '<div class="notifications-list change-unit-requirements">';
+
+                            for (var i = 0; i < requirements.length; i++) {
+                                (requirements[i].isNew ? newRequirements : existingRequirements).push(requirements[i]);
+                            }
+
+                            html += '<div class="change-unit-section change-unit-new-title">' + $html(this.msg("label.change-unit.new-alerts", newCount)) + '</div>';
+                            html += newCount > 0 ? this.renderLocalRequirementList(newRequirements, newCount)
+                                    : '<div class="change-unit-none">' + $html(this.msg("label.change-unit.no-new-alert")) + '</div>';
+
+                            if (resolvedCount > 0) {
+                                html += '<div class="change-unit-section change-unit-resolved-title">'
+                                        + $html(this.msg("label.change-unit.resolved", resolvedCount)) + '</div>';
+                                html += '<div class="change-unit-resolved">' + this.renderLocalRequirementList(scores.resolved, resolvedCount) + '</div>';
+                            }
+
+                            if (scores.lessSevereCount > 0) {
+                                html += '<div class="change-unit-none">' + $html(this.msg("label.change-unit.less-severe", scores.lessSevereCount)) + '</div>';
+                            }
+
+                            if (existingCount > 0) {
+                                html += '<details class="change-unit-existing"><summary class="change-unit-section">'
+                                        + $html(this.msg("label.change-unit.existing", existingCount)) + '</summary>'
+                                        + this.renderLocalRequirementList(existingRequirements, existingCount) + '</details>';
+                            }
+
+                            html += '</div>';
+                            Dom.get(this.id + "-notificationTable").innerHTML = html;
+                        },
+
+                        /**
+                         * @method renderLocalRequirementList
+                         * @param requirements {array} the requirements to render
+                         * @param totalCount {number} the number of requirements before the server capped the list
+                         * @return {string} the HTML of the list
+                         */
+                        renderLocalRequirementList : function ProductNotifications_renderLocalRequirementList(requirements, totalCount) {
+                            var html = "", filter = this.localFilter || {};
+
+                            requirements = requirements || [];
+                            for (var i = 0; i < requirements.length; i++) {
+                                var requirement = requirements[i];
+                                if ((!filter.reqType || filter.reqType == requirement.reqType)
+                                        && (!filter.reqDataType || filter.reqDataType == requirement.reqDataType)) {
+                                    html += this.renderLocalRequirement(requirement);
+                                }
+                            }
+
+                            if (totalCount && totalCount > requirements.length) {
+                                html += '<div class="change-unit-more">' + $html(this.msg("label.change-unit.more", totalCount - requirements.length))
+                                        + '</div>';
+                            }
+                            return html;
+                        },
+
+                        /**
+                         * @method renderLocalRequirement
+                         * @param requirement {object} a requirement of the change unit
+                         * @return {string} the HTML of the requirement
+                         */
+                        renderLocalRequirement : function ProductNotifications_renderLocalRequirement(requirement) {
+                            var html = '<div class="rclReq-details">';
+                            if (requirement.reqType) {
+                                html += '<div class="icon"><span class="reqType' + requirement.reqType + '" title="'
+                                        + $html(this.msg("data.reqtype." + requirement.reqType.toLowerCase())) + '">&nbsp;</span></div>';
+                            }
+                            html += '<div class="rclReq-title">';
+                            html += $html(this.getLocalizedMessage(requirement.message)) + '</div>';
+                            html += '<div class="clear"></div></div>';
+                            return html;
+                        },
+
+                        /**
+                         * @method getLocalizedMessage
+                         * @param message {object} the message of a requirement, by locale
+                         * @return {string} the message in the user locale, or the closest one
+                         */
+                        getLocalizedMessage : function ProductNotifications_getLocalizedMessage(message) {
+                            var locale = Alfresco.constants.JS_LOCALE || "";
+                            if (!message) {
+                                return "";
+                            }
+                            if (message[locale]) {
+                                return message[locale];
+                            }
+                            if (message[locale.split("_")[0]]) {
+                                return message[locale.split("_")[0]];
+                            }
+                            if (message[""]) {
+                                return message[""];
+                            }
+                            for (var key in message) {
+                                if (message.hasOwnProperty(key)) {
+                                    return message[key];
+                                }
+                            }
+                            return "";
                         },
 
                         /**
@@ -633,16 +829,22 @@
                          * @method reloadDataTable
                          */
                         reloadDataTable : function SimpleDocList_reloadDataTable() {
+                            if (this.options.localRequirements) {
+                                this.renderLocalRequirements();
+                                return;
+                            }
                             this.widgets.notificationsDataTable.loadDataTable(this.getParameters());
                         },
-                        
+
                         destroy : function (){
-                            
+
                             if (!this.options.scores) {
                                 YAHOO.Bubbling.unsubscribe("refreshDataGrids",this.loadPanelData, this);
                             }
                             this.widgets.showNotificationsButton.destroy();
-                            this.widgets.notificationsDataTable.destroy();
+                            if (this.widgets.notificationsDataTable) {
+                                this.widgets.notificationsDataTable.destroy();
+                            }
                             this.options.containerDiv.parentNode.removeChild(this.options.containerDiv);
                             this.options.containerDiv.innerHTML = "";
                             this.widgets.panelDiv.innerHTML = "";

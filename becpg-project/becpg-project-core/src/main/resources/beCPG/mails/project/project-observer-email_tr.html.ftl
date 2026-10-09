@@ -207,9 +207,7 @@
 										<#if (args.taskDescription)?? && args.taskDescription != "">                                             
 										<li>Açıklama : ${args.taskDescription}</li>                                       
 										</#if> 
-										</ul>         
-                                   </#if> 
-	                                             </ul>         
+										</ul>
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Yorum Yap :</p>
 	                                                        <div class="comment">

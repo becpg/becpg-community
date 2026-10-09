@@ -1,0 +1,25 @@
+<#--
+  A score graded by a named grade, which carries no order: NOVA groups, Yuka verdicts, SIGA
+  indexes... drawn as a plate coloured by the verdict, under the name of the scheme. A score that
+  grades no class but states a value, a Yuka rating out of a hundred for instance, prints its value
+  on a neutral plate. A template named after the code, score-ecovadis.ftlx, takes precedence.
+
+  The model is a ScoreMarking under "score".
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign PAD = 3>
+<#assign titleText = lib.titleOf(score.code())>
+<#assign hasClass = (score.scoreClass()!"")?has_content>
+<#assign gradeText = hasClass?then(score.scoreClass(), (score.value()!"") + score.unit()???then(score.unit(), ""))>
+<#assign fill = hasClass?then(lib.gradeColour(score.scoreClass()), lib.GRADE_DEFAULT)>
+<#assign PLATE_H = 24>
+<#assign PLATE_W = [lib.textWidth(gradeText, 12) + 14, 26]?max>
+<#assign W = [PLATE_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+<#assign H = lib.TITLE_H + PLATE_H + 2 * PAD>
+
+<@svg.document width=W height=H>
+	<@lib.title x=W / 2 text=titleText/>
+	<@lib.pill x=(W - PLATE_W) / 2 top=lib.TITLE_H + PAD width=PLATE_W height=PLATE_H fill=fill text=gradeText/>
+</@svg.document>

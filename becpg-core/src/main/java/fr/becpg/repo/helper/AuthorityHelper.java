@@ -228,10 +228,20 @@ public class AuthorityHelper implements InitializingBean {
 	/**
 	 * <p>isExternalUser.</p>
 	 *
+	 * Nobody is not an external user. The question is asked about the owner of a
+	 * node ({@code BeCPGOwnableServiceImpl.getOwner}), and a node whose
+	 * {@code cm:creator} is not set answers null there - on which
+	 * {@code AuthorityServiceImpl.getAuthoritiesForUser} throws, deep inside a
+	 * permission check that no caller can catch. Measured as a 500 on every write
+	 * of a {@code d:mltext} property of such a node.
+	 *
 	 * @param userName a {@link java.lang.String} object
 	 * @return a boolean
 	 */
 	public static boolean isExternalUser(String userName) {
+		if ((userName == null) || userName.isBlank()) {
+			return false;
+		}
 		return instance.beCPGCacheService.getFromCache(AuthorityHelper.CACHE_KEY, userName, () -> {
 			for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 				if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
@@ -250,6 +260,9 @@ public class AuthorityHelper implements InitializingBean {
 	 * @return a boolean
 	 */
 	public static boolean hasGroupAuthority(String userName, String groupAuthority) {
+		if ((userName == null) || userName.isBlank()) {
+			return false;
+		}
 		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 			if ((PermissionService.GROUP_PREFIX + groupAuthority).equals(currAuth)) {
 				return true;

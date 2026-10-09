@@ -61,11 +61,20 @@ public class PackModel {
 	/** Constant <code>PACK_MATERIAL_LIST_TYPE</code> */
 	public static final QName PACK_MATERIAL_LIST_TYPE = QName.createQName(PACK_URI, "packMaterialList");
 
+	/** Constant <code>PROP_PACK_MATERIAL_ECOTAXE_CATEGORY</code> */
+	public static final QName PROP_PACK_MATERIAL_ECOTAXE_CATEGORY = QName.createQName(PACK_URI, "pmEcoTaxeCategory");
+
 	/** Constant <code>PROP_PACK_MATERIAL_LIST_WEIGHT</code> */
 	public static final QName PROP_PACK_MATERIAL_LIST_WEIGHT = QName.createQName(PACK_URI, "pmlWeight");
 
+	/** Constant <code>PROP_PACK_MATERIAL_LIST_PERC</code> */
+	public static final QName PROP_PACK_MATERIAL_LIST_PERC = QName.createQName(PACK_URI, "pmlPerc");
+
 	/** Constant <code>ASSOC_PACK_MATERIAL_LIST_MATERIAL</code> */
 	public static final QName ASSOC_PACK_MATERIAL_LIST_MATERIAL = QName.createQName(PACK_URI, "pmlMaterial");
+
+	/** Constant <code>ASSOC_PACK_MATERIAL_LIST_GEO_ORIGIN</code> */
+	public static final QName ASSOC_PACK_MATERIAL_LIST_GEO_ORIGIN = QName.createQName(PACK_URI, "pmlGeoOrigin");
 
 	/** Constant <code>ASPECT_TARE</code> */
 	public static final QName ASPECT_TARE = QName.createQName(PACK_URI, "tareAspect");
@@ -125,5 +134,46 @@ public class PackModel {
 
 	/** Constant <code>PROP_PM_ISNOTRECYCLABLE</code> */
 	public static final QName PROP_PM_ISNOTRECYCLABLE  = QName.createQName(PACK_URI, "pmIsNotRecyclable");
+
+	/** Constant <code>ASPECT_PACKAGING_COMPONENT</code> */
+	public static final QName ASPECT_PACKAGING_COMPONENT = QName.createQName(PACK_URI, "packagingComponentAspect");
+
+	/** Constant <code>TYPE_PACKAGING_COMPONENT_LIST</code> */
+	public static final QName TYPE_PACKAGING_COMPONENT_LIST = QName.createQName(PACK_URI, "packagingComponentList");
+	/** Constant <code>PROP_PCL_COMPONENT</code> */
+	public static final QName PROP_PCL_COMPONENT = QName.createQName(PACK_URI, "pclComponent");
+	/** Constant <code>PROP_PCL_QTY</code> */
+	public static final QName PROP_PCL_QTY = QName.createQName(PACK_URI, "pclQty");
+	/** Constant <code>PROP_PCL_UNIT</code> */
+	public static final QName PROP_PCL_UNIT = QName.createQName(PACK_URI, "pclUnit");
+	/** Constant <code>PROP_PCL_PROCESS</code> */
+	public static final QName PROP_PCL_PROCESS = QName.createQName(PACK_URI, "pclProcess");
+	/** Constant <code>PROP_PCL_RECYCLED_PERC</code> */
+	public static final QName PROP_PCL_RECYCLED_PERC = QName.createQName(PACK_URI, "pclRecycledPerc");
+	/** Constant <code>PROP_PCL_DECL_TYPE</code> */
+	public static final QName PROP_PCL_DECL_TYPE = QName.createQName(PACK_URI, "pclDeclType");
+	/** Constant <code>ASSOC_PCL_MATERIAL</code> */
+	public static final QName ASSOC_PCL_MATERIAL = QName.createQName(PACK_URI, "pclMaterial");
+	/** Constant <code>ASSOC_PCL_PRODUCT</code> */
+	public static final QName ASSOC_PCL_PRODUCT = QName.createQName(PACK_URI, "pclProduct");
+
+	/** Constant <code>TYPE_SUPPLIER_PACKAGING_LIST</code> */
+	public static final QName TYPE_SUPPLIER_PACKAGING_LIST = QName.createQName(PACK_URI, "supplierPackagingList");
+	/** Constant <code>PROP_SPL_COMPONENT</code> */
+	public static final QName PROP_SPL_COMPONENT = QName.createQName(PACK_URI, "splComponent");
+	/** Constant <code>PROP_SPL_QTY</code> */
+	public static final QName PROP_SPL_QTY = QName.createQName(PACK_URI, "splQty");
+	/** Constant <code>PROP_SPL_UNIT</code> */
+	public static final QName PROP_SPL_UNIT = QName.createQName(PACK_URI, "splUnit");
+	/** Constant <code>PROP_SPL_PKG_LEVEL</code> */
+	public static final QName PROP_SPL_PKG_LEVEL = QName.createQName(PACK_URI, "splPkgLevel");
+	/** Constant <code>PROP_SPL_RECYCLED_PERC</code> */
+	public static final QName PROP_SPL_RECYCLED_PERC = QName.createQName(PACK_URI, "splRecycledPerc");
+	/** Constant <code>PROP_SPL_DECL_TYPE</code> */
+	public static final QName PROP_SPL_DECL_TYPE = QName.createQName(PACK_URI, "splDeclType");
+	/** Constant <code>ASSOC_SPL_MATERIAL</code> */
+	public static final QName ASSOC_SPL_MATERIAL = QName.createQName(PACK_URI, "splMaterial");
+	/** Constant <code>ASSOC_SPL_PRODUCT</code> */
+	public static final QName ASSOC_SPL_PRODUCT = QName.createQName(PACK_URI, "splProduct");
 
 }

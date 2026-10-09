@@ -832,7 +832,7 @@
                if (!pw) return true;
                if (pw.length < 14) return false;
                var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
-               var specialChars = "!@#$%^&*()-_=+[]{} ";
+               var specialChars = "!@#$%^&*()-_=+[]{}. ";
                for (var i = 0; i < pw.length; i++) {
                   var c = pw.charAt(i);
                   if (c >= 'A' && c <= 'Z') hasUpper = true;
@@ -2488,7 +2488,7 @@
              var isPasswordSecure = function(pw) {
                 if (!pw || pw.length < 14) return false;
                 var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
-                var specialChars = "!@#$%^&*()-_=+[]{} ";
+                var specialChars = "!@#$%^&*()-_=+[]{}. ";
                 for (var i = 0; i < pw.length; i++) {
                    var c = pw.charAt(i);
                    if (c >= 'A' && c <= 'Z') hasUpper = true;

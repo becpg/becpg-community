@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -250,7 +251,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @return a {@link java.util.Map} object.
 	 */
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = HashMap.newHashMap(simpleListDataList.size());
 		for (SimpleListDataItem sl : simpleListDataList) {
 			if (isCharactFormulated(sl)) {
 				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<>());
@@ -471,6 +472,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					if (qties.isNotNull()) {
 						visitPart(formulatedProduct, packagingListDataItem, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null,
 								variant, toRemove);
+
+						// #32363 : a non-kit packaging material (e.g. a printed box) may itself embed a nested packaging list
+						// (e.g. a neutral box carrying the hazardous substances). Packaging kits already carry their own
+						// aggregated list, so only non-kit packaging is walked here to avoid double counting.
+						if (propagateNestedPackaging() && !partProduct.isPackagingKit()
+								&& partProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+							visitNestedPackaging(formulatedProduct, partProduct, qty, simpleListDataList, qtyProvider, mandatoryCharacts2, variant,
+									toRemove);
+						}
 					}
 				}
 			}
@@ -478,6 +488,60 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
 		}
 
+	}
+
+	/**
+	 * Whether characteristics defined on a nested packaging list (a packaging material embedded in another
+	 * non-kit packaging material) should propagate to the formulated product. Enabled for hazardous
+	 * substances and physico-chemical characteristics (see #32363); disabled by default so cost and
+	 * nutrient aggregations, which rely on each packaging component being a leaf, keep their behaviour.
+	 *
+	 * @return {@code true} to walk nested packaging lists
+	 */
+	protected boolean propagateNestedPackaging() {
+		return false;
+	}
+
+	/**
+	 * Recursively visits the packaging list embedded in a packaging component so that characteristics
+	 * (hazardous substances, physico-chemical values, ...) defined on a deeply nested packaging material
+	 * still propagate to the formulated product (see #32363).
+	 *
+	 * @param formulatedProduct  the product being formulated
+	 * @param packagingProduct   the packaging component whose own packaging list must be walked
+	 * @param parentQty          the quantity of {@code packagingProduct} used in the formulated product
+	 * @param simpleListDataList the list being aggregated
+	 * @param qtyProvider        the quantity provider
+	 * @param mandatoryCharacts  the mandatory characteristics accumulator
+	 * @param variant            the variant being formulated, or {@code null}
+	 * @param toRemove           the items to remove accumulator
+	 */
+	protected void visitNestedPackaging(ProductData formulatedProduct, ProductData packagingProduct, Double parentQty, List<T> simpleListDataList,
+			SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant, List<T> toRemove) {
+
+		for (PackagingListDataItem nestedItem : packagingProduct.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+
+			if ((nestedItem.getProduct() == null) || ((nestedItem.getIsRecycle() != null) && nestedItem.getIsRecycle())) {
+				continue;
+			}
+
+			ProductData nestedProduct = (ProductData) alfrescoRepository.findOne(nestedItem.getProduct());
+
+			Double nestedQtyRatio = FormulationHelper.getQty(nestedItem);
+			Double nestedQty = ((parentQty != null) ? parentQty : 1d) * ((nestedQtyRatio != null) ? nestedQtyRatio : 1d);
+
+			FormulatedQties qties = new FormulatedQties(nestedQty, nestedQty, qtyProvider.getNetQty(variant), qtyProvider.getNetWeight(variant));
+
+			if (qties.isNotNull()) {
+				visitPart(formulatedProduct, nestedItem, nestedProduct, simpleListDataList, qties, mandatoryCharacts, null, null, variant, toRemove);
+
+				if (!nestedProduct.isPackagingKit() && nestedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					visitNestedPackaging(formulatedProduct, nestedProduct, nestedQty, simpleListDataList, qtyProvider, mandatoryCharacts, variant,
+							toRemove);
+				}
+			}
+		}
 	}
 
 	/**
@@ -1114,6 +1178,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			return true;
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * Tells whether the product is a logistic unit that carries no list of the given type. A product loaded
+	 * from the repository always holds a lazy, non null list, so a null check never skips it and the
+	 * formulation created the list from the finished product the unit groups (#37189). A logistic unit only
+	 * gets the list when its template, or the user, gave it one.
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param dataListType the type of the list
+	 * @return {@code true} for a logistic unit without such a list
+	 */
+	protected boolean isLogisticUnitWithoutList(ProductData formulatedProduct, QName dataListType) {
+		return (formulatedProduct instanceof LogisticUnitData) && !alfrescoRepository.hasDataList(formulatedProduct, dataListType);
 	}
 
 	/**

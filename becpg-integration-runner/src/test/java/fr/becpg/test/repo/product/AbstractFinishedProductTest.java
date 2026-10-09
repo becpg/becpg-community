@@ -1329,6 +1329,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 				Assert.assertEquals("Incorrect label. Formulated :" + formulatedIll + "\n   - junit ref " + ill, ill, formulatedIll);
 				Assert.assertNotNull(illDataItem.getLogValue());
+
+				LabelingInvariants.assertHolds(formulatedIll, formulatedProduct.getName());
 			}
 		}
 

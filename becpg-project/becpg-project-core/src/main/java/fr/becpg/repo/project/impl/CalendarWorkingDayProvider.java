@@ -37,6 +37,16 @@ public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implem
         this.calendarNodeRef = calendarNodeRef;
     }
 
+    /**
+     * <p>Identifies this provider in a log line, so a planning warning names the calendar at fault.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
+    @Override
+    public String toString() {
+        return calendarNodeRef != null ? "calendar " + calendarNodeRef : "default calendar (week ends off)";
+    }
+
     /** {@inheritDoc} */
     @Override
     public boolean isWorkingDay(Date date) {

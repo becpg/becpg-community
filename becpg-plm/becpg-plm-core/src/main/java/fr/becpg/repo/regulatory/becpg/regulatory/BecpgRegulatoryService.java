@@ -2,22 +2,19 @@ package fr.becpg.repo.regulatory.becpg.regulatory;
 
 import com.google.common.collect.Streams;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
-import fr.becpg.repo.entity.remote.RemoteEntityFormat;
-import fr.becpg.repo.entity.remote.RemoteEntityService;
-import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
+import fr.becpg.repo.regulatory.IngredientRegulatoryCodes;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
@@ -30,17 +27,15 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -50,9 +45,9 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     public static final String ERROR_PREFIX = "Error during becpg-regulatory analysis: ";
     private static final String MESSAGE_REGULATORY_ERROR = "message.regulatory.error";
 
-    private final RemoteEntityService remoteEntityService;
     private final ProductDataEntityJsonService productDataEntityJsonService;
     private final BecpgRegulatoryAuthenticationService authenticationService;
+    private final BecpgRegulatoryClient regulatoryClient;
 
     public BecpgRegulatoryService(@Qualifier("nodeService") NodeService nodeService,
                                   AlfrescoRepository<RepositoryEntity> alfrescoRepository,
@@ -63,23 +58,24 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                                   MutexFactory mutexFactory,
                                   SystemConfigurationService systemConfigurationService,
                                   ProductDataEntityJsonService productDataEntityJsonService,
-                                  RemoteEntityService remoteEntityService,
-                                  BecpgRegulatoryAuthenticationService authenticationService) {
+                                  BecpgRegulatoryAuthenticationService authenticationService,
+                                  BecpgRegulatoryClient regulatoryClient) {
         super(nodeService, alfrescoRepository, formulationService, batchQueueService, policyBehaviourFilter,
                 entityActivityService, mutexFactory, systemConfigurationService);
         this.productDataEntityJsonService = productDataEntityJsonService;
-        this.remoteEntityService = remoteEntityService;
         this.authenticationService = authenticationService;
+        this.regulatoryClient = regulatoryClient;
     }
 
     @Override
     protected String serverUrl() {
-        return systemConfigurationService.confValue("beCPG.regulatory.serverUrl");
+        return regulatoryClient.serverUrl();
     }
 
     /**
      * In OAuth2 mode, delegates token acquisition to {@link BecpgRegulatoryAuthenticationService}.
-     * In ticket mode, no bearer token is needed (the ticket is set as a header).
+     * In ticket mode, no bearer token is needed (the ticket is set as a header by
+     * {@link BecpgRegulatoryClient}).
      */
     @Override
     protected Optional<String> getToken() {
@@ -94,19 +90,6 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     @Override
     protected Log logger() {
         return logger;
-    }
-
-    /**
-     * Adds the delegated Alfresco authentication ticket so the regulatory service
-     * can authenticate the caller against this repository. The header name matches
-     * the one expected by the regulatory core ({@code BECPG_TICKET}). Only applied
-     * in {@code ticket} authentication mode (see {@code beCPG.regulatory.authMode}).
-     *
-     * @param headers the headers being built for the outgoing request
-     */
-    @Override
-    protected void customizeHeaders(HttpHeaders headers) {
-        authenticationService.getBecpgTicket().ifPresent(ticket -> headers.set("BECPG_TICKET", ticket));
     }
 
     @Override
@@ -167,7 +150,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     private List<RequirementListDataItem> generateErrorsForAllRegulatoryPairs(RegulatoryContext context, Exception e) {
-        logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), e);
+        logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), maskedCause(e));
         Map<NodeRef, String> nodeRefRegCodeMap = productDataEntityJsonService.fillNodeRefDictionary(context.getProduct().getRegulatoryList());
 
         return context.getProduct().getRegulatoryList().stream().flatMap(regElement -> generateReqCtrlErrors(
@@ -178,24 +161,29 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     private boolean analyze(RegulatoryContext context) throws JSONException {
-        JSONObject recipePayload = fetchEntityAsJson(context.getProduct().getNodeRef(), buildRecipeParams());
-        String becpgRegulatoryUrl = serverUrl() + "/v1/regulatory/check";
-
-        tracePostRequest(recipePayload, becpgRegulatoryUrl);
-        String analysisResult = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(
-                becpgRegulatoryUrl, createEntity(recipePayload.toString()), String.class, new HashMap<>());
+        JSONObject recipePayload = regulatoryClient.fetchRecipe(context.getProduct().getNodeRef());
+        String analysisResult = regulatoryClient.check(recipePayload);
         if (analysisResult == null)
             return false;
         JSONObject json = new JSONObject(analysisResult);
 
+        // The beCPG regulatory service resolves the ingredients in the same call as the analysis, where Decernis
+        // has a dedicated endpoint (see DecernisRegulatoryService#fetchIngredients).
+        productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach(this::storeBecpgCodes);
+
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
-        context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
         List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
         Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountryToUsagePairs(
-                context.getProduct().getRegulatoryList(), parsedRequirements);
+                context.getProduct().getRegulatoryList(), parsedIngRegulatoryElements);
         Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
                 context.getProduct().getIngList(), parsedIngRegulatoryElements);
+
+        List<IngRegulatoryListDataItem> filteredIngRegulatoryElements = parsedIngRegulatoryElements.stream()
+                .filter(item -> !isEmptyRegulatoryItem(item))
+                .toList();
+        context.getIngRegulatoryListDataItems().addAll(filteredIngRegulatoryElements);
+
         List<RequirementListDataItem> allRequirementAlerts = Streams.concat(
                 parsedRequirements.stream(), alertsForNotCoveredCountryToUsagePairs, alertsForNotCoveredIngredients
         ).toList();
@@ -204,35 +192,31 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         return true;
     }
 
-    private RemoteParams buildRecipeParams() {
-        RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
-        params.setFilteredProperties(Set.of(
-                ContentModel.PROP_SYS_NAME, PLMModel.PROP_INGLIST_QTY_PERC,
-                PLMModel.ASSOC_INGLIST_ING,
-                PLMModel.ASSOC_REGULATORY_USAGE_REF, PLMModel.ASSOC_REGULATORY_COUNTRIES
-        ));
-        params.setFilteredAssocProperties(Map.of(
-                PLMModel.ASSOC_INGLIST_ING, Set.of(
-                        PLMModel.PROP_CAS_NUMBER,
-                        PLMModel.PROP_CE_NUMBER,
-                        PLMModel.PROP_EC_NUMBER,
-                        PLMModel.PROP_FDA_NUMBER,
-                        PLMModel.PROP_FEMA_NUMBER,
-                        PLMModel.PROP_FL_NUMBER,
-                        PLMModel.PROP_ING_TYPE_V2,
-                        PLMModel.TYPE_ING_TYPE_ITEM,
-                        PLMModel.PROP_ING_TYPE_DEC_THRESHOLD,
-                        PLMModel.PROP_PLURAL_LEGAL_NAME
-                ),
-                PLMModel.ASSOC_REGULATORY_USAGE_REF, Set.of(PLMModel.PROP_REGULATORY_CODE),
-                PLMModel.ASSOC_REGULATORY_COUNTRIES, Set.of(PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_GEO_ORIGIN_ISOCODE)
-        ));
-        return params;
+    /**
+     * Stores the codes returned by the beCPG regulatory service on the ingredient, next to the codes of the
+     * other regulatory services, and saves only when something changed.
+     *
+     * @param ingredientId the ingredient node id
+     * @param becpgCodes the comma separated codes returned for this ingredient
+     */
+    private void storeBecpgCodes(String ingredientId, String becpgCodes) {
+        IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, ingredientId));
+        IngredientRegulatoryCodes present = IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode());
+        IngredientRegulatoryCodes updated = present.withBecpgCodes(IngredientRegulatoryCodes.parse(becpgCodes).tokens());
+        if (!updated.equals(present)) {
+            ingItem.setRegulatoryCode(updated.format());
+            alfrescoRepository.save(ingItem);
+        }
     }
 
-    private JSONObject fetchEntityAsJson(NodeRef nodeRef, RemoteParams params) throws JSONException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        remoteEntityService.getEntity(nodeRef, out, params);
-        return new JSONObject(out.toString(StandardCharsets.UTF_8));
+    /**
+     * Elements without requirements are indicating that ingredient was resolved and providing regulatoryCode.
+     */
+    private boolean isEmptyRegulatoryItem(IngRegulatoryListDataItem item) {
+        return (item.getCitation() == null || item.getCitation().isEmpty()) &&
+                (item.getRestrictionLevels() == null || item.getRestrictionLevels().isEmpty()) &&
+                (item.getResultIndicator() == null || item.getResultIndicator().isEmpty()) &&
+                (item.getPrecautions() == null || item.getPrecautions().isEmpty()) &&
+                (item.getComment() == null || item.getComment().isEmpty());
     }
 }

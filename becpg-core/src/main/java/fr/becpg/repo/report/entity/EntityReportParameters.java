@@ -449,12 +449,10 @@ public class EntityReportParameters {
 
 			if (json.has(JSON_PARAM_PREFS)) {
 				JSONObject prefs = json.getJSONObject(JSON_PARAM_PREFS);
-				JSONArray keys = prefs.names();
-				for (int i = 0; i < keys.length(); i++) {
-					String key = keys.getString(i);
+				for (String key : prefs.keySet()) {
 					Object value = prefs.get(key);
-					if (value instanceof Boolean) {
-						ret.getPreferences().put(key, Boolean.toString((Boolean) value));
+					if (value instanceof Boolean booleanValue) {
+						ret.getPreferences().put(key, Boolean.toString(booleanValue));
 					} else {
 						ret.getPreferences().put(key, value.toString());
 					}

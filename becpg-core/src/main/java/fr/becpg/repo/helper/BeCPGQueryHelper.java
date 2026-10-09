@@ -165,7 +165,7 @@ public class BeCPGQueryHelper {
 	 * @return a {@link org.apache.lucene.analysis.Analyzer} object
 	 */
 	private static Analyzer getTextAnalyzer(boolean enableStopWords) {
-		if (Locale.FRENCH.equals(I18NUtil.getLocale())) {
+		if (isFrench(I18NUtil.getLocale())) {
 			if (enableStopWords) {
 				return new FrenchAnalyzer();
 			}
@@ -175,6 +175,17 @@ public class BeCPGQueryHelper {
 			return new EnglishAnalyzer();
 		}
 		return new EnglishAnalyzer(CharArraySet.EMPTY_SET);
+	}
+
+	/**
+	 * The analyzer is chosen on the language alone: a user is served in "fr_FR" or "fr_BE" as much
+	 * as in "fr", and all of them are to be tokenised as French.
+	 *
+	 * @param locale the locale to test, may be <code>null</code>
+	 * @return true when that locale speaks French
+	 */
+	private static boolean isFrench(Locale locale) {
+		return (locale != null) && Locale.FRENCH.getLanguage().equals(locale.getLanguage());
 	}
 
 	/**

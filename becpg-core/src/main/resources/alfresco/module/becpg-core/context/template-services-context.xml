@@ -29,6 +29,17 @@
         <property name="authorityService">
             <ref bean="AuthorityService"/>
         </property>
+        <property name="commentPermissionService">
+            <ref bean="commentPermissionService"/>
+        </property>
     </bean>
-	
+
+	<bean id="beCPGTemplateRenderService" class="fr.becpg.repo.template.impl.FreemarkerTemplateRenderServiceImpl">
+		<property name="nodeService" ref="NodeService" />
+		<property name="contentService" ref="ContentService" />
+		<property name="repoService" ref="repoService" />
+		<property name="repositoryFolderPath" value="/System/Templates" />
+		<property name="classpathPrefix" value="/beCPG/templates" />
+	</bean>
+
 </beans>

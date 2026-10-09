@@ -39,7 +39,26 @@ This is a **Java 17** enterprise project with emphasis on:
   - Text blocks
   - Records and sealed classes (when suitable)
 
-### 2. Code Style Principles
+### 2. Language: everything in the source is English
+**All source code is written in English, comments included.** This is not negotiable and it
+applies to every file type in the repository:
+
+- **Identifiers**: classes, methods, fields, variables, Spring bean names, constants
+- **Comments and Javadoc**: every line, including the `@param` and `@return` descriptions
+- **Log messages** and exception messages
+- **Commit messages** (see the Git section below)
+- **Webscript descriptors**: `<shortname>` and `<description>`
+
+French belongs to the *interface*, never to the source. User-facing wording lives in the
+`*_fr.properties` bundles or in repository content; a French sentence anywhere else is either a
+defect or a quote. When it genuinely is a quote — a field label, an error message the system
+really emits, a regulatory footnote used as test data — keep the quote as it is and write the
+sentence around it in English.
+
+This applies to the files you touch: fix the file you are working on, do not translate the
+whole repository in passing.
+
+### 3. Code Style Principles
 - **No `var` declarations** - always use explicit types for readability
 - **Avoid fully-qualified class names** (package class declarations like `com.example.Service`) in code. Instead, declare them as `import` statements at the top of the Java file.
 - Use **lambdas** and **method references** for cleaner code
@@ -47,7 +66,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Use **try-with-resources** for `AutoCloseable` objects
 - Apply **pattern matching** to simplify type checks
 
-### 3. Dependency Management
+### 4. Dependency Management
 **Critical**: This project emphasizes minimizing external libraries:
 - Prefer JDK APIs and existing internal utilities first
 - Add dependencies only with clear, documented benefits
@@ -55,16 +74,19 @@ This is a **Java 17** enterprise project with emphasis on:
 - Choose small, well-maintained libraries over heavy frameworks
 - Justify any new dependency additions
 
-### 4. Code Quality Standards
+### 5. Code Quality Standards
 - **4 spaces indentation**, no tabs
-- **Braces on new lines** for classes and methods
-- Keep methods **short and focused** (≤ 30 lines recommended)
-- Use standard **Java naming conventions**
+- **Braces on the same line** (K&R style) for classes and methods
+- Keep methods **extremely short and focused** (ideally 10-15 lines, max 20 lines) to respect Clean Code
+- Use standard **Java naming conventions** with intention-revealing, pronounceable, and searchable names
 - Prioritize **readability over cleverness**
 - Use `Objects.equals()` for null-safe comparisons
 - Use `String.join()` instead of manual concatenation
+- **No commented-out code**: Never leave commented-out blocks of code in the codebase; rely on Git history instead
+- **No magic strings**: Never use magic strings. Always declare them as `static final String` fields to ensure maintainability and prevent typos
+- **No en-dash characters**: Never use the en-dash character (`–`, `\u2013`) in code, configurations, or CSV templates. Always use the standard hyphen/minus character (`-`) instead to avoid character encoding issues and ensure exact matches with external databases.
 
-### 5. JavaScript Standards
+### 6. JavaScript Standards
 - **Use ECMAScript 5 (ES5)** syntax only - no modern ES6+ features
 - Follow traditional JavaScript patterns compatible with legacy browsers
 - Use `function` declarations instead of arrow functions
@@ -72,7 +94,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Avoid template literals, destructuring, and other ES6+ features
 - Maintain compatibility with existing YUI-based components
 
-### 6. UI JavaScript Framework
+### 7. UI JavaScript Framework
 - **Use YUI 2 (Yahoo! User Interface Library 2)** for all UI JavaScript components
 - Leverage YUI 2 widgets and utilities:
   - `YAHOO.util.Dom` for DOM manipulation
@@ -80,6 +102,57 @@ This is a **Java 17** enterprise project with emphasis on:
   - `YAHOO.Bubbling` for custom event messaging
 - Follow YUI 2 patterns and conventions for component development
 - Extend existing YUI-based components rather than creating vanilla JavaScript alternatives
+
+### 8. Clean Code Principles (Robert C. Martin)
+All code written in this project must adhere to Robert C. Martin's **Clean Code** principles to ensure readability, scalability, and long-term maintainability:
+
+- **Meaningful Names**:
+  - Use **intention-revealing, pronounceable, and searchable** names for classes, variables, and methods.
+  - Class and object names must be **nouns or noun phrases** (e.g., `FinishedProductData`, `NutriScoreIT`). Avoid generic/vague suffixes.
+  - Method and function names must be **verbs or verb phrases** (e.g., `updateProduct`, `performBusinessOperation`).
+  - Avoid mental mappings, disinformation, and arbitrary encodings.
+  - **No magic strings**: Always declare string literals as `static final String` fields rather than hardcoding them inline.
+
+- **Functions & Methods**:
+  - **Smaller than Small**: Keep methods extremely short and focused (ideally 10-15 lines, maximum 20 lines).
+  - **Do One Thing**: A function should do exactly one thing, do it well, and do it only. Ensure all statements inside a function are at the same level of abstraction (Single Level of Abstraction Principle - SLAP).
+  - **Minimize Arguments**: Monadic (1 arg) and dyadic (2 args) are preferred. Triadic (3 args) should be avoided where possible, and polyadic (4+ args) require exceptional justification. If a function needs more than 2 or 3 arguments, wrap them in a dedicated object/record (e.g., a parameter object).
+  - **No Side Effects**: Functions must not have hidden side effects (e.g., unexpectedly modifying global state or class attributes that aren't clear from the function's name).
+  - **Command-Query Separation (CQS)**: Functions should either perform an action (modify state) or return an answer (query state), but never both.
+  - **DRY (Don't Repeat Yourself)**: Actively eliminate duplication in both code and logic.
+
+- **Comments**:
+  - **Don't comment bad code—rewrite it**: Code should explain itself.
+  - **Only high-value comments**: Keep inline comments to a minimum. Use comments to explain *why* something is done (intent, clarification, or warnings), not *what* is done.
+  - **No commented-out code**: Never leave dead or commented-out code blocks in the files. Rely on Git history to retrieve past versions.
+
+- **Formatting (The Newspaper Metaphor)**:
+  - Keep source files cohesive and readable, with high-level concepts at the top and implementation details/utilities below.
+  - Use vertical open space (empty lines) between logical thoughts, statements, and methods.
+
+- **Objects & Data Structures**:
+  - Keep **data structures** (simple data holders like Records, DTOs, or POJOs exposing data and having no behavior) clearly distinct from **objects** (exposing behavior and hiding data). Do not mix them into "Hybrids".
+  - **Law of Demeter**: A method of a class should only call methods on its own class, its parameters, objects it creates, or its direct components. Avoid chaining calls (e.g., `a.getB().getC().doSomething()`).
+
+- **Error Handling**:
+  - **Exceptions over Return Codes**: Use runtime exceptions (e.g., `BeCPGException`) to signal errors rather than returning error codes or boolean success flags.
+  - **Write Try-Catch-Finally First**: Define the boundary and scope of the transaction/logic block using try-catch blocks.
+  - **Don't Return or Pass Null**: Avoid passing or returning `null` references. Use modern alternatives like `Optional`, empty collections, or throw a descriptive exception.
+
+- **Classes**:
+  - **Single Responsibility Principle (SRP)**: A class must have one, and only one, reason to change.
+  - **High Cohesion**: Methods should manipulate a small number of the class's instance variables. High cohesion indicates the class is focused on a single logical concept.
+  - **Organizing for Change**: Design classes to be open for extension but closed for modification (Open-Closed Principle - OCP).
+
+- **Unit and Integration Tests**:
+  - Treat test code as first-class citizens; it must be kept as clean and maintainable as production code.
+  - Follow the **F.I.R.S.T.** rules:
+    - **F**ast: Tests should run quickly.
+    - **I**ndependent: Tests must not depend on each other or run in a specific order.
+    - **R**epeatable: Tests must run and pass in any environment (local, CI/CD).
+    - **S**elf-Validating: Tests must have a boolean output (pass/fail) without requiring manual interpretation.
+    - **T**imely: Tests should be written in tandem with the production code.
+  - **One Concept per Test**: Keep test methods highly focused on testing a single concept with minimal assertions.
 
 ## Git Commit Message Format
 
@@ -110,6 +183,7 @@ Fix #1234 - [Security] Patch authentication vulnerability
 - **One line only** - no multi-line commit messages
 - **English descriptions** - clear and concise
 - Include ticket references when applicable
+- **Stage and commit only explicitly modified or created files** - never use generic `git add .` or stage unrelated untracked files from the workspace.
 
 ## AI Assistant Best Practices
 
@@ -117,14 +191,14 @@ Fix #1234 - [Security] Patch authentication vulnerability
 1. **Always follow the coding style guide** - no exceptions
 2. **Minimize external dependencies** - check if functionality exists in JDK first
 3. **Use Java 17 features** appropriately
-4. **Keep methods focused** and under 30 lines when possible
+4. **Keep methods focused** and under 30 lines when possible (ideally 10-15 lines, max 20 lines to respect Clean Code)
 5. **Add proper error handling** with try-catch blocks
 6. **Use meaningful variable names** with explicit types
 
 ### Code Documentation and Comments
 1. **Generate or update Javadoc** for all new/modified methods and classes
 2. **Use proper Javadoc format** with `@param`, `@return`, `@throws` tags
-3. **Avoid inline comments** only write high-value comments if at all. Avoid talking to the user through comments.
+3. **Avoid inline comments**: Keep inline comments to an absolute minimum, focusing only on explaining *why* something is done. Never talk to the user or describe what the code does through inline comments.
 4. **Let code be self-documenting** through clear naming and structure
 
 ### Logging Standards
@@ -245,7 +319,14 @@ Building and running the application is a long and ongoing task; therefore, ensu
 
 ### Running Tests 
 
-When making code changes, use the following commands to test, first rebuild and relaunch the application (3 to 4 minutes):
+**Unit tests** need neither a rebuild nor a running application, so run them on every code change:
+
+```bash
+./mvnw test -pl [module] -Dtest=[TestClassName]
+# Example: ./mvnw test -pl becpg-core -Dtest=SecurePasswordGeneratorTest
+```
+
+**Integration tests** need the application rebuilt and relaunched first (3 to 4 minutes):
 
 1. **Compile and restart**: 
    ```bash
@@ -262,7 +343,19 @@ Then launch the test
 
 
 ### Testing Standards
-1. **Prefer Integration Tests over Unit Tests**: In beCPG, majority are IT tests that require Spring context. Only use unit tests for simple cases that don't need Spring context loaded.
+1. **Unit test the code you add, around 75% of it**: new or modified behaviour ships with a JUnit unit test in the same commit - plain JUnit and Mockito, no Spring context, no repository, no HTTP. Unit tests live in `<module>/src/test/java`, under the package of the class they cover, and are named `<ClassName>Test`.
+
+   The target is roughly 75% of the added code, not 100%. Business rules, computations, parsing, validation, error handling and edge cases are worth a test; getters, plain data holders, Spring wiring, logging and generated code are not. Spend the effort where a regression would actually hurt.
+
+   Code that can be unit tested is unit tested: an integration test does **not** replace a unit test there. `*IT` tests cover the wiring between components and remain welcome for that, but they are slow, need a running context, and do not pin down a single unit of behaviour.
+
+   **When a unit test is not possible, fall back on an integration test.** The usual blockers are a private method on a Spring bean, a class patching Alfresco under `alfresco-patch`, behaviour that only exists through the repository (policies, behaviours, formulation over real nodes, webscripts), and JavaScript with no test harness. First check whether extracting the logic into a small collaborator is cheap and within the ticket's scope; if so, unit test the collaborator. Otherwise cover the behaviour with an `*IT`:
+
+   - **extend an existing IT first**: add an assertion or a test method to the IT that already covers the area (same service, same scenario, same test product) rather than creating a new one;
+   - **create a new IT** only when no existing one fits, following the structure below;
+   - state in the Redmine note which IT covers the fix and why a unit test was not possible.
+
+   **When neither a unit test nor an IT is possible, raise the point - never skip it silently.** Name what blocks the test and propose the change that would make the code testable. Shipping untested code is a decision the developer takes explicitly, not a default.
 
 2. **Integration Test Structure**:
    ```java

@@ -359,10 +359,11 @@
 					<!-- <show id="ecm:culTargetItem" /> -->	
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
-					<show id="ecm:culReqDetails" />		
+					<show id="ecm:culEntityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="ecm:culReqError" label="hidden" />
+					<field id="ecm:culEntityScore" read-only="true" />
 				</appearance>				
 			</form>
 		</forms>
@@ -464,6 +465,7 @@
 					<show id="bcpg:compoListLossPerc" force="true"/>
 					<show id="mpm:plQty" force="true"/>
 					<show id="bcpg:packagingListQty" force="true"/>
+					<show id="bcpg:packagingListPkgLevel" force="true"/>
 				</field-visibility>
 			</form>
 		</forms>

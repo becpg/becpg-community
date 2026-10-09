@@ -178,7 +178,17 @@
 			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 	</mapping>
-	
+
+	<!-- The ISO code identifies an origin, and a column pointing at one by @Assoc(key="bcpg:geoOriginISOCode")
+	     is only resolved when the key is declared here. The name is deliberately not a key: it is
+	     held as a multilingual text, and a repository holding its origins in another language than
+	     the one the file ships would duplicate them instead of updating them -->
+	<mapping name="bcpg:geoOrigin">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:geoOriginISOCode" />
+		</nodeColumnKeys>
+	</mapping>
+
 	<mapping name="bcpg:ing">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:charactName" />

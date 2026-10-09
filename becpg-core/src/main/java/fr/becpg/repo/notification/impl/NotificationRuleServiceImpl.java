@@ -168,35 +168,65 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		for (NodeRef notificationNodeRef : getAllNotificationRule()) {
 			NotificationRuleListDataItem notification = alfrescoRepository.findOne(notificationNodeRef);
 			if ((notification != null) && !shouldSkip(notification)) {
+				try {
+					initializeNotification(notification);
 
-				initializeNotification(notification);
+					SearchRuleFilter filter = buildSearchFilter(notification);
+					SearchRuleResult searchResult = searchRuleService.search(filter);
 
-				SearchRuleFilter filter = buildSearchFilter(notification);
-				SearchRuleResult searchResult = searchRuleService.search(filter);
+					if (!isEmptyResult(notification, searchResult, filter)) {
 
-				if (!isEmptyResult(notification, searchResult, filter)) {
+						Map<String, Object> templateArgs = buildTemplateArgs(notification, filter);
+						Map<NodeRef, Object> entities = buildEntities(searchResult.getResults(), notification);
 
-					Map<String, Object> templateArgs = buildTemplateArgs(notification, filter);
-					Map<NodeRef, Object> entities = buildEntities(searchResult.getResults(), notification);
+						Consumer<NodeRef> mailSender = createMailSender(notification, templateArgs, entities, filter, searchResult);
 
-					Consumer<NodeRef> mailSender = createMailSender(notification, templateArgs, entities, filter, searchResult);
+						if (CollectionUtils.isNotEmpty(notification.getReportTpls())) {
+							processReportTemplates(notification, searchResult, mailSender);
+						} else {
+							mailSender.accept(null);
+						}
 
-					if (CollectionUtils.isNotEmpty(notification.getReportTpls())) {
-						processReportTemplates(notification, searchResult, mailSender);
+						executeScriptIfExists(notification, searchResult.getResults(), templateArgs);
 					} else {
-						mailSender.accept(null);
+						logNoObjects(notification, filter);
+
 					}
-
-					executeScriptIfExists(notification, searchResult.getResults(), templateArgs);
-				} else {
-					logNoObjects(notification, filter);
-
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
+					}
+					logger.error("Error while sending notification " + notificationNodeRef, e);
+					saveErrorLog(notificationNodeRef, notification, e);
 				}
 			}
 		}
 	}
 
-	
+	/**
+	 * Record on the rule why it failed, so that it does not keep failing without ever saying so.
+	 *
+	 * The rule node has already been written by {@link #initializeNotification}, so the calling
+	 * transaction holds its row lock: writing the error log in a transaction of its own would wait
+	 * on that lock until it times out and starve the remaining rules.
+	 *
+	 * @param notificationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param cause the failure to report
+	 */
+	private void saveErrorLog(NodeRef notificationNodeRef, NotificationRuleListDataItem notification, Exception cause) {
+		try {
+			notification.setErrorLog(cause.getMessage() != null ? cause.getMessage() : cause.toString());
+
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				alfrescoRepository.save(notification);
+				return null;
+			}, false, false);
+		} catch (Exception e) {
+			logger.error("Error while saving notification error details " + notificationNodeRef, e);
+		}
+	}
+
 	/**
 	 * <p>shouldSkip.</p>
 	 *
@@ -286,8 +316,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		QName nodeType = filter.getNodeType();
 
 		args.put(NODE_TYPE, Objects.toString(dictionaryService.getType(nodeType).getTitle(dictionaryService), nodeType.toPrefixString()));
-		args.put(DATE_FIELD, Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), nodeType),
-				filter.getDateField().toPrefixString()));
+		args.put(DATE_FIELD, dateFieldTitle(filter.getDateField(), nodeType));
 
 		if ((notification.getTarget() != null) && nodeService.exists(notification.getTarget())) {
 			args.put(TARGET_PATH, filter.getNodePath().subPath(2, filter.getNodePath().size() - 1).toDisplayPath(nodeService, permissionService) + "/"
@@ -396,6 +425,23 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	/**
+	 * <p>Reads the title of the date a notification rule watches.</p>
+	 *
+	 * A rule may carry no date field at all, in which case there is nothing to name in the mail.
+	 *
+	 * @param dateField a {@link org.alfresco.service.namespace.QName} object, may be <code>null</code>
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return the localised title, the prefixed name as a fallback, or an empty string
+	 */
+	private String dateFieldTitle(QName dateField, QName nodeType) {
+		if (dateField == null) {
+			return "";
+		}
+
+		return Objects.toString(dictionaryService.getTitle(dictionaryService.getProperty(dateField), nodeType), dateField.toPrefixString());
+	}
+
+	/**
 	 * <p>resolveDateFieldTitle.</p>
 	 *
 	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
@@ -412,9 +458,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					I18NUtil.setLocale(MLTextHelper.parseLocale(localeString));
 				}
 			}
-			return Objects.toString(
-					dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), filter.getNodeType()),
-					filter.getDateField().toPrefixString());
+			return dateFieldTitle(filter.getDateField(), filter.getNodeType());
 		} finally {
 			I18NUtil.setLocale(currentLocale);
 		}

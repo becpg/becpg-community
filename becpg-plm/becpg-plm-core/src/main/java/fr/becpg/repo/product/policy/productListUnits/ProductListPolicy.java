@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.policy.productListUnits;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,6 +110,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT,
 				new JavaBehaviour(this, "onUpdateProperties"));
 
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_MICROBIO,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
 		super.disableOnCopyBehaviour(PLMModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_LCALIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_NUTLIST);
@@ -129,11 +133,41 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	/** {@inheritDoc} */
 	@Override
-	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)
 				|| isPropChanged(before, after, PLMModel.PROP_NUTRIENT_PREPARED_UNIT)) {
-			queueNode(KEY_PRODUCTS, productNodeRef);
+			queueNode(KEY_PRODUCTS, nodeRef);
+		}
+
+		if (isPropChanged(before, after, PLMModel.PROP_MICROBIO_TYPE)) {
+			queueCharactListItems(nodeRef, PLMModel.ASSOC_MICROBIOLIST_MICROBIO);
+		}
+	}
+
+	/*
+	 * A productListItem mirrors some properties of the characteristic it points to. The mirror is
+	 * refreshed when the association is created, it has to be refreshed as well when the
+	 * characteristic itself changes, otherwise the lines created beforehand keep a stale value.
+	 */
+	/**
+	 * <p>queueCharactListItems.</p>
+	 *
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 */
+	private void queueCharactListItems(NodeRef charactNodeRef, QName assocQName) {
+
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(charactNodeRef, assocQName);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Refreshing " + assocRefs.size() + " list items pointing to charact " + charactNodeRef);
+		}
+
+		for (AssociationRef assocRef : assocRefs) {
+			if (!isVersionStoreNode(assocRef.getSourceRef())) {
+				queueAssoc(KEY_PRODUCT_LISTITEMS, assocRef);
+			}
 		}
 	}
 

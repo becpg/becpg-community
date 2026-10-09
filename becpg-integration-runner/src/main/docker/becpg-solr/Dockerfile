@@ -2,6 +2,12 @@ FROM alfresco/alfresco-search-services:2.0.17
 
 ENV DIST_DIR=/opt/alfresco-search-services
 
+USER root
+
+RUN dnf update -y && dnf clean all && rm -rf /var/cache/dnf
+
+USER solr
+
 COPY rerank/solrcore.properties  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY rerank/solrconfig.xml  $DIST_DIR/solrhome/templates/rerank/conf/
 COPY shared.properties $DIST_DIR/solrhome/conf/

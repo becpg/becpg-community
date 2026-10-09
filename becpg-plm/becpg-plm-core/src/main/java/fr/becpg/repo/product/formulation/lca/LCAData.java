@@ -1,81 +1,41 @@
 package fr.becpg.repo.product.formulation.lca;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * <p>LCAData class.</p>
+ * One entry of an LCA database: the impacts of a reference product, indexed by indicator
+ * code.
+ *
+ * <p>The codes are the ones held by {@code bcpg:lcaCode}, so a database plugin publishing
+ * a new indicator has nothing to declare here.</p>
  *
  * @author valentin
  * @version $Id: $Id
  */
 public class LCAData {
-	private String id;
-	private String value;
-	private Double score;
-	private Double climateChange;
-	private Double ozoneDepletion;
-	private Double ionizingRadiation;
-	private Double photochemicalOzoneFormation;
-	private Double particulateMatter;
-	private Double acidification;
-	private Double terrestrialEutrophication;
-	private Double freshwaterEutrophication;
-	private Double marineEutrophication;
-	private Double landUse;
-	private Double freshwaterEcotoxicity;
-	private Double waterUse;
-	private Double resourceUseFossils;
-	private Double resourceUseMineralsMetal;
-	private Double humanToxicityNonCancer;
-	private Double humanToxicityCancer;
+
+	private final String id;
+
+	private final String value;
+
+	private final Double score;
+
+	private final Map<String, Double> impacts = new LinkedHashMap<>();
 
 	/**
 	 * <p>Constructor for LCAData.</p>
 	 *
-	 * @param id a {@link java.lang.String} object
-	 * @param value a {@link java.lang.String} object
-	 * @param score a {@link java.lang.Double} object
-	 * @param climateChange a {@link java.lang.Double} object
-	 * @param particulateMatter a {@link java.lang.Double} object
-	 * @param waterUse a {@link java.lang.Double} object
-	 * @param landUse a {@link java.lang.Double} object
-	 * @param resourceUseMineralsMetal a {@link java.lang.Double} object
-	 * @param ozoneDepletion a {@link java.lang.Double} object
-	 * @param acidification a {@link java.lang.Double} object
-	 * @param ionizingRadiation a {@link java.lang.Double} object
-	 * @param photochemicalOzoneFormation a {@link java.lang.Double} object
-	 * @param terrestrialEutrophication a {@link java.lang.Double} object
-	 * @param marineEutrophication a {@link java.lang.Double} object
-	 * @param freshwaterEutrophication a {@link java.lang.Double} object
-	 * @param freshwaterEcotoxicity a {@link java.lang.Double} object
-	 * @param humanToxicityCancer a {@link java.lang.Double} object
-	 * @param humanToxicityNonCancer a {@link java.lang.Double} object
-	 * @param resourceUseFossils a {@link java.lang.Double} object
+	 * @param id the identifier of the entry in its database
+	 * @param value the display name of the entry
+	 * @param score the single score published by the database, may be null
 	 */
-	public LCAData(String id, String value, Double score, Double climateChange,
-			Double particulateMatter, Double waterUse, Double landUse, Double resourceUseMineralsMetal,
-			Double ozoneDepletion, Double acidification, Double ionizingRadiation,
-			Double photochemicalOzoneFormation, Double terrestrialEutrophication, Double marineEutrophication,
-			Double freshwaterEutrophication, Double freshwaterEcotoxicity, Double humanToxicityCancer,
-			Double humanToxicityNonCancer, Double resourceUseFossils) {
-		super();
+	public LCAData(String id, String value, Double score) {
 		this.id = id;
 		this.value = value;
 		this.score = score;
-		this.climateChange = climateChange;
-		this.ozoneDepletion = ozoneDepletion;
-		this.ionizingRadiation = ionizingRadiation;
-		this.photochemicalOzoneFormation = photochemicalOzoneFormation;
-		this.particulateMatter = particulateMatter;
-		this.acidification = acidification;
-		this.terrestrialEutrophication = terrestrialEutrophication;
-		this.freshwaterEutrophication = freshwaterEutrophication;
-		this.marineEutrophication = marineEutrophication;
-		this.landUse = landUse;
-		this.freshwaterEcotoxicity = freshwaterEcotoxicity;
-		this.waterUse = waterUse;
-		this.resourceUseFossils = resourceUseFossils;
-		this.resourceUseMineralsMetal = resourceUseMineralsMetal;
-		this.humanToxicityNonCancer = humanToxicityNonCancer;
-		this.humanToxicityCancer = humanToxicityCancer;
 	}
 
 	/**
@@ -106,147 +66,35 @@ public class LCAData {
 	}
 
 	/**
-	 * <p>Getter for the field <code>climateChange</code>.</p>
+	 * <p>Records the impact of one indicator, ignoring the ones the database leaves empty.</p>
 	 *
-	 * @return a {@link java.lang.Double} object
+	 * @param lcaCode the indicator code, as held by {@code bcpg:lcaCode}
+	 * @param impact the impact value
+	 * @return this entry
 	 */
-	public Double getClimateChange() {
-		return climateChange;
+	public LCAData withImpact(String lcaCode, Double impact) {
+		if (impact != null) {
+			impacts.put(lcaCode, impact);
+		}
+		return this;
 	}
 
 	/**
-	 * <p>Getter for the field <code>ozoneDepletion</code>.</p>
+	 * <p>Getter for the field <code>impacts</code>.</p>
 	 *
-	 * @return a {@link java.lang.Double} object
+	 * @return the impacts indexed by indicator code, never null
 	 */
-	public Double getOzoneDepletion() {
-		return ozoneDepletion;
+	public Map<String, Double> getImpacts() {
+		return Collections.unmodifiableMap(impacts);
 	}
 
 	/**
-	 * <p>Getter for the field <code>ionizingRadiation</code>.</p>
+	 * <p>Indicator codes held by this entry, in the order the database published them.</p>
 	 *
-	 * @return a {@link java.lang.Double} object
+	 * @return a {@link java.util.Set} object
 	 */
-	public Double getIonizingRadiation() {
-		return ionizingRadiation;
-	}
-
-	/**
-	 * <p>Getter for the field <code>photochemicalOzoneFormation</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getPhotochemicalOzoneFormation() {
-		return photochemicalOzoneFormation;
-	}
-
-	/**
-	 * <p>Getter for the field <code>particulateMatter</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getParticulateMatter() {
-		return particulateMatter;
-	}
-
-	/**
-	 * <p>Getter for the field <code>acidification</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getAcidification() {
-		return acidification;
-	}
-
-	/**
-	 * <p>Getter for the field <code>terrestrialEutrophication</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getTerrestrialEutrophication() {
-		return terrestrialEutrophication;
-	}
-
-	/**
-	 * <p>Getter for the field <code>freshwaterEutrophication</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getFreshwaterEutrophication() {
-		return freshwaterEutrophication;
-	}
-
-	/**
-	 * <p>Getter for the field <code>marineEutrophication</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getMarineEutrophication() {
-		return marineEutrophication;
-	}
-
-	/**
-	 * <p>Getter for the field <code>landUse</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getLandUse() {
-		return landUse;
-	}
-
-	/**
-	 * <p>Getter for the field <code>freshwaterEcotoxicity</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getFreshwaterEcotoxicity() {
-		return freshwaterEcotoxicity;
-	}
-
-	/**
-	 * <p>Getter for the field <code>waterUse</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getWaterUse() {
-		return waterUse;
-	}
-
-	/**
-	 * <p>Getter for the field <code>resourceUseFossils</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getResourceUseFossils() {
-		return resourceUseFossils;
-	}
-
-	/**
-	 * <p>Getter for the field <code>resourceUseMineralsMetal</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getResourceUseMineralsMetal() {
-		return resourceUseMineralsMetal;
-	}
-
-	/**
-	 * <p>Getter for the field <code>humanToxicityNonCancer</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getHumanToxicityNonCancer() {
-		return humanToxicityNonCancer;
-	}
-
-	/**
-	 * <p>Getter for the field <code>humanToxicityCancer</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object
-	 */
-	public Double getHumanToxicityCancer() {
-		return humanToxicityCancer;
+	public Set<String> getLcaCodes() {
+		return getImpacts().keySet();
 	}
 
 	/** {@inheritDoc} */

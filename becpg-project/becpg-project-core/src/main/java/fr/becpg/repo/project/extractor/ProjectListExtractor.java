@@ -459,10 +459,10 @@ public class ProjectListExtractor extends SimpleExtractor {
 								// Only in progress tasks
 								if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 
-									Map<String, Object> tmp = new HashMap<>(4);
+									Map<String, Object> tmp = HashMap.newHashMap(4);
 
-									Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-									Map<String, Boolean> userAccess = new HashMap<>(1);
+									Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+									Map<String, Boolean> userAccess = HashMap.newHashMap(1);
 
 									permissions.put("userAccess", userAccess);
 									userAccess.put("edit", false);
@@ -490,10 +490,10 @@ public class ProjectListExtractor extends SimpleExtractor {
 										if ((permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED)
 												&& (securityService.computeAccessMode(nodeRef, itemType, field.getFieldQname()) >= SecurityService.READ_ACCESS)) {
 											
-											Map<String, Object> tmp = new HashMap<>(4);
+											Map<String, Object> tmp = HashMap.newHashMap(4);
 											
-											Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-											Map<String, Boolean> userAccess = new HashMap<>(1);
+											Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+											Map<String, Boolean> userAccess = HashMap.newHashMap(1);
 											
 											permissions.put("userAccess", userAccess);
 											userAccess.put("edit",
@@ -515,7 +515,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 												NodeRef subProjectNoderef = associationService.getTargetAssoc(itemNodeRef,
 														ProjectModel.ASSOC_SUB_PROJECT);
 												if (subProjectNoderef != null) {
-													HashMap<String, Object> commentCount = new HashMap<>(6);
+													HashMap<String, Object> commentCount = HashMap.newHashMap(6);
 													Integer count = (Integer) nodeService.getProperty(subProjectNoderef,
 															ForumModel.PROP_COMMENT_COUNT);
 													commentCount.put("displayValue", count);
@@ -539,13 +539,13 @@ public class ProjectListExtractor extends SimpleExtractor {
 									for (NodeRef itemNodeRef : results) {
 										if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 
-											Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-											Map<String, Boolean> userAccess = new HashMap<>(1);
+											Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+											Map<String, Boolean> userAccess = HashMap.newHashMap(1);
 
 											permissions.put("userAccess", userAccess);
 											userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED);
 
-											Map<String, Object> tmp = new HashMap<>(3);
+											Map<String, Object> tmp = HashMap.newHashMap(3);
 											QName itemType = nodeService.getType(itemNodeRef);
 											Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 											tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));

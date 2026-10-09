@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.data.dataList;
 
-import org.alfresco.service.cmr.repository.NodeRef;
+import java.util.Objects;
+
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.regulatory.RequirementType;
@@ -50,6 +52,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
 	private MLText errorMsg;
+	private String entityScore;
 	
 	
 	/**
@@ -196,6 +199,26 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	}
 
 	/**
+	 * Returns the scores and requirements of the simulated product, compared with the product before the change order.
+	 *
+	 * @return the JSON built by {@link fr.becpg.repo.ecm.impl.ChangeUnitScoreBuilder}, or null when not computed yet
+	 */
+	@AlfProp
+	@AlfQname(qname = "ecm:culEntityScore")
+	public String getEntityScore() {
+		return entityScore;
+	}
+
+	/**
+	 * Sets the scores and requirements of the simulated product.
+	 *
+	 * @param entityScore the JSON built by {@link fr.becpg.repo.ecm.impl.ChangeUnitScoreBuilder}
+	 */
+	public void setEntityScore(String entityScore) {
+		this.entityScore = entityScore;
+	}
+
+	/**
 	 * <p>Constructor for ChangeUnitDataItem.</p>
 	 */
 	public ChangeUnitDataItem() {
@@ -230,6 +253,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((errorMsg == null) ? 0 : errorMsg.hashCode());
+		result = prime * result + ((entityScore == null) ? 0 : entityScore.hashCode());
 		result = prime * result + ((reqDetails == null) ? 0 : reqDetails.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
 		result = prime * result + ((revision == null) ? 0 : revision.hashCode());
@@ -253,6 +277,8 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 			if (other.errorMsg != null)
 				return false;
 		} else if (!errorMsg.equals(other.errorMsg))
+			return false;
+		if (!Objects.equals(entityScore, other.entityScore))
 			return false;
 		if (reqDetails == null) {
 			if (other.reqDetails != null)

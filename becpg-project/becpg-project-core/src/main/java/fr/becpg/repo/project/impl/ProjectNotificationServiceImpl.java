@@ -97,7 +97,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		String afterStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + afterState);
 
 		String subject = createSubject(projectNodeRef, taskNodeRef, afterStateMsg);
-		Map<String, Object> templateArgs = new HashMap<>(7);
+		Map<String, Object> templateArgs = HashMap.newHashMap(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
 		templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 		templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_DESCRIPTION));
@@ -132,7 +132,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		logger.debug("Notifying comments");
 		String subject = createSubject(projectNodeRef, taskNodeRef, null);
 
-		Map<String, Object> templateArgs = new HashMap<>(7);
+		Map<String, Object> templateArgs = HashMap.newHashMap(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Comment);
 		templateArgs.put(ARG_ACTIVITY_EVENT, activityEvent);
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
@@ -224,7 +224,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		logger.debug("Notifying properties");
 		String subject = createSubject(projectNodeRef, null, null);
 
-		Map<String, Object> templateArgs = new HashMap<>(7);
+		Map<String, Object> templateArgs = HashMap.newHashMap(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Entity);
 		templateArgs.put(ARG_ACTIVITY_EVENT, ActivityEvent.Update);
 		templateArgs.put(ARG_PROJECT, projectNodeRef);

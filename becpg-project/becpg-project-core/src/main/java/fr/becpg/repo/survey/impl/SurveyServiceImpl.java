@@ -1,13 +1,14 @@
 package fr.becpg.repo.survey.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -26,6 +27,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.regulatory.RequirementAwareEntity;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -38,6 +40,7 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyQuestionCache;
 import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SurveyServiceImpl class.</p>
@@ -68,6 +71,20 @@ public class SurveyServiceImpl implements SurveyService {
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
+	@Autowired
+	private AssociationService associationService;
+
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+
+	/**
+	 * Constant <code>CONF_SUBSIDIARY_SCOPE_ENABLED="beCPG.survey.subsidiaryScope.enabled"</code>
+	 * <p>
+	 * Opt-in, <code>false</code> in the shipped configuration : see
+	 * {@link #createSubsidiaryScopeFilter(NodeRef)}.
+	 */
+	private static final String CONF_SUBSIDIARY_SCOPE_ENABLED = "beCPG.survey.subsidiaryScope.enabled";
+
 	/*
 	 * data :
 	 * [{"qid":"q1","cid":"q1r1"},{"qid":"q2","cid":"q2r1","comment":"Test"},{"qid":"q3a","cid":"q3ar1","listOptions":"1"},{"qid":"q3b","cid":"q3br1","listOptions":"1,3"},{"qid":"q4a","cid":"q4ar2"}]
@@ -96,14 +113,15 @@ public class SurveyServiceImpl implements SurveyService {
 			List<RequirementListDataItem> requirements = getRequirementsForEntity(entityNodeRef);
 			Map<String, List<RequirementListDataItem>> questionRequirements = mapRequirementsToQuestions(requirements);
 			
-			final List<SurveyListDataItem> surveyListDataItems = getSurveys(entityNodeRef, dataListName);
+			final Predicate<SurveyQuestion> subsidiaryScope = createSubsidiaryScopeFilter(entityNodeRef);
+			final List<SurveyListDataItem> surveyListDataItems = filterSubsidiaryScope(getSurveys(entityNodeRef, dataListName), subsidiaryScope);
 
 			for (SurveyListDataItem survey : surveyListDataItems) {
 				JSONObject value = new JSONObject();
 
 				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
-				appendQuestionDefinition(definitions, surveyQuestion, questions, questionRequirements);
+				appendQuestionDefinition(definitions, surveyQuestion, questions, questionRequirements, subsidiaryScope);
 				if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
 					value.put("qid", survey.getQuestion().getId());
 					if (survey.getComment() != null) {
@@ -200,7 +218,7 @@ public class SurveyServiceImpl implements SurveyService {
 	        }
 	    }
 
-	    for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
+	    for (SurveyListDataItem survey : filterSubsidiaryScope(getSurveys(entityNodeRef, dataListName), createSubsidiaryScopeFilter(entityNodeRef))) {
 	    	final List<NodeRef> choices = survey.getChoices();
 	        // Reset survey
 	        survey.setComment(null);
@@ -286,16 +304,93 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	/**
+	 * Builds the subsidiary scope filter applied to the questions of an entity, i.e. the answer to
+	 * "is this question one this entity's subsidiary has to answer?" (Redmine #25461 / DEV-813 :
+	 * subsidiaries sharing one entity template and one questionnaire, each supplier only seeing the
+	 * questions of its own subsidiary).
+	 * <p>
+	 * The semantics are strictly the ones already implemented by
+	 * <code>DocumentFormulationHandler.isDocTypeMatchProduct()</code> for a document type and by
+	 * <code>SurveyListFormulationHandler</code> for a generated question, on the very same
+	 * association <code>bcpg:subsidiaryRef</code> :
+	 * <ul>
+	 * <li>a question carrying <b>no</b> subsidiary is answered by everyone — today's behaviour, kept
+	 * as is,</li>
+	 * <li>a question carrying subsidiaries is kept only when the entity carries at least one of
+	 * them.</li>
+	 * </ul>
+	 * Nothing is written : the filter only hides questions from what is served, the stored
+	 * <code>survey:surveyList</code> rows (and the answers of a hidden question) are left untouched,
+	 * both when reading and when saving.
+	 * <p>
+	 * <b>Opt-in</b> : returns "everything is in scope" unless
+	 * <code>beCPG.survey.subsidiaryScope.enabled</code> is set to <code>true</code>, which it is not
+	 * in the shipped configuration. Left alone, every instance keeps serving exactly the questions it
+	 * serves today.
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.function.Predicate} object
+	 */
+	private Predicate<SurveyQuestion> createSubsidiaryScopeFilter(NodeRef entityNodeRef) {
+		if ((entityNodeRef == null) || !Boolean.parseBoolean(systemConfigurationService.confValue(CONF_SUBSIDIARY_SCOPE_ENABLED))) {
+			return surveyQuestion -> true;
+		}
+
+		List<NodeRef> entitySubsidiaries = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_SUBSIDIARY_REF);
+
+		return surveyQuestion -> {
+			if (surveyQuestion == null) {
+				return true;
+			}
+			List<NodeRef> questionSubsidiaries = surveyQuestion.getSubsidiaryRefs();
+			if ((questionSubsidiaries == null) || questionSubsidiaries.isEmpty()) {
+				return true;
+			}
+			return (entitySubsidiaries != null) && !entitySubsidiaries.isEmpty() && !Collections.disjoint(questionSubsidiaries, entitySubsidiaries);
+		};
+	}
+
+	/**
+	 * Keeps only the survey rows whose question is in the subsidiary scope of the entity, see
+	 * {@link #createSubsidiaryScopeFilter(NodeRef)}. A row whose question cannot be resolved is kept.
+	 *
+	 * @param surveyListDataItems a {@link java.util.List} object
+	 * @param subsidiaryScope a {@link java.util.function.Predicate} object
+	 * @return a {@link java.util.List} object
+	 */
+	private List<SurveyListDataItem> filterSubsidiaryScope(List<SurveyListDataItem> surveyListDataItems,
+			Predicate<SurveyQuestion> subsidiaryScope) {
+		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
+		return surveyListDataItems.stream().filter(survey -> {
+			if (survey.getQuestion() == null) {
+				return true;
+			}
+			SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(survey.getQuestion());
+			if (surveyQuestion == null) {
+				return true;
+			}
+			return subsidiaryScope.test(surveyQuestion);
+		}).toList();
+	}
+
+	/**
 	 * <p>appendQuestionDefinition.</p>
 	 *
 	 * @param definitions a {@link org.json.JSONArray} object
 	 * @param surveyQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
 	 * @param questions a {@link java.util.Set} object
 	 * @param questionRequirements a {@link java.util.Map} object
+	 * @param subsidiaryScope a {@link java.util.function.Predicate} object, see
+	 *            {@link #createSubsidiaryScopeFilter(NodeRef)} : always true unless the subsidiary
+	 *            scope has been enabled
 	 * @throws org.json.JSONException if any.
 	 */
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, 
-			Map<String, List<RequirementListDataItem>> questionRequirements) throws JSONException {
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions,
+			Map<String, List<RequirementListDataItem>> questionRequirements, Predicate<SurveyQuestion> subsidiaryScope) throws JSONException {
+
+		if (!subsidiaryScope.test(surveyQuestion)) {
+			return;
+		}
 
 		if (!questions.contains(surveyQuestion)) {
 
@@ -375,7 +470,7 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("commentType", surveyQuestion.getResponseCommentType());
 					}
 
-					appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
+					appendCids(choice, surveyQuestion, definitions, questions, questionRequirements, subsidiaryScope);
 
 					choices.put(choice);
 
@@ -387,7 +482,7 @@ public class SurveyServiceImpl implements SurveyService {
 						JSONObject choice = new JSONObject();
 						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
-						appendCids(choice, defChoice, definitions, questions, questionRequirements);
+						appendCids(choice, defChoice, definitions, questions, questionRequirements, subsidiaryScope);
 
 						if (!CommentType.none.name().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
@@ -414,7 +509,7 @@ public class SurveyServiceImpl implements SurveyService {
 				}
 				choice.put("commentType", surveyQuestion.getResponseCommentType());
 
-				appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
+				appendCids(choice, surveyQuestion, definitions, questions, questionRequirements, subsidiaryScope);
 
 				choices.put(choice);
 			}
@@ -443,14 +538,22 @@ public class SurveyServiceImpl implements SurveyService {
 	 * @param definitions a {@link org.json.JSONArray} object
 	 * @param questions a {@link java.util.Set} object
 	 * @param questionRequirements a {@link java.util.Map} object
+	 * @param subsidiaryScope a {@link java.util.function.Predicate} object, see
+	 *            {@link #createSubsidiaryScopeFilter(NodeRef)} : always true unless the subsidiary
+	 *            scope has been enabled, in which case an out of scope follow-up question is neither
+	 *            referenced nor defined
 	 */
 	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions,
-			Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
+			Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements,
+			Predicate<SurveyQuestion> subsidiaryScope) {
 		if (surveyQuestion.getNextQuestions() != null) {
 			JSONArray cids = new JSONArray();
 			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
+				if (!subsidiaryScope.test(question)) {
+					continue;
+				}
 				cids.put(question.getNodeRef().getId());
-				appendQuestionDefinition(definitions, question, questions, questionRequirements);
+				appendQuestionDefinition(definitions, question, questions, questionRequirements, subsidiaryScope);
 			}
 			if (cids.length() > 0) {
 				choice.put("cid", cids);
@@ -520,21 +623,67 @@ public class SurveyServiceImpl implements SurveyService {
 		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
 			return true;
 		}
-		boolean inNextQuestions = new ArrayList<>(surveyQuestionByNodeRef.values()).stream()
-				.map(sQuestion -> getSurveyQuestionCache().getSurveyQuestionsByParent().get(sQuestion)).flatMap(List::stream)
-				.map(surveyQuestionByNodeRef::get)
-				.filter(sAnswer -> sAnswer.getNextQuestions() != null)
-				.anyMatch(q -> q.getNextQuestions().contains(parentQuestion));
-		if (!inNextQuestions) {
+		if (!isNextQuestionOfAnyAnswer(parentQuestion, surveyQuestionByNodeRef)) {
 			return true;
 		}
-		return surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-				.map(surveyQuestionByNodeRef::get)
-				.filter(Objects::nonNull)
-				.map(SurveyQuestion::getNextQuestions)
-				.filter(Objects::nonNull)
-				.flatMap(List::stream)
-				.anyMatch(parentQuestion::equals);
+		return isNextQuestionOfAChosenAnswer(parentQuestion, surveyListDataItems, surveyQuestionByNodeRef);
+	}
+
+	/**
+	 * Tells whether a question is revealed by some answer of the questionnaire, i.e. whether it is a
+	 * follow-up question at all.
+	 *
+	 * @param question the question to look for
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when an answer lists the question among its next questions
+	 */
+	private boolean isNextQuestionOfAnyAnswer(SurveyQuestion question, Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		for (List<NodeRef> answers : getSurveyQuestionCache().getSurveyQuestionsByParent().values()) {
+			if (leadsTo(answers, question, surveyQuestionByNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tells whether a question is revealed by an answer actually chosen on the survey rows.
+	 *
+	 * @param question the question to look for
+	 * @param surveyListDataItems the survey rows, whose choices may be empty or unset
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when a chosen answer lists the question among its next questions
+	 */
+	private static boolean isNextQuestionOfAChosenAnswer(SurveyQuestion question, List<SurveyListDataItem> surveyListDataItems,
+			Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		for (SurveyListDataItem surveyListDataItem : surveyListDataItems) {
+			if (leadsTo(surveyListDataItem.getChoices(), question, surveyQuestionByNodeRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tells whether one of the given answers leads to a question. A row with no choice, an answer missing
+	 * from the questionnaire or an answer with no next question leads nowhere.
+	 *
+	 * @param answers the answer nodes, may be null
+	 * @param question the question to look for
+	 * @param surveyQuestionByNodeRef the questions and answers of the questionnaire, by node
+	 * @return true when one answer lists the question among its next questions
+	 */
+	static boolean leadsTo(List<NodeRef> answers, SurveyQuestion question, Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef) {
+		if (answers == null) {
+			return false;
+		}
+		for (NodeRef answerNodeRef : answers) {
+			SurveyQuestion answer = surveyQuestionByNodeRef.get(answerNodeRef);
+			if ((answer != null) && (answer.getNextQuestions() != null) && answer.getNextQuestions().contains(question)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

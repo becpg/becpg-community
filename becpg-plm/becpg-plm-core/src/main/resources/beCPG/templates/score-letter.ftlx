@@ -1,0 +1,42 @@
+<#--
+  Every score graded on letters: the Nutri-Score, the Green-Score, the Nutri-Grade, the animal
+  welfare label, the FlorIndex, the PPWR recyclability... A template named after the score code,
+  score-ecobeautyscore.ftlx for instance, takes precedence for that score alone.
+
+  The scale is laid out flat with the reached class grown, or stamped as a single tag for the
+  schemes printed that way, under the name of the scheme. See score-lib.ftlx for the themes.
+
+  The model is a ScoreMarking under "score": its class is the grade reached.
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign theme = lib.themeOf(score.code())>
+<#assign reached = (score.scoreClass()!"")?upper_case>
+<#assign titleText = lib.titleOf(score.code())>
+<#assign PAD = 3>
+<#assign CAPTION_H = score.caption()???then(10, 0)>
+
+<#if theme.layout == "tag">
+	<#assign TAG = 62>
+	<#assign W = TAG + 2 * PAD>
+	<#assign H = TAG + CAPTION_H + 2 * PAD>
+	<@svg.document width=W height=H>
+		<@lib.letterTag x=PAD top=PAD theme=theme reached=reached caption=titleText size=TAG/>
+		<#if score.caption()??>
+		<@svg.centredText x=W / 2 middle=PAD + TAG + CAPTION_H / 2 text=score.caption() size=6 fill=lib.MUTED weight="normal"/>
+		</#if>
+	</@svg.document>
+<#else>
+	<#assign GROWN = 25>
+	<#assign STRIP_W = lib.stripWidth(theme.classes, 17, GROWN)>
+	<#assign W = [STRIP_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+	<#assign H = lib.TITLE_H + GROWN + CAPTION_H + 2 * PAD>
+	<@svg.document width=W height=H>
+		<@lib.title x=W / 2 text=titleText/>
+		<@lib.letterStrip x=(W - STRIP_W) / 2 top=lib.TITLE_H + PAD theme=theme reached=reached grown=GROWN/>
+		<#if score.caption()??>
+		<@svg.centredText x=W / 2 middle=lib.TITLE_H + PAD + GROWN + CAPTION_H / 2 + 1 text=score.caption() size=6 fill=lib.MUTED weight="normal"/>
+		</#if>
+	</@svg.document>
+</#if>

@@ -11,8 +11,10 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,8 +27,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -42,6 +46,14 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	protected static final Log logger = LogFactory.getLog(FormulationChannelServiceIT.class);
 
+	private static final QName PROP_GS1_DESCRIPTION_SHORT = QName.createQName(GS1Model.GS1_URI, "descriptionShort");
+
+	private static final String DESCRIPTION_OVER_40_CHARS = "Gruyere AOP Michel Grossrieder 9M Moleson";
+
+	private static final String MODIFICATION_AFTER_FORMULATION = "Modified after formulation";
+
+	private static final String MIN_HOURS_SINCE_MODIFICATION = "4";
+
 	private FormulationChannelService formulationChannelService;
 	
 	@Autowired
@@ -50,8 +62,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	@Before
 	public void init() {
-		batchQueueService.cancelBatch("reformulateChangedEntities");
-		batchQueueService.removeBatchFromQueue("reformulateChangedEntities");
+		batchQueueService.cancelBatch(FormulationChannelService.REFORMULATE_BATCH_ID);
+		batchQueueService.removeBatchFromQueue(FormulationChannelService.REFORMULATE_BATCH_ID);
+		waitForBatchQueueToRelease(reformulateBatchInfo());
 		publicationChannelService = Mockito.spy(publicationChannelService);
 		systemConfigurationService = Mockito.spy(systemConfigurationService);
 		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
@@ -63,8 +76,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		if (Mockito.mockingDetails(publicationChannelService).isMock()) {
 			Mockito.reset(publicationChannelService);
 		}
@@ -74,6 +88,31 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		if (Mockito.mockingDetails(formulationService).isMock()) {
 			Mockito.reset(formulationService);
 		}
+		super.tearDown();
+	}
+
+	/**
+	 * Names the batch the service queues, so that a run left over by a scheduled job or by the
+	 * previous test can be waited for before this one queues its own.
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
+	private BatchInfo reformulateBatchInfo() {
+		BatchInfo batchInfo = new BatchInfo(FormulationChannelService.REFORMULATE_BATCH_ID, FormulationChannelService.REFORMULATE_BATCH_DESC_ID);
+		batchInfo.setPriority(BatchPriority.LOW);
+		return batchInfo;
+	}
+
+	/**
+	 * Asserts that the service did queue a batch, reporting what the queue was busy with when it
+	 * did not: the service stays silent and returns null whenever the identifier is already taken.
+	 *
+	 * @param message the reason the batch was expected to run
+	 * @param batchInfo the batch the service returned
+	 */
+	private void assertBatchQueued(String message, BatchInfo batchInfo) {
+		assertNotNull(message + " - running batch: " + batchQueueService.getRunningBatchInfo() + ", queue: "
+				+ batchQueueService.getBatchesInQueue(), batchInfo);
 	}
 	
 	@Test
@@ -132,7 +171,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(finishedProductNodeRef);
 		assertIsPublished(rawMaterialNodeRef);
@@ -210,7 +249,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -258,7 +297,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -312,7 +351,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(rawMaterialNodeRef);
 		
@@ -321,6 +360,107 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertEquals(formulatedDate, newFormulatedDate);
 	}
 	
+	@Test
+	public void testWhereUsedFormulationOfProductFormulatedByHand() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM formulated by hand test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		NodeRef finishedProductNodeRef = createFinishedProductUsing("FP where used of RM formulated by hand", rawMaterialNodeRef);
+
+		inWriteTx(() -> {
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		Date formulatedDate = inReadTx(() -> (Date) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+		assertIsPublished(finishedProductNodeRef);
+		assertEquals(formulatedDate, inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+		assertNotNull(inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	@Test
+	public void testPublicationOfProductBreakingModelConstraint() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM breaking model constraint test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		inWriteTx(() -> {
+			IntegrityChecker.setWarnInTransaction();
+			nodeService.setProperty(rawMaterialNodeRef, PROP_GS1_DESCRIPTION_SHORT, DESCRIPTION_OVER_40_CHARS);
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+	}
+
+	@Test
+	public void testProductModifiedTooRecentlyIsLeftForLaterRun() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM modified too recently test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		inWriteTx(() -> {
+			productService.formulate(rawMaterialNodeRef);
+			return null;
+		});
+		Date formulatedDate = inReadTx(() -> (Date) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+		inWriteTx(() -> {
+			nodeService.setProperty(rawMaterialNodeRef, ContentModel.PROP_DESCRIPTION, MODIFICATION_AFTER_FORMULATION);
+			return null;
+		});
+		doReturn(MIN_HOURS_SINCE_MODIFICATION).when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsNotPublished(rawMaterialNodeRef);
+		assertEquals(formulatedDate, inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	/**
+	 * Creates a finished product holding the given component in its composition, left unformulated.
+	 *
+	 * @param name the finished product name
+	 * @param componentNodeRef the component of the composition
+	 * @return the finished product node
+	 */
+	private NodeRef createFinishedProductUsing(String name, NodeRef componentNodeRef) {
+		return inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(name);
+			finishedProduct.setParentNodeRef(getTestFolderNodeRef());
+			CompoListDataItem compoItem = new CompoListDataItem();
+			compoItem.setQtySubFormula(1d);
+			compoItem.setCompoListUnit(ProductUnit.kg);
+			compoItem.setProduct(componentNodeRef);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(compoItem);
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.save(finishedProduct).getNodeRef();
+		});
+	}
+
 	@Test
 	public void testSystemConditionsThresholds() throws InterruptedException {
 		
@@ -379,7 +519,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxActiveUsers");
 		
 		batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run with high thresholds", batchInfo);
+		assertBatchQueued("Batch should run with high thresholds", batchInfo);
 		waitForBatchEnd(batchInfo);
 	}
 
@@ -401,11 +541,40 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", 0, 1);
 		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", null, null);
+	}
+
+	@Test
+	public void testChannelFormulationKeepsTriggerModifiedDate() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM trigger date test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+
+		Date triggerDate = new Date(System.currentTimeMillis() - 3_600_000L);
+		inWriteTx(() -> {
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(rawMaterialNodeRef,
+					FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, triggerDate);
+			return null;
+		});
+
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertNotNull(inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+		assertEquals(triggerDate, inReadTx(() -> nodeService.getProperty(getChannelListNodeRef(rawMaterialNodeRef),
+				PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE)));
+		assertIsPublished(rawMaterialNodeRef);
 	}
 
 	@Test
@@ -431,7 +600,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.FAILED.toString(), "1", 1, 1);
@@ -482,7 +651,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertNotNull("Batch should run", batchInfo);
+		assertBatchQueued("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertIsPublished(rawMaterialNodeRef);

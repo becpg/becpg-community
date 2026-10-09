@@ -1,0 +1,45 @@
+<!--
+  Copyright (C) 2010-2026 beCPG.
+
+  This file is part of beCPG
+
+  beCPG is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  beCPG is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<webscript>
+    <shortname>beCPG Portal: wizard configuration</shortname>
+    <description>
+        Returns the supplier wizard structure and, for every step, the field definition
+        resolved by Share (formId + entityType + siteId + list cascade, client overrides
+        included) enriched by the repository form service.
+
+        Consumed by the React supplier portal, which holds an Alfresco ticket and cannot
+        run the Share resolution cascade itself.
+
+        Additive endpoint: the Share wizard page (wizard-mgr) is untouched.
+    </description>
+    <url>/becpg/portal/wizard?wizardId={wizardId}</url>
+    <url>/becpg/portal/wizard?wizardId={wizardId}&amp;nodeRef={nodeRef?}&amp;entityType={entityType?}&amp;siteId={siteId?}&amp;mode={mode?}&amp;withItemForm={withItemForm?}</url>
+    <format default="json"></format>
+    <!--
+        An identity is required. The default is `none`, under which the wizard structure -
+        its steps, their form ids and their list ids - was readable by anyone.
+
+        `user` is what the caller can satisfy: the portal opens a real Share session
+        (POST /share/noauth/becpg/portal/session) and sends its cookie. It used to hold an
+        Alfresco ticket only, which is why an earlier attempt kept `none` and checked the
+        identity in the script; that premise is gone, and so is the `portalTicket` argument
+        this endpoint accepted - a credential in a query string, written to the access log
+        of every hop and to browser history.
+    -->
+    <authentication>user</authentication>
+</webscript>

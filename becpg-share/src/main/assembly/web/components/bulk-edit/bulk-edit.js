@@ -667,6 +667,10 @@
 						 *         onSelectedTypeChanged event
 						 */
 						onSelectedTypeChanged : function() {
+							// The cached results belong to the previously selected type
+							this.currentPage = 1;
+							this.currentQueryExecutionId = null;
+							this.queryExecutionId = null;
 							this.populateBulkEdit();
 							this.widgets.showButton.set("disabled", false);
 						},
@@ -796,6 +800,23 @@
 						 * </pre>
 						 */
 						_onDataListFailure : function BulkEdit__onDataListFailure(p_response, p_message) {
+							var status = p_response != null && p_response.serverResponse != null ? p_response.serverResponse.status : null;
+
+							// A lost session is not a form configuration problem: re-run the login flow
+							// instead of reporting a misleading error the user cannot act upon.
+							if (status === 401 || status === 403) {
+								window.location.reload(true);
+								return;
+							}
+
+							// Any other failure here is transient (repository restart, proxy error,
+							// ticket renewal, network blip): retry once silently before reporting.
+							if (!this.columnsRetried) {
+								this.columnsRetried = true;
+								YAHOO.lang.later(1000, this, this.populateBulkEdit);
+								return;
+							}
+
 							Alfresco.util.PopupManager.displayPrompt({
 								title : p_message.title,
 								text : p_message.text,
@@ -849,6 +870,7 @@
 						 *            {Object} Ajax data structure
 						 */
 						onDatalistColumns : function BulkEdit_onDatalistColumns(response) {
+							this.columnsRetried = false;
 							this.datalistColumns = response.json.columns;
 							// Set-up the bulk edit props picker
 							this._setupPropsPicker();

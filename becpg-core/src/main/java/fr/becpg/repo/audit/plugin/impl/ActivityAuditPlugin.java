@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.tenant.TenantService;
@@ -100,6 +101,18 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements ExtraQue
 			return auditQuery.filter(ENTITY_NODEREF + "=" + tenantService.getName(new NodeRef(entityNodeRef)));
 		}
 		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The activities are read entity by entity: the entity also has to be the filter the database
+	 * reads with, for the extra query to derive the one of its tenant. It therefore comes before
+	 * the identifier, which would otherwise come first.
+	 */
+	@Override
+	public List<String> getFilterHierarchy() {
+		return List.of(ENTITY_NODEREF, ID, PROP_BCPG_AL_USER_ID, PROP_BCPG_AL_TYPE);
 	}
 
 }

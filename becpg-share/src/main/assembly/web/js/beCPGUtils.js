@@ -479,6 +479,8 @@
         "bcpg:ing": "ing",
         "{http://www.bcpg.fr/model/becpg/1.0}nut": "nut",
         "bcpg:nut": "nut",
+        "{http://www.bcpg.fr/model/becpg/1.0}scoreDefinition": "scoreDefinition",
+        "bcpg:scoreDefinition": "scoreDefinition",
         "{http://www.bcpg.fr/model/becpg/1.0}geoOrigin": "geoOrigin",
         "bcpg:geoOrigin": "geoOrigin",
         "{http://www.bcpg.fr/model/becpg/1.0}bioOrigin": "bioOrigin",

@@ -1,0 +1,276 @@
+{
+ "id": "quality-and-compliance",
+ "name": "Qualité et conformité",
+ "version": 1,
+ "theme": {
+  "mode": "light",
+  "ground": "#f4f7f8",
+  "surface": "#ffffff",
+  "fg": "#0d2b33",
+  "muted": "#5b7780",
+  "accent": "#009dcc"
+ },
+ "nav": {
+  "position": "rail",
+  "railFullHeight": true,
+  "footer": {
+   "settings": true
+  }
+ },
+ "header": {
+  "wordmarkAccent": "conformité",
+  "eyebrow": "beCPG",
+  "liveBadge": "En direct"
+ },
+ "assistantSlot": {
+  "enabled": true,
+  "title": "Assistant conformité",
+  "persona": "Analyste conformité et réglementaire beCPG",
+  "scope": "Répondre uniquement sur les cubes regulatoryScores, toxicology, requirements et plantCertifications.",
+  "greeting": "Posez une question sur les scores réglementaires, la toxicologie ou les certifications.",
+  "suggestedPrompts": [
+   "Score réglementaire par classe",
+   "Certifications par organisme",
+   "Exigences non respectées"
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "regulatoryScores"
+  }
+ },
+ "tags": [
+  "conformite",
+  "reglementaire",
+  "qualite"
+ ],
+ "pages": [
+  {
+   "id": "reglementaire",
+   "title": "Réglementaire",
+   "icon": "shield",
+   "heading": "Conformité réglementaire",
+   "subheading": "Scores réglementaires, classes et évolution par famille",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Score réglementaire par classe",
+      "query": {
+       "kind": "reference",
+       "path": "/regulatory-score-by-class.saiku"
+      }
+     },
+     {
+      "id": "t2",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Évolution par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/regulatory-score-trend-by-family.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t3",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Exigences non respectées",
+      "query": {
+       "kind": "reference",
+       "path": "/compliance-unmet-requirements.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "toxicologie",
+   "title": "Toxicologie",
+   "icon": "flask",
+   "heading": "Seuils toxicologiques",
+   "subheading": "Valeurs, minima et maxima par agent toxicologique",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t4",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Valeurs par agent",
+      "query": {
+       "kind": "reference",
+       "path": "/toxicology-values-by-agent.saiku"
+      }
+     },
+     {
+      "id": "t5",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Allergènes majeurs",
+      "query": {
+       "kind": "reference",
+       "path": "/top-10-allergens.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t6",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition par état",
+      "query": {
+       "kind": "reference",
+       "path": "/products-per-state.saiku"
+      },
+      "chartType": "pie"
+     }
+    ]
+   }
+  },
+  {
+   "id": "certifications",
+   "title": "Certifications",
+   "icon": "award",
+   "heading": "Certifications et audits",
+   "subheading": "Certifications par organisme, référentiel et usine",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t7",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Par organisme",
+      "query": {
+       "kind": "reference",
+       "path": "/certifications-by-body.saiku"
+      }
+     },
+     {
+      "id": "t8",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Par usine",
+      "query": {
+       "kind": "reference",
+       "path": "/certifications-by-plant.saiku"
+      }
+     },
+     {
+      "id": "t9",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Allégations portées",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-label-claims-validated-only.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "non-conformites",
+   "title": "Non-conformités",
+   "icon": "alert-triangle",
+   "heading": "Suivi des non-conformités",
+   "subheading": "Volumes, types, origines et usines concernées",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par type",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-type.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par état",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-state.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par usine",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-by-plant.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t4",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Par année",
+      "query": {
+       "kind": "reference",
+       "path": "/nc-trend-per-year.saiku"
+      },
+      "chartType": "line"
+     }
+    ]
+   }
+  }
+ ]
+}

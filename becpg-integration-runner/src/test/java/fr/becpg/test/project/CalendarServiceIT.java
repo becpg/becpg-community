@@ -38,7 +38,10 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 		NodeRef calendarRef = createCalendar("Test Calendar", "2023/12/25;2024/01/01", "2023/08/01-2023/08/15", null);
 		assertNotNull(calendarRef);
 
-		Calendar cal = Calendar.getInstance();
+		// The service reads the calendar day of a Date in PROJECT_TIMEZONE, so the dates asked
+		// about have to be built there too: midnight in any zone east of GMT belongs to the
+		// previous day once converted, and the assertions then land on the wrong weekday.
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// 2023/12/25 is Monday, but holiday
 		cal.set(2023, Calendar.DECEMBER, 25, 0, 0, 0);
@@ -66,7 +69,7 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 		NodeRef calendarRef = createCalendar("Default Calendar", null, null, null);
 		assertNotNull(calendarRef);
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// Test default weekend (Saturday)
 		cal.set(2024, Calendar.FEBRUARY, 3, 0, 0, 0); // Saturday
@@ -93,7 +96,7 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 		NodeRef calendarRef = createCalendar("Custom Calendar", null, null, nonWorkingDays);
 		assertNotNull(calendarRef);
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// Test Saturday (configured as non-working)
 		cal.set(2024, Calendar.FEBRUARY, 3, 0, 0, 0); // Saturday
@@ -117,7 +120,7 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 		NodeRef calendarRef = createCalendar("Friday-Saturday Weekend", null, null, nonWorkingDays);
 		assertNotNull(calendarRef);
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// Test Friday (configured as non-working)
 		cal.set(2024, Calendar.FEBRUARY, 2, 0, 0, 0); // Friday
@@ -144,7 +147,7 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 		NodeRef calendarRef = createCalendar("Six Day Week", null, null, nonWorkingDays);
 		assertNotNull(calendarRef);
 
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// Test Sunday (non-working)
 		cal.set(2024, Calendar.FEBRUARY, 4, 0, 0, 0); // Sunday
@@ -175,7 +178,7 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
 
 	@Test
 	public void testCalendarWithNoConfiguration() {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 
 		// Test with null calendar - should use default weekend
 		cal.set(2024, Calendar.FEBRUARY, 3, 0, 0, 0); // Saturday

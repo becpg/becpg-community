@@ -41,6 +41,15 @@ public class ToxRequirementScanner extends SimpleListRequirementScanner<ToxListD
 		return MESSAGE_TOX_INFO;
 	}
 
+	/**
+	 * A toxicity requirement is a range: the value of a specification item is not an exact target
+	 * and cannot be entered in the specification forms.
+	 */
+	@Override
+	protected Double getRequiredValue(ToxListDataItem specDataItem) {
+		return null;
+	}
+
 	@Override
 	protected Double getMaxi(ToxListDataItem specDataItem, ToxListDataItem listDataItem) {
 		Double maxi = super.getMaxi(specDataItem, listDataItem);

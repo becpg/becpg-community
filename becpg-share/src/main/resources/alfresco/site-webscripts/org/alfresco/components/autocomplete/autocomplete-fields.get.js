@@ -35,6 +35,8 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
+var SECURITY_FORM_ID = "security";
+
 /**
  * Retrieves the value of the given named argument from the URL arguments
  *
@@ -69,40 +71,57 @@ function getArgument(argName, defValue)
  */
 function getFormConfig(itemId, formId)
 {
-   var formConfig = null;
-   
-   // query for configuration for item
-   var nodeConfig = config.scoped[itemId];
-   
-   if (nodeConfig !== null)
-   {
-      // get the forms configuration
-      var formsConfig = nodeConfig.forms;
+   var formConfig = getScopedForm(itemId, formId);
 
-      if (formsConfig !== null)
+   if (formConfig == null)
+   {
+      formConfig = getScopedForm(itemId, "create");
+   }
+
+   if (formConfig == null)
+   {
+      var nodeConfig = config.scoped[itemId];
+
+      if (nodeConfig != null && nodeConfig.forms != null)
       {
-         if (formId !== null && formId.length > 0)
-         {
-            // look up the specific form
-            formConfig = formsConfig.getForm(formId);
-         } 
-         
-         if (formConfig === null)
-         {
-        	  formConfig = formsConfig.getForm("create");
-         }
-         
-         
-         if (formConfig === null)
-         {
-            // look up the default form
-            formConfig = formsConfig.defaultForm;
-         }
-    	  
+         // look up the default form
+         formConfig = nodeConfig.forms.defaultForm;
       }
    }
-   
+
    return formConfig;
+}
+
+/**
+ * Finds the named form declared for the given item id, without
+ * falling back on any other form.
+ *
+ * A datalist type is scoped twice: once by its node (node-type
+ * evaluator) and once by its type name (model-type evaluator). Only
+ * one of the two usually declares the "security" form, so both scopes
+ * have to be asked before giving up.
+ *
+ * @method getScopedForm
+ * @param itemId The id of the item to retrieve the config for, either
+ *               a nodeRef or a type name
+ * @param formId The id of the form to look up
+ * @return Object representing the form or null
+ */
+function getScopedForm(itemId, formId)
+{
+   if (itemId == null || itemId.length === 0 || itemId == "null" || formId == null || formId.length === 0)
+   {
+      return null;
+   }
+
+   var nodeConfig = config.scoped[itemId];
+
+   if (nodeConfig == null || nodeConfig.forms == null)
+   {
+      return null;
+   }
+
+   return nodeConfig.forms.getForm(formId);
 }
 
 /**
@@ -238,8 +257,16 @@ function main()
 
 	if (itemType != null && itemType.length > 0) {
 
-      var formConfig = getFormConfig(itemNode!=null ? itemNode : itemType ,"security");
-      
+      var formConfig = getScopedForm(itemNode, SECURITY_FORM_ID);
+
+      if (formConfig == null) {
+         formConfig = getScopedForm(itemType, SECURITY_FORM_ID);
+      }
+
+      if (formConfig == null) {
+         formConfig = getFormConfig(itemNode != null ? itemNode : itemType, SECURITY_FORM_ID);
+      }
+
       // get the configured visible fields
       var visibleFields = getVisibleFields("view", formConfig);
       

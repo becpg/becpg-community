@@ -225,6 +225,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 												|| (formulatedDate.getTime() > specFormulatedDate.getTime())) {
 											
 											ProductData productData = alfrescoRepository.findOne(productNodeRef);
+											List<SpecCompatibilityDataItem> newRows = new ArrayList<>();
 											
 											for (RequirementScanner scanner : requirementScanners) {
 												
@@ -248,10 +249,11 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 													}
 													
 													toUpdateProducts.add(productNodeRef);
-													productSpecificationData.getSpecCompatibilityList().add(new SpecCompatibilityDataItem(
-															RequirementType.Forbidden, reqDetails.toString(), productNodeRef));
+													newRows.add(new SpecCompatibilityDataItem(RequirementType.Forbidden, reqDetails.toString(), productNodeRef));
 												}
 											}
+											SpecCompatibilityListUpdater.replaceProductRows(productSpecificationData.getSpecCompatibilityList(), productNodeRef,
+													newRows);
 										} else {
 											logger.trace("Skipping productNodeRef: " + productNodeRef);
 											toSkipProducts.add(productNodeRef);
@@ -292,7 +294,8 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 										policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 										
 										ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(formulatedProduct.getNodeRef());
-										productSpecificationData.getSpecCompatibilityList().removeIf(p -> !toSkipProducts.contains(p.getSourceItem()));
+										SpecCompatibilityListUpdater.removeObsoleteRows(productSpecificationData.getSpecCompatibilityList(), toSkipProducts,
+												toUpdateProducts);
 										
 										stopWatch.stop();
 										

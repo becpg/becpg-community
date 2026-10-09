@@ -97,6 +97,18 @@
               </#if>
            </#list>
 		</datalist>
+		<script type="text/javascript">
+			YAHOO.util.Event.addListener("${fieldHtmlId}", "input", function() {
+				// Browsers close the suggestions once the field is emptied, whereas a click on the empty field lists every value
+				if (this.value === "" && typeof this.showPicker === "function") {
+					try {
+						this.showPicker();
+					} catch (e) {
+						// showPicker is refused without user activation or by browsers not supporting it on a datalist
+					}
+				}
+			});
+		</script>
       <#elseif field.control.params.options?? && field.control.params.options != "">
          <select id="${fieldHtmlId}" name="${field.name}" tabindex="0"
                <#if field.description??>title="${field.description}"</#if>

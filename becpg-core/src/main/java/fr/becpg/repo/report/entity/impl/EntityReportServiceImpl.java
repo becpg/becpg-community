@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,12 +33,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -65,6 +68,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
@@ -105,6 +109,7 @@ import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtra
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.EntityReportParameters.EntityReportParameter;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -137,6 +142,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	private static final String REPORT_LIST_CACHE_KEY = "REPORT_KIND_CACHE_KEY";
 	/** Constant <code>MAX_TRACE_XML_LENGTH=1024 * 1024</code> */
 	private static final int MAX_TRACE_XML_LENGTH = 1024 * 1024;
+
+	private static final String PREF_REPORT_KIND_CODE = "reportKindCode";
+
+	private static final String PREF_REPORT_PARAMETERS_JSON = "reportParametersJson";
+
+	private static final String FILTERED_DATASOURCE_XML_TRACE = "Filtered DataSource XML : \n";
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
@@ -185,6 +196,63 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	@Autowired
 	private ContentService contentService;
+
+	@Autowired
+	private TransactionService transactionService;
+
+	/*
+	 * Report generation waits on the report server, and a transaction held across
+	 * that wait keeps its row locks and stops InnoDB from purging its undo records
+	 * - every other write on the instance then pays for it, and the repository only
+	 * recovers when it restarts.
+	 *
+	 * The work splits cleanly: every read happens before the report server is
+	 * called and every write after it, nothing touches the database in between. So
+	 * each side runs in its own short transaction and the call itself runs in none.
+	 * Writing the report content is safe there: contentService.getWriter streams
+	 * straight to the node's final location in the content store, and the listener
+	 * that records cm:content on stream close opens its own transaction when there
+	 * is none.
+	 *
+	 * A caller that already holds a transaction simply keeps it - these join it
+	 * rather than open another - and gains nothing. Only a caller that holds none,
+	 * as the report job now does, gets the shorter transactions.
+	 */
+	/** What the preparation phase resolved about the document to produce. */
+	private record ReportTarget(Boolean isDefault, String reportFormat, String documentName, String documentTitle,
+			NodeRef documentNodeRef) {
+	}
+
+	/** What the preparation phase resolved about how to produce it. */
+	private record ReportEngineSetup(BeCPGReportEngine engine, EntityReportExtractorPlugin extractor, ContentWriter writer) {
+	}
+
+	/**
+	 * Runs the callback in its own transaction, with the auditable behaviour of the given node
+	 * suppressed inside that transaction. Pass the node the callback writes to: the entity for
+	 * the ones that touch the product, the report document for the ones that touch the report.
+	 *
+	 * Alfresco binds the behaviour filter to the transaction and clears it on completion, so a
+	 * suppression taken around several transactions holds for the first one only. Now that
+	 * generation no longer runs in a single transaction, suppressing it inside each of them is
+	 * what keeps cm:modified where the caller put it. Rules need no such care: their suppression
+	 * is bound to the thread, not to the transaction.
+	 */
+	private <T> T inTransaction(NodeRef auditableOff, RetryingTransactionCallback<T> callback, boolean readOnly) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			boolean auditableEnabled = policyBehaviourFilter.isEnabled(auditableOff, ContentModel.ASPECT_AUDITABLE);
+			if (auditableEnabled) {
+				policyBehaviourFilter.disableBehaviour(auditableOff, ContentModel.ASPECT_AUDITABLE);
+			}
+			try {
+				return callback.execute();
+			} finally {
+				if (auditableEnabled) {
+					policyBehaviourFilter.enableBehaviour(auditableOff, ContentModel.ASPECT_AUDITABLE);
+				}
+			}
+		}, readOnly);
+	}
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -283,32 +351,31 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		ReentrantLock lock = mutexFactory.getMutex("report-"+nodeRefTo.getId());
-	    boolean lockAcquired = false;
-	    
-	    try {
-	        // Check if we already hold the lock or can acquire it
-	        if (lock.isHeldByCurrentThread()) {
-	            // We already hold the lock, just proceed
-	            lockAcquired = true;
-	        } else {
-	            // Try to acquire the lock
-	            lockAcquired = lock.tryLock();
-	            if (!lockAcquired) {
-	                logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
-	                return; // Exit early if lock acquisition failed
-	            }
-	        }
-	        
-	        // Only proceed with report generation if we have the lock
-	        internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
-	    } finally {
-	        // Only release the lock if we acquired it in this method call
-	        if (lockAcquired) {
-	            lock.unlock();
-	            mutexFactory.removeMutex(nodeRefTo.toString(), lock);
-	        }
-	    }
+		generateReports(nodeRefFrom, nodeRefTo, generateAllReports, null, null);
+	}
+
+	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind,
+			Locale targetLocale) {
+		String mutexKey = "report-" + nodeRefTo.getId();
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
+		boolean lockAcquiredInThisCall = false;
+
+		if (!lock.isHeldByCurrentThread()) {
+			lockAcquiredInThisCall = lock.tryLock();
+			if (!lockAcquiredInThisCall) {
+				logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+				return;
+			}
+		}
+
+		try {
+			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports, reportKind, targetLocale);
+		} finally {
+			if (lockAcquiredInThisCall) {
+				lock.unlock();
+				mutexFactory.removeMutex(mutexKey, lock);
+			}
+		}
 	}
 
 	/**
@@ -317,8 +384,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param generateAllReports a boolean
+	 * @param reportKind the report kind to restrict the templates to, or <code>null</code>
+	 * @param targetLocale the only locale to generate, or <code>null</code> for all of them
 	 */
-	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
+	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind,
+			Locale targetLocale) {
 
 		if (nodeRefFrom == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -327,7 +397,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		L2CacheSupport.doInCacheContext(() -> {
 
 			RunAsWork<Object> actionRunAs = () -> {
-				if (nodeService.exists(nodeRefFrom)) {
+				if (Boolean.TRUE.equals(inTransaction(nodeRefFrom, () -> nodeService.exists(nodeRefFrom), true))) {
 
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -339,21 +409,33 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							I18NUtil.setLocale(defaultLocale);
 							I18NUtil.setContentLocale(defaultLocale);
 							
-							ruleService.disableRules();
-							policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+							boolean rulesEnabled = ruleService.isEnabled();
 							
-							List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports);
-							updateReportsAssoc(nodeRefTo, newReports);
+							if (rulesEnabled) {
+								ruleService.disableRules();
+							}
+							
+							// The auditable behaviour is suppressed by inTransaction, once per transaction: the
+							// filter is bound to the transaction, so suppressing it here would cover the first
+							// transaction generation opens and none of the ones that write.
+							try {
+								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind, targetLocale);
+								inTransaction(nodeRefTo, () -> {
+									updateReportsAssoc(nodeRefTo, newReports, reportKind, targetLocale, defaultLocale);
+									return null;
+								}, false);
+							} finally {
+								if (rulesEnabled) {
+									ruleService.enableRules();
+								}
+							}
 							
 							return null;
 						});
-						
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(nodeRefFrom);
 					}
 				}
 				return true;
@@ -369,29 +451,43 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param entityNodeTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param defaultLocale a {@link java.util.Locale} object
 	 * @param generateAllReports a boolean
+	 * @param reportKind
+	 * @param targetLocale the only locale to generate, or <code>null</code> for all of them
 	 * @return a {@link java.util.List} object
 	 */
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports,
+			String reportKind, Locale targetLocale) {
 
 		Set<ReportableError> engineErrors = new HashSet<>();
 
 		Date generatedDate = Calendar.getInstance().getTime();
 
-		Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
-		Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+		/* Reads that decide what to produce, in one transaction of their own. */
+		List<NodeRef> tplsNodeRef = inTransaction(entityNodeRef, () -> {
 
-		if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
-			logger.trace("Using formulated date instead of modified");
-			modified = formulatedDate;
-		}
+			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
 
-		Calendar deprecatedDate = Calendar.getInstance();
-		deprecatedDate.setTime(modified);
-		deprecatedDate.add(Calendar.HOUR, -1);
+			if ((formulatedDate != null) && (modified != null) && (formulatedDate.getTime() > modified.getTime())) {
+				logger.trace("Using formulated date instead of modified");
+				modified = formulatedDate;
+			}
 
-		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
+			Calendar deprecatedDate = Calendar.getInstance();
+			deprecatedDate.setTime(modified);
+			deprecatedDate.add(Calendar.HOUR, -1);
 
-		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+			List<NodeRef> tpls = reportTplService.cleanDefaultTpls(getReportTplsToGenerate(entityNodeRef));
+
+			if (reportKind != null && !reportKind.isEmpty()) {
+				tpls = tpls.stream().filter(tplNodeRef -> {
+					List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+					return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
+				}).collect(Collectors.toList());
+			}
+
+			return tpls;
+		}, true);
 
 		List<NodeRef> newReports = new ArrayList<>();
 
@@ -410,29 +506,36 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			} else {
 				hideDefaultLocal = false;
 			}
-			
-			for (Locale locale : entityReportLocales) {
+
+			for (Locale locale : restrictToTargetLocale(entityReportLocales, targetLocale, defaultLocale)) {
 				
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 				
 				finalTplsNodeRef.stream().forEach(tplNodeRef -> {
 					
-					for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef, engineErrors)) {
+					for (EntityReportParameters reportParameters : inTransaction(entityNodeRef, 
+							() -> getEntityReportParametersList(tplNodeRef, entityNodeRef, engineErrors), true)) {
 							
-						if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
+						if (Boolean.TRUE.equals(inTransaction(entityNodeRef, () -> isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal), true))) {
 							
-							Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-							
-							// prepare
-							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-									reportParameters.getReportNameFormat(reportNameFormat()));
-							
-							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-									reportParameters.getReportTitleFormat(reportTitleFormat()));
-							
-							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters, engineErrors);
+							// prepare: reads, plus the document node itself when it has to be created
+							ReportTarget target = inTransaction(entityNodeRef, () -> {
+								Boolean tplIsDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+								String tplFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+								String name = getReportDocumentName(entityNodeRef, tplNodeRef, tplFormat, locale, reportParameters,
+										reportParameters.getReportNameFormat(reportNameFormat()));
+								String title = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
+										reportParameters.getReportTitleFormat(reportTitleFormat()));
+								return new ReportTarget(tplIsDefault, tplFormat, name, title,
+										getReportDocumentNodeRef(entityNodeTo, tplNodeRef, name, locale, reportParameters, engineErrors));
+							}, false);
+
+							Boolean isDefault = target.isDefault();
+							String reportFormat = target.reportFormat();
+							String documentName = target.documentName();
+							String documentTitle = target.documentTitle();
+							NodeRef documentNodeRef = target.documentNodeRef();
 							
 							if (documentNodeRef != null) {
 								
@@ -446,13 +549,20 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									auditScope.putAttribute(ReportAuditPlugin.FORMAT, reportFormat);
 									auditScope.putAttribute(ReportAuditPlugin.NAME, documentName);
 									
-									BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
-									
-									extractor = retrieveExtractor(entityNodeRef, engine);
-									
-									policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
-									
-									ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+									/*
+									 * Resolving the engine and the extractor, and opening the writer, all
+									 * read the repository: they get a transaction of their own, closed
+									 * before the report server is called.
+									 */
+									ReportEngineSetup setup = inTransaction(entityNodeRef, () -> {
+										BeCPGReportEngine reportEngine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
+										return new ReportEngineSetup(reportEngine, retrieveExtractor(entityNodeRef, reportEngine),
+												contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true));
+									}, false);
+
+									BeCPGReportEngine engine = setup.engine();
+									extractor = setup.extractor();
+									ContentWriter writer = setup.writer();
 									
 									if ((entityReportLocales.size() > 1) && !MLTextHelper.isDefaultLocale(locale)) {
 										isDefault = false;
@@ -460,104 +570,143 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									if (writer != null) {
 										
-										if (generateAllReports
-												|| ((selectedReportNodeRef != null) && (documentNodeRef != null)
-														&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
-												|| !entityNodeRef.equals(entityNodeTo)) {
+										final Boolean generateForDefault = isDefault;
+										if (Boolean.TRUE.equals(inTransaction(entityNodeRef, () -> shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports,
+												selectedReportNodeRef, generateForDefault, documentNodeRef, tplNodeRef, reportKind), true))) {
 											
 											String reportKindCode = "";
 											if (tplNodeRef != null) {
-												List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-												if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+												List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+												if (!reportKindProp.isEmpty()) {
 													reportKindCode = reportKindProp.get(0);
 												}
 											}
-											reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-											reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+											reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+											reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
-											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
-											
-											auditScope.addCheckpoint(EXTRACT);
-											
-											reportData.setParameters(reportParameters);
-											
+											final EntityReportExtractorPlugin dataExtractor = extractor;
+
+											/*
+											 * Reads only: build the datasource the report server will be given.
+											 * Kept in its own transaction so it closes before the call below.
+											 */
+											EntityReportData reportData = inTransaction(entityNodeRef, () -> {
+
+												EntityReportData data = dataExtractor.extract(entityNodeRef, reportParameters.getPreferences());
+
+												auditScope.addCheckpoint(EXTRACT);
+
+												data.setParameters(reportParameters);
+
+												if (engine.isXmlEngine()) {
+													if (data.getXmlDataSource() == null) {
+														throw new IllegalArgumentException("nodeElt is null");
+													}
+
+													if (logger.isTraceEnabled()) {
+														logger.trace("DataSource XML : \n" + getTruncatedXml(data.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+													}
+
+													filterByReportKind(data.getXmlDataSource(), tplNodeRef);
+
+													if (logger.isTraceEnabled()) {
+														logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(data.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+													}
+												}
+
+												return data;
+											}, false);
+
 											String mimetype = mimetypeService.guessMimetype(documentName);
 											writer.setMimetype(mimetype);
 											Map<String, Object> params = new HashMap<>();
-											
+
 											params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 											params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 											params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-													associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+													inTransaction(entityNodeRef, () -> associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES), true));
 											params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 											params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
-											
+
 											if (logger.isDebugEnabled()) {
 												logger.debug("Update report: " + entityNodeRef + " for document " + documentName + " (" + documentNodeRef + ")");
 											}
-											
-											if (engine.isXmlEngine()) {
-												if (reportData.getXmlDataSource() == null) {
-													throw new IllegalArgumentException("nodeElt is null");
+
+											/*
+											 * No transaction around this: it waits on the report server. The bytes
+											 * go straight to the node's place in the content store, and the
+											 * listener that records cm:content on stream close opens the short
+											 * transaction it needs by itself.
+											 */
+											try {
+												engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+											} finally {
+												/*
+												 * The datasource size is read from the engine, which serializes the
+												 * tree anyway, instead of measuring it here with a second full pass.
+												 * Falls back to measuring it when no engine published one.
+												 *
+												 * In a finally block so the attribute stays recorded on failure.
+												 */
+												if (engine.isXmlEngine()) {
+													auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
 												}
-												
-												if (logger.isTraceEnabled()) {
-													logger.trace("DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
-												}
-												
-												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
-												
-												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-												
-												if (logger.isTraceEnabled()) {
-													logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
-												}
-												
 											}
-											
-											engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
-											
+
 											auditScope.addCheckpoint(CREATE_REPORT);
-											
+
 											engineErrors.addAll(reportData.getLogs());
 											
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
+											inTransaction(documentNodeRef, () -> {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, false);
+												return null;
+											}, false);
 										} else {
 											writer.setMimetype("text/plain");
 											writer.putContent("Loading ...");
 											logger.debug("Mark durty report: " + entityNodeRef + " for document " + documentName + " ("
 													+ documentNodeRef + ")");
 											
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+											inTransaction(documentNodeRef, () -> {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+												return null;
+											}, false);
 										}
 										
 										I18NUtil.setLocale(Locale.getDefault());
 										I18NUtil.setContentLocale(Locale.getDefault());
 										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
-										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
-										
-										nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
-										
-										if (!Boolean.TRUE.equals(includeReportInSearch())) {
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
-										} else {
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
-											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
-										}
-										
-										if (reportParameters.isEmpty()) {
-											nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
-										} else {
-											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
-													reportParameters.toJSONString());
-										}
-										
-										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, MLTextHelper.localeKey(locale));
-										nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, isDefault);
+										final Boolean reportIsDefault = isDefault;
+
+										/* Writes only, in one short transaction of their own. */
+										inTransaction(documentNodeRef, () -> {
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, generatedDate);
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getSystemUserName());
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_NAME, documentName);
+
+											nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
+
+											if (!Boolean.TRUE.equals(includeReportInSearch())) {
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
+											} else {
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
+												nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_CONTENT_INDEXED, false);
+											}
+
+											if (reportParameters.isEmpty()) {
+												nodeService.removeProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS);
+											} else {
+												nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
+														reportParameters.toJSONString());
+											}
+
+											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, MLTextHelper.localeKey(locale));
+											nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_IS_DEFAULT, reportIsDefault);
+
+											return null;
+										}, false);
 										
 										I18NUtil.setLocale(locale);
 										I18NUtil.setContentLocale(locale);
@@ -570,8 +719,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(tplNodeRef)));
 									
 									logger.error(message, e);
-								} finally {
-									policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 								}
 								
 								// Set Assoc
@@ -586,18 +733,38 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 			}
 			
-			reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
+			inTransaction(entityNodeRef, () -> {
+				reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
+				return null;
+			}, false);
 				
 			
 		} else {
 			logger.debug("No report tpls found, delete existing ones");
 		}
 
-		// set reportNodeGenerated property to now
-		nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
+		inTransaction(entityNodeRef, () -> {
+			// set reportNodeGenerated property to now
+			nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, generatedDate);
 
-		entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+			entityActivityService.postEntityActivity(entityNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+			return null;
+		}, false);
+
 		return newReports;
+	}
+
+	private boolean shouldGenerate(final NodeRef entityNodeRef, final NodeRef entityNodeTo, boolean generateAllReports,
+			final NodeRef selectedReportNodeRef, Boolean isDefault, NodeRef documentNodeRef, NodeRef tplNodeRef, String reportKind) {
+		if (tplNodeRef != null && reportKind != null && !reportKind.isEmpty()) {
+			List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+			return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
+		}
+		return generateAllReports
+				|| ((selectedReportNodeRef != null) && (documentNodeRef != null)
+						&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
+				|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
+				|| !entityNodeRef.equals(entityNodeTo);
 	}
 
 	/**
@@ -616,8 +783,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			String reportKindCode = "";
 			if (tplNodeRef != null) {
-				List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-				if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+				List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+				if (!reportKindProp.isEmpty()) {
 					reportKindCode = reportKindProp.get(0);
 				}
 			}
@@ -682,6 +849,27 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param element a {@link org.dom4j.Element} object
 	 * @return a long
 	 */
+	/**
+	 * Size of the XML datasource, for auditing.
+	 *
+	 * The engine that actually serializes the datasource publishes the size it
+	 * obtains, so it is reused here rather than recomputed with a full pass. The
+	 * fallback covers engines that publish nothing and generations that fail
+	 * before serialization.
+	 *
+	 * @param reportData the report data
+	 * @return the size in bytes, 0 when there is no datasource
+	 */
+	private long datasourceSize(EntityReportData reportData) {
+		Long published = reportData.getDatasourceSize();
+		if (published != null) {
+			return published;
+		}
+
+		Element xmlDataSource = reportData.getXmlDataSource();
+		return xmlDataSource != null ? estimateXmlSize(xmlDataSource) : 0L;
+	}
+
 	private long estimateXmlSize(Element element) {
 		class CountingOutputStream extends OutputStream {
 			private long count = 0;
@@ -1121,13 +1309,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 							String reportKindCode = "";
 							if (tplNodeRef != null) {
-								List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-								if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+								List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+								if (!reportKindProp.isEmpty()) {
 									reportKindCode = reportKindProp.get(0);
 								}
 							}
-							reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-							reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+							reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+							reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
 							EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 							
@@ -1166,15 +1354,26 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 									
-									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-									
 									if (logger.isTraceEnabled()) {
-										logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+										logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 									}
 									
 								}
 								
-								engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								try {
+									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								} finally {
+									/*
+									 * The datasource size is read from the engine, which serializes the
+									 * tree anyway, instead of measuring it here with a second full pass.
+									 * Falls back to measuring it when no engine published one.
+									 *
+									 * In a finally block so the attribute stays recorded on failure.
+									 */
+									if (engine.isXmlEngine()) {
+										auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+									}
+								}
 								
 								auditScope.addCheckpoint(CREATE_REPORT);
 								
@@ -1226,7 +1425,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
 						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(entityNodeRef);
+						policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 						
 						reportableEntityService.postEntityErrors(entityNodeRef, REPORT_FORMULATION_CHAIN_ID, engineErrors);
 					}
@@ -1257,6 +1456,28 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 */
 	private void internalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
+
+		/*
+		 * Runs within an L2 cache context, like the batch path does. Without one,
+		 * L2CacheSupport.getCurrentThreadCache() hands back a throwaway map on every
+		 * call, so entity lookups all miss and each data list row reloads its
+		 * association targets, which is an N+1 on entities with many data lists.
+		 *
+		 * A context is only opened when none is active: a nested one would start
+		 * from an empty cache and penalize a caller that already warmed its own.
+		 */
+		if (L2CacheSupport.isThreadCacheEnable()) {
+			doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, engineErrors);
+		} else {
+			L2CacheSupport.doInCacheContext(
+					() -> doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream,
+							engineErrors),
+					false, true);
+		}
+	}
+
+	private void doInternalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -1276,13 +1497,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 				String reportKindCode = "";
 				if (templateNodeRef != null) {
-					List<String> reportKindProp = (List<String>) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS);
-					if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+					List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS));
+					if (!reportKindProp.isEmpty()) {
 						reportKindCode = reportKindProp.get(0);
 					}
 				}
-				reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-				reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+				reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+				reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
 				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 				
@@ -1312,14 +1533,25 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
 						
-						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-
 						if (logger.isTraceEnabled()) {
-							logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+							logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 						}
 					}
 
-					engine.createReport(templateNodeRef, reportData, outputStream, params);
+					try {
+						engine.createReport(templateNodeRef, reportData, outputStream, params);
+					} finally {
+						/*
+						 * The datasource size is read from the engine, which serializes the
+						 * tree anyway, instead of measuring it here with a second full pass.
+						 * Falls back to measuring it when no engine published one.
+						 *
+						 * In a finally block so the attribute stays recorded on failure.
+						 */
+						if (engine.isXmlEngine()) {
+							auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+						}
+					}
 					
 					auditScope.addCheckpoint(CREATE_REPORT);
 
@@ -1327,11 +1559,20 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 				} catch (ReportException e) {
 
-					String message = "Failed to execute report for template : " + templateNodeRef;
+					/*
+					 * A caller that gave up mid-stream is not a report error: nothing is
+					 * wrong with the entity or the template, and recording an error on the
+					 * entity would tell its next reader otherwise.
+					 */
+					if (ReportUtils.isClientAbort(e)) {
+						logger.info("Report for template " + templateNodeRef + " was not delivered: " + e.getMessage());
+					} else {
+						String message = "Failed to execute report for template : " + templateNodeRef;
 
-					engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(templateNodeRef)));
+						engineErrors.add(new ReportableError(ReportableErrorType.ERROR, message, new MLText(message), List.of(templateNodeRef)));
 
-					logger.error(message, e);
+						logger.error(message, e);
+					}
 				}
 
 			} finally {
@@ -1424,8 +1665,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			preferences = reportParameters.getPreferences();
 		}
 		
-		preferences.put("reportKindCode", "");
-		preferences.put("reportParametersJson", reportParameters.toJSONString());
+		preferences.put(PREF_REPORT_KIND_CODE, "");
+		preferences.put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 		
 		final Map<String, String> finalPreferences = preferences;
 		final EntityReportParameters finalReportParameters = reportParameters;
@@ -1691,24 +1932,129 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	}
 
 	/**
+	 * Keeps the locale a caller asked for, so that refreshing one report does not regenerate the
+	 * entity in every language it declares.
+	 *
+	 * The default locale is kept alongside it: a template that declares no locale of its own is
+	 * only ever generated in that one, so dropping it would silently produce nothing.
+	 *
+	 * The whole list is returned when no locale is requested, and when the requested one has no
+	 * counterpart on the entity: generating the wrong language beats generating nothing.
+	 */
+	private List<Locale> restrictToTargetLocale(List<Locale> entityReportLocales, Locale targetLocale, Locale defaultLocale) {
+		if (targetLocale == null) {
+			return entityReportLocales;
+		}
+
+		Locale nearestLocale = MLTextHelper.getNearestLocale(targetLocale, new HashSet<>(entityReportLocales));
+
+		if (nearestLocale == null) {
+			return entityReportLocales;
+		}
+
+		List<Locale> restrictedLocales = nearestLocale.equals(defaultLocale) ? List.of(nearestLocale) : List.of(nearestLocale, defaultLocale);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Restricting report generation to " + restrictedLocales + " out of " + entityReportLocales + " (asked for " + targetLocale
+					+ ")");
+		}
+
+		return restrictedLocales;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> extractReportKindsList(Serializable propVal) {
+		if (propVal instanceof List<?> list) {
+			return (List<String>) list;
+		} else if (propVal instanceof String str && !str.isEmpty()) {
+			return Collections.singletonList(str);
+		}
+		return Collections.emptyList();
+	}
+
+	private List<String> getReportKinds(NodeRef reportNodeRef) {
+		List<String> reportKinds = extractReportKindsList(nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_KINDS));
+		if (!reportKinds.isEmpty()) {
+			return reportKinds;
+		}
+		NodeRef tplNodeRef = associationService.getTargetAssoc(reportNodeRef, ReportModel.ASSOC_REPORT_TPL);
+		if (tplNodeRef != null) {
+			return extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean isReportOfKind(NodeRef reportNodeRef, String reportKind) {
+		List<String> reportKinds = getReportKinds(reportNodeRef);
+		if (reportKind != null && !reportKind.isEmpty()) {
+			return reportKinds.contains(reportKind);
+		}
+		return reportKinds.isEmpty();
+	}
+
+	/**
 	 * <p>updateReportsAssoc.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param newReports a {@link java.util.List} object
 	 */
-	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports, String reportKind, Locale targetLocale, Locale defaultLocale) {
+		List<NodeRef> currentReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			for (NodeRef dbReport : associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS)) {
+			for (NodeRef dbReport : currentReports) {
 				if (!newReports.contains(dbReport)) {
-					logger.debug("delete old report: " + dbReport);
-					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(dbReport);
+					boolean shouldDelete = !isKeptByThisRun(dbReport, reportKind, targetLocale, defaultLocale);
+					if (shouldDelete) {
+						logger.debug("delete old report: " + dbReport);
+						nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(dbReport);
+					}
 				}
 			}
 		}
 
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+		List<NodeRef> finalReports = new ArrayList<>(newReports);
+		for (NodeRef dbReport : currentReports) {
+			if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && isKeptByThisRun(dbReport, reportKind, targetLocale, defaultLocale)) {
+				finalReports.add(dbReport);
+			}
+		}
+
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
+	}
+
+	/**
+	 * Tells whether a report the run did not produce must stay associated to the entity: either
+	 * it belongs to another kind, or it is written in a language this run never looked at.
+	 */
+	private boolean isKeptByThisRun(NodeRef reportNodeRef, String reportKind, Locale targetLocale, Locale defaultLocale) {
+		if ((reportKind != null) && !reportKind.isEmpty() && !isReportOfKind(reportNodeRef, reportKind)) {
+			return true;
+		}
+
+		return !wasRegenerated(reportNodeRef, targetLocale, defaultLocale);
+	}
+
+	/**
+	 * Tells whether this run had a chance to produce that report again.
+	 *
+	 * A report the run never looked at must survive it: when the caller asked for one locale,
+	 * the reports written in the other languages are neither regenerated nor missing, they are
+	 * simply out of scope, and deleting them as stale would lose them.
+	 */
+	private boolean wasRegenerated(NodeRef reportNodeRef, Locale targetLocale, Locale defaultLocale) {
+		if (targetLocale == null) {
+			return true;
+		}
+
+		for (Locale reportLocale : getEntityReportLocales(reportNodeRef)) {
+			if (reportLocale.getLanguage().equals(targetLocale.getLanguage()) || reportLocale.equals(defaultLocale)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1921,13 +2267,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(reportNodeRef, ReportModel.ASSOC_REPORT_TPL);
 
 				for (AssociationRef assocRef : assocRefs) {
-					Serializable reportKindsProp = nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS);
-
-					if (reportKindsProp instanceof List<?>) {
-						List<?> reportKinds = (List<?>) reportKindsProp;
-						if (reportKinds.contains(reportKind)) {
-							reports.add(reportNodeRef);
-						}
+					List<String> reportKinds = extractReportKindsList(nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS));
+					if (reportKinds.contains(reportKind)) {
+						reports.add(reportNodeRef);
 					}
 				}
 			}
@@ -1980,14 +2322,21 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
+		return getOrRefreshReportsOfKind(entityNodeRef, reportKind, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind, Locale locale) {
 		List<NodeRef> reportsOfKind = getReportsOfKind(entityNodeRef, reportKind);
-		boolean shouldGenerate = shouldGenerateReport(entityNodeRef, null)
+		boolean shouldGenerate = reportsOfKind.isEmpty()
+				|| shouldGenerateReport(entityNodeRef, null)
 				|| reportsOfKind.stream().anyMatch(r -> shouldGenerateReport(entityNodeRef, r));
 		if (!shouldGenerate) {
 			return reportsOfKind;
 		}
 		logger.debug("Entity report is not up to date for entity " + entityNodeRef);
-		internalGenerateReports(entityNodeRef, entityNodeRef, true);
+		generateReports(entityNodeRef, entityNodeRef, false, reportKind, locale);
 		return getReportsOfKind(entityNodeRef, reportKind);
 	}
 

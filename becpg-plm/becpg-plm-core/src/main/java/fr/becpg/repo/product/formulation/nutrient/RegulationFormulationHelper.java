@@ -46,10 +46,13 @@ public class RegulationFormulationHelper {
 	public static final String ATTR_NUT_CODE = "nutCode";
 	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
-	/** Constant <code>KEY_TOLERANCE_MAX="tu"</code> */
-	private static final String KEY_TOLERANCE_MAX = "tu";
-	/** Constant <code>KEY_TOLERANCE_MIN="tl"</code> */
-	private static final String KEY_TOLERANCE_MIN = "tl";
+	/**
+	 * Key of the maximum tolerated value. The stored keys are historical: "tl" holds the maximum
+	 * and "tu" the minimum, which is how the nutrient list screen reads them.
+	 */
+	private static final String KEY_TOLERANCE_MAX = "tl";
+	/** Key of the minimum tolerated value, see {@link #KEY_TOLERANCE_MAX}. */
+	private static final String KEY_TOLERANCE_MIN = "tu";
 	/** Constant <code>KEY_MINI="min"</code> */
 	private static final String KEY_MINI = "min";
 	/** Constant <code>KEY_MAXI="max"</code> */
@@ -77,9 +80,9 @@ public class RegulationFormulationHelper {
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
-		regulations.put("TT", new UsNutrientRegulation("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
-		regulations.put("DO", new UsNutrientRegulation("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
-		regulations.put("PE", new UsNutrientRegulation("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
+		regulations.put("TT", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
+		regulations.put("DO", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
+		regulations.put("PE", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
@@ -258,6 +261,63 @@ public class RegulationFormulationHelper {
 	}
 
 	/**
+	 * <p>extractGDAPercPerContainer.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public static Double extractGDAPercPerContainer(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_GDA_PERC_PER_CONTAINER, key);
+	}
+
+	/**
+	 * <p>Extracts the display-ready view of a nutrient for a single regulation.</p>
+	 *
+	 * <p>Single-regulation counterpart of {@link #extractXMLAttribute(Element, String, Locale, boolean, String)}:
+	 * both read the same regulation definition and the same rounded value blob, one returning a record
+	 * and the other writing report attributes.</p>
+	 *
+	 * @param nutListItem a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @param nutCode a {@link java.lang.String} object, the regulatory code of the nutrient
+	 * @param locale a {@link java.util.Locale} object, drives the number formatting
+	 * @param locKey a {@link java.lang.String} object, the regulation key, may differ from the locale
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.RegulatedNutrient} object
+	 */
+	public static RegulatedNutrient extractRegulatedNutrient(NutListDataItem nutListItem, String nutCode, Locale locale, String locKey) {
+
+		String roundedValue = nutListItem.getRoundedValue();
+		String precision = nutListItem.getMeasurementPrecision();
+
+		Double value = extractValue(roundedValue, locKey);
+		Double valuePerServing = extractValuePerServing(roundedValue, locKey);
+		Double valuePerContainer = extractValuePerContainer(roundedValue, locKey);
+
+		return new RegulatedNutrient(nutCode, toDisplayRule(getRegulation(locKey).getNutrientDefinition(nutCode)), value, valuePerServing,
+				valuePerContainer, extractGDAPerc(roundedValue, locKey), extractGDAPercPerContainer(roundedValue, locKey),
+				toDisplayValue(nutListItem.getValue(), value, nutCode, precision, locale, locKey, nutListItem.getUnit()),
+				toDisplayValue(nutListItem.getValuePerServing(), valuePerServing, nutCode, precision, locale, locKey, nutListItem.getUnit()),
+				toDisplayValue(valuePerContainer, valuePerContainer, nutCode, precision, locale, locKey, null));
+	}
+
+	private static NutrientDisplayRule toDisplayRule(NutrientDefinition definition) {
+		if (definition == null) {
+			return NutrientDisplayRule.undefined();
+		}
+		return new NutrientDisplayRule(definition.getSort(), definition.getDepthLevel(), Boolean.TRUE.equals(definition.getBold()),
+				Boolean.TRUE.equals(definition.getMandatory()), Boolean.TRUE.equals(definition.getOptional()),
+				Boolean.TRUE.equals(definition.getShowGDAPerc()), definition.getGda(), definition.getUl(), definition.getUnit());
+	}
+
+	private static String toDisplayValue(Double value, Double roundedValue, String nutCode, String precision, Locale locale, String locKey,
+			String nutUnit) {
+		if (value == null) {
+			return null;
+		}
+		return displayValue(value, roundedValue, nutCode, precision, locale, locKey, nutUnit);
+	}
+
+	/**
 	 * <p>extractValueByKey.</p>
 	 *
 	 * @param roundedValue a {@link java.lang.String} object
@@ -283,6 +343,25 @@ public class RegulationFormulationHelper {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Maps a regulatory code to a nutrient regulation key used in the roundedValue JSON.
+	 * The code is returned as is when it matches a known regulation (EU, US, CA...),
+	 * otherwise it is resolved through its country locale (e.g. "FR" is mapped to "EU").
+	 * Defaults to "EU" when the code is null or blank.
+	 *
+	 * @param regulatoryCode the regulatory code of a country, can be null
+	 * @return the matching regulation key, never null
+	 */
+	public static String toRegulationKey(String regulatoryCode) {
+		if ((regulatoryCode != null) && !regulatoryCode.isBlank()) {
+			if (regulations.containsKey(regulatoryCode)) {
+				return regulatoryCode;
+			}
+			return getLocalKey(new Locale("", regulatoryCode));
+		}
+		return "EU";
 	}
 
 	/**
@@ -347,6 +426,7 @@ public class RegulationFormulationHelper {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
 			String measurementPrecision = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
+			String nutListUnit = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_UNIT.getLocalName());
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 			String nutListValuePrepared = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
@@ -412,7 +492,7 @@ public class RegulationFormulationHelper {
 						if ((nutListValue != null) && (!nutListValue.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey),
-											nutCode, measurementPrecision, locale, locKey));
+											nutCode, measurementPrecision, locale, locKey, nutListUnit));
 							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
@@ -422,13 +502,13 @@ public class RegulationFormulationHelper {
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
+											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePrepared),
-											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
+											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
 
 							Double nutListValuePreparedPerServing = extractPreparedValuePerServing(roundedValue, locKey);
 
@@ -477,7 +557,7 @@ public class RegulationFormulationHelper {
 	 * @param abrv a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
-	private static String keyToXml(String abrv) {
+	static String keyToXml(String abrv) {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
 			return "SecondaryValue";
@@ -500,7 +580,7 @@ public class RegulationFormulationHelper {
 		case KEY_TOLERANCE_MAX:
 			return "ToleranceMax";
 		case KEY_TOLERANCE_MIN:
-			return "ToleranceMax";
+			return "ToleranceMin";
 		case KEY_UL:
 			return "UpperLimit";
 		default:
@@ -532,6 +612,19 @@ public class RegulationFormulationHelper {
 	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
 	 */
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
+		extractRoundedValue(formulatedProduct, nutCode, n, NutrientToleranceCriteria.NONE);
+	}
+
+	/**
+	 * <p>extractRoundedValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
+	 * @param criteria what is known about the nutrient line: claimed (EU Table 3 tolerances), added (Canadian class I);
+	 *                 the serving size of each regulation is added here
+	 */
+	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n, NutrientToleranceCriteria criteria) {
 		JSONObject jsonRound = new JSONObject();
 		JSONObject jsonPreparedRound = new JSONObject();
 		try {
@@ -568,16 +661,19 @@ public class RegulationFormulationHelper {
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 
-				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit);
+				Double servingSize = getServingSize(key, formulatedProduct);
+				NutrientToleranceCriteria servingCriteria = criteria.withServingSize(servingSize);
+
+				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					tmin.put(key, tolerances.getFirst());
-					tmax.put(key, tolerances.getSecond());
+					tmax.put(key, tolerances.getFirst());
+					tmin.put(key, tolerances.getSecond());
 				}
 
-				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit);
+				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit, servingCriteria);
 				if (tolerances != null) {
-					secondaryTmin.put(key, tolerances.getFirst());
-					secondaryTmax.put(key, tolerances.getSecond());
+					secondaryTmax.put(key, tolerances.getFirst());
+					secondaryTmin.put(key, tolerances.getSecond());
 				}
 
 				if (n instanceof VariantAwareDataItem) {
@@ -590,8 +686,6 @@ public class RegulationFormulationHelper {
 						}
 					}
 				}
-
-				Double servingSize = getServingSize(key, formulatedProduct);
 
 				if ((n.getValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getValue() * (servingSize * 1000d)) / 100;
@@ -889,7 +983,21 @@ public class RegulationFormulationHelper {
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
 	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
-		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
+		return tolerances(value, nutCode, getLocalKey(locale), nutUnit, false);
+	}
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a nutritional or health claim (EU Table 3 tolerances)
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutCode, getLocalKey(locale), nutUnit, isClaimed);
 	}
 
 	/**
@@ -901,11 +1009,11 @@ public class RegulationFormulationHelper {
 	 * @param nutUnit a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
-	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
+	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit, boolean isClaimed) {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(key).tolerances(value, nutCode, nutUnit);
+		return getRegulation(key).tolerances(value, nutCode, nutUnit, isClaimed);
 	}
 
 	/**
@@ -958,6 +1066,29 @@ public class RegulationFormulationHelper {
 			return null;
 		}
 		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, measurementPrecision, locale);
+	}
+
+	/**
+	 * <p>displayValue.</p>
+	 *
+	 * <p>Unit-aware variant: {@code value} is expressed in {@code nutUnit} whereas {@code roundedValue}
+	 * is already expressed in the unit of the regulation.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param regulation a {@link java.lang.String} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale,
+			String regulation, String nutUnit) {
+		if (value == null) {
+			return null;
+		}
+		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, measurementPrecision, locale, nutUnit);
 	}
 
 	/**

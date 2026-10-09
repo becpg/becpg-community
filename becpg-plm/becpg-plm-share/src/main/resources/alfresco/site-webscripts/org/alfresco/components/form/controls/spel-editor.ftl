@@ -1,4 +1,5 @@
 <#assign controlId = fieldHtmlId + "-cntrl">
+<#assign formId = args.htmlid?js_string?html + "-form">
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=2></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
 <script type="text/javascript">//<![CDATA[
@@ -8,6 +9,7 @@
 		   {
 		      <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
 		      field: "${field.name}",
+		      formId: "${formId}",
 		   <#if field.mandatory??>
 		      mandatory: ${field.mandatory?string},
 		    </#if>

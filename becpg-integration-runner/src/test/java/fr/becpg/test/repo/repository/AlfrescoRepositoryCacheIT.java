@@ -12,8 +12,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class AlfrescoRepositoryCacheIT extends PLMBaseTestCase {
@@ -70,6 +72,44 @@ public class AlfrescoRepositoryCacheIT extends PLMBaseTestCase {
 		});
 		
 		
+	}
+
+	/**
+	 * A cached ingredient keeps its ingredient type as an entity. Deleting that type leaves the
+	 * {@code bcpg:ingTypeV2} d:noderef property in place: reloading the ingredient must drop the
+	 * type, as a read from the database does, instead of failing on the deleted node (#36737:
+	 * every formulation of a product using the ingredient failed).
+	 */
+	@Test
+	public void testCachedEntityPropertyOnDeletedNode() {
+		NodeRef[] nodes = inWriteTx(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, name + " - Deleted ing type");
+			NodeRef ingTypeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "deletedIngType"), PLMModel.TYPE_ING_TYPE_ITEM, properties)
+					.getChildRef();
+			properties.clear();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, name + " - Ing with deleted type");
+			properties.put(PLMModel.PROP_ING_TYPE_V2, ingTypeNodeRef);
+			NodeRef ingNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "ingWithDeletedType"), PLMModel.TYPE_ING, properties).getChildRef();
+			return new NodeRef[] { ingTypeNodeRef, ingNodeRef };
+		});
+
+		inReadTx(() -> {
+			assertNotNull(((IngItem) alfrescoRepository.findOne(nodes[1])).getIngType());
+			return null;
+		});
+
+		inWriteTx(() -> {
+			nodeService.deleteNode(nodes[0]);
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertNull(((IngItem) alfrescoRepository.findOne(nodes[1])).getIngType());
+			return null;
+		});
 	}
 
 }

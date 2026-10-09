@@ -30,6 +30,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # The project compiles with release 21; without it the buildless extractor falls
+    # back to the JDK on the PATH (17) and fails to resolve the Java 19+ APIs we use.
+    - name: Set up JDK 21
+      if: matrix.language == 'java'
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
       with:

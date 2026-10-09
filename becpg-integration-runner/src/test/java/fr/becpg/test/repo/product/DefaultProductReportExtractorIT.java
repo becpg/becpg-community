@@ -12,6 +12,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.dom4j.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -47,6 +48,20 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 
 	
 	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorIT.class);
+
+	private static final String SF_WITH_LINE_INSTRUCTION = "SF with line instruction";
+
+	private static final String SF_WITHOUT_LINE_INSTRUCTION = "SF without line instruction";
+
+	private static final String SF_INSTRUCTION = "Preparation Step 1";
+
+	private static final String LINE_INSTRUCTION = "(25 gr)";
+
+	private static final String TAG_DATALISTS = "dataLists";
+
+	private static final String TAG_COMPOLISTS = "compoLists";
+
+	private static final String ATTR_COMPOLIST_PRODUCT = "compoListProduct";
 
 	@Autowired
 	@Qualifier("productReportExtractor")
@@ -194,5 +209,61 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 
 			return null;
 		}, false, true);
+	}
+
+	/**
+	 * A composition line pointing to a semi-finished product exposes a single instruction element:
+	 * the line's own when it has one, the semi-finished product's otherwise.
+	 */
+	@Test
+	public void testLineInstructionOverridesComponentInstruction() {
+		Map<String, List<Element>> instructionsByProduct = inWriteTx(() -> {
+			NodeRef sfWithLineInstructionNodeRef = createSemiFinishedProductWithInstruction(SF_WITH_LINE_INSTRUCTION);
+			NodeRef sfWithoutLineInstructionNodeRef = createSemiFinishedProductWithInstruction(SF_WITHOUT_LINE_INSTRUCTION);
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product with line instructions");
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+					.withProduct(sfWithLineInstructionNodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+					.withProduct(sfWithoutLineInstructionNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			ProductData createdProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			nodeService.setProperty(createdProduct.getCompoListView().getCompoList().get(0).getNodeRef(), PLMModel.PROP_INSTRUCTION,
+					LINE_INSTRUCTION);
+
+			Element entityElt = defaultProductReportExtractor.extract(finishedProductNodeRef, new HashMap<>()).getXmlDataSource();
+			return collectInstructionsByProduct(entityElt);
+		});
+
+		assertSingleInstruction(LINE_INSTRUCTION, instructionsByProduct.get(SF_WITH_LINE_INSTRUCTION));
+		assertSingleInstruction(SF_INSTRUCTION, instructionsByProduct.get(SF_WITHOUT_LINE_INSTRUCTION));
+	}
+
+	private NodeRef createSemiFinishedProductWithInstruction(String name) {
+		SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
+		semiFinishedProduct.setName(name);
+		NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
+		nodeService.setProperty(semiFinishedProductNodeRef, PLMModel.PROP_INSTRUCTION, SF_INSTRUCTION);
+		return semiFinishedProductNodeRef;
+	}
+
+	private static Map<String, List<Element>> collectInstructionsByProduct(Element entityElt) {
+		Map<String, List<Element>> instructionsByProduct = new HashMap<>();
+		Element compoListsElt = entityElt.element(TAG_DATALISTS).element(TAG_COMPOLISTS);
+		for (Element compoListElt : compoListsElt.elements(PLMModel.TYPE_COMPOLIST.getLocalName())) {
+			instructionsByProduct.put(compoListElt.attributeValue(ATTR_COMPOLIST_PRODUCT),
+					compoListElt.elements(PLMModel.PROP_INSTRUCTION.getLocalName()));
+		}
+		return instructionsByProduct;
+	}
+
+	private static void assertSingleInstruction(String expectedInstruction, List<Element> instructions) {
+		Assert.assertNotNull(instructions);
+		Assert.assertEquals(1, instructions.size());
+		Assert.assertEquals(expectedInstruction, instructions.get(0).getText().trim());
 	}
 }

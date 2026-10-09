@@ -30,6 +30,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -98,6 +99,11 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
 
 		if (variantPackagingData != null) {
+
+			// #31701: secondary/tertiary/inner packaging declared on the sub-components must be counted
+			// at every level (added flat, without re-multiplication by productPerBoxes / boxesPerPallet).
+			VariantPackagingData compositionTare = PackagingHelper.getCompositionTareByLevel(formulatedProduct);
+
 			if (variantPackagingData.getProductPerInnerPack() != null) {
 				Integer productPerInnerPack = variantPackagingData.getProductPerInnerPack();
 
@@ -105,7 +111,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				BigDecimal netWeightInnerPack = netWeightPrimary.multiply(BigDecimal.valueOf(productPerInnerPack));
 
 				// Calculate gross weight inner pack (kg): (Net weight * Nb products / inner pack) + (tare * Nb products / inner pack) + innerTare
-				BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack)).add(variantPackagingData.getTareInner());
+				BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack)).add(variantPackagingData.getTareInner())
+						.add(compositionTare.getTareInner());
 				BigDecimal weightInnerPack = tareInnerPack.add(netWeightInnerPack);
 
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_PRODUCT_PER_INNER_PACK, productPerInnerPack);
@@ -116,8 +123,12 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 			if ((variantPackagingData.getProductPerBoxes() != null)) {
 
-				BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
+				// Own secondary tare (product's own packaging), used as the base for the tertiary roll-up
+				// so the composition secondary tare is not re-multiplied by boxesPerPallet.
+				BigDecimal tareSecondaryOwn = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 						.add(variantPackagingData.getTareSecondary());
+
+				BigDecimal tareSecondary = tareSecondaryOwn.add(compositionTare.getTareSecondary());
 
 				BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 				BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
@@ -126,8 +137,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 				if (variantPackagingData.getBoxesPerPallet() != null) {
 
-					BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
-							.add(variantPackagingData.getTareTertiary());
+					BigDecimal tareTertiary = tareSecondaryOwn.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
+							.add(variantPackagingData.getTareTertiary()).add(compositionTare.getTareTertiary());
 
 					BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 					BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
@@ -137,7 +148,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				}
 			}
 
-			if (((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_INNERPACK_ASPECT))
+			if ((isPackagedTradeItem(formulatedProduct) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_INNERPACK_ASPECT))
 					&& !variantPackagingData.isManualInner()) {
 				Double width = variantPackagingData.getInnerWidth();
 				Double depth = variantPackagingData.getInnerDepth();
@@ -149,7 +160,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 			}
 
-			if ((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
+			if (isPackagedTradeItem(formulatedProduct) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
 
@@ -223,7 +234,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 								variantPackagingData.getPlatformTermsAndConditionsCode());
 					}
 
-					if ((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+					if (isPackagedTradeItem(formulatedProduct) || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
 
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_PRODUCTS_PER_BOX, variantPackagingData.getProductPerBoxes());
 
@@ -272,6 +283,19 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 		}
 		return true;
+	}
+
+	/**
+	 * Tells whether the product is a packaged trade item, whose measures, inner pack and pallet
+	 * information are always computed from its packaging, whatever aspects it carries. A logistic
+	 * unit is one, like a finished product: its template carries neither the measures nor the
+	 * pallet aspect, so a check on the aspects alone left its packaging tab empty (#37189).
+	 *
+	 * @param product the formulated product
+	 * @return {@code true} for a finished product or a logistic unit
+	 */
+	static boolean isPackagedTradeItem(ProductData product) {
+		return (product instanceof FinishedProductData) || (product instanceof LogisticUnitData);
 	}
 
 	/**

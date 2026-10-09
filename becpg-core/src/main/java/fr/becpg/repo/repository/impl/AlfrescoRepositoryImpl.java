@@ -608,7 +608,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					boolean deleteNodes = false;
 
 					for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-						if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient()) {
+						if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient() && nodeService.exists(dataListItem.getNodeRef())) {
 							nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 							nodeService.deleteNode(dataListItem.getNodeRef());
 							deleteNodes = true;
@@ -847,11 +847,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 							if ((o instanceof RepositoryEntity repoEntity) && (repoEntity.getNodeRef() != null)) {
 
+								// Deleting the target leaves the d:noderef property in place; read from the database it is
+								// filtered out, so the cached copy must drop it too instead of reloading a deleted node.
 								PropertyUtils.setProperty(entity, pd.getName(),
-										findOne(repoEntity.getNodeRef(),
-												pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE
-														: CacheType.STANDARD,
-												localCache));
+										nodeService.exists(repoEntity.getNodeRef())
+												? findOne(repoEntity.getNodeRef(),
+														pd.getPropertyType().isAnnotationPresent(AlfCacheable.class) ? CacheType.FORCE_SHARED_CACHE
+																: CacheType.STANDARD,
+														localCache)
+												: null);
 								isRefreshed = true;
 							}
 

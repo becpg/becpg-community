@@ -14,7 +14,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
-import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -106,27 +105,26 @@ public class BeCPGUserAccountService {
 			userAccount.setUserName(createTenantAware(userAccount.getUserName()));
 			NodeRef personNodeRef = null;
 
-			boolean userAlreadyExists = personService.personExists(userAccount.getUserName());
-			
-			if (userAlreadyExists) {
+			if (personService.personExists(userAccount.getUserName())) {
 				if (createOnly) {
 					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
 				personNodeRef = updateUser(userAccount);
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					generatePassword(userAccount.getUserName());
+				} else if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
+					updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
+				}
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					userAccount.setPassword(SecurePasswordGenerator.generatePassword());
+				}
 				personNodeRef = createUser(userAccount);
-			}
-			
-			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-				updatePassword(userAccount.getUserName(), userAccount.getPassword(), userAlreadyExists && Boolean.TRUE.equals(userAccount.getNotify()));
 			}
 			
 			updateGroups(userAccount);
 
-			if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
-				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME));
-			}
 			if (Boolean.TRUE.equals(userAccount.getDisable())) {
 				AuthorityHelper.disableAccount(userAccount.getUserName());
 			} else if (Boolean.FALSE.equals(userAccount.getDisable())) {
@@ -231,7 +229,7 @@ public class BeCPGUserAccountService {
 	private NodeRef createUser(BeCPGUserAccount userAccount) {
 		NodeRef personNodeRef;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Create external user: " + userAccount.getUserName() + " pwd: " + userAccount.getPassword());
+			logger.debug("Create external user: " + userAccount.getUserName());
 		}
 		Map<QName, Serializable> propMap = userAccount.getExtraProps();
 		propMap.put(ContentModel.PROP_USERNAME, userAccount.getUserName());
@@ -241,7 +239,7 @@ public class BeCPGUserAccountService {
 		setIdsUser(userAccount, userAccount.getUserName(), personNodeRef, false);
 
 		// notify supplier
-		if (Boolean.TRUE.equals(userAccount.getNotify())) {
+		if (Boolean.TRUE.equals(userAccount.getNotify()) || Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
 			beCPGMailService.sendMailNewUser(personNodeRef, userAccount.getUserName(), userAccount.getPassword());
 		}
 		return personNodeRef;
@@ -540,7 +538,7 @@ public class BeCPGUserAccountService {
 				if (!identityServiceAccountProvider.registerAccount(userAccount)) {
 					logger.error("User already exists in IDS with same username or email. username: " + userAccount.getUserName() + ", email: " + userAccount.getEmail());
 				}
-			} catch (IdentityServiceException e) {
+			} catch (RuntimeException e) {
 				personService.deletePerson(personNodeRef);
 				throw e;
 			}
@@ -589,7 +587,7 @@ public class BeCPGUserAccountService {
 		boolean hasLower = false;
 		boolean hasDigit = false;
 		boolean hasSpecial = false;
-		String specialChars = "!@#$%^&*()-_=+[]{}";
+		String specialChars = "!@#$%^&*()-_=+[]{}.";
 		for (int i = 0; i < password.length(); i++) {
 			char c = password.charAt(i);
 			if (Character.isUpperCase(c)) {

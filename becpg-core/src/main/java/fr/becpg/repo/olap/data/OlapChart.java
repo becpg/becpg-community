@@ -20,13 +20,16 @@ package fr.becpg.repo.olap.data;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +39,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import org.springframework.extensions.surf.util.I18NUtil;
+
 import fr.becpg.common.dom.DOMUtils;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.MLTextHelper;
 
 /**
  * Store Chart infos
@@ -47,6 +54,8 @@ import fr.becpg.common.dom.DOMUtils;
 public class OlapChart {
 
 	private NodeRef nodeRef;
+	private String fileName;
+	private String olapQueryId;
 	private String queryName;
 	private String queryId;
 	private String mdx;
@@ -55,6 +64,9 @@ public class OlapChart {
 	private String xml;
 
 	/** Constant <code>logger</code> */
+	/** Extension of a saved OLAP query document. */
+	public static final String SAIKU_EXTENSION = ".saiku";
+
 	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
 	/**
@@ -64,8 +76,70 @@ public class OlapChart {
 	 */
 	public OlapChart(FileInfo fileInfo) {
 		super();
-		this.queryName = fileInfo.getName().replace(".saiku", "");
+		this.olapQueryId = (String) fileInfo.getProperties().get(BeCPGModel.PROP_OLAP_QUERY_ID);
+		this.fileName = readFileName(fileInfo);
+		this.queryName = readQueryName(fileInfo);
 		this.nodeRef = fileInfo.getNodeRef();
+	}
+
+	/**
+	 * Reads the identity of a stored chart.
+	 *
+	 * <p>#24931: a resource shipped by beCPG is identified by {@code bcpg:olapQueryId}, which no
+	 * translation touches, while its name carries the label the user reads. A query the user saved
+	 * from Saiku has no such id, so its name remains its identity, as it was before.
+	 *
+	 * @param fileInfo the stored document
+	 * @return the name every reference resolves on, extension included
+	 */
+	private String readFileName(FileInfo fileInfo) {
+		if (olapQueryId == null) {
+			return fileInfo.getName();
+		}
+		return olapQueryId + extensionOf(fileInfo.getName());
+	}
+
+	/**
+	 * Reads the display label of a stored chart, in the locale of the caller.
+	 *
+	 * <p>The label falls back to the name without its extension. Strip it from the end only: a
+	 * plain replace turns "Sales.saikudash" into "Salesdash", which is neither a usable label nor
+	 * a name any caller can map back to the stored file.
+	 *
+	 * @param fileInfo the stored document
+	 * @return the label to display
+	 */
+	private static String readQueryName(FileInfo fileInfo) {
+		Serializable title = fileInfo.getProperties().get(ContentModel.PROP_TITLE);
+		if (title instanceof MLText mlText) {
+			String value = MLTextHelper.getClosestValue(mlText, I18NUtil.getLocale());
+			if ((value != null) && !value.isBlank()) {
+				return value;
+			}
+		} else if ((title instanceof String value) && !value.isBlank()) {
+			return value;
+		}
+
+		return stripExtension(fileInfo.getName());
+	}
+
+	private static String stripExtension(String name) {
+		int dot = name.lastIndexOf('.');
+		return dot > 0 ? name.substring(0, dot) : name;
+	}
+
+	private static String extensionOf(String name) {
+		int dot = name.lastIndexOf('.');
+		return dot > 0 ? name.substring(dot) : "";
+	}
+
+	/**
+	 * <p>Getter for the field <code>fileName</code>.</p>
+	 *
+	 * @return the stored file name, extension included
+	 */
+	public String getFileName() {
+		return fileName;
 	}
 
 	/**
@@ -87,12 +161,16 @@ public class OlapChart {
 	}
 
 	/**
-	 * <p>Getter for the field <code>queryId</code>.</p>
+	 * Returns the identity callers address this chart by: the technical id when beCPG ships the
+	 * resource, the id its content declares otherwise.
+	 *
+	 * <p>Every caller must go through this getter rather than the field, the dashlet preference and
+	 * {@code getOlapChart} being matched on what it returns.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getQueryId() {
-		return queryId;
+		return (olapQueryId != null) ? olapQueryId : queryId;
 	}
 
 	/**
@@ -166,6 +244,16 @@ public class OlapChart {
 		logger.trace("Get XML data query from xml" + xml);
 		this.xml = xml;
 
+		// #24931: a query re-saved from the Saiku 4.8 workspace is stored as JSON, not as the
+		// Saiku 2.x XML this method was written for. Parsing it as XML throws, the caller skips the
+		// chart, and it silently disappears from the beCPG BI dashlet. The document is still passed
+		// on verbatim to the OLAP server, which accepts both forms, so only the few attributes read
+		// here need a second reading.
+		if (isJsonQuery(xml)) {
+			loadFromJson(xml);
+			return;
+		}
+
 		try (InputStream is = new ByteArrayInputStream(xml.getBytes())) {
 
 			Document doc = DOMUtils.parse(is);
@@ -182,6 +270,27 @@ public class OlapChart {
 		}
 	}
 
+	private static boolean isJsonQuery(String content) {
+		return (content != null) && content.trim().startsWith("{");
+	}
+
+	/**
+	 * Reads the few attributes this class exposes from a Saiku 4.8 query document.
+	 *
+	 * @param json the query as stored by the 4.8 workspace
+	 * @throws JSONException if the document is not readable
+	 */
+	private void loadFromJson(String json) throws JSONException {
+		JSONObject root = new JSONObject(json);
+		queryId = root.optString("name", null);
+		type = root.optString("type", null);
+		mdx = root.optString("mdx", null);
+		JSONObject cubeObject = root.optJSONObject("cube");
+		if (cubeObject != null) {
+			cube = cubeObject.optString("name", null);
+		}
+	}
+
 	/**
 	 * <p>toJSONObject.</p>
 	 *
@@ -191,7 +300,8 @@ public class OlapChart {
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
-		obj.put("queryId", queryId);
+		obj.put("fileName", fileName);
+		obj.put("queryId", getQueryId());
 		obj.put("cube", cube);
 		obj.put("type", type);
 		obj.put("noderef", nodeRef);

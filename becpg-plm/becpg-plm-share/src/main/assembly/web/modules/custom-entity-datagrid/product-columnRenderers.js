@@ -21,6 +21,29 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     var NUMBER_FORMAT = { "maximumFractionDigits": 4 };
     var NUTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "nutDetails");
+
+    /**
+     * Regulations without a flag image: their details link keeps the information icon.
+     */
+    var REGULATIONS_WITHOUT_FLAG = ["CTA"];
+
+    /**
+     * URL of the flag of a regulation key (eg. "EU", "CA").
+     */
+    var getRegulationFlagUrl = function(regulationKey) {
+        return Alfresco.constants.URL_CONTEXT + 'res/components/images/flags/' + regulationKey.split("_")[0].toLowerCase() + '.png';
+    };
+
+    /**
+     * Reads the value a rounded value JSON holds for a regulation, null when there is none.
+     * A value or a tolerance of 0 is a real one and must not be taken for a missing value.
+     */
+    var getRegulationValue = function(jsonData, valueKey, regulationKey) {
+        if (jsonData[valueKey] && jsonData[valueKey][regulationKey] !== undefined && jsonData[valueKey][regulationKey] !== null) {
+            return jsonData[valueKey][regulationKey];
+        }
+        return null;
+    };
     var CHARACTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "charactDetails");
     var INGLISTING_INFO_EVENTCLASS = Alfresco.util.generateDomId(null, "ingListIngInfo");
 
@@ -211,6 +234,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:ingListFlags"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var flagCode = YAHOO.lang.isArray(data.value) ? data.value.join("") : data.value;
+            if (flagCode == null || String(flagCode).replace(/\s/g, "") === "") {
+                return "";
+            }
+            var flagLabel = (data.displayValue != null && String(data.displayValue).replace(/\s/g, "") !== "") ? data.displayValue : flagCode;
+            YAHOO.util.Dom.addClass(elCell, "ing-list-flags-cell");
+            var flagClass = "ing-list-flag-" + String(flagCode).toLowerCase().replace(/_/g, "-");
+            flagLabel = Alfresco.util.encodeHTML(flagLabel);
+            return '<span class="ing-list-flag ' + flagClass + '" title="' + flagLabel + '">' + flagLabel + '</span>';
+        }
+
+    });
+
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:lclClaimValue"],
         renderer: function(oRecord, data, label, scope) {
             if ("true" === data.value) {
@@ -295,7 +335,9 @@ if (beCPG.module.EntityDataGridRenderers) {
         var tooltip = details ? buildEcoScoreTooltip(scope, details) : buildEcoScoreFallbackTooltip(scope, score, scoreClass);
         var badgeClass = getEcoScoreBadgeClass(scoreClass);
 
-        var html = '<div class="eco-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+        // encodeAttr and not encodeHTML: the latter turns newlines into "<br />", which a title
+        // attribute renders literally. encodeAttr emits "&#10;" instead (#29832).
+        var html = '<div class="eco-score-cell"' + (tooltip ? ' title="' + beCPG.util.encodeAttr(tooltip) + '"' : '') + '>';
         if (badgeClass) {
             html += '<span class="ecoscore-class ' + badgeClass + '" aria-hidden="true"></span>';
         }
@@ -383,7 +425,8 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
 
         var tooltip = details ? buildNutrientTooltip(scope, details) : buildNutriScoreFallbackTooltip(scope, score, nutrientClass);
-        var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+        // encodeAttr and not encodeHTML: see renderEcoScore (#29832).
+        var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + beCPG.util.encodeAttr(tooltip) + '"' : '') + '>';
 
         html += buildNutrientClassRow(nutrientClass);
         html += '</div>';
@@ -455,6 +498,148 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer: function(oRecord, data, label, scope) {
             var itemData = oRecord.getData("itemData");
             return renderNutrientScore(scope, itemData);
+        }
+    });
+
+    /** Value of a property of the row, null when the datagrid did not extract it. */
+    function scoreRowProp(oRecord, name) {
+        var itemData = oRecord.getData("itemData");
+        return itemData && itemData[name] ? itemData[name].value : null;
+    }
+
+    /** Property of the definition the score points to, null when it is not extracted. */
+    function scoreDefProp(oRecord, name) {
+        var itemData = oRecord.getData("itemData");
+        var target = itemData ? itemData["dt_bcpg_rslScoreDef"] : null;
+        if (!target || !target[0] || !target[0]["itemData"] || !target[0]["itemData"][name]) {
+            return null;
+        }
+        return target[0]["itemData"][name].value;
+    }
+
+    function isManualScore(oRecord) {
+        var isManual = scoreRowProp(oRecord, "prop_bcpg_rslIsManual");
+        return isManual === true || isManual === "true";
+    }
+
+    /**
+     * The breakdown of a score entered by hand is only rewritten around the entry by the next
+     * formulation: until then the row, not the breakdown, holds the verdict to draw.
+     */
+    function withManualVerdict(details, scoreClass, value) {
+        if (!details.manual) {
+            details.computedClass = details["class"];
+            details.computedValue = details.value;
+            details.manual = true;
+        }
+        details["class"] = scoreClass;
+        details.value = value;
+        return details;
+    }
+
+    /**
+     * A score entered by hand carries no breakdown: its badge is rebuilt from the verdict
+     * of the row and the scale of its definition, otherwise the cell would stay empty.
+     */
+    function scoreDetailsOrVerdict(oRecord, data) {
+        var details = beCPG.util.score.parseDetails(data ? data.value : null);
+        var scoreClass = scoreRowProp(oRecord, "prop_bcpg_rslClass");
+        var value = scoreRowProp(oRecord, "prop_bcpg_rslValue");
+
+        if (details) {
+            return isManualScore(oRecord) ? withManualVerdict(details, scoreClass, value) : details;
+        }
+
+        if ((scoreClass === null || scoreClass === "") && (value === null || value === "")) {
+            return null;
+        }
+
+        return {
+            code: scoreDefProp(oRecord, "prop_bcpg_scoreDefCode"),
+            scale: scoreDefProp(oRecord, "prop_bcpg_scoreDefScale"),
+            unit: scoreDefProp(oRecord, "prop_bcpg_scoreDefUnit"),
+            "class": scoreClass,
+            value: value,
+            parts: []
+        };
+    }
+
+    // Generic score of the score framework: the rendering is driven by the scale carried
+    // by the normalized detail, so a new score needs no renderer of its own.
+    // Score column of the score list: a mark and its axes read as a tree, like the composition
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslScoreDef"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+            var itemData = oRecord.getData("itemData");
+            var depth = itemData && itemData["prop_bcpg_depthLevel"] ? itemData["prop_bcpg_depthLevel"].value : 0;
+            var padding = depth * 25;
+            var tr = scope.widgets.dataTable.getTrEl(elCell);
+            var toggle = "";
+
+            if (depth) {
+                Dom.addClass(tr, "mtl-level-" + depth);
+            }
+
+            if (false === itemData["isLeaf"]) {
+                var open = itemData["open"];
+                toggle = '<div id="group_' + (open ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef")
+                    + '" style="margin-left:' + padding + 'px;" class="onCollapsedAndExpanded">'
+                    + '<a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+                    + (open ? "expanded" : "collapsed") + '"></span></a></div>';
+                Dom.addClass(tr, "mtl-" + (open ? "expanded" : "collapsed"));
+            } else if (true === itemData["isLeaf"]) {
+                // a score standing on its own is not a leaf of anything, it stays flush left
+                if (depth) {
+                    padding += 25;
+                }
+                Dom.addClass(tr, "mtl-leaf");
+            }
+
+            return toggle + '<span style="margin-left:' + padding + 'px;">'
+                + Alfresco.util.encodeHTML(data.displayValue) + "</span>";
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslDetails"],
+        renderer: function(oRecord, data, label, scope) {
+            if (!beCPG.util.score) {
+                return "";
+            }
+
+            var details = scoreDetailsOrVerdict(oRecord, data);
+            if (!details) {
+                return "";
+            }
+
+            var badge = beCPG.util.score.renderBadge(details, scope, oRecord.getData("nodeRef"));
+
+            // the error log has no column of its own, it shows as the warning pictogram
+            var error = scoreRowProp(oRecord, "prop_bcpg_rslErrorLog");
+            if (error) {
+                badge = '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">' + badge + "</span>";
+            }
+
+            return '<div class="score-badge-cell">' + badge + "</div>";
+        }
+    });
+
+    // Logos of a score: the row carries the image, the class alone would say little.
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:sblClass"],
+        renderer: function(oRecord, data, label, scope) {
+            var nodeRef = oRecord.getData("nodeRef");
+            var verdict = Alfresco.util.encodeHTML(data && data.value ? data.value.toString() : "");
+
+            if (!nodeRef) {
+                return verdict;
+            }
+
+            // the file name is not extracted by the grid, the content endpoint does without it
+            var url = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/content/" + nodeRef.replace(":/", "");
+
+            return '<span class="score-badge"><img class="score-badge-img" src="' + url + '" alt="' + verdict
+                + '" onerror="this.style.display=\'none\';" /></span> ' + verdict;
         }
     });
 
@@ -574,7 +759,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var copyMessage = Alfresco.util.encodeHTML(
                 scope.msg("message.copy-to-clipboard.success")
-            ).replace(/'/g, "\\'");
+            ).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 
             var toggleScript =
                 "var p=document.getElementById('" + panelId + "');" +
@@ -688,13 +873,50 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:productState", "bcpg:supplierState", "bcpg:clientState", "bcpg:documentState",
-            "bcpg:productCollectionState", "qa:batchState", "qa:ncState", "qa:qcState"],
+            "bcpg:productCollectionState", "ecm:ecoState", "qa:batchState", "qa:ncState", "qa:qcState"],
         renderer: function(oRecord, data, label, scope) {
             if (data.value != null && data.value !== "") {
                 return '<span class="product-state entity-' + data.value + '">'
                     + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+    // Packaging components carry their hierarchy on a free-text column, so none of the
+    // association renderers above applies and the rows used to be drawn flat even though
+    // the level and the parent were stored (#34468).
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pack:pclComponent", "pack:splComponent"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+
+            var padding = 0;
+            var toogleGroupButton = null;
+            var tr = scope.widgets.dataTable.getTrEl(elCell);
+            var depthLevel = oRecord.getData("itemData")["prop_bcpg_depthLevel"];
+
+            if (depthLevel && depthLevel.value) {
+                padding = (depthLevel.value - 1) * 25;
+
+                Dom.addClass(tr, "mtl-level-" + depthLevel.value);
+            }
+
+            if (false === oRecord.getData("itemData")["isLeaf"]) {
+                toogleGroupButton = '<div id="group_' + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef") + '" style="margin-left:' + padding
+                    + 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+                    + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '"></span></a></div>';
+                Dom.addClass(tr, "mtl-" + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed"));
+
+            } else if (true === oRecord.getData("itemData")["isLeaf"]) {
+                padding += 25;
+
+                Dom.addClass(tr, "mtl-leaf");
+            }
+
+            return (toogleGroupButton != null ? toogleGroupButton : '') + '<span class="' + (data.metadata || "") + '" '
+                + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
         }
 
     });
@@ -898,33 +1120,34 @@ if (beCPG.module.EntityDataGridRenderers) {
                         ret += '<div id="nut-details-' + oColumn.field + "-" + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">' + nutName + '</div><div class="bd" >';
                         for (var i = 0; i < keys.length; i++) {
                             var k = keys[i];
-                            var value = jsonData.v[k];
-                            if (k && value) {
+                            var value = getRegulationValue(jsonData, "v", k);
+                            if (k && value !== null) {
                                 minimumFractionDigits = 0;
                                 if (k == "EU" && jsonData.v[key] != null && value < 10 && value >= 1) {
                                     minimumFractionDigits = 1;
                                 }
 
-                                var toleranceMin = jsonData.tl ? jsonData.tl[k] || '' : '';
-                                var toleranceMax = jsonData.tu ? jsonData.tu[k] || '' : '';
+                                // Historical keys: "tl" holds the maximum tolerated value, "tu" the minimum
+                                var toleranceMin = getRegulationValue(jsonData, "tu", k);
+                                var toleranceMax = getRegulationValue(jsonData, "tl", k);
                                 var min = jsonData.min ? jsonData.min[k] || '' : '';
                                 var max = jsonData.max ? jsonData.max[k] || '' : '';
                                 var gda = jsonData.gda ? jsonData.gda[k] || '' : '';
                                 var vps = jsonData.vps ? jsonData.vps[k] || '' : '';
 
                                 ret += '<div>' +
-                                    '<h3>' + scope.msg("nutrient.details.header", k + ' <img  title="' + k + '" src="' + Alfresco.constants.URL_CONTEXT + 'res/components/images/flags/' + k.split("_")[0].toLowerCase() + '.png" />') + '</h3>' +
+                                    '<h3>' + scope.msg("nutrient.details.header", k + ' <img  title="' + k + '" src="' + getRegulationFlagUrl(k) + '" />') + '</h3>' +
                                     '<p>' + scope.msg("nutrient.details.value", value.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
                                     })) + '</p>' +
-                                    (toleranceMin ? '<p>' + scope.msg("nutrient.details.tl", toleranceMin.toLocaleString(beCPG.util.getJSLocale(), {
+                                    (toleranceMin !== null ? '<p>' + scope.msg("nutrient.details.tu", toleranceMin.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
                                     })) + '</p>' : '') +
-                                    (toleranceMax ? '<p>' + scope.msg("nutrient.details.tu", toleranceMax.toLocaleString(beCPG.util.getJSLocale(), {
+                                    (toleranceMax !== null ? '<p>' + scope.msg("nutrient.details.tl", toleranceMax.toLocaleString(beCPG.util.getJSLocale(), {
                                         minimumFractionDigits: minimumFractionDigits,
                                         maximumFractionDigits: 5,
                                         useGrouping: true
@@ -947,7 +1170,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                         ret += '</div></div>';
 
                         ret += '<span class="node-' + oColumn.field + "-" + oRecord.getData("nodeRef") + '">';
-                        ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
+                        var flagStyle = '';
+                        if (REGULATIONS_WITHOUT_FLAG.indexOf(key) < 0) {
+                            flagStyle = ' style="background-image:url(\'' + getRegulationFlagUrl(key) + '\');background-position:left center;"';
+                        }
+                        ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + ' (' + key + ')"' + flagStyle + ' href="" >';
                         ret += "&nbsp;";
                         ret += "</a></span>";
 
@@ -2043,8 +2270,14 @@ if (beCPG.module.EntityDataGridRenderers) {
                         oColumn.showAfterRenderSize = 16;
                     }
 
-                    return "<span title=\"" + data.displayValue.replace(/&nbsp;/gi, " ")
-                        .replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm, " ").replace(/"/gm, "")
+                    // Strip the tags until none is left: one pass can rebuild a tag from the pieces of another
+                    var title = data.displayValue.replace(/&nbsp;/gi, " "), previous;
+                    do {
+                        previous = title;
+                        title = title.replace(/<(?:.|\n)*?>/gm, '');
+                    } while (title !== previous);
+
+                    return "<span title=\"" + title.replace(/\n/gm, " ").replace(/[<>"]/gm, "")
                         + "\" class='instructions'>&nbsp;</span>";
                 } else {
                     return data.displayValue;
@@ -2192,57 +2425,77 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 
-    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:entityScore"],
-        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            var scoreValue = data.value,
-                nodeRef = oRecord.getData("nodeRef"),
-                scoreData = null
+    /**
+     * Renders the completion gauge and the forbidden alerts counter of a product.
+     *
+     * @param oRecord {object} the datagrid record
+     * @param data {object} the cell data holding the scores JSON
+     * @param scope {object} the datagrid
+     * @param i {number} the column index
+     * @param localRequirements {boolean} true when the requirements are carried by the scores
+     * @return {string} the HTML of the cell
+     */
+    var renderProductNotificationsCell = function(oRecord, data, scope, i, localRequirements) {
+        var nodeRef = oRecord.getData("nodeRef"),
+            scoreData = null,
             html = '';
 
-            if (scoreValue) {
-                try {
-                    scoreData = JSON.parse(scoreValue);
-                } catch (e) {
-                    // error parsing
-                }
+        if (data.value) {
+            try {
+                scoreData = JSON.parse(data.value);
+            } catch (e) {
+                // error parsing
             }
+        }
 
+        if (scoreData) {
+            var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
 
-            if (scoreData) {
-                var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
+            html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
+                'data-node-ref="' + nodeRef + '" ' +
+                'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
 
-                html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
-                    'data-node-ref="' + nodeRef + '" ' +
-                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
+            setTimeout(function() {
+                var container = document.getElementById(containerId);
+                if (container && !container._productNotificationsInit) {
+                    container._productNotificationsInit = true;
 
-                setTimeout(function() {
-                    var container = document.getElementById(containerId);
-                    if (container && !container._productNotificationsInit) {
-                        container._productNotificationsInit = true;
+                    var toolbar = Alfresco.util.ComponentManager.find({
+                        name: "beCPG.component.ProductListToolbar"
+                    })[0];
 
-                        var toolbar = Alfresco.util.ComponentManager.find({
-                            name: "beCPG.component.ProductListToolbar"
-                        })[0];
+                    var productNotifications = new beCPG.component.ProductNotifications(containerId);
+                    productNotifications.setOptions({
+                        entityNodeRef: nodeRef,
+                        list: scope.datalistMeta ? scope.datalistMeta.name : '',
+                        containerDiv: container,
+                        scores: scoreData,
+                        localRequirements: localRequirements
+                    });
 
-                        var productNotifications = new beCPG.component.ProductNotifications(containerId);
-                        productNotifications.setOptions({
-                            entityNodeRef: nodeRef,
-                            list: scope.datalistMeta ? scope.datalistMeta.name : '',
-                            containerDiv: container,
-                            scores: scoreData
-                        });
-
-                        if (toolbar && toolbar.msg) {
-                            productNotifications.msg = function(arg1, arg2, arg3, arg4) {
-                                return toolbar.msg(arg1, arg2, arg3, arg4);
-                            }
+                    if (toolbar && toolbar.msg) {
+                        productNotifications.msg = function(arg1, arg2, arg3, arg4) {
+                            return toolbar.msg(arg1, arg2, arg3, arg4);
                         }
                     }
-                }, 10);
-            }
+                }
+            }, 10);
+        }
 
-            return html;
+        return html;
+    };
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:entityScore"],
+        renderer: function(oRecord, data, label, scope, i) {
+            return renderProductNotificationsCell(oRecord, data, scope, i, false);
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["ecm:culEntityScore"],
+        renderer: function(oRecord, data, label, scope, i) {
+            return renderProductNotificationsCell(oRecord, data, scope, i, true);
         }
     });
 
@@ -2432,6 +2685,23 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
             return Alfresco.util.encodeHTML(data.displayValue);
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: "qa:batchAllocationStockRefs",
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var itemData = oRecord.getData("itemData");
+            var elTr = scope.widgets.dataTable.getTrEl(elCell);
+            var stockRefs = itemData["assoc_qa_batchAllocationStockRefs"];
+            if (stockRefs && stockRefs.length > 0) {
+                Dom.setStyle(elTr, "opacity", "0.6");
+                Dom.setStyle(elTr, "background-color", "#f5f5f5");
+            } else {
+                Dom.setStyle(elTr, "opacity", "");
+                Dom.setStyle(elTr, "background-color", "");
+            }
+            return data ? Alfresco.util.encodeHTML(data.displayValue) : "";
         }
     });
 

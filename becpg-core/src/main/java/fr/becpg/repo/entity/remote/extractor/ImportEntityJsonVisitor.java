@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -163,6 +165,17 @@ public class ImportEntityJsonVisitor {
 				}
 				context.setRetry(false);
 				ret = visit(entity, JsonVisitNodeType.ENTITY, null, context);
+				if (ret != null) {
+					/*
+					 * A retry replays the whole document, entity included. Without its id the
+					 * entity is looked up again by findNode, and that lookup can fall back on
+					 * the search index — which cannot see a node created by the transaction
+					 * still running. The entity was then created a second time under the same
+					 * name and the request died on DuplicateChildNodeNameException, after
+					 * having done all of its work twice.
+					 */
+					entity.put(RemoteEntityService.ATTR_ID, ret.getId());
+				}
 				retryCount++;
 				logger.debug("Retrying count:" + retryCount);
 			}
@@ -911,6 +924,13 @@ public class ImportEntityJsonVisitor {
 
 			if (value instanceof JSONArray array) {
 				value = array.length() > 0 ? array.get(0) : null;
+			}
+
+			if (DataTypeDefinition.DATE.equals(dataTypeName) && (value instanceof String day)) {
+				Optional<Date> parsedDay = RemoteHelper.parseDay(day);
+				if (parsedDay.isPresent()) {
+					return parsedDay.get();
+				}
 			}
 
 			if (RemoteHelper.isJSONValue(propQName) || value instanceof JSONObject) {

@@ -171,6 +171,12 @@ div.selected-items, div.item-select {
 .search .product-state.entity-closing,
 .search .product-state.entity-closed,
 .search .product-state.entity-Compliant,
+.search .product-state.entity-Automatic,
+.search .product-state.entity-ToCalculateWUsed,
+.search .product-state.entity-WUsedCalculated,
+.search .product-state.entity-Simulated,
+.search .product-state.entity-Applied,
+.search .product-state.entity-InError,
 .search .product-state.entity-NonCompliant {
     display: inline-block;
     padding: 0 6px;
@@ -198,4 +204,10 @@ div.selected-items, div.item-select {
 .search .product-state.entity-closed { color: #2e7d32; background-color: #e8f5e9; }
 .search .product-state.entity-Compliant { color: #2e7d32; background-color: #e8f5e9; }
 .search .product-state.entity-NonCompliant { color: #c62828; background-color: #ffebee; }
+.search .product-state.entity-Automatic { color: #546e7a; background-color: #eceff1; }
+.search .product-state.entity-ToCalculateWUsed { color: #e65100; background-color: #fff3e0; }
+.search .product-state.entity-WUsedCalculated { color: #1565c0; background-color: #e3f2fd; }
+.search .product-state.entity-Simulated { color: #546e7a; background-color: #eceff1; }
+.search .product-state.entity-Applied { color: #2e7d32; background-color: #e8f5e9; }
+.search .product-state.entity-InError { color: #c62828; background-color: #ffebee; }
 

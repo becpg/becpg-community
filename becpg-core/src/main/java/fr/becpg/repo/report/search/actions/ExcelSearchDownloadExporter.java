@@ -1,15 +1,11 @@
 
 package fr.becpg.repo.report.search.actions;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.DownloadStatusUpdateService;
@@ -19,13 +15,17 @@ import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.helper.ExcelStreamHelper;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext;
 
@@ -40,13 +40,16 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ExcelSearchDownloadExporter.class);
 
+	/** Number of rows kept in memory before being flushed to disk */
+	private static final int ROW_ACCESS_WINDOW_SIZE = 100;
+
 	private ExcelReportSearchRenderer excelReportSearchRenderer;
 
 	private ContentService contentService;
 
-	private XSSFWorkbook workbook;
+	private SXSSFWorkbook workbook;
 
-	private List<XSSFSheet> sheets = new ArrayList<>();
+	private List<Sheet> sheets = new ArrayList<>();
 
 	Map<String, ExcelSheetExportContext> context = new HashMap<>();
 
@@ -98,84 +101,168 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	/** {@inheritDoc} */
 	@Override
-	public void start(final ExporterContext context) {
+	public void startExport() {
 		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
 
 		try {
-			workbook = new XSSFWorkbook(reader.getContentInputStream());
+			XSSFWorkbook template = new XSSFWorkbook(reader.getContentInputStream());
+
+			readTemplateHeaders(template);
+
+			workbook = new SXSSFWorkbook(template, ROW_ACCESS_WINDOW_SIZE);
+			workbook.setCompressTempFiles(true);
+
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-				sheets.add(i, workbook.getSheetAt(i));
+				SXSSFSheet sheet = workbook.getSheetAt(i);
+
+				// Columns have to be tracked to stay auto-sizeable once the rows are flushed to disk
+				sheet.trackAllColumnsForAutoSizing();
+
+				sheets.add(i, sheet);
 			}
 
 		} catch (ContentIOException | IOException e) {
-			logger.error("Error generating excel report", e);
+			throw new BeCPGException("Cannot read the excel report template: " + templateNodeRef, e);
 		}
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * Read the header of each sheet on the template itself: once the workbook is wrapped for
+	 * streaming, the rows already written are no longer randomly accessible.
+	 *
+	 * @param template a {@link org.apache.poi.xssf.usermodel.XSSFWorkbook} object
+	 */
+	private void readTemplateHeaders(XSSFWorkbook template) {
+		QName mainType = null;
+		for (int i = 0; i < template.getNumberOfSheets(); i++) {
+			XSSFSheet templateSheet = template.getSheetAt(i);
+
+			final QName currentMainType = mainType;
+			ExcelSheetExportContext sheetContext = transactionHelper
+					.doInTransaction(() -> excelReportSearchRenderer.readHeader(templateSheet, currentMainType, parameters), true, true);
+
+			if (sheetContext != null && sheetContext.getMainType() != null) {
+				mainType = sheetContext.getMainType();
+			}
+
+			context.put(templateSheet.getSheetName(), sheetContext);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The sheets of a template all describe the same entity, so they are filled in a single
+	 * transaction: opening one per sheet charges the export the price of a transaction for every
+	 * single row it writes.
+	 */
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
 
-	    incFilesAddedCount();
-	    AtomicReference<QName> mainTypeRef = new AtomicReference<>();
+		incFilesAddedCount();
 
-	    for (XSSFSheet sheet : sheets) {
-	        QName type = transactionHelper.doInTransaction(() -> {
+		transactionHelper.doInTransaction(() -> {
+			fillSheets(entityNodeRef);
+			return null;
+		}, true, true);
 
-	            ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
-	            if (excelSheetExportContext == null) {
-	                excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainTypeRef.get(), parameters);
-	                context.put(sheet.getSheetName(), excelSheetExportContext);
-	            }
+		updateStatus();
 
-	            QName t = excelReportSearchRenderer.fillSheet(
-	                sheet,
-	                List.of(entityNodeRef),
-	                excelSheetExportContext
-	            );
-
-	            sheet.setForceFormulaRecalculation(true);
-	            return t;
-
-	        }, true, true);
-
-	        if (mainTypeRef.get() == null && type != null) {
-	            mainTypeRef.set(type);
-	        }
-
-	        updateStatus();
-	    }
-
-	    // Periodically clear per-sheet caches to limit memory growth
-	    nodesSinceLastCacheClear++;
-	    if (nodesSinceLastCacheClear >= cacheClearEvery) {
-	      for (ExcelSheetExportContext ctx : context.values()) {
-	        if (ctx != null) {
-	          ctx.clearCache();
-	        }
-	      }
-	      nodesSinceLastCacheClear = 0;
-	      if (logger.isDebugEnabled()) {
-	        logger.debug("Cleared Excel sheet caches after processing batch of " + cacheClearEvery + " nodes");
-	      }
-	    }
+		clearCachesEveryBatch();
 	}
 
+	/**
+	 * Write the rows the given entity adds to each sheet of the template.
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void fillSheets(NodeRef entityNodeRef) {
+		for (Sheet sheet : sheets) {
+			ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
 
-
-	/** {@inheritDoc} */
-	@Override
-	public void end() {
-		if (tempFile != null) {
-			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
-				workbook.setForceFormulaRecalculation(true);
-				workbook.write(outputStream);
-				workbook.close();
-			} catch (FileNotFoundException e) {
-				logger.error("Failed to create excel file", e);
-			} catch (ContentIOException | IOException e) {
-				logger.error("Error generating excel report", e);
+			if (excelSheetExportContext == null) {
+				continue;
 			}
+
+			excelReportSearchRenderer.fillSheet(sheet, List.of(entityNodeRef), excelSheetExportContext);
+
+			sheet.setForceFormulaRecalculation(true);
+		}
+	}
+
+	/**
+	 * Drop what was extracted for the entities of the previous batch, to bound the memory an export
+	 * holds whatever the number of results.
+	 */
+	private void clearCachesEveryBatch() {
+
+		nodesSinceLastCacheClear++;
+
+		if (nodesSinceLastCacheClear < cacheClearEvery) {
+			return;
+		}
+
+		for (ExcelSheetExportContext sheetContext : context.values()) {
+			if (sheetContext != null) {
+				sheetContext.clearCache();
+			}
+		}
+
+		nodesSinceLastCacheClear = 0;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Cleared Excel sheet caches after processing batch of " + cacheClearEvery + " nodes");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * A workbook that could not be written entirely is not published: the client would download a
+	 * file it can only open by repairing it, instead of being told that its export failed.
+	 */
+	@Override
+	public void endExport() {
+		if ((tempFile == null) || (workbook == null)) {
+			return;
+		}
+
+		try {
+			workbook.setForceFormulaRecalculation(true);
+			ExcelStreamHelper.writeWorkbook(workbook, tempFile);
+		} catch (ContentIOException | IOException e) {
+			throw new BeCPGException("Error generating excel report", e);
+		} finally {
+			closeWorkbook();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Called by the action on every outcome, so that an export failing halfway still gives its
+	 * temporary files back.
+	 */
+	@Override
+	public void releaseResources() {
+		closeWorkbook();
+	}
+
+	private void closeWorkbook() {
+		if (workbook == null) {
+			return;
+		}
+
+		SXSSFWorkbook toClose = workbook;
+		workbook = null;
+
+		try {
+			toClose.close();
+		} catch (IOException e) {
+			logger.error("Cannot close excel workbook", e);
+		} finally {
+			// Streaming keeps the flushed rows in temporary files that POI only removes on demand
+			toClose.dispose();
 		}
 	}
 

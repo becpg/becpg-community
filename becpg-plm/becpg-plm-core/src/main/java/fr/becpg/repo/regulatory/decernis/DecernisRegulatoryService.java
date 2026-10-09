@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
 import java.util.*;
@@ -335,7 +336,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		try {
 			ingredientAnalysisResults = ingredientAnalysis(context, checkContext);
 		} catch (RestClientException e) {
-			logger.error("Error during Decernis ingredients analysis: " + cleanError(e.getMessage()), e);
+			logger.error("Error during Decernis ingredients analysis: " + cleanError(e.getMessage()), maskedCause(e));
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
 					.ofDataType(RequirementDataType.Formulation)
@@ -385,7 +386,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			try {
 				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
 			} catch (Exception e) {
-				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), e);
+				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), maskedCause(e));
 				context.getRequirements().addAll(generateReqCtrlErrors(
 						regulatoryBatch.countryBatches().countries(),
 						regulatoryBatch.usageBatches().usages(),
@@ -551,7 +552,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 				context.setRegulatoryRecipeId(recipeId);
 			}
 		} catch (RestClientException e) {
-			logger.error(generateError(e), e);
+			logger.error(generateError(e), maskedCause(e));
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
 					.ofDataType(RequirementDataType.Specification)
@@ -570,7 +571,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 				String ingName = extractIngName(ingItem);
-				String rid = ingItem.getRegulatoryCode();
+				String rid = ProductDataDecernisJsonService.extractRid(ingItem);
 
 				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
 
@@ -584,8 +585,8 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 					} catch (RestClientException e) {
 						logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
 					} catch (Exception e) {
-						logger.error(e, e);
-						throw new FormulateException("Unexpected decernis error: " + cleanError(e.getMessage()), e);
+						logger.error(cleanError(e.getMessage()), maskedCause(e));
+						throw new FormulateException("Unexpected decernis error: " + cleanError(e.getMessage()), maskedCause(e));
 					}
 				}
 			}
@@ -691,32 +692,51 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-				String rid = ingItem.getRegulatoryCode();
-				if (rid == null || rid.isEmpty()) {
-					rid = fetchIngredientId(ingListDataItem, companyName());
-					if (logger.isDebugEnabled()) {
-						logger.debug("Try to fetch ingredient ID: " + ingItem.getCharactName());
-					}
-					if (rid != null) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + rid);
-						}
-					} else {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Could not find ingredient ID: " + ingItem.getCharactName());
-						}
-						rid = UNKNOWN;
-					}
-					ingItem.setRegulatoryCode(rid);
-					alfrescoRepository.save(ingItem);
+				IngredientRegulatoryCodes codes = IngredientRegulatoryCodes.parse(ingItem.getRegulatoryCode());
+
+				if (codes.decernisId().isEmpty() && !codes.isDecernisIdUnknown()) {
+					codes = storeDecernisId(ingListDataItem, ingItem, codes);
 				}
-				if (UNKNOWN.equals(rid)) {
+
+				if (codes.isDecernisIdUnknown()) {
 					RequirementListDataItem noCodeRequirement = createReqCtrl(ingListDataItem,
 							MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
 					context.getRequirements().add(noCodeRequirement);
 				}
 			}
 		}
+	}
+
+	/**
+	 * Asks Decernis for the ingredient id and stores the answer next to the codes of the other regulatory
+	 * services. A missing answer is stored as the {@code unknown} marker so that Decernis is not asked again
+	 * on every formulation.
+	 *
+	 * @param ingListDataItem the ingredient line of the product
+	 * @param ingItem the ingredient charact to update
+	 * @param codes the codes currently stored on the ingredient
+	 * @return the stored codes
+	 */
+	private IngredientRegulatoryCodes storeDecernisId(IngListDataItem ingListDataItem, IngItem ingItem, IngredientRegulatoryCodes codes) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Try to fetch ingredient ID: " + ingItem.getCharactName());
+		}
+		String decernisId = fetchIngredientId(ingListDataItem, companyName());
+		IngredientRegulatoryCodes updated;
+		if (StringUtils.hasText(decernisId)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + decernisId);
+			}
+			updated = codes.withDecernisId(decernisId);
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Could not find ingredient ID: " + ingItem.getCharactName());
+			}
+			updated = codes.withUnknownDecernisId();
+		}
+		ingItem.setRegulatoryCode(updated.format());
+		alfrescoRepository.save(ingItem);
+		return updated;
 	}
 
 	public String fetchIngredientId(IngListDataItem ingListDataItem, String companyName) {

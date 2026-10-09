@@ -17,7 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.extractor;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
@@ -30,7 +39,13 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  * @version $Id: $Id
  */
 public class RemoteHelper {
-	
+
+	/** Constant <code>ISO_DAY_FORMATTER</code> */
+	private static final DateTimeFormatter ISO_DAY_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+
+	/** Constant <code>ISO_DAY_PATTERN</code> */
+	private static final Pattern ISO_DAY_PATTERN = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+
     /**
      * <p>Constructor for RemoteHelper.</p>
      */
@@ -68,5 +83,48 @@ public class RemoteHelper {
 	public static boolean isJSONValue(QName propType) {
 		return BeCPGModel.PROP_ENTITY_SCORE.equals(propType) || BeCPGModel.PROP_ACTIVITYLIST_DATA.equals(propType);
 	}
-	
+
+	/**
+	 * <p>States whether a property denotes a calendar day rather than an instant.</p>
+	 *
+	 * @param propType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param dictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
+	 * @return a boolean.
+	 */
+	public static boolean isDayProperty(QName propType, EntityDictionaryService dictionaryService) {
+		PropertyDefinition propertyDefinition = dictionaryService.getProperty(propType);
+		return (propertyDefinition != null) && DataTypeDefinition.DATE.equals(propertyDefinition.getDataType().getName());
+	}
+
+	/**
+	 * Renders a <code>d:date</code> as the calendar day the repository displays.
+	 * <p>
+	 * The repository holds a day as an instant and whoever writes it picks a time zone.
+	 * Publishing that instant lets every reader re-interpret it in its own zone, which moves the
+	 * day by one on a server ahead of UTC. A plain day carries no zone, so it cannot move.
+	 *
+	 * @param value a {@link java.util.Date} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	public static String formatDay(Date value) {
+		return ISO_DAY_FORMATTER.format(value.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+	}
+
+	/**
+	 * Reads back a calendar day, anchored at midnight in the time zone of this server.
+	 * <p>
+	 * Anything else yields an empty result, so that the ISO instants written by earlier versions
+	 * keep going through the standard Alfresco conversion.
+	 *
+	 * @param value a {@link java.lang.String} object.
+	 * @return a {@link java.util.Optional} object.
+	 */
+	public static Optional<Date> parseDay(String value) {
+		if ((value == null) || !ISO_DAY_PATTERN.matcher(value).matches()) {
+			return Optional.empty();
+		}
+
+		return Optional.of(Date.from(LocalDate.parse(value, ISO_DAY_FORMATTER).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	}
+
 }

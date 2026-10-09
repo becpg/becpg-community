@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -172,6 +173,88 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 
 		assertFalse(timestamps < modified.getTime());
 
+	}
+
+	/**
+	 * A variant is not a datalist item but a direct child of the entity: editing it must refresh the
+	 * modified date of the entity all the same.
+	 */
+	@Test
+	public void testVariantDateModified() {
+
+		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			SemiFinishedProductData sfData = new SemiFinishedProductData();
+			sfData.setName("SF variant");
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
+
+		}, false, true);
+
+		long timestamps = Calendar.getInstance().getTimeInMillis();
+
+		// add a variant
+		final NodeRef variantNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Variant 1");
+			properties.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
+
+			return nodeService.createNode(sfNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, properties)
+					.getChildRef();
+
+		}, false, true);
+
+		Date modified = getModified(sfNodeRef);
+		assertTrue(timestamps < modified.getTime());
+
+		timestamps = Calendar.getInstance().getTimeInMillis();
+		assertFalse(timestamps < modified.getTime());
+
+		// rename the variant
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.setProperty(variantNodeRef, ContentModel.PROP_NAME, "Variant 1 renamed");
+			return null;
+
+		}, false, true);
+
+		modified = getModified(sfNodeRef);
+		assertTrue(timestamps < modified.getTime());
+
+		timestamps = Calendar.getInstance().getTimeInMillis();
+		assertFalse(timestamps < modified.getTime());
+
+		// switch the default variant flag
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.setProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
+			return null;
+
+		}, false, true);
+
+		modified = getModified(sfNodeRef);
+		assertTrue(timestamps < modified.getTime());
+
+		timestamps = Calendar.getInstance().getTimeInMillis();
+		assertFalse(timestamps < modified.getTime());
+
+		// remove the variant
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.deleteNode(variantNodeRef);
+			return null;
+
+		}, false, true);
+
+		modified = getModified(sfNodeRef);
+		assertTrue(timestamps < modified.getTime());
+
+	}
+
+	private Date getModified(NodeRef entityNodeRef) {
+		return transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED), false, true);
 	}
 
 }

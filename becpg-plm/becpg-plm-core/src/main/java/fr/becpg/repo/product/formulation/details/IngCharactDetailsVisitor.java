@@ -1,11 +1,15 @@
 package fr.becpg.repo.product.formulation.details;
 
+import java.util.List;
+
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.formulation.FormulationFilters;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
@@ -31,6 +35,45 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	@Override
 	protected double provideQtyUsedBasisFactor(CharactDetailsVisitorContext context) {
 		return context.getCumulatedYieldFactor();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Mirrors IngsCalculatingFormulationHandler, which spreads the ingredients over the positive
+	 * composition lines only: a negative line is left out of the recipe quantity basis.
+	 */
+	@Override
+	protected Double provideNetQty(ProductData productData) {
+		Double recipeQty = super.provideNetQty(productData);
+		return recipeQty != null ? recipeQty * CompositionQtyBasis.computePositiveLinesFactor(getEffectiveCompoList(productData)) : null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Composition lines without a positive quantity are ignored by the ingredient list, so they are not
+	 * detailed either.
+	 */
+	@Override
+	protected boolean shouldVisitCompoListItem(CompoListDataItem compoListDataItem) {
+		return super.shouldVisitCompoListItem(compoListDataItem) && CompositionQtyBasis.hasPositiveQty(compoListDataItem);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The ingredient list of a component with negative lines is spread over its positive lines, whereas
+	 * its lines are related to its signed net weight: the ratio between the two brings the children lines
+	 * back to their parent line.
+	 */
+	@Override
+	protected double provideComponentBasisFactor(ProductData componentProduct) {
+		return 1d / CompositionQtyBasis.computePositiveLinesFactor(getEffectiveCompoList(componentProduct));
+	}
+
+	private List<CompoListDataItem> getEffectiveCompoList(ProductData productData) {
+		return productData.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO);
 	}
 
 	/** {@inheritDoc} */

@@ -158,38 +158,86 @@
                 url: url, method: "GET",
                 successCallback: {
                     fn: function(response) {
-                        nextStep.nodeRef = response.json.nodeRef;
+                        // A 200 without nodeRef (e.g. becpg/project/path when the folder is missing)
+                        // keeps the step on its default nodeRef.
+                        if (response.json && response.json.nodeRef) {
+                            nextStep.nodeRef = response.json.nodeRef;
+                        }
                         this.loadStep(nextStep);
+                    },
+                    scope: this
+                },
+                failureCallback: {
+                    fn: function() {
+                        this.onNextStepWebScriptFailure(nextStep);
                     },
                     scope: this
                 }
             });
         },
 
+        /**
+         * The next step cannot be resolved: tell the user and go back to the previous step, which is
+         * reloaded on the node already created so that the missing data can be completed. A late
+         * answer, once the user has left the step, is ignored.
+         *
+         * @method onNextStepWebScriptFailure
+         * @param nextStep {object} the step the webscript was resolving
+         */
+        onNextStepWebScriptFailure: function(nextStep) {
+            if (this.currentIndex !== nextStep.index) return;
+
+            Alfresco.util.PopupManager.displayPrompt({
+                title: this.msg("message.failure"),
+                text: this.msg("wizard.nextstep.failure")
+            });
+            isNavigatingBack = true;
+            this.widgets.wizard.steps("previous");
+        },
+
         handleFinish: function(currentIndex) {
             var step = this.options.wizardStruct[currentIndex];
             if (!step) return true;
 
-            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
-            if (step.type === "form" || step.type === "survey") {
-                if (step.form) {
-                    validationInProgress = true;
-                    var isValid = this.options.readOnly || step.readOnly ||
-                        step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
-                     if(isValid && !(stepReadOnly)){
-                       Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
-                     }
-                    validationInProgress = false;
-                    step.finish = true;
-                    if (!isValid) return false;
-                } else {
-                    step.finish = true;
-                }
+            if (this.isEditableFormStep(step)) {
+                return this.submitFinishStep(step);
             }
 
-            if (!(step && step.finish)) {
-                this._navigateForward(this.options.wizardStruct[0].nodeRef);
-            }
+            this._navigateForward(this.options.wizardStruct[0].nodeRef);
+            return true;
+        },
+
+        /**
+         * A form or survey step that owns a forms runtime and is still editable: it is the only kind of
+         * step that has something to submit on finish. A read-only survey still instantiates a forms
+         * runtime (its FormUI is created with mode POST whatever the view mode), so the runtime alone
+         * does not mean the step is editable.
+         *
+         * @method isEditableFormStep
+         * @param step {object} wizard step
+         * @return {boolean}
+         */
+        isEditableFormStep: function(step) {
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
+            return (step.type === "form" || step.type === "survey") && !!step.form && !stepReadOnly;
+        },
+
+        /**
+         * Validates and submits the last editable step; the navigation happens in onFormSubmit once
+         * the submit has succeeded.
+         *
+         * @method submitFinishStep
+         * @param step {object} wizard step
+         * @return {boolean} false when the form is invalid
+         */
+        submitFinishStep: function(step) {
+            validationInProgress = true;
+            var isValid = step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+            validationInProgress = false;
+            if (!isValid) return false;
+
+            step.finish = true;
+            Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
             return true;
         },
 

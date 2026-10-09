@@ -1,0 +1,63 @@
+<#--
+  A score stated as a figure: the PEF single score, the Ecobalyse cost, the FSA-Ofcom points, the
+  eco-modulation... drawn as a plate bearing the name of the scheme, the value and its unit, and
+  the class when the score grades one, "HFSS" for instance.
+
+  A scheme that publishes no aggregated value but shares of the reference intake, the NutrInform
+  battery being the case, is drawn as one battery per part instead, filled to its share.
+
+  The model is a ScoreMarking under "score".
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign PAD = 3>
+<#assign batteries = []>
+<#if !score.value()??>
+	<#list score.parts() as part>
+		<#if part.fill()??>
+			<#assign batteries = batteries + [part]>
+		</#if>
+	</#list>
+</#if>
+
+<#if batteries?has_content>
+	<#assign CELL_W = 58>
+	<#assign CELL_H = 54>
+	<#assign BLUE = "#1f6fb2">
+	<#assign W = batteries?size * CELL_W>
+	<#assign H = CELL_H>
+	<@svg.document width=W height=H>
+		<#list batteries as part>
+			<#assign left = part?index * CELL_W>
+			<#assign body = {"x": left + 7, "y": 18, "w": 40, "h": 13}>
+			<@svg.centredText x=left + CELL_W / 2 middle=6 text=part.name() size=svg.fittedSize(part.name(), CELL_W - 4, 8) fill=lib.INK/>
+			<@svg.centredText x=left + CELL_W / 2 middle=13 text=part.amount() size=7 fill=lib.MUTED weight="normal"/>
+			<rect x="${body.x}" y="${body.y}" width="${body.w}" height="${body.h}" rx="2" fill="${lib.WHITE}" stroke="#222222" stroke-width="1.5"/>
+			<rect x="${body.x + body.w + 1}" y="${body.y + 4}" width="3" height="${body.h - 8}" rx="1" fill="#222222"/>
+			<#if (part.fill() gt 0)>
+			<rect x="${body.x + 2}" y="${body.y + 2}" width="${((body.w - 4) * part.fill() * 10)?round / 10}" height="${body.h - 4}" fill="${BLUE}"/>
+			</#if>
+			<@svg.centredText x=left + CELL_W / 2 middle=CELL_H - 9 text=part.share()!"" size=8 fill=lib.INK weight="normal"/>
+		</#list>
+	</@svg.document>
+<#else>
+	<#assign titleText = lib.titleOf(score.code())>
+	<#assign valueText = (score.value()!"") + score.unit()???then(" " + score.unit(), "")>
+	<#assign hasClass = (score.scoreClass()!"")?has_content>
+	<#assign VALUE_SIZE = 12>
+	<#assign PLATE_H = 22>
+	<#assign VALUE_W = [lib.textWidth(valueText, VALUE_SIZE) + 12, 40]?max>
+	<#assign CLASS_W = hasClass?then(lib.textWidth(score.scoreClass(), 10) + 12, 0)>
+	<#assign W = [VALUE_W + CLASS_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+	<#assign H = lib.TITLE_H + PLATE_H + 2 * PAD>
+	<@svg.document width=W height=H>
+		<@lib.title x=W / 2 text=titleText/>
+		<#assign left = (W - VALUE_W - CLASS_W) / 2>
+		<rect x="${left + 0.75}" y="${lib.TITLE_H + PAD + 0.75}" width="${VALUE_W - 1.5}" height="${PLATE_H - 1.5}" rx="4" fill="${lib.WHITE}" stroke="${lib.INK}" stroke-width="1.5"/>
+		<@svg.centredText x=left + VALUE_W / 2 middle=lib.TITLE_H + PAD + PLATE_H / 2 text=valueText size=VALUE_SIZE fill=lib.INK/>
+		<#if hasClass>
+		<@lib.pill x=left + VALUE_W top=lib.TITLE_H + PAD width=CLASS_W height=PLATE_H fill=lib.gradeColour(score.scoreClass()) text=score.scoreClass() size=10/>
+		</#if>
+	</@svg.document>
+</#if>

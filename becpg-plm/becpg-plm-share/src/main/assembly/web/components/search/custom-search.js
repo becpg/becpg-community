@@ -15,6 +15,8 @@
 	beCPG.custom.Search = function CustomSearch_constructor(htmlId) {
 		beCPG.custom.Search.superclass.constructor.call(this, htmlId);
 		this.selectedItems = {};
+		this.queryExecutionId = null;
+		this.searchCriteria = null;
 
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
 		YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
@@ -163,7 +165,8 @@
 									metaFields : {
 										page : "page",
 										pageSize : "pageSize",
-										fullListSize : "fullListSize"
+										fullListSize : "fullListSize",
+										queryExecutionId : "queryExecutionId"
 									}
 								}
 							});
@@ -464,6 +467,7 @@
 								        "prop_bcpg_clientState",
 								        "prop_bcpg_documentState",
 								        "prop_bcpg_productCollectionState",
+								        "prop_ecm_ecoState",
 								        "prop_pjt_projectState",
 								        "prop_qa_batchState",
 								        "prop_qa_ncState",
@@ -686,6 +690,7 @@
 									// Pagination
 									me.resultsCount = oResponse.meta.fullListSize;
 									me.currentPage = oResponse.meta.page;
+									me.queryExecutionId = oResponse.meta.queryExecutionId;
 
 									// clear the empty error message
 									me.widgets.dataTable.set("MSG_EMPTY", "");
@@ -876,6 +881,19 @@
 											// were
 											// available
 											});
+
+							// A cached result list belongs to one set of criteria: without this, a new search
+							// would come back with the identifier of the previous one, and the server would
+							// serve its results instead of running the query again
+							var criteria = params.replace(/&page=[^&]*/, "");
+							if (this.searchCriteria !== criteria) {
+								this.searchCriteria = criteria;
+								this.queryExecutionId = null;
+							}
+
+							if (this.queryExecutionId) {
+								params += "&queryExecutionId=" + encodeURIComponent(this.queryExecutionId);
+							}
 
 							return params;
 						},

@@ -110,6 +110,8 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 	@Autowired
+	private ProjectFormulationAuditFilter projectFormulationAuditFilter;
+	@Autowired
 	private ProjectActivityService projectActivityService;
 	@Autowired
 	private ProjectListPolicy projectListPolicy;
@@ -291,7 +293,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				projectFormulationAuditFilter.disableAuditForFormulation();
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_SYSTEM_ENTITY);
@@ -321,7 +323,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				projectFormulationAuditFilter.enableAuditAfterFormulation();
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
@@ -623,7 +625,6 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 				}
 			}
 		}
-
 	}
 
 	/** {@inheritDoc} */
@@ -650,7 +651,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 			try {
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 
-				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
+				projectFormulationAuditFilter.runAudited(() -> scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model));
 			} finally {
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 			}
@@ -692,15 +693,10 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, List<NodeRef> groups) {
 		if (nodeRef != null) {
-			NodeRef projectNodeRef = nodeRef;
-			if (ProjectModel.TYPE_TASK_LIST.equals(nodeService.getType(nodeRef))) {
-				projectNodeRef = entityListDAO.getEntity(nodeRef);
-			}
-			
 			for (NodeRef groupNodeRef : groups) {
 				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
 				if (ProjectHelper.isRoleAuhtority(authorityName)) {
-					List<NodeRef> resources = extractResources(projectNodeRef, Arrays.asList(groupNodeRef));
+					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
 					if (resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
 						return true;
 					}

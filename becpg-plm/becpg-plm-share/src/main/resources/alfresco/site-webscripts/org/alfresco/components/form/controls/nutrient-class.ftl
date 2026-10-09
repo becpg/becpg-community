@@ -1,16 +1,23 @@
-<#assign fieldValue = field.value>
+<#--
+  Deprecated since #36086: the standard forms no longer use this control, the score is shown by the
+  score list and its score-badge control. It is kept for the customer forms still referring to it
+  and will be removed in a later version.
+-->
+<#assign fieldValue = (field.value)!"">
 <div class="form-field">
    <div class="viewmode-field">
       <span class="viewmode-label">${field.label?html}:</span>
-      <#attempt>
-		    <#assign tmp = fieldValue?eval>
-		    <#assign isValid = true>
-		<#recover>
-		    <#assign isValid = false>
-		</#attempt>
-	  <#if isValid && fieldValue?has_content>
-	      <#if fieldValue != "" && fieldValue?eval??>
-			<#assign nutrientDetails = fieldValue?eval>
+      <#-- Only attempt the eval on a non empty value: "?eval" on an empty string throws, and
+           FreeMarker logs the failure of an #attempt block even when #recover handles it. -->
+      <#assign nutrientDetails = "">
+      <#if fieldValue?trim?has_content>
+         <#attempt>
+            <#assign nutrientDetails = fieldValue?eval>
+         <#recover>
+            <#assign nutrientDetails = "">
+         </#attempt>
+      </#if>
+      <#if nutrientDetails?is_hash>
 		      <span class="viewmode-value nutrient-class">
 		      <#assign class = nutrientDetails.nutrientClass>
 		      
@@ -93,7 +100,6 @@
 			          <span class="nutrient-class-error" >${class?html}</span>
 		        </#if>
 		      </span>
-	       </#if>
 	  </#if>
    </div>
 </div>

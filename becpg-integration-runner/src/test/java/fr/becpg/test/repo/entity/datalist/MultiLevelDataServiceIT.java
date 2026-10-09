@@ -46,14 +46,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 	private NodeRef lSF4NodeRef = null;
 	private NodeRef finishedProductNodeRef = null;
 
-	/**
-	 * Test get Multilevel of the compoList
-	 */
-	@Test
-	public void testGetMultiLevelCompoList() {
-
-		logger.debug("testGetMultiLevelCompoList");
-
+	private void setupMultiLevelCompoListTestData() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
@@ -107,6 +100,17 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		waitForSolr();
+	}
+
+	/**
+	 * Test get Multilevel of the compoList
+	 */
+	@Test
+	public void testGetMultiLevelCompoList() {
+
+		logger.debug("testGetMultiLevelCompoList");
+
+		setupMultiLevelCompoListTestData();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -127,6 +131,91 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			assertEquals(6, checks);
 			return null;
 
+		}, false, true);
+	}
+
+	@Test
+	public void testFilterMultiLevelCompoList() {
+		logger.debug("testFilterMultiLevelCompoList");
+
+		setupMultiLevelCompoListTestData();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			final DataListFilter dataListFilter = new DataListFilter();
+			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
+			dataListFilter.updateMaxDepth(-1);
+			dataListFilter.setEntityNodeRefs(Collections.singletonList(finishedProductNodeRef));
+			dataListFilter.setFilterId("FORM_FILTER");
+			dataListFilter.getCriteriaMap().put("prop_bcpg_compoListUnit", "kg");
+
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+
+			assertNotNull(mlld);
+			assertEquals(3, mlld.getTree().size());
+
+			boolean foundChild12 = false;
+			boolean foundChild2 = false;
+			boolean foundChild21 = false;
+
+			for (MultiLevelListData childData : mlld.getTree().values()) {
+				if (childData.getEntityNodeRef().equals(rawMaterial1NodeRef)) {
+					foundChild12 = true;
+				} else if (childData.getEntityNodeRef().equals(rawMaterial2NodeRef)) {
+					foundChild2 = true;
+				} else if (childData.getEntityNodeRef().equals(lSF4NodeRef)) {
+					foundChild21 = true;
+				}
+			}
+
+			assertTrue("rawMaterial1NodeRef not found at root", foundChild12);
+			assertTrue("rawMaterial2NodeRef not found at root", foundChild2);
+			assertTrue("lSF4NodeRef not found at root", foundChild21);
+
+			return null;
+		}, false, true);
+	}
+
+	@Test
+	public void testSelfContainedParentItem() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished Product Self Contained");
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Raw material Self");
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+
+			CompoListDataItem compoItem = CompoListDataItem.build()
+					.withParent(null)
+					.withQty(1d)
+					.withQtyUsed(1d)
+					.withUnit(ProductUnit.P)
+					.withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterialNodeRef);
+
+			finishedProduct.getCompoListView().setCompoList(Collections.singletonList(compoItem));
+			NodeRef fpNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(fpNodeRef);
+			NodeRef compoListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST);
+			List<NodeRef> items = entityListDAO.getListItems(compoListNodeRef, PLMModel.TYPE_COMPOLIST, null);
+			assertEquals(1, items.size());
+			NodeRef itemNodeRef = items.get(0);
+
+			nodeService.setProperty(itemNodeRef, fr.becpg.model.BeCPGModel.PROP_PARENT_LEVEL, itemNodeRef);
+
+			final DataListFilter dataListFilter = new DataListFilter();
+			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
+			dataListFilter.updateMaxDepth(-1);
+			dataListFilter.setEntityNodeRefs(Collections.singletonList(fpNodeRef));
+
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+			assertNotNull(mlld);
+			assertEquals(1, mlld.getTree().size());
+			assertTrue(mlld.getTree().containsKey(itemNodeRef));
+
+			return null;
 		}, false, true);
 	}
 

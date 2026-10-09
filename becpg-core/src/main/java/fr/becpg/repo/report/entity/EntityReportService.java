@@ -100,7 +100,20 @@ public interface EntityReportService {
 	 * @return a {@link java.util.List} object
 	 */
 	List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportType);
-	
+
+	/**
+	 * <p>getOrRefreshReportsOfKind.</p>
+	 *
+	 * Same as {@link #getOrRefreshReportsOfKind(NodeRef, String)} but regenerates the reports
+	 * of the given locale only, instead of every locale declared on the entity.
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportType a {@link java.lang.String} object
+	 * @param locale the locale to regenerate, or <code>null</code> for all of them
+	 * @return a {@link java.util.List} object
+	 */
+	List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportType, Locale locale);
+
 	/**
 	 * <p>getXmlReportDataSource.</p>
 	 *

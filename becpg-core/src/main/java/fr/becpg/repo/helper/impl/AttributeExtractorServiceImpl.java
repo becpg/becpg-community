@@ -90,6 +90,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
+	private static final String FIELD_PATH_SEPARATOR = "|";
+	private static final String MULTI_VALUE_SEPARATOR = ",";
+	private static final String RANGE_SEPARATOR = "..";
+	private static final String WILDCARD_OPERATOR = "*";
+	private static final String STARTS_WITH_OPERATOR = "^";
+
+	private static final Pattern NUMERIC_PATTERN = Pattern.compile("-?\\d+([.,]\\d+)?");
+
+	private static final String METADATA_DATE = "date";
+	private static final String METADATA_DATETIME = "datetime";
+
 	private static final String KEY_DISPLAY_VALUE = "displayValue";
 	private static final String KEY_METADATA = "metadata";
 	private static final String KEY_VALUE = "value";
@@ -231,6 +242,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 		String formula = null;
+		String structureKey;
 
 		public AttributeExtractorStructure(AttributeExtractorField field, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
@@ -315,6 +327,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public boolean isNested() {
 			return (childrens != null) && !childrens.isEmpty();
+		}
+
+		/**
+		 * The fields this structure extracts: itself and, recursively, its children. Two structures
+		 * reading the same field but not the same children describe two different extractions.
+		 *
+		 * @return a {@link java.lang.String} object
+		 */
+		public String getStructureKey() {
+			if (structureKey == null) {
+				StringBuilder key = new StringBuilder(getFieldName());
+
+				if (childrens != null) {
+					for (AttributeExtractorStructure child : childrens) {
+						key.append('|').append(child.getStructureKey());
+					}
+				}
+
+				structureKey = key.toString();
+			}
+			return structureKey;
 		}
 
 		public ClassAttributeDefinition getFieldDef() {
@@ -1164,18 +1197,37 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 
-		String metadata;
+		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
+		if (plugin != null) {
+			return plugin.extractMetadata(type, nodeRef);
+		}
+
+		return defaultMetadata(type);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String extractMetadataKey(QName type, NodeRef nodeRef) {
 
 		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
 		if (plugin != null) {
-			metadata = plugin.extractMetadata(type, nodeRef);
-		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
-			metadata = "container";
-		} else {
-			metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
+			return plugin.extractMetadataKey(type, nodeRef);
 		}
 
-		return metadata;
+		return defaultMetadata(type);
+	}
+
+	/**
+	 * <p>defaultMetadata.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String defaultMetadata(QName type) {
+		if (type.equals(ContentModel.TYPE_FOLDER)) {
+			return "container";
+		}
+		return entityDictionaryService.toPrefixString(type).split(":")[1];
 	}
 
 	/** {@inheritDoc} */
@@ -1271,7 +1323,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				for (Map.Entry<String, Object> entry : comp.entrySet()) {
 					String compKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-					if (critKey.equals(compKey)) {
+					if (isCriterionOn(critKey, compKey)) {
 						Object tmp = entry.getValue();
 						if (tmp != null) {
 							List<Map<String, Object>> dataList = new ArrayList<>();
@@ -1281,12 +1333,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 								dataList.add((Map<String, Object>) tmp);
 							}
 
-							for (Map<String, Object> data : dataList) {
-								if (matchData(data, compKey, Collections.singletonMap(critKey, critValue))) {
-									found = true;
-									break;
-								}
-							}
+							found = matchCriterion(dataList, compKey, critKey, critValue);
 						}
 						break;
 					}
@@ -1304,7 +1351,127 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	/**
-	 * <p>matchData.</p>
+	 * <p>Matches the data extracted for a field against a criterion.</p>
+	 *
+	 * The data holds one entry per value of the field, and the criterion matches as soon as one of
+	 * them matches. A criterion holding several values - what a filter on a multiple association
+	 * sends - matches as soon as one of its values is found: filtering on two plants keeps the
+	 * entities made in either of them.
+	 *
+	 * @param dataList a {@link java.util.List} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean matchCriterion(List<Map<String, Object>> dataList, String compKey, String critKey, String critValue) {
+		if (matchAnyData(dataList, compKey, critKey, critValue)) {
+			return true;
+		}
+
+		for (String singleValue : splitMultiValue(critValue)) {
+			if (matchAnyData(dataList, compKey, critKey, singleValue)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * <p>Tells whether one of the extracted values matches the criterion.</p>
+	 *
+	 * @param dataList a {@link java.util.List} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean matchAnyData(List<Map<String, Object>> dataList, String compKey, String critKey, String critValue) {
+		Map<String, String> criteriaMap = Collections.singletonMap(critKey, critValue);
+
+		for (Map<String, Object> data : dataList) {
+			if (matchData(data, compKey, criteriaMap)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * <p>Splits a criterion holding several values, empty when it holds a single one.</p>
+	 *
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
+	private List<String> splitMultiValue(String critValue) {
+		if ((critValue == null) || !critValue.contains(MULTI_VALUE_SEPARATOR)) {
+			return Collections.emptyList();
+		}
+
+		List<String> singleValues = new ArrayList<>();
+
+		for (String singleValue : critValue.split(MULTI_VALUE_SEPARATOR)) {
+			if (!singleValue.trim().isEmpty()) {
+				singleValues.add(singleValue.trim());
+			}
+		}
+
+		return singleValues;
+	}
+
+	/**
+	 * <p>Tells whether a criterion applies to an extracted field.</p>
+	 *
+	 * A criterion targets either the field itself, or a property reached through it: the criterion
+	 * <code>bcpg:allergenListAllergen|bcpg:allergenCode</code> is carried by the extracted field
+	 * <code>bcpg:allergenListAllergen</code>, whose data {@link #matchData} then walks down.
+	 *
+	 * @param critKey a {@link java.lang.String} object
+	 * @param compKey a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean isCriterionOn(String critKey, String compKey) {
+		return critKey.equals(compKey) || critKey.startsWith(compKey + FIELD_PATH_SEPARATOR);
+	}
+
+	/**
+	 * <p>Tells whether the extracted data of a field matches the criterion carried by critKey.</p>
+	 *
+	 * @param data a {@link java.util.Map} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @return a boolean
+	 */
+	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
+		if ((data == null) || data.isEmpty()) {
+			return false;
+		}
+
+		if (data.get(KEY_VALUE) == null) {
+			return matchNestedData(data, critKey, criteriaMap);
+		}
+
+		String compValue = cleanCriterionValue(criteriaMap.get(critKey));
+
+		if (compValue == null) {
+			return true;
+		}
+
+		String value = data.get(KEY_VALUE).toString().toLowerCase();
+		String displayValue = data.get(KEY_DISPLAY_VALUE) != null ? data.get(KEY_DISPLAY_VALUE).toString().toLowerCase() : "";
+
+		if (logger.isTraceEnabled()) {
+			logger.trace("Test Match on: " + critKey);
+			logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
+		}
+
+		return matchValue(value, displayValue, compValue, data);
+	}
+
+	/**
+	 * <p>Walks down the properties reached through a field, looking for the one the criterion targets.</p>
 	 *
 	 * @param data a {@link java.util.Map} object
 	 * @param critKey a {@link java.lang.String} object
@@ -1312,99 +1479,151 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	 * @return a boolean
 	 */
 	@SuppressWarnings("unchecked")
-	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
-		if ((data == null) || data.isEmpty()) {
-			return false;
-		}
+	private boolean matchNestedData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
+		for (Map.Entry<String, Object> propEntry : data.entrySet()) {
+			String propKey = propEntry.getKey();
+			Object propValue = propEntry.getValue();
+			String newCritKey = critKey + FIELD_PATH_SEPARATOR
+					+ propKey.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-		String value = null;
-
-		if (data.containsKey(KEY_VALUE) && (data.get(KEY_VALUE) != null)) {
-			value = data.get(KEY_VALUE).toString().toLowerCase();
-		} else {
-
-			for (Map.Entry<String, Object> propEntry : data.entrySet()) {
-				String propKey = propEntry.getKey();
-				Object propValue = propEntry.getValue();
-				String newCritKey = critKey + "|" + propKey.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
-
-				if (propValue instanceof Map) {
-					if (matchData((Map<String, Object>) propValue, newCritKey, criteriaMap)) {
+			if (propValue instanceof Map) {
+				if (matchData((Map<String, Object>) propValue, newCritKey, criteriaMap)) {
+					return true;
+				}
+			} else if (propValue instanceof List) {
+				for (Object item : (List<?>) propValue) {
+					if ((item instanceof Map) && matchData((Map<String, Object>) item, newCritKey, criteriaMap)) {
 						return true;
 					}
-				} else if (propValue instanceof List) {
-					for (Object item : (List<?>) propValue) {
-						if (item instanceof Map) {
-							if (matchData((Map<String, Object>) item, newCritKey, criteriaMap)) {
-								return true;
-							}
-						}
-					}
 				}
 			}
-			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * <p>Normalizes a criterion before comparing it: case, surrounding quotes and escaped spaces.</p>
+	 *
+	 * @param critValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String cleanCriterionValue(String critValue) {
+		if (critValue == null) {
+			return null;
 		}
 
-		String compValue = criteriaMap.get(critKey);
+		String compValue = critValue.toLowerCase();
 
-		if (value == null) {
-			return compValue == null;
+		if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
+			compValue = compValue.replace("\"", "");
 		}
 
-		String displayValue = data.get(KEY_DISPLAY_VALUE) != null ? data.get(KEY_DISPLAY_VALUE).toString().toLowerCase() : "";
+		return compValue.replace("\\ ", " ");
+	}
 
-		if (compValue != null) {
-			compValue = compValue.toLowerCase();
-			if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
-				compValue = compValue.replace("\"", "");
-			}
+	/**
+	 * <p>Compares an extracted value with a single criterion, honouring the search operators.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param displayValue a {@link java.lang.String} object
+	 * @param compValue a {@link java.lang.String} object
+	 * @param data a {@link java.util.Map} object
+	 * @return a boolean
+	 */
+	private boolean matchValue(String value, String displayValue, String compValue, Map<String, Object> data) {
+		if (compValue.contains(WILDCARD_OPERATOR)) {
+			String searchedValue = compValue.replace(WILDCARD_OPERATOR, "");
+			return value.contains(searchedValue) || displayValue.contains(searchedValue);
 		}
 
-		if ((compValue != null) && compValue.contains("\\ ")) {
-			compValue = compValue.replace("\\ ", " ");
+		if (compValue.startsWith(STARTS_WITH_OPERATOR)) {
+			String searchedValue = compValue.replace(STARTS_WITH_OPERATOR, "");
+			return value.startsWith(searchedValue) || displayValue.startsWith(searchedValue);
 		}
 
-		if (logger.isTraceEnabled()) {
-			logger.trace("Test Match on: " + critKey);
-			logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
+		if (compValue.contains(RANGE_SEPARATOR)) {
+			return matchRange(value, displayValue, compValue);
 		}
-		if ((compValue != null) && compValue.contains("*")) {
 
-			compValue = compValue.replace("*", "");
+		if (isDateData(data)) {
+			return dateMatches(value, compValue);
+		}
 
-			if (!value.contains(compValue) && !displayValue.contains(compValue)) {
+		return value.equals(compValue) || value.contains(compValue) || displayValue.equals(compValue);
+	}
+
+	/**
+	 * <p>Matches a value against the bounds of a range criterion.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param displayValue a {@link java.lang.String} object
+	 * @param compValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean matchRange(String value, String displayValue, String compValue) {
+		String[] bounds = compValue.split(Pattern.quote(RANGE_SEPARATOR));
+
+		if (bounds.length <= 1) {
+			return true;
+		}
+
+		return isInRange(value, bounds[0], bounds[1]) || isInRange(displayValue, bounds[0], bounds[1]);
+	}
+
+	/**
+	 * <p>Tells whether a value stands between the bounds of a range.</p>
+	 *
+	 * Numeric bounds are compared as numbers, so 15 stays out of 1..9; anything else, dates
+	 * included, keeps the alphabetical order of the extracted values.
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param lowerBound a {@link java.lang.String} object
+	 * @param upperBound a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean isInRange(String value, String lowerBound, String upperBound) {
+		if (isNumeric(lowerBound) && isNumeric(upperBound)) {
+			if (!isNumeric(value)) {
 				return false;
 			}
-		} else if ((compValue != null) && compValue.startsWith("^")) {
 
-			compValue = compValue.replace("^", "");
+			double numericValue = toNumber(value);
 
-			if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
-				return false;
-			}
-		} else if ((compValue != null) && compValue.contains("..")) {
-			String[] bounds = compValue.split("\\.\\.");
-
-			if (bounds.length > 1) {
-				String lowerBound = bounds[0];
-				String upperBound = bounds[1];
-
-				if (((value.compareTo(lowerBound) < 0) || (value.compareTo(upperBound) > 0))
-						&& ((displayValue.compareTo(lowerBound) < 0) || (displayValue.compareTo(lowerBound) > 0))) {
-					return false;
-				}
-
-			}
-		} else if ((compValue != null) && data.containsKey(KEY_METADATA)
-				&& ("datetime".equals(data.get(KEY_METADATA)) || "date".equals(data.get(KEY_METADATA)))) {
-			if (!dateMatches(value, compValue)) {
-				return false;
-			}
-		} else if ((compValue != null) && !value.equals(compValue) && !value.contains(compValue) && !displayValue.equals(compValue)) {
-			return false;
-
+			return (numericValue >= toNumber(lowerBound)) && (numericValue <= toNumber(upperBound));
 		}
-		return true;
+
+		return (value.compareTo(lowerBound) >= 0) && (value.compareTo(upperBound) <= 0);
+	}
+
+	/**
+	 * <p>Tells whether a value holds a number.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	private boolean isNumeric(String value) {
+		return NUMERIC_PATTERN.matcher(value).matches();
+	}
+
+	/**
+	 * <p>Reads a number written with either decimal separator.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a double
+	 */
+	private double toNumber(String value) {
+		return Double.parseDouble(value.replace(',', '.'));
+	}
+
+	/**
+	 * <p>Tells whether extracted data holds a date.</p>
+	 *
+	 * @param data a {@link java.util.Map} object
+	 * @return a boolean
+	 */
+	private boolean isDateData(Map<String, Object> data) {
+		Object metadata = data.get(KEY_METADATA);
+		return METADATA_DATE.equals(metadata) || METADATA_DATETIME.equals(metadata);
 	}
 
 	/**

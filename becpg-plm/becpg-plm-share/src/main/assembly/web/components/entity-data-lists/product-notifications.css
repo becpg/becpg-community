@@ -738,3 +738,80 @@ div .div-regulatorycodes ul li span {
 	color: #b71c1c;
 }
 
+
+.product-notifications-container .change-unit-delta {
+	display: inline-block;
+	margin-left: 10px;
+	font-size: 11px;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.product-notifications-container .change-unit-delta .delta-better {
+	color: #2e7d32;
+}
+
+.product-notifications-container .change-unit-delta .delta-worse {
+	color: #b71c1c;
+}
+
+.product-notifications-container .change-unit-delta .delta-none {
+	color: #757575;
+}
+
+.notifications-panel .change-unit-previous {
+	padding: 4px 8px;
+	color: #555;
+	font-style: italic;
+}
+
+.notifications-list.change-unit-requirements {
+	padding: 0 20px 10px;
+}
+
+.change-unit-requirements .change-unit-section {
+	clear: both;
+	margin-top: 8px;
+	padding: 4px 0;
+	border-bottom: 1px solid #ccc;
+	font-weight: bold;
+}
+
+.change-unit-requirements .change-unit-new-title {
+	margin-top: 0;
+	color: #b71c1c;
+}
+
+.change-unit-requirements .change-unit-resolved-title {
+	color: #2e7d32;
+}
+
+.change-unit-requirements .change-unit-resolved .rclReq-details {
+	border-left: 3px solid #2e7d32;
+}
+
+.change-unit-requirements .change-unit-none {
+	padding: 4px;
+	color: #2e7d32;
+}
+
+.change-unit-requirements .change-unit-existing summary {
+	cursor: pointer;
+	color: #757575;
+	font-weight: normal;
+}
+
+.change-unit-requirements .change-unit-existing .rclReq-title {
+	color: #757575;
+}
+
+.change-unit-requirements .change-unit-more {
+	clear: both;
+	padding: 4px 0;
+	color: #757575;
+}
+
+.change-unit-requirements .rclReq-details {
+	padding: 4px;
+	border-bottom: 1px solid #eee;
+}

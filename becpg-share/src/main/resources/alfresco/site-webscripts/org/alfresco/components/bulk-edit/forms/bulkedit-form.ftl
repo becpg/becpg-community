@@ -6,6 +6,10 @@
    <@formLib.renderFormsRuntime formId=formId />
 </#if>
 
+<#-- A bulk edit asks for the fields it was given, so a tabbed template, which lays out the whole
+     type, would show the create form instead of the chosen fields. -->
+<#assign isTabbed = !(fields??) && ((form.editTemplate?? && (form.editTemplate == "tab-edit" || form.editTemplate?ends_with("tab-edit-form.ftl"))) || (form.createTemplate?? && (form.createTemplate == "tab-edit" || form.createTemplate?ends_with("tab-edit-form.ftl")))) />
+
 
 <div id="${el}-dialog">
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
@@ -13,7 +17,7 @@
 
       <div id="${formId}-container" class="form-container">
 
-         <#if form.showCaption?exists && form.showCaption && ( !form.editTemplate?exists || form.editTemplate != "tab-edit")>
+         <#if form.showCaption?exists && form.showCaption && !isTabbed>
             <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
          </#if>
       
@@ -26,7 +30,7 @@
 	     </#if>
 
   		 	<div id="${formId}-fields" class="form-fields">
-   			<#if  !form.editTemplate?exists ||  form.editTemplate!= "tab-edit">
+   			<#if !isTabbed>
                <#list form.structure as item>
                   <#if item.kind == "set">
                   	<#if fields??>

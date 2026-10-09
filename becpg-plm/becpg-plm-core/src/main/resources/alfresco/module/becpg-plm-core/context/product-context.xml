@@ -21,6 +21,11 @@
 <beans>
 
 	<!-- Product Policies -->
+	<bean id="scoreDefinitionPolicy" class="fr.becpg.repo.score.ScoreDefinitionPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="scoreDefinitionService" ref="scoreDefinitionService" />
+	</bean>
+
 	<bean id="entityCopyPolicy"
 		class="fr.becpg.repo.product.policy.EntityCopyPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
@@ -45,6 +50,9 @@
 		<property name="associationService" ref="associationService"/>
 	</bean>
 	
+	<bean id="ingListLegacyFlagsPolicy" class="fr.becpg.repo.product.policy.IngListLegacyFlagsPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap" />
+
 	<bean id="ingToxPolicy" class="fr.becpg.repo.toxicology.IngToxPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="toxicologyService" ref="toxicologyService"/>

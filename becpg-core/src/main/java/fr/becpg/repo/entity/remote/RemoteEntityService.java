@@ -42,6 +42,8 @@ public interface RemoteEntityService {
 	String NODEREF_TYPE = "d:noderef";
 	/** Constant <code>CATEGORY_TYPE="d:category"</code> */
 	String CATEGORY_TYPE = "d:category";
+	/** Constant <code>ANY_TYPE="d:any"</code> */
+	String ANY_TYPE = "d:any";
 	/** Constant <code>NODE_TYPE="node"</code> */
 	String NODE_TYPE = "node";
 	/** Constant <code>MLTEXT_TYPE="d:mltext"</code> */
@@ -105,6 +107,15 @@ public interface RemoteEntityService {
 	/** Constant <code>ATTR_PARENT_ID="parent"</code> */
 	String ATTR_PARENT_ID = "parent";
 	
+	/**
+	 * Constant <code>ATTR_ENTITY_ID="entityId"</code>
+	 * <p>
+	 * nodeRef id of the entity owning the datalist a listing row belongs to. Only emitted on
+	 * <code>ENTITY_LIST</code> rows, and only when <code>appendParent=true</code> is requested
+	 * (see {@link fr.becpg.repo.entity.remote.RemoteParams#PARAM_APPEND_PARENT}).
+	 */
+	String ATTR_ENTITY_ID = "entityId";
+
 	/** Constant <code>ATTR_VERSION="version"</code> */
 	String ATTR_VERSION = "version";
 	
@@ -148,8 +159,13 @@ public interface RemoteEntityService {
 
 	/**
 	 * List entities at format with specific assoc/props
+	 * <p>
+	 * <b>The page must hold search results.</b> The listing serializes what it is handed without
+	 * re-evaluating the caller's permissions, because a search returns only what
+	 * <code>ACLEntryAfterInvocationProvider</code> has already granted the caller read access to.
+	 * A page assembled by any other means would be serialized without an access check.
 	 *
-	 * @param entities a {@link java.util.List} object.
+	 * @param entities a {@link org.alfresco.query.PagingResults} object, holding search results.
 	 * @param result a {@link java.io.OutputStream} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object

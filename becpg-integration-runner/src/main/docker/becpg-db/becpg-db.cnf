@@ -10,8 +10,12 @@ character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
 
 # =============================================================================
-# MySQL 8.4 Configuration - SMALL Profile
-# Container RAM: 3.2GB | Database Size: 3.2GB | Max Connections: ~30
+# MySQL 9 Configuration - default profile of an on-premise instance
+# Container RAM: 3.2GB (BECPG_DB_RAM) | Database Size: 3.2GB | Max Connections: ~30
+#
+# The buffer pool below is the one a 3276m container fits. A LARGE or X_LARGE instance gets more
+# RAM than that, so its deployment overrides innodb_buffer_pool_size on the command line rather
+# than leaving 3 to 6GB of its budget unused.
 # =============================================================================
 
 # Buffer Pool Configuration
@@ -72,7 +76,14 @@ innodb_open_files = 800
 # Monitoring (lightweight)
 slow_query_log = 1
 long_query_time = 2.0                    
-log_queries_not_using_indexes = 1      
+# Off on purpose: this one logs a line for every query that does not use an index, whatever its
+# duration, and Alfresco runs a lot of those. Nothing rotates that file, so it grows for the whole
+# life of the instance - 4.3GB of it had piled up on a single developer machine. Turn it on for a
+# diagnosis session with SET GLOBAL log_queries_not_using_indexes = 1, no restart needed.
+log_queries_not_using_indexes = 0
+# A single file the instance appends to, rather than a new one per container name that nothing
+# ever cleans up.
+slow_query_log_file = /var/lib/mysql/slow.log
 
 # Additional memory savings
 innodb_buffer_pool_dump_at_shutdown = ON

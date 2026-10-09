@@ -3,6 +3,8 @@
  */
 package fr.becpg.test.project;
 
+import static org.junit.Assert.assertThrows;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,10 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.archive.NodeArchiveService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
@@ -66,6 +74,16 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 	@Autowired
 	private PersonService personService;
+
+	@Autowired
+	private CommentService commentService;
+
+	@Autowired
+	private NodeArchiveService nodeArchiveService;
+
+	private static final String TASK_COMMENT = "Task comment";
+
+	private static final String UPDATED_TASK_COMMENT = "Updated task comment";
 
 	/**
 	 * Test a project create InProgress start automatically
@@ -657,15 +675,19 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			// check workflow props
-			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			return null;
+		}, false, true);
+
+		// The Activiti task is updated after commit, see ProjectWorkflowServiceImpl#runAfterCommit
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
-			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
-			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
-			assertTrue(taskListDataItem.getResources().containsAll(taskListDataItemDB.getResources())); //order is not guarenteed
+			assertEquals("task1 modified", taskListDataItemDB.getTaskName());
+			assertEquals(Integer.valueOf(3), taskListDataItemDB.getDuration());
 			assertEquals(2, taskListDataItemDB.getResources().size());
-			checkWorkflowProperties(workflowInstanceId, taskListDataItemDB.getNodeRef(), "Pjt 1 - task1 modified", taskListDataItemDB.getEnd(),
-					taskListDataItemDB.getResources());
+			checkWorkflowProperties(taskListDataItemDB.getWorkflowInstance(), taskListDataItemDB.getNodeRef(), "Pjt 1 - task1 modified",
+					taskListDataItemDB.getEnd(), taskListDataItemDB.getResources());
 
 			return null;
 		}, false, true);
@@ -687,7 +709,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(), "Pjt 1 - task1", taskListDataItem.getEnd(),
 					taskListDataItem.getResources());
 
-			// modify WF props (duration and add a resource)
+			// modify WF props (duration and replace the resource by a group)
 			logger.info("modify WF props");
 			taskListDataItem.setTaskName("task4 modified");
 			taskListDataItem.setDuration(3);
@@ -696,29 +718,39 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+			return null;
+		}, false, true);
 
-			Assert.assertNull(task.getProperties().get(ContentModel.PROP_OWNER));
+		// The Activiti task is updated after commit, see ProjectWorkflowServiceImpl#runAfterCommit
+		final String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			String workflowInstanceId = projectData.getTaskList().get(0).getWorkflowInstance();
+
+			WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
+			Assert.assertNull("A pooled task has no owner", task.getProperties().get(ContentModel.PROP_OWNER));
 
 			Map<QName, Serializable> taskProp = new HashMap<>();
-
 			taskProp.put(ContentModel.PROP_OWNER, BeCPGTestHelper.USER_ONE);
-
 			workflowService.updateTask(task.getId(), taskProp, null, null);
 
 			alfrescoRepository.save(projectData);
 			projectService.formulate(projectNodeRef);
 
-			// check workflow props
-			projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
-			assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
-			assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());
-			assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
-			assertEquals(1, taskListDataItemDB.getResources().size());
+			return workflowInstanceId;
+		}, false, true);
 
-			task = getNextTaskForWorkflow(workflowInstanceId);
-			Assert.assertEquals(BeCPGTestHelper.USER_ONE, task.getProperties().get(ContentModel.PROP_OWNER));
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
+			assertEquals("task4 modified", taskListDataItemDB.getTaskName());
+			assertEquals(Integer.valueOf(3), taskListDataItemDB.getDuration());
+			assertEquals(1, taskListDataItemDB.getResources().size());
+			assertEquals(groupTwo, taskListDataItemDB.getResources().get(0));
+
+			WorkflowTask task = getNextTaskForWorkflow(workflowInstance);
+			Assert.assertEquals("The owner a user claimed is kept", BeCPGTestHelper.USER_ONE, task.getProperties().get(ContentModel.PROP_OWNER));
 
 			return null;
 		}, false, true);
@@ -843,5 +875,124 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 			return null;
 		}, false, true);
+	}
+
+	@Test
+	public void testAuthorCanModifyTaskCommentAfterFormulation() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		inWriteTx(() -> {
+			projectService.formulate(projectNodeRef);
+			return null;
+		});
+
+		inWriteTxAs(BeCPGTestHelper.USER_ONE, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		});
+	}
+
+	@Test
+	public void testOtherUserCannotModifyTaskComment() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			return null;
+		}));
+
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		}));
+	}
+
+	@Test
+	public void testAdminCanModifyOtherUserTaskComment() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, getTaskNodeRef(projectNodeRef, 0));
+
+		inWriteTx(() -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
+			commentService.deleteComment(commentNodeRef);
+			return null;
+		});
+	}
+
+	@Test
+	public void testTaskCommentedByOtherUserCanBeDeleted() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef plannedTaskNodeRef = getTaskNodeRef(projectNodeRef, 2);
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, plannedTaskNodeRef);
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeService.deleteNode(plannedTaskNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertFalse(nodeService.exists(commentNodeRef));
+			return null;
+		});
+	}
+
+	@Test
+	public void testTaskCommentedByOtherUserCanBeRestored() {
+		final NodeRef projectNodeRef = createProjectEditableByUsers();
+		final NodeRef plannedTaskNodeRef = getTaskNodeRef(projectNodeRef, 2);
+		final NodeRef commentNodeRef = commentAs(BeCPGTestHelper.USER_ONE, plannedTaskNodeRef);
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeService.deleteNode(plannedTaskNodeRef);
+			return null;
+		});
+
+		inWriteTxAs(BeCPGTestHelper.USER_TWO, () -> {
+			nodeArchiveService.restoreArchivedNode(nodeArchiveService.getArchivedNode(plannedTaskNodeRef));
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertTrue(nodeService.exists(commentNodeRef));
+			return null;
+		});
+	}
+
+	private NodeRef createProjectEditableByUsers() {
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
+		inWriteTx(() -> {
+			permissionService.setPermission(projectNodeRef, BeCPGTestHelper.USER_ONE, PermissionService.COORDINATOR, true);
+			permissionService.setPermission(projectNodeRef, BeCPGTestHelper.USER_TWO, PermissionService.COORDINATOR, true);
+			return null;
+		});
+		return projectNodeRef;
+	}
+
+	private NodeRef getTaskNodeRef(NodeRef projectNodeRef, int taskIndex) {
+		return inReadTx(() -> ((ProjectData) alfrescoRepository.findOne(projectNodeRef)).getTaskList().get(taskIndex).getNodeRef());
+	}
+
+	private NodeRef commentAs(String userName, NodeRef discussableNodeRef) {
+		return inWriteTxAs(userName, () -> commentService.createComment(discussableNodeRef, "", TASK_COMMENT, false));
+	}
+
+	/**
+	 * Runs a write transaction as a user logged in, the identity Alfresco records as the creator of a node.
+	 *
+	 * @param userName the user to log in
+	 * @param callback the work to run
+	 * @return the work result
+	 */
+	private <T> T inWriteTxAs(String userName, RetryingTransactionCallback<T> callback) {
+		String previousUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		AuthenticationUtil.setFullyAuthenticatedUser(userName);
+		try {
+			return inWriteTx(callback);
+		} finally {
+			AuthenticationUtil.setFullyAuthenticatedUser(previousUser);
+		}
 	}
 }

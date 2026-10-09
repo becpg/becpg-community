@@ -2,13 +2,14 @@ FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS builder
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
-      
+COPY alfresco-core-patch-*.amp $TOMCAT_DIR/amps/
 COPY becpg-core-*.amp $TOMCAT_DIR/amps/
 COPY becpg-project-core-*.amp  $TOMCAT_DIR/amps/
 COPY becpg-designer-core-*.amp  $TOMCAT_DIR/amps/
 COPY becpg-plm-core-*.amp  $TOMCAT_DIR/amps/
 
-RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-*.amp webapps/alfresco -nobackup -force && \
+RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/alfresco-core-patch-*.amp webapps/alfresco -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-designer-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-plm-core-*.amp webapps/alfresco -nobackup -force 
@@ -18,7 +19,7 @@ FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
 ENV TOMCAT_DIR=/usr/local/tomcat
 
 # Download Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar \
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.15/org.jacoco.agent-0.8.15-runtime.jar \
     -o $TOMCAT_DIR/jacoco-runtime.jar
 
 # Copy hotswap configurations

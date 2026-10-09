@@ -127,6 +127,7 @@ function main()
    // Widget instantiation metadata...
   
    model.localeString = this.locale.substring(0, 2);
+   model.externalUser = user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true;
    
 }
 

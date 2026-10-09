@@ -2,6 +2,8 @@ package fr.becpg.repo.formulation.impl;
 
 import java.util.Set;
 
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -43,6 +45,21 @@ public class ReportableEntityServiceImpl implements ReportableEntityService {
 	/** {@inheritDoc} */
 	@Override
 	public void postEntityErrors(NodeRef entityNodeRef, String formulationChainId, Set<ReportableError> errors) {
+
+		/*
+		 * Posting errors writes them on the entity, which a read-only transaction
+		 * cannot do. Callers reached from a GET webscript — generating a report over
+		 * the remote API, for one — run in exactly such a transaction, and the
+		 * database refusal used to surface as an "Internal error" that replaced the
+		 * failure being reported. Logging keeps the diagnosis without the write.
+		 */
+		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Read-only transaction: reporting the errors of " + entityNodeRef + " to the log instead of the entity");
+			}
+			logErrors(errors);
+			return;
+		}
 
 		QName type = nodeService.getType(entityNodeRef);
 		Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(type);

@@ -49,6 +49,20 @@ public interface RemoteServiceRegisty {
 	NodeService mlNodeService();
 
 	/**
+	 * <p>unsecuredNodeService.</p>
+	 * <p>
+	 * The internal <code>nodeService</code> bean: same ML, multi-tenant and nodeRef handling as the
+	 * public <code>NodeService</code>, but without the security interceptor that evaluates the
+	 * caller's permissions on every single read. Reserved for nodes whose readability has already
+	 * been established — a search result, for instance, which
+	 * <code>ACLEntryAfterInvocationProvider</code> has already filtered.
+	 * </p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
+	NodeService unsecuredNodeService();
+
+	/**
 	 * <p>namespaceService.</p>
 	 *
 	 * @return a {@link org.alfresco.service.namespace.NamespaceService} object

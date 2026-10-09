@@ -125,7 +125,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 		// and therefore the browser will have
 		// the latest thumbnail image.
 		if (model == null) {
-			model = new HashMap<>(1);
+			model = HashMap.newHashMap(1);
 		}
 
 		if (req.getParameter("lastModified") != null) {

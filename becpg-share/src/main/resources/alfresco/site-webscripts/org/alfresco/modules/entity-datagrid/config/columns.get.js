@@ -19,6 +19,21 @@
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
+var DATAGRID_PREFS = "fr.becpg.formulation.dashlet.custom.datagrid-prefs";
+
+var PREFS_SCOPE_PATTERN = /^[A-Za-z0-9_-]+$/;
+
+var datagridPrefsRoot = DATAGRID_PREFS;
+
+/**
+ * Scopes the column preferences, ignoring any scope that is not a plain preference segment.
+ */
+function initDatagridPrefsRoot(prefsScope) {
+	if (prefsScope != null && PREFS_SCOPE_PATTERN.test(prefsScope)) {
+		datagridPrefsRoot = DATAGRID_PREFS + "." + prefsScope;
+	}
+}
+
 /**
  * Retrieves the value of the given named argument from the URL arguments
  * 
@@ -39,6 +54,94 @@ function getArgument(argName, defValue) {
 	}
 
 	return result;
+}
+
+var NODE_REF_PATTERN = /^[a-z]+:\/\/[A-Za-z0-9]+\/[A-Za-z0-9-]+$/;
+
+var preferenceRoot = null;
+
+/**
+ * Reads the whole user preference tree, once per request.
+ *
+ * AlfrescoUtil.getPreferences() re-parses preferences.value on every single call - this web script
+ * calls it twice per column - and blows up when no user is bound to the request context (the stock
+ * "preferences" root object encodes a null user id). A missing preference must never fail the
+ * column definitions, so any failure degrades to "no preference set".
+ *
+ * @method getPreferenceRoot
+ * @return Object the preference tree, never null
+ */
+function getPreferenceRoot() {
+	if (preferenceRoot === null) {
+		preferenceRoot = {};
+		try {
+			var value = preferences.value;
+			if (value) {
+				preferenceRoot = jsonUtils.toObject(value);
+			}
+		} catch (e) {
+			if (logger.isLoggingEnabled()) {
+				logger.log("Unable to read the user preferences, falling back on an empty set: " + e);
+			}
+		}
+	}
+
+	return preferenceRoot;
+}
+
+/**
+ * Resolves a dotted preference path, same contract as AlfrescoUtil.getPreferences.
+ *
+ * @method getPreference
+ * @param filter
+ *            The dotted preference path
+ * @return The preference node or null when the path is not set
+ */
+function getPreference(filter) {
+	var node = getPreferenceRoot(), parts = filter.split(".");
+
+	for (var i = 0; i < parts.length; i++) {
+		if ((node === null) || (typeof node !== "object") || !node[parts[i]]) {
+			return null;
+		}
+		node = node[parts[i]];
+	}
+
+	return node;
+}
+
+/**
+ * Parses the body of a repository response, without ever throwing.
+ *
+ * A connector error leaves the response body null and a proxy may answer HTML: eval() then raises a
+ * SyntaxError that surfaces as a 500 to the browser, i.e. the "Could not read Data List Column
+ * definitions" pop-up, instead of an empty column set.
+ *
+ * @method parseFormResponse
+ * @param response
+ *            The repository response
+ * @return Object the parsed body or null when it is not JSON
+ */
+function parseFormResponse(response) {
+	var body = null;
+
+	try {
+		// Response.toString() returns the raw body, which is null whenever the call failed
+		body = response.response;
+		if (!body || (body == "null")) {
+			if (logger.isLoggingEnabled()) {
+				logger.log("Empty form definition response");
+			}
+			return null;
+		}
+
+		return eval('(' + body + ')');
+	} catch (e) {
+		if (logger.isLoggingEnabled()) {
+			logger.log("Unparseable form definition response: " + e + " - " + body);
+		}
+		return null;
+	}
 }
 
 function getRequestHeader(headerName) {
@@ -255,8 +358,8 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
 				} else  {
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
-					
+					var preferences = getPreference(datagridPrefsRoot + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+
 					if(existInPref(preferences) && isChecked(preferences)){
 						postBodyForcedFields.push(fieldId);
 					}
@@ -283,7 +386,45 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 function main() {
 	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
-	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
+	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef")
+	, prefsScope = getArgument("prefsScope");
+
+	initDatagridPrefsRoot(prefsScope);
+
+	/*
+	 * withControls=true adds the field's <control> to every column.
+	 *
+	 * Opt-in, and deliberately per call rather than per instance: without the
+	 * argument this web script answers exactly what it answered before, byte for
+	 * byte, so Share's own datagrid is untouched. It exists because the columns
+	 * carry the field's type but not the control the form configuration declares
+	 * for it, and a client that renders its own grid - the supplier portal - has
+	 * no other way to learn that bcpg:ingListIngTypes is filled from
+	 * becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem. The
+	 * information already crosses the wire for a form; it did not for a column.
+	 */
+	var withControls = getArgument("withControls") == "true";
+
+	/*
+	 * withDefaults=true adds the model's <default> to every column.
+	 *
+	 * Same opt-in rule as withControls: without the argument the answer is byte
+	 * identical. A column is resolved without a node, so the value the repository
+	 * returns with it is the model default and nothing else - which is what tells
+	 * a client rendering its own grid that an unticked boolean legitimately means
+	 * false, rather than a question nobody has answered.
+	 */
+	var withDefaults = getArgument("withDefaults") == "true";
+
+	/*
+	 * withSets=true adds the form set of every column, and the set hierarchy.
+	 *
+	 * Same opt-in rule: without the argument the answer is byte identical. A
+	 * datagrid form lists the columns without any appearance, so the sets are
+	 * read from the edit form of setsNodeRef - a row of the grid - which is the
+	 * form the user knows the fields from. See getSetSources.
+	 */
+	var withSets = getArgument("withSets") == "true";
 
 	var skipSecurityRules = false;
 	var referer = getRequestHeader("Referer");
@@ -295,14 +436,13 @@ function main() {
 	}
 
 	
-	cache.maxAge = 3600; // in seconds
-	cache.neverCache=false;
-	cache.isPublic=false;
-	cache.mustRevalidate=true;
-	
-	if (noCache) {
-	   cache.lastModified = new Date(noCache);	
-	}
+	// This column set is per user: the column preferences and the security rules both filter it.
+	// It must never be stored by a shared cache, and "no-cache" is the only thing the web script
+	// framework can express - it has no "private" branch (WebScriptServletResponse.setCache), and
+	// omitting "public" is not enough: a CDN or a corporate proxy stores a bare "max-age" response
+	// all the same and serves it to another user, which was verified on dev on 2026-08-17 (an
+	// answer built for an authenticated user came back on a request carrying no session at all).
+	cache.neverCache = true;
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
 	
@@ -313,11 +453,19 @@ function main() {
 	}
 	
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules);
+	model.withDefaults = withDefaults;
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules, withControls);
+
+	// getColumns returns nothing once it has set an error status, which must reach the client as is
+	if (withSets && model.columns != null) {
+		var setSources = getSetSources(itemType, getArgument("setsNodeRef"));
+		assignColumnSets(model.columns, setSources);
+		model.sets = getLabelledSets(setSources);
+	}
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey, skipSecurityRules) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey, skipSecurityRules, withControls) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -368,27 +516,46 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 				return;
 			}
 
-			var formModel = eval('(' + json + ')');
 			var override = false;
 
 			// if we got a successful response attempt to render the form
 			if (json.status == 200) {
+				// only a 200 carries a JSON body: parsing anything else (empty body on a connector
+				// error, HTML error page from a proxy) throws and turns into a 500 for the client
+				var formModel = parseFormResponse(json);
+				if (formModel === null) {
+					status.setCode(502, "Invalid form definition response");
+					return;
+				}
 				columns = formModel.fields;
 				override = formModel.override;
 			} else {
 				if (logger.isLoggingEnabled()) {
-					logger.log("error = " + formModel.message);
+					logger.log("error = " + json.status + " " + json);
 				}
 				columns = [];
 			}
 			
-           	// get default fields
-			if(mode == "datagrid-prefs"){			
-				postBody.force = [];
-				var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
-				formModel = eval('(' + jsonDefaultFields + ')');			
-			    defaultColumns = formModel.fields;
-			}
+			// The columns shown when nothing is forced, i.e. the ones ticked by default. Resolving
+			// them costs a second form resolution, and it only settles the columns the user has no
+			// preference for. Validating the column chooser writes a preference for every column it
+			// offered, so from the second opening on the answer is built with a single call to the
+			// repository.
+			var defaultColumnsLoaded = false;
+
+			var loadDefaultColumns = function() {
+				if (!defaultColumnsLoaded) {
+					defaultColumnsLoaded = true;
+					postBody.force = [];
+					var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
+					var defaultFieldsModel = jsonDefaultFields.status == 200 ? parseFormResponse(jsonDefaultFields) : null;
+					if (defaultFieldsModel !== null) {
+						defaultColumns = defaultFieldsModel.fields;
+					}
+				}
+
+				return defaultColumns;
+			};
 
 			
 			if(override){
@@ -419,7 +586,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
 				   } 
 				   
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
+					var preferences = getPreference(datagridPrefsRoot + "." + prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
@@ -443,7 +610,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					}
 
 
-					column.columns = getColumns(name + "", "sub-datagrid", null, mode, null, null, null, null, skipSecurityRules);
+					column.columns = getColumns(name + "", "sub-datagrid", null, mode, null, null, null, null, skipSecurityRules, withControls);
 
 					ret.push(column);
 
@@ -471,11 +638,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
-						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "", mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "", mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					} else if (formIdArgs != null && formIdArgs.length > 0) {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					} else {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", null, mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", null, mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					}
 
 					ret.push(column);
@@ -497,7 +664,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								
 								
 								columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
-								
+
+								if (withControls) {
+									columns[j].control = getControl(formConfig.fields[fieldId], itemType);
+								}
+
 							}	
 							
 							if (mode == "datagrid-prefs") {
@@ -505,7 +676,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								if(existInPref(preferences)){
 									columns[j].checked = isChecked(preferences);
 								} else {
-									if(isDefault(fieldId, defaultColumns) || formConfig.isFieldForced(fieldId)) {
+									if(formConfig.isFieldForced(fieldId) || isDefault(fieldId, loadDefaultColumns())) {
 										columns[j].checked = true;
 									} else {
 										columns[j].checked = false;
@@ -533,6 +704,298 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 }
 
 
+
+/**
+ * The <control> a field declares, as a plain object the FTL can serialise.
+ *
+ * The template names the widget - autocomplete.ftl, textfield.ftl - and the
+ * parameters carry what makes it work, first of all the "ds" of an autocomplete.
+ * The values arrive as configured, whitespace included: a <control-param> written
+ * on its own line carries the indentation of the XML, and trimming it here is the
+ * only place where the caller cannot get it wrong.
+ *
+ * The datagrid form is asked first, then the item's DEFAULT form. That order is
+ * not a convenience: a datagrid form lists the columns to show and almost never
+ * repeats the control, while the default form is where the picker is described -
+ * bcpg:ingListIngTypes declares its "ds" there and nowhere else. Share resolves
+ * the same way when it edits a row, so a client rendering its own grid sees what
+ * Share's editor sees.
+ *
+ * @method getControl
+ * @param field The form configuration field of the resolved form
+ * @param itemType The item type, to fall back on its default form
+ * @return Object {template, params} or null when no form declares a control
+ */
+function getControl(field, itemType) {
+	return mergeControl(
+		readControl(field),
+		readControl(getDefaultFormField(itemType, field != null ? field.id : null)));
+}
+
+/**
+ * The resolved form's control completed by the default form's.
+ *
+ * A datagrid form often repeats the template and drops the parameters -
+ * bcpg:ingListGeoOrigin declares its autocomplete-association.ftl and no "ds".
+ * Taking that control as it stands would shadow the datasource the default form
+ * declares, so the two are merged, the resolved form winning key by key.
+ *
+ * @method mergeControl
+ * @param control the control of the resolved form, or null
+ * @param fallback the control of the default form, or null
+ * @return Object {template, params} or null when neither declares anything
+ */
+function mergeControl(control, fallback) {
+	if (control == null) {
+		return fallback;
+	}
+	if (fallback == null) {
+		return control;
+	}
+
+	var params = {}, name;
+	for (name in fallback.params) {
+		params[name] = fallback.params[name];
+	}
+	for (name in control.params) {
+		params[name] = control.params[name];
+	}
+
+	return {
+		template: control.template != null ? control.template : fallback.template,
+		params: params
+	};
+}
+
+/**
+ * @method readControl
+ * @param field a form configuration field, or null
+ * @return Object {template, params} or null when the field declares nothing
+ */
+function readControl(field) {
+	var control = field != null ? field.control : null;
+	if (control == null) {
+		return null;
+	}
+
+	var params = {}, hasParam = false;
+	// `getParams()` answers a ControlParam[], each carrying its own name and
+	// value - not a Map, and not something for..in can walk under Rhino.
+	var declared = control.params;
+	if (declared != null) {
+		for (var k = 0; k < declared.length; k++) {
+			var param = declared[k];
+			if (param != null && param.name != null) {
+				params["" + param.name] = trimValue(param.value);
+				hasParam = true;
+			}
+		}
+	}
+
+	var template = control.template != null ? "" + control.template : null;
+	if (template == null && !hasParam) {
+		return null;
+	}
+
+	return { template: template, params: params };
+}
+
+/**
+ * A control-param value written on its own line in the XML carries the
+ * indentation with it.
+ *
+ * @method trimValue
+ * @param value
+ * @return String
+ */
+function trimValue(value) {
+	return value != null ? ("" + value).replace(/^\s+|\s+$/g, "") : "";
+}
+
+/**
+ * The same field, as the item's default form describes it.
+ *
+ * @method getDefaultFormField
+ * @param itemType prefixed type, e.g. bcpg:ingList
+ * @param fieldId the field to look up
+ * @return the field configuration, or null
+ */
+function getDefaultFormField(itemType, fieldId) {
+	if (itemType == null || fieldId == null) {
+		return null;
+	}
+	var defaultForm = getDefaultForm(itemType);
+	return defaultForm !== null && defaultForm.fields != null ? defaultForm.fields[fieldId] : null;
+}
+
+/**
+ * The default form of a configuration scope.
+ *
+ * A type name only reaches the model-type configurations and a nodeRef only the
+ * node-type ones: the two scopes are disjoint.
+ *
+ * @method getDefaultForm
+ * @param scope a prefixed type, e.g. pjt:project, or a nodeRef
+ * @return the form configuration, or null
+ */
+function getDefaultForm(scope) {
+	var nodeConfig = config.scoped[scope];
+	var formsConfig = nodeConfig !== null ? nodeConfig.forms : null;
+	return formsConfig !== null ? formsConfig.defaultForm : null;
+}
+
+/**
+ * The forms the sets of the columns are read from, in order of precedence.
+ *
+ * The edit form of a node comes first: it is the form the user knows the
+ * fields from, and a client often declares its whole set hierarchy there and
+ * nowhere else - the project tabs of a client configuration may only exist in
+ * the node-type form. The default form of the type completes it, for the
+ * columns the edit form leaves out and for a grid that shows no row.
+ *
+ * @method getSetSources
+ * @param itemType prefixed type of the columns
+ * @param setsNodeRef nodeRef of an item of that type, or null
+ * @return Array of {form, owners}, the forms that declare at least one labelled set
+ */
+function getSetSources(itemType, setsNodeRef) {
+	var sources = [];
+
+	if (setsNodeRef != null && NODE_REF_PATTERN.test(setsNodeRef)) {
+		appendSetSource(sources, getDefaultForm(setsNodeRef));
+	}
+	if (itemType != null && itemType.length > 0) {
+		appendSetSource(sources, getDefaultForm(itemType));
+	}
+
+	return sources;
+}
+
+/**
+ * @method appendSetSource
+ * @param sources the sources being built
+ * @param formConfig a form configuration, or null
+ */
+function appendSetSource(sources, formConfig) {
+	var owners = getLabelledSetOwners(formConfig);
+	for (var setId in owners) {
+		if (owners[setId] !== null) {
+			sources.push({ form: formConfig, owners: owners });
+			return;
+		}
+	}
+}
+
+/**
+ * Maps every set of the form to the set it is offered as: itself when it has a
+ * label, its closest labelled ancestor otherwise. A layout set such as a bare
+ * 2-column-set has nothing to show in a drop-down, its fields belong to the
+ * panel around it. The default set, whose id is empty, is never offered: an
+ * empty value stands for every set in the drop-down.
+ *
+ * @method getLabelledSetOwners
+ * @param formConfig a form configuration, or null
+ * @return Object set id to {id, label, labelId, parentId}, or to null when no set above is labelled
+ */
+function getLabelledSetOwners(formConfig) {
+	var owners = {};
+	if (formConfig !== null) {
+		var rootSets = formConfig.rootSets;
+		for (var i = 0; i < rootSets.length; i++) {
+			collectSetOwners(rootSets[i], null, owners);
+		}
+	}
+	return owners;
+}
+
+/**
+ * @method collectSetOwners
+ * @param formSet the set to walk down from
+ * @param parentOwner the labelled set above, or null
+ * @param owners the map being filled, in declaration order
+ */
+function collectSetOwners(formSet, parentOwner, owners) {
+	var setId = "" + formSet.setId;
+	var owner = parentOwner;
+
+	if (setId.length > 0 && (hasText(formSet.labelId) || hasText(formSet.label))) {
+		owner = {
+			id: setId,
+			label: hasText(formSet.label) ? "" + formSet.label : null,
+			labelId: hasText(formSet.labelId) ? "" + formSet.labelId : null,
+			parentId: parentOwner !== null ? parentOwner.id : null
+		};
+	}
+
+	owners[setId] = owner;
+
+	var children = formSet.children;
+	for (var i = 0; i < children.length; i++) {
+		collectSetOwners(children[i], owner, owners);
+	}
+}
+
+/**
+ * @method hasText
+ * @param value a string, or null
+ * @return true when the value is neither null nor empty
+ */
+function hasText(value) {
+	return value != null && ("" + value).length > 0;
+}
+
+/**
+ * Sets the "set" of every top level column, taken from the first source that
+ * places the column in a labelled set.
+ *
+ * @method assignColumnSets
+ * @param columns the columns built by getColumns
+ * @param sources the sources built by getSetSources
+ */
+function assignColumnSets(columns, sources) {
+	for (var i = 0; i < columns.length; i++) {
+		for (var j = 0; j < sources.length && columns[i].set == null; j++) {
+			var owner = getFieldSetOwner(sources[j], columns[i].name);
+			if (owner != null) {
+				columns[i].set = owner.id;
+			}
+		}
+	}
+}
+
+/**
+ * @method getFieldSetOwner
+ * @param source a source built by getSetSources
+ * @param fieldId the field to look up
+ * @return the labelled set the form places the field in, or null
+ */
+function getFieldSetOwner(source, fieldId) {
+	var field = source.form.fields != null ? source.form.fields[fieldId] : null;
+	return field != null && field.set != null ? source.owners["" + field.set] : null;
+}
+
+/**
+ * The labelled sets of every source, in declaration order so that a parent
+ * comes before its children. A set declared by several sources is kept as the
+ * first one declares it, the one assignColumnSets gives precedence to.
+ *
+ * @method getLabelledSets
+ * @param sources the sources built by getSetSources
+ * @return Array of {id, label, labelId, parentId}
+ */
+function getLabelledSets(sources) {
+	var ret = [], seen = {};
+	for (var i = 0; i < sources.length; i++) {
+		var owners = sources[i].owners;
+		for (var setId in owners) {
+			if (owners[setId] !== null && owners[setId].id == setId && !seen[setId]) {
+				seen[setId] = true;
+				ret.push(owners[setId]);
+			}
+		}
+	}
+	return ret;
+}
 
 function isChecked(preferences) {
 	if (existInPref(preferences)) {

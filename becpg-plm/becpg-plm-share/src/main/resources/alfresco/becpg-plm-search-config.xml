@@ -27,6 +27,7 @@
 			<show id="bcpg:supplierState" />
 			<show id="bcpg:clientState" />
 			<show id="bcpg:documentState" />
+			<show id="ecm:ecoState" />
 			<show id="bcpg:code" />
 			<show id="bcpg:erpCode"/>
 			<show id="bcpg:eanCode" />

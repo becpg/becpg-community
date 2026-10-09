@@ -54,6 +54,23 @@ public interface NutrientRegulation {
 	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale);
 
 	/**
+	 * <p>displayValue.</p>
+	 *
+	 * <p>Unit-aware counterpart: {@code value} is expressed in {@code nutUnit} and is converted to the
+	 * unit of the regulation before the display rules are applied, {@code roundedValue} being already
+	 * expressed in that unit.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutrientTypeCode a {@link java.lang.String} object.
+	 * @param measurementPrecision a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object.
+	 * @param nutUnit a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale, String nutUnit);
+
+	/**
 	 * <p>convertValue.</p>
 	 *
 	 * @param value a {@link java.lang.Double} object.
@@ -73,4 +90,39 @@ public interface NutrientRegulation {
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
 	Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit);
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * <p>Claim-aware tolerances. When {@code isClaimed} is {@code true} the nutrient is subject to a
+	 * nutritional or health claim and the claim-specific tolerances (EU Table 3, "side 1 / side 2")
+	 * are applied instead of the standard ones (EU Table 1). Regulations that do not distinguish the
+	 * claim case fall back to the standard tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a claim
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	default Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutrientTypeCode, nutUnit);
+	}
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * <p>Criteria-aware tolerances: besides the claim, the criteria tell whether the nutrient was
+	 * added to the product, which the Canadian regulation assesses without any tolerance (class I).
+	 * Regulations that ignore that notion fall back to the claim-aware tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param criteria what is known about the nutrient line
+	 * @return the (maximum, minimum) tolerated values, either of them possibly {@code null}
+	 */
+	default Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, NutrientToleranceCriteria criteria) {
+		return tolerances(value, nutrientTypeCode, nutUnit, criteria.claimed());
+	}
 }

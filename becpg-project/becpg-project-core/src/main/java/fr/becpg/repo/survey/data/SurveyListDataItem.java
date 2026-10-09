@@ -19,6 +19,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  * <p>SurveyListDataItem class.</p>
@@ -27,7 +28,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "survey:surveyList")
-public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEntityItem {
+public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEntityItem, CopiableDataItem {
 
 	/**
 	 * 
@@ -70,6 +71,37 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	public SurveyListDataItem(NodeRef question, boolean generated) {
 		this.question = question;
 		this.generated = generated;
+	}
+
+	/**
+	 * Copy constructor
+	 *
+	 * @param surveyListDataItem a {@link fr.becpg.repo.survey.data.SurveyListDataItem} object
+	 */
+	public SurveyListDataItem(SurveyListDataItem surveyListDataItem) {
+		super(surveyListDataItem);
+		this.comment = surveyListDataItem.comment;
+		this.numberComment = surveyListDataItem.numberComment;
+		this.dateComment = surveyListDataItem.dateComment;
+		this.question = surveyListDataItem.question;
+		this.choices = surveyListDataItem.choices != null ? new ArrayList<>(surveyListDataItem.choices) : null;
+		this.sort = surveyListDataItem.sort;
+		this.generated = surveyListDataItem.generated;
+		this.reportKinds = surveyListDataItem.reportKinds != null ? new ArrayList<>(surveyListDataItem.reportKinds) : null;
+		this.regulatoryCountriesRef = new ArrayList<>(surveyListDataItem.regulatoryCountriesRef);
+		this.regulatoryUsagesRef = new ArrayList<>(surveyListDataItem.regulatoryUsagesRef);
+		this.regulatoryType = surveyListDataItem.regulatoryType;
+		this.regulatoryMessage = surveyListDataItem.regulatoryMessage;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public SurveyListDataItem copy() {
+		SurveyListDataItem ret = new SurveyListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/**

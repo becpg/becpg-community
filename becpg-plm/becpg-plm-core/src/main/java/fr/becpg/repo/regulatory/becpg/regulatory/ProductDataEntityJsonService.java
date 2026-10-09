@@ -7,19 +7,23 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import fr.becpg.repo.regulatory.AbstractRegulatoryService;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -38,6 +42,8 @@ import java.util.stream.Stream;
  */
 @Service
 public class ProductDataEntityJsonService {
+    private static final Log log = LogFactory.getLog(ProductDataEntityJsonService.class);
+
     public static final String MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND = "message.regulatory.usage-to-country.missing";
     public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 
@@ -101,10 +107,11 @@ public class ProductDataEntityJsonService {
 
         readString(attrs, PLMModel.PROP_RCL_REQ_TYPE, v -> item.setReqType(RequirementType.fromString(v)));
         readString(attrs, PLMModel.PROP_RCL_REQ_DATA_TYPE, v -> item.setReqDataType(RequirementDataType.fromString(v)));
-        readString(attrs, PLMModel.PROP_RCL_REQ_MESSAGE, v -> item.setReqMlMessage(new MLText(v)));
         readString(attrs, PLMModel.PROP_REGULATORY_CODE, item::setRegulatoryCode);
         readString(attrs, PLMModel.PROP_RCL_FORMULATION_CHAIN_ID, item::setFormulationChainId);
         readString(attrs, PLMModel.PROP_RCL_ERROR_LOG, item::setErrorLog);
+
+        readMlString(attrs, PLMModel.PROP_RCL_REQ_MESSAGE, item::setReqMlMessage);
 
         readDouble(attrs, PLMModel.PROP_RCL_REQ_MAX_QTY, item::setReqMaxQty);
 
@@ -120,38 +127,118 @@ public class ProductDataEntityJsonService {
     }
 
     /**
+     * Extracts ingredient id:regulatoryCode pairs to update ingredient characts
+     */
+    public Map<String, String> extractIngIdToRegulatoryCodes(JSONObject ingRegulatoryListJson) {
+        JSONObject datalists = ingRegulatoryListJson.getJSONObject("datalists");
+
+        String listTypeName = qnameToString(PLMModel.TYPE_ING_REGULATORY_LIST);
+        String ingAssocTypeName = qnameToString(PLMModel.ASSOC_IRL_ING);
+        String regCodeTypeName = qnameToString(PLMModel.PROP_REGULATORY_CODE);
+
+        if (datalists.has(listTypeName)) {
+            JSONArray array = datalists.getJSONArray(listTypeName);
+            return IntStream.range(0, array.length())
+                    .mapToObj(i -> array.getJSONObject(i).optJSONObject("attributes"))
+                    .filter(attributes -> attributes != null && attributes.has(ingAssocTypeName))
+                    .<Pair<String, String>>mapMulti((jsonAttributes, sink) -> {
+                        JSONObject ingAssoc = jsonAttributes.optJSONObject(ingAssocTypeName);
+                        if (ingAssoc != null) {
+                            String id = ingAssoc.optString("id");
+                            JSONObject assocAttrs = ingAssoc.optJSONObject("attributes");
+                            String regCode = assocAttrs != null ? assocAttrs.optString(regCodeTypeName) : "";
+                            if (StringUtils.hasText(id) && StringUtils.hasText(regCode)) {
+                                sink.accept(Pair.of(id, regCode));
+                            }
+                        }
+                    }).collect(Collectors.toMap(
+                            Pair::getKey,
+                            Pair::getValue,
+                            (v1, v2) -> {
+                                if (StringUtils.hasText(v1) && StringUtils.hasText(v2)) {
+                                    if (v1.equals(v2))
+                                        return v1;
+                                    log.warn("becpg-regulatory returned different regulatory code sets for the same ingredient: " + v1 + " and " + v2);
+                                }
+                                return StringUtils.hasText(v1) ? v1 : StringUtils.hasText(v2) ? v2 : "";
+                            }
+                    ));
+        }
+        return Map.of();
+    }
+
+    /**
+     * Creates a list of tolerated reqCtrl elements for
+     * each country that was not listed in IngRegulatoryList x
+     * each regulatory usage ever specified for this country.
+     * As product regulatory usage is only one of many criteria used to pick relevant regulatory requirements -
+     * raising by-pair alerts makes no sense.
+     *
      * @param regulatoryElements    regulatory list contents, as defined in the product
-     * @param parsedReqCtrlElements only ones, directly deserialized from JSON
-     * @return a stream of {@link RequirementListDataItem} alerts for uncovered COUNTRY - USAGE pairs
+     * @param ingRegulatoryElements only ones, directly deserialized from JSON
+     * @return a stream of {@link RequirementListDataItem} alerts for each not-covered country x usages this country ever linked with
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredCountryToUsagePairs(Collection<RegulatoryListDataItem> regulatoryElements,
-                                                                                        Collection<RequirementListDataItem> parsedReqCtrlElements) {
-        if (regulatoryElements == null || parsedReqCtrlElements == null || regulatoryElements.isEmpty() || parsedReqCtrlElements.isEmpty())
+                                                                                        Collection<IngRegulatoryListDataItem> ingRegulatoryElements) {
+        if (regulatoryElements == null || ingRegulatoryElements == null)
             return Stream.empty();
 
-        // COUNTRY - USAGE that were handled
-        Set<String> coveredPairCodes = parsedReqCtrlElements.stream()
-                .map(RequirementListDataItem::getRegulatoryCode)
-                .collect(Collectors.toSet());
+        Map<NodeRef, Set<NodeRef>> countryToUsages = new HashMap<>();
+        // squash usages for each country from different regulatoryElements
+        for (RegulatoryListDataItem item : regulatoryElements) {
+            for (NodeRef country : item.getRegulatoryCountriesRef()) {
+                countryToUsages.computeIfAbsent(country, ignored -> new HashSet<>()).addAll(item.getRegulatoryUsagesRef());
+            }
+        }
+        // remove pairs if country was handled in any ingRegulatory element
+        for (IngRegulatoryListDataItem item : ingRegulatoryElements) {
+            for (NodeRef country : item.getRegulatoryCountries()) {
+                countryToUsages.remove(country);
+            }
+        }
+        // everything handled - return
+        if (countryToUsages.isEmpty())
+            return Stream.empty();
 
         Map<NodeRef, String> codeByRef = fillNodeRefDictionary(regulatoryElements);
+        MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND);
 
-        return regulatoryElements.stream().flatMap(item -> Lists.cartesianProduct(
-                        item.getRegulatoryCountriesRef(), item.getRegulatoryUsagesRef()).stream()
-                ).collect(Collectors.toMap(
-                        pair -> codeByRef.get(pair.get(0)) + " - " + codeByRef.get(pair.get(1)),
-                        ArrayList::new,
-                        (existing, duplicate) -> existing
-                )).entrySet()
-                .stream()
-                .mapMulti((entry, sink) -> {
-                    String code = entry.getKey();
-                    if (!coveredPairCodes.contains(code)) {
-                        MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND);
-                        List<NodeRef> sources = entry.getValue();
-                        sink.accept(createToleratedReqCtrl(sources, i18NMessage, null, code));
-                    }
-                });
+        return countryToUsages.entrySet().stream().flatMap(entry -> {
+            NodeRef country = entry.getKey();
+            String countryRegCode = codeByRef.get(country);
+
+            return entry.getValue().stream().map(usage -> {
+                String code = countryRegCode + " - " + codeByRef.get(usage);
+                return createToleratedReqCtrl(Lists.newArrayList(country, usage), i18NMessage, null, code);
+            });
+        });
+    }
+
+    /**
+     * Creates a list of tolerated reqCtrl elements for each ingredient that was not listed in IngRegulatoryList
+     *
+     * @param ingredientElements           {@code ingList} contents, as defined in the product
+     * @param ingredientRegulatoryElements deserialized from JSON
+     * @return a stream of {@link RequirementListDataItem} alerts for each ingredient, for which {@link IngRegulatoryListDataItem} was not provided
+     */
+    public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
+                                                                                Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
+
+        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
+            return Stream.empty();
+
+        Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
+                .map(IngRegulatoryListDataItem::getIng)
+                .collect(Collectors.toSet());
+
+        return ingredientElements.stream().mapMulti((ing, sink) -> {
+            NodeRef ingNodeRef = ing.getIng();
+            if (ingNodeRef != null && !parsedIngRegulatoryElements.contains(ingNodeRef)) {
+                ArrayList<NodeRef> sources = Lists.newArrayList(ingNodeRef);
+                MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+                sink.accept(createToleratedReqCtrl(sources, i18NMessage, ingNodeRef, null));
+            }
+        });
     }
 
     public Map<NodeRef, String> fillNodeRefDictionary(Collection<RegulatoryListDataItem> regulatoryElements) {
@@ -182,41 +269,16 @@ public class ProductDataEntityJsonService {
                 item.setIng(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
         }
 
-        readString(attrs, PLMModel.PROP_IRL_CITATION, v -> item.setCitation(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_RESTRICTION_LEVELS, v -> item.setRestrictionLevels(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_PRECAUTIONS, v -> item.setPrecautions(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_RESULT_INDICATOR, v -> item.setResultIndicator(new MLText(v)));
-        readString(attrs, PLMModel.PROP_REGULATORY_COMMENT, v -> item.setComment(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_USAGES, v -> item.setUsages(new MLText(v)));
+        readMlString(attrs, PLMModel.PROP_IRL_CITATION, item::setCitation);
+        readMlString(attrs, PLMModel.PROP_IRL_RESTRICTION_LEVELS, item::setRestrictionLevels);
+        readMlString(attrs, PLMModel.PROP_IRL_PRECAUTIONS, item::setPrecautions);
+        readMlString(attrs, PLMModel.PROP_IRL_RESULT_INDICATOR, item::setResultIndicator);
+        readMlString(attrs, PLMModel.PROP_REGULATORY_COMMENT, item::setComment);
+        readMlString(attrs, PLMModel.PROP_IRL_USAGES, item::setUsages);
 
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_COUNTRIES, item::setRegulatoryCountries);
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_USAGE_REF, item::setRegulatoryUsages);
         return item;
-    }
-
-    /**
-     * @param ingredientElements           {@code ingList} contents, as defined in the product
-     * @param ingredientRegulatoryElements deserialized from JSON
-     * @return a stream of {@link RequirementListDataItem} alerts for each ingredient, for which {@link IngRegulatoryListDataItem} was not provided
-     */
-    public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
-                                                                                Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
-
-        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
-            return Stream.empty();
-
-        Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
-                .map(IngRegulatoryListDataItem::getIng)
-                .collect(Collectors.toSet());
-
-        return ingredientElements.stream().mapMulti((ing, sink) -> {
-            NodeRef ingNodeRef = ing.getIng();
-            if (ingNodeRef != null && !parsedIngRegulatoryElements.contains(ingNodeRef)) {
-                ArrayList<NodeRef> sources = Lists.newArrayList(ingNodeRef);
-                MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-                sink.accept(createToleratedReqCtrl(sources, i18NMessage, ingNodeRef, null));
-            }
-        });
     }
 
     private static RequirementListDataItem createToleratedReqCtrl(List<NodeRef> sources, MLText message, NodeRef charact, String code) {
@@ -226,7 +288,7 @@ public class ProductDataEntityJsonService {
         item.setReqDataType(RequirementDataType.Specification);
         item.setReqMlMessage(message);
         item.setSources(sources);
-        item.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+        item.setFormulationChainId(AbstractRegulatoryService.REGULATORY_KEY);
 
         if (code != null && !code.isBlank()) {
             item.setRegulatoryCode(code);
@@ -239,6 +301,33 @@ public class ProductDataEntityJsonService {
 
     private static String qnameToString(QName qname) {
         return "bcpg:" + qname.getLocalName();
+    }
+
+    private static void readMlString(JSONObject attrs, QName qname, Consumer<MLText> consumer) {
+        String baseKey = qnameToString(qname);
+        String localePrefix = baseKey + "_";
+        MLText value = null;
+        for (String key : attrs.keySet()) {
+            Locale locale;
+            if (key.equals(baseKey)) {
+                locale = MLText.getDefaultLocale();
+            } else if (key.startsWith(localePrefix)) {
+                String localeString = key.substring(localePrefix.length());
+                locale = MLTextHelper.parseLocale(localeString);
+            } else {
+                continue;
+            }
+            if (locale != null) {
+                if (value == null) {
+                    value = new MLText(locale, attrs.getString(key));
+                } else {
+                    value.addValue(locale, attrs.getString(key));
+                }
+            }
+        }
+        if (value != null) {
+            consumer.accept(value);
+        }
     }
 
     private static void readString(JSONObject attrs, QName qname, Consumer<String> consumer) {

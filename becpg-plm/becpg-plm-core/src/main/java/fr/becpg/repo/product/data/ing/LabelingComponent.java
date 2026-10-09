@@ -320,7 +320,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getVolume(boolean withYield) {
-		return withYield ? qtyWithYield : volume;
+		return withYield ? volumeWithYield : volume;
 	}
 
 	/**

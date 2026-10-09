@@ -123,6 +123,7 @@ function main()
          siteId : model.site,
          maxItems : parseInt(model.maxItems),
          activity :  activityParameters,
+		 externalUser: user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true,
          editorConfig : {
             menu: {},
             toolbar: "bold italic underline | bullist numlist | forecolor backcolor | undo redo removeformat",

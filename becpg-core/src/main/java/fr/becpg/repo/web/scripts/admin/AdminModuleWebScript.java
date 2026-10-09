@@ -3,7 +3,9 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -155,7 +157,14 @@ public class AdminModuleWebScript extends MonitorWebScript {
 				break;
 			case ACTION_GET_CONNECTED_USERS:
 				logger.debug("Get connected users");
-				ret.put("users", users);
+				List<Map<String, String>> connectedUsersList = new ArrayList<>();
+				for (String user : users) {
+					Map<String, String> uMap = new HashMap<>();
+					uMap.put("username", user);
+					uMap.put("licenseGroup", licenseManager.getUserLicenseGroup(user));
+					connectedUsersList.add(uMap);
+				}
+				ret.put("users", connectedUsersList);
 				break;
 			default:
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);

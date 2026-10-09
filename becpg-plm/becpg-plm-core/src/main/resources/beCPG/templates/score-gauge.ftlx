@@ -1,0 +1,18 @@
+<#--
+  A score graded on a gauge, the axes of the Planet-score being the case: the whole A to E range as
+  a colour bar with a cursor on the level reached, under the name of the axis.
+
+  The model is a ScoreMarking under "score": its class is the level reached.
+-->
+<#import "svg-lib.ftlx" as svg>
+<#import "score-lib.ftlx" as lib>
+
+<#assign titleText = lib.titleOf(score.code())>
+<#assign PAD = 3>
+<#assign W = [lib.GAUGE_W, lib.textWidth(titleText, lib.TITLE_SIZE)]?max + 2 * PAD>
+<#assign H = lib.TITLE_H + lib.GAUGE_H + 2 * PAD>
+
+<@svg.document width=W height=H>
+	<@lib.title x=W / 2 text=titleText/>
+	<@lib.gauge x=(W - lib.GAUGE_W) / 2 top=lib.TITLE_H + PAD reached=(score.scoreClass()!"")?upper_case/>
+</@svg.document>

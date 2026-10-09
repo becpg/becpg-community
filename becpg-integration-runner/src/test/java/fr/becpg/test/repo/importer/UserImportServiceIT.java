@@ -222,6 +222,42 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
+	public void testCreateNewUserWithGeneratedPasswordShouldSendSingleMailWithGeneratedPassword() {
+		BeCPGMailService originalMailService = (BeCPGMailService) ReflectionTestUtils.getField(beCPGUserAccountService,
+				"beCPGMailService");
+		BeCPGMailService mockMailService = Mockito.mock(BeCPGMailService.class);
+		ReflectionTestUtils.setField(beCPGUserAccountService, "beCPGMailService", mockMailService);
+
+		try {
+			String username = buildUsername("new-user-gen-pwd");
+			trackUserForCleanup(username);
+
+			String csvContent = createCsvContent(
+					new String[] { "username", "cm:firstName", "cm:lastName", "cm:email", "should_generate_password", "notify" },
+					new String[] { username, "NewFirst", "NewLast", "new.user@test.com", "true", "true" });
+			NodeRef csv = inWriteTx(() -> createCsvImport(buildFileName("new-user-gen-pwd", ".csv"), csvContent));
+
+			inWriteTx(() -> {
+				userImporterService.importUser(csv);
+				return null;
+			});
+
+			assertUserProperties(username, "NewFirst", "NewLast", "new.user@test.com", false);
+
+			ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+			Mockito.verify(mockMailService, Mockito.times(1)).sendMailNewUser(Mockito.any(NodeRef.class), Mockito.eq(username), passwordCaptor.capture());
+			Mockito.verify(mockMailService, Mockito.never()).sendMailNewPassword(Mockito.any(NodeRef.class), Mockito.anyString(), Mockito.anyString());
+
+			String generatedPassword = passwordCaptor.getValue();
+			assertNotNull("Generated password should not be null", generatedPassword);
+			assertFalse("Generated password should not be empty", generatedPassword.isBlank());
+			assertTrue("Generated password should be at least 14 characters", generatedPassword.length() >= 14);
+		} finally {
+			ReflectionTestUtils.setField(beCPGUserAccountService, "beCPGMailService", originalMailService);
+		}
+	}
+
+	@Test
 	public void testImportUserShouldRenameUserNameToLowerCase() {
 		String originalUsername = QName.createValidLocalName(name.getMethodName() + "-User");
 		String lowerCaseUsername = originalUsername.toLowerCase();

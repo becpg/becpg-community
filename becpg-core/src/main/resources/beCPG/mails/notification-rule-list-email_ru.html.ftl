@@ -74,7 +74,7 @@ margin-top:3px;
                                             <tr>
                                        <td>
                                        <#assign notification=args.notification>
-                                       <#assign dateField=notification.properties["bcpg:nrDateField"] >
+                                       <#assign dateField=(notification.properties["bcpg:nrDateField"])!"">
                                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                              <tr>
                                                 <td class="flex">
@@ -120,7 +120,7 @@ margin-top:3px;
 																<td class="becpg_rowBorderTopLeftRight">${key?split("|")[1]}</td>
 															</tr>
 														</#list>
-													<#elseif node.properties[dateField]??>
+													<#elseif dateField?has_content && node.properties[dateField]??>
 														<tr> 
 															<td class="becpg_rowBorderTop"> ${item.displayPath} </td>
 															<td class="becpg_rowBorderTopLeftRight">

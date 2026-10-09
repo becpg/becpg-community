@@ -1,0 +1,85 @@
+{
+  "header": {
+    "logo": "becpg-logo.png",
+    "title": "TECHNICAL SPECIFICATIONS ${bcpg:code} ${version}",
+    "subtitle": "${legalName}",
+    "date": "${cm:modified?date}",
+    "startNumberingAt": 1
+  },
+
+  "tableOfContents": {
+    "enabled": false,
+    "title": "TABLE OF CONTENTS",
+    "font": "Arial-Bold",
+    "size": 16,
+    "color": "#1F3864"
+  },
+
+  "pagination": {
+    "enabled": false,
+    "format": "Page ${page} / ${total}",
+    "startNumberingAt": 1,
+    "font": "Arial",
+    "size": 8,
+    "color": "#404040"
+  },
+
+  "componentHeadingStyle": {
+    "font": "Arial-Bold",
+    "size": 11,
+    "color": "#1F3864",
+    "prefix": "> "
+  },
+
+  "annexes": [
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
+      "title": "ANNEX 1: RAW MATERIALS",
+      "scope": "COMPO_CHILDREN",
+      "recurse": true,
+      "componentTypes": ["bcpg:rawMaterial"],
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
+      "title": "ANNEX 2: PRIMARY PACKAGING",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Primary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=PackagingSheet",
+      "title": "ANNEX 3: SECONDARY PACKAGING",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Secondary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": false,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=Photos",
+      "title": "ANNEX 4: PHOTOS",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "To be annexed after the first manufacturing",
+      "required": false,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "annexIdResolver": "bcpg:documentTypeRef|cm:name=QualityDocuments",
+      "title": "ANNEX 5: QUALITY DOCUMENTS",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "required": false,
+      "mimeTypes": ["application/pdf"]
+    }
+  ]
+}

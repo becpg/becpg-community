@@ -9,13 +9,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +32,11 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -181,8 +180,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final String TOKEN_ONLY = "Only";
     /** Constant <code>TOKEN_ALL="All"</code> */
     private static final String TOKEN_ALL = "All";
-    /** Constant <code>TOKEN_INCLUDE_EMPTY="IncludeEmpty"</code> */
-    private static final String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
     /** Constant <code>ONLY_LEVEL_PREFIX="OnlyLevel"</code> */
     private static final String ONLY_LEVEL_PREFIX = "OnlyLevel";
     /** Constant <code>MAX_RECURSION_DEPTH=20</code> */
@@ -191,8 +188,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final int DEPTH_UNLIMITED = -1;
     /** Constant <code>PERMISSION_READ="Read"</code> */
     private static final String PERMISSION_READ = "Read";
-    /** Constant <code>HEADER_VALUES="VALUES"</code> */
-    private static final String HEADER_VALUES = "VALUES";
     /** Constant <code>KEY_PACKAGING_QTY_FOR_PRODUCT="prop_bcpg_packagingListQtyForProduct"</code> */
     private static final String KEY_PACKAGING_QTY_FOR_PRODUCT = "prop_bcpg_packagingListQtyForProduct";
     /** Constant <code>KEY_COMPO_QTY_FOR_PRODUCT="prop_bcpg_compoListQtyForProduct"</code> */
@@ -262,8 +257,8 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
     /** {@inheritDoc} */
     @Override
-    public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-            AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+    public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+            AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
         String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
         boolean wUsed = false;
@@ -298,7 +293,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             depthLevel = TOKEN_ALL;
         }
 
-        ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+        ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
         final int depthLevelNum = TOKEN_ALL.equals(depthLevel) ? DEPTH_UNLIMITED : Integer.parseInt(depthLevel);
         final Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache = wUsed ? new HashMap<>() : null;
 
@@ -339,14 +334,17 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param includeEmpty whether to create rows for entities with empty lists
      * @return the new row number after processing
      */
-    private int fillSheetWithExtractorLogic(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
+    private int fillSheetWithExtractorLogic(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
             String[] parameters, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum, boolean includeEmpty) {
+            ExcelExportCache cache, ExcelCellStyles excelCellStyles, int depthLevelNum, boolean includeEmpty) {
 
         String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
         boolean isOnlyLevel = parameter != null && parameter.contains(TOKEN_ONLY);
 
         for (NodeRef entityNodeRef : searchResults) {
+            if (!nodeService.exists(entityNodeRef)) {
+                continue;
+            }
             QName entityType = nodeService.getType(entityNodeRef);
             if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
                 Serializable key = extractKey(entityNodeRef, keyColumn);
@@ -357,15 +355,17 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
                 String filter = EffectiveFilters.EFFECTIVE;
 
+                Map<String, List<String>> dynamicCharactColumnCache = new HashMap<>();
+
                 if (PLMModel.TYPE_PACKAGINGLIST.equals(itemType)) {
                     rownum = fillPackagingSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty, dynamicCharactColumnCache);
                 } else if (PLMModel.TYPE_COMPOLIST.equals(itemType)) {
                     rownum = fillCompositionSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty, dynamicCharactColumnCache);
                 } else if (MPMModel.TYPE_PROCESSLIST.equals(itemType)) {
                     rownum = fillProcessSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty, dynamicCharactColumnCache);
                 }
             }
         }
@@ -376,7 +376,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>fillSheetWithMultiLevelService.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param searchResults a {@link java.util.List} object
      * @param mainType a {@link org.alfresco.service.namespace.QName} object
      * @param itemType a {@link org.alfresco.service.namespace.QName} object
@@ -392,12 +392,15 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param includeEmpty a boolean
      * @return a int
      */
-    private int fillSheetWithMultiLevelService(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
+    private int fillSheetWithMultiLevelService(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
             String[] parameters, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum, QName pivotAssoc,
+            ExcelExportCache cache, ExcelCellStyles excelCellStyles, int depthLevelNum, QName pivotAssoc,
             Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache, boolean includeEmpty) {
 
         for (NodeRef entityNodeRef : searchResults) {
+            if (!nodeService.exists(entityNodeRef)) {
+                continue;
+            }
             QName entityType = nodeService.getType(entityNodeRef);
             if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
                 Serializable key = extractKey(entityNodeRef, keyColumn);
@@ -433,27 +436,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     }
 
     /**
-     * <p>extractKey.</p>
-     *
-     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-     * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
-     * @return a {@link java.io.Serializable} object
-     */
-    private Serializable extractKey(NodeRef entityNodeRef, AttributeExtractorStructure keyColumn) {
-        Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
-        }
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-        }
-        return key;
-    }
-
-    /**
      * <p>fillPackagingSheet.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
      * @param rownum a int
@@ -469,9 +454,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param includeEmpty a boolean
      * @return a int
      */
-    private int fillPackagingSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
-            List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
+     private int fillPackagingSheet(Sheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
+            List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, Map<String, Object> entityItems,
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -487,7 +473,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         if (productData.hasPackagingListEl(new EffectiveFilters<>(filter))) {
             for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(filter))) {
                         rownum = fillPackagingRow(sheet, entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, productData, dataItem), dataItem,
-                                metadataFields, cache, rownum, key, entityItems, excelCellStyles, 1, false, false, depthLevelNum, isOnlyLevel, parameter);
+                                metadataFields, cache, rownum, key, entityItems, excelCellStyles, 1, false, false, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
             }
         } else if (includeEmpty) {
             // Create empty row when includeEmpty is true and list is empty
@@ -504,7 +490,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                                 new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoItem), metadataFields, cache,
                                 entityItems, excelCellStyles, 1,
                                 (productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents(),
-                                depthLevelNum, isOnlyLevel, parameter);
+                                depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -516,7 +502,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>fillCompositionSheet.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
      * @param rownum a int
@@ -532,9 +518,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param includeEmpty a boolean
      * @return a int
      */
-    private int fillCompositionSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
-            List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
+    private int fillCompositionSheet(Sheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
+            List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, Map<String, Object> entityItems,
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -551,7 +538,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                 if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
                     rownum = loadCompoListItem(sheet, entityNodeRef, rownum, key,
                             new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), metadataFields, cache,
-                            entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter);
+                            entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                 }
             }
         } else if (includeEmpty) {
@@ -565,7 +552,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>fillProcessSheet.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
      * @param rownum a int
@@ -581,9 +568,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param includeEmpty a boolean
      * @return a int
      */
-    private int fillProcessSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
-            List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
+    private int fillProcessSheet(Sheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
+            List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, Map<String, Object> entityItems,
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -599,7 +587,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(filter))) {
                 rownum = loadProcessListItem(sheet, entityNodeRef, rownum, key,
                         new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, dataItem), dataItem, metadataFields, cache,
-                        entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter);
+                        entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
             }
         } else if (includeEmpty) {
             // Create empty row when includeEmpty is true and list is empty
@@ -614,7 +602,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(compoType) || PLMModel.TYPE_FINISHEDPRODUCT.equals(compoType)) {
                         rownum = loadProcessListItemForCompo(sheet, entityNodeRef, rownum, key,
                                 new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoItem), metadataFields, cache,
-                                entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter);
+                                entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -626,7 +614,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>loadPackagingListItemForCompo.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param rownum a int
      * @param key a {@link java.io.Serializable} object
@@ -642,10 +630,11 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param parameter a {@link java.lang.String} object
      * @return a int
      */
-    private int loadPackagingListItemForCompo(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+    private int loadPackagingListItemForCompo(Sheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level,
-            boolean dropPackagingOfComponents, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelExportCache cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level,
+            boolean dropPackagingOfComponents, int depthLevelNum, boolean isOnlyLevel, String parameter,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export this level (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && level > depthLevelNum) {
@@ -693,7 +682,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     .getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
                 rownum = fillPackagingRow(sheet, entityNodeRef,
                         new CurrentLevelQuantities(alfrescoRepository, packagingListDataItem, currentLevelQuantities), packagingListDataItem,
-                        metadataFields, cache, rownum, key, entityItems, excelCellStyles, level + 1, dropPackagingOfComponents, true, depthLevelNum, isOnlyLevel, parameter);
+                        metadataFields, cache, rownum, key, entityItems, excelCellStyles, level + 1, dropPackagingOfComponents, true, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
             }
         }
 
@@ -709,7 +698,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                                 dropPackagingOfComponents
                                         || ((componentProductData.getDropPackagingOfComponents() != null)
                                                 && componentProductData.getDropPackagingOfComponents()),
-                                depthLevelNum, isOnlyLevel, parameter);
+                                depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -721,7 +710,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>fillPackagingRow.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
      * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
@@ -739,9 +728,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param parameter a {@link java.lang.String} object
      * @return a int
      */
-    private int fillPackagingRow(XSSFSheet sheet, NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities,
-            PackagingListDataItem dataItem, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache,
-            int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+    private int fillPackagingRow(Sheet sheet, NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities,
+            PackagingListDataItem dataItem, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache,
+            int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent, int depthLevelNum, boolean isOnlyLevel, String parameter,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export this level (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && level > depthLevelNum) {
@@ -757,6 +747,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
             Map<QName, Serializable> properties = nodeService.getProperties(dataItem.getNodeRef());
             Map<String, Object> item = doExtract(dataItem.getNodeRef(), PLMModel.TYPE_PACKAGINGLIST, metadataFields, properties, cache);
+            processDynamicCharactColumns(item, dataItem.getNodeRef().getId(), dynamicCharactColumnCache);
 
             if (entityItems != null) {
                 item.putAll(entityItems);
@@ -767,13 +758,8 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             item.put(KEY_QTY_FOR_COST, currentLevelQuantities.getQtyForCost());
             item.put(KEY_DEPTH_LEVEL, level);
 
-            PackagingLevel packLevel = dataItem.getPkgLevel();
-            if (packLevel == null) {
-                packLevel = PackagingLevel.Primary;
-            }
-
-            item.put("prop_" + PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-                    (!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents);
+            // #31701: keep secondary/tertiary packaging of sub-components in the report.
+            item.put("prop_" + PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), dropPackagingOfComponents);
 
             // Apply formulas
             for (AttributeExtractorStructure metadataField : metadataFields) {
@@ -806,7 +792,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
                         rownum = fillPackagingRow(sheet, entityNodeRef,
                                 new CurrentLevelQuantities(alfrescoRepository, p, currentLevelQuantities), p, metadataFields, cache, rownum,
-                                key, entityItems, excelCellStyles, level + 1, dropPackagingOfComponents, isPackagingOfComponent, depthLevelNum, isOnlyLevel, parameter);
+                                key, entityItems, excelCellStyles, level + 1, dropPackagingOfComponents, isPackagingOfComponent, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -818,7 +804,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>loadCompoListItem.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param rownum a int
      * @param key a {@link java.io.Serializable} object
@@ -833,9 +819,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param parameter a {@link java.lang.String} object
      * @return a int
      */
-    private int loadCompoListItem(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+    private int loadCompoListItem(Sheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelExportCache cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export this level (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && level > depthLevelNum) {
@@ -856,6 +843,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             Map<QName, Serializable> properties = nodeService.getProperties(currentLevelQuantities.getCompoListItem().getNodeRef());
             Map<String, Object> item = doExtract(currentLevelQuantities.getCompoListItem().getNodeRef(), PLMModel.TYPE_COMPOLIST,
                     metadataFields, properties, cache);
+            processDynamicCharactColumns(item, currentLevelQuantities.getCompoListItem().getNodeRef().getId(), dynamicCharactColumnCache);
 
             if (entityItems != null) {
                 item.putAll(entityItems);
@@ -902,7 +890,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     if (subDataItem.getProduct() != null) {
                         rownum = loadCompoListItem(sheet, entityNodeRef, rownum, key,
                                 new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
-                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter);
+                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -914,7 +902,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>loadProcessListItem.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param rownum a int
      * @param key a {@link java.io.Serializable} object
@@ -930,9 +918,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param parameter a {@link java.lang.String} object
      * @return a int
      */
-    private int loadProcessListItem(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+    private int loadProcessListItem(Sheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, ProcessListDataItem dataItem, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelExportCache cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export this level (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && level > depthLevelNum) {
@@ -952,6 +941,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
             Map<QName, Serializable> properties = nodeService.getProperties(dataItem.getNodeRef());
             Map<String, Object> item = doExtract(dataItem.getNodeRef(), MPMModel.TYPE_PROCESSLIST, metadataFields, properties, cache);
+            processDynamicCharactColumns(item, dataItem.getNodeRef().getId(), dynamicCharactColumnCache);
 
             if (entityItems != null) {
                 item.putAll(entityItems);
@@ -994,7 +984,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                             .getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
                         rownum = loadProcessListItem(sheet, entityNodeRef, rownum, key,
                                 new CurrentLevelQuantities(nodeService, alfrescoRepository, subDataItem, currentLevelQuantities), subDataItem,
-                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter);
+                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -1006,7 +996,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /**
      * <p>loadProcessListItemForCompo.</p>
      *
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
      * @param rownum a int
      * @param key a {@link java.io.Serializable} object
@@ -1021,9 +1011,10 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param parameter a {@link java.lang.String} object
      * @return a int
      */
-    private int loadProcessListItemForCompo(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+    private int loadProcessListItemForCompo(Sheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelExportCache cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter,
+            Map<String, List<String>> dynamicCharactColumnCache) {
 
         // Check if we should export this level (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && level > depthLevelNum) {
@@ -1048,7 +1039,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     .getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
                 rownum = loadProcessListItem(sheet, entityNodeRef, rownum, key,
                         new CurrentLevelQuantities(nodeService, alfrescoRepository, processListDataItem, currentLevelQuantities),
-                        processListDataItem, metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter);
+                        processListDataItem, metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
             }
         }
 
@@ -1060,7 +1051,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(subType) || PLMModel.TYPE_FINISHEDPRODUCT.equals(subType)) {
                         rownum = loadProcessListItemForCompo(sheet, entityNodeRef, rownum, key,
                                 new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
-                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter);
+                                metadataFields, cache, entityItems, excelCellStyles, level + 1, depthLevelNum, isOnlyLevel, parameter, dynamicCharactColumnCache);
                     }
                 }
             }
@@ -1082,7 +1073,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param level the depth level
      * @return the new row number
      */
-    private int createEmptyEntityRow(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+    private int createEmptyEntityRow(Sheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level) {
 
         Row row = sheet.createRow(rownum++);
@@ -1113,7 +1104,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * <p>appendNextLevel.</p>
      *
      * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
-     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
      * @param itemType a {@link org.alfresco.service.namespace.QName} object
      * @param metadataFields a {@link java.util.List} object
      * @param cache a {@link java.util.Map} object
@@ -1128,8 +1119,8 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
      * @param wUsedAssocCache a {@link java.util.Map} object
      * @return a int
      */
-    protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
-            List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
+    protected int appendNextLevel(MultiLevelListData listData, Sheet sheet, QName itemType,
+            List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache, int rownum, Serializable key,
             Double parentQty, String[] parameters, Map<String, Object> entityItems, Map<String, List<String>> dynamicCharactColumnCache,
             ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 
@@ -1214,5 +1205,33 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             }
         }
         return rownum;
+    }
+
+    private void processDynamicCharactColumns(Map<String, Object> item, String componentId, Map<String, List<String>> dynamicCharactColumnCache) {
+        if (dynamicCharactColumnCache == null) {
+            return;
+        }
+        for (Entry<String, Object> itemEntry : item.entrySet()) {
+            String itemKey = itemEntry.getKey();
+            Object itemValue = itemEntry.getValue();
+            if (itemKey.startsWith(PREFIX_DYNAMIC_CHAR_COLUMN)) {
+                if (JsonFormulaHelper.isJsonString(itemValue)) {
+                    if (dynamicCharactColumnCache.get(itemKey) == null) {
+                        dynamicCharactColumnCache.put(itemKey, new ArrayList<>());
+                    }
+                    dynamicCharactColumnCache.get(itemKey).add((String) itemValue);
+                    Object value = JsonFormulaHelper.cleanCompareJSON((String) itemValue);
+                    item.put(itemKey, value);
+                } else if (dynamicCharactColumnCache.get(itemKey) != null) {
+                    for (String subValues : dynamicCharactColumnCache.get(itemKey)) {
+                        Object subValue = JsonFormulaHelper.extractComponentValue(subValues, componentId);
+                        if (subValue != null) {
+                            item.put(itemKey, subValue);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

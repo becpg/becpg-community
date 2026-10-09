@@ -1,10 +1,17 @@
 package fr.becpg.test.repo.supplier;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
@@ -21,9 +28,11 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.SupplierPortalInitRepoVisitor;
 import fr.becpg.repo.authentication.UserAlreadyExistsException;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -35,6 +44,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.signature.SignatureProjectHelper;
 import fr.becpg.repo.supplier.SupplierPortalService;
+import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class SupplierPortalIT extends PLMBaseTestCase {
@@ -46,6 +56,19 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 	private static final String TEST_SUPPLIER_FIRST_NAME = "Junit";
 	private static final String TEST_SUPPLIER_LAST_NAME = "Supplier";
 	private static final String TEST_RAW_MATERIAL_NAME = "Junit Supplier portal MP test";
+	private static final String TEST_INTERNAL_SUPPLIER_NAME = "Junit Supplier internal account test";
+	private static final String TEST_INTERNAL_USER_NAME = "supplierPortalInternalUser";
+	private static final String TEST_EXTERNAL_SUPPLIER_NAME = "Junit Supplier external account test";
+	private static final String TEST_EXTERNAL_SUPPLIER_EMAIL = "removed-supplier@becpg.fr";
+	private static final String TEST_COMMENT_SUPPLIER_NAME = "Junit Supplier comment test";
+	private static final String TEST_COMMENT_SUPPLIER_PLANT_NAME = "Junit Supplier comment plant test";
+	private static final String SUPPLIER_COMMENT = "Supplier comment";
+	private static final String UPDATED_SUPPLIER_COMMENT = "Updated supplier comment";
+	private static final String TEST_CONCURRENT_SUPPLIER_NAME = "Junit Supplier concurrent project test";
+	private static final String TEST_CONCURRENT_SUPPLIER_PLANT_NAME = "Junit Supplier concurrent project plant test";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_NAME = "Junit Supplier update request test";
+	private static final String TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME = "Junit Supplier update request plant test";
+	private static final String TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME = "Junit Supplier update request other test";
 
 	@Autowired
 	private SupplierPortalService supplierPortalService;
@@ -61,6 +84,95 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 
 	@Autowired
 	private SignatureProjectHelper signatureProjectHelper;
+
+	@Autowired
+	private CommentService commentService;
+
+	@Autowired
+	private ProjectService projectService;
+
+	@Test
+	public void testOpenSupplierProjectIsFoundFromTheOriginalEntity() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		assertNull("A product without project has no open supplier project",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		assertNotNull("The project works on a branch, it must still be found from the original",
+				inReadTx(() -> supplierPortalService.findOpenSupplierProject(rawMaterialNodeRef)));
+	}
+
+	@Test
+	public void testSupplierAccountCanRequestTheUpdateOfItsSheetOnce() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+		// `createSupplierAccount` does not link an account that already exists: link it here.
+		inWriteTx(() -> {
+			associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(supplierAccountNodeRef));
+			return null;
+		});
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+
+		NodeRef templateNodeRef = openTemplateToSuppliers();
+		NodeRef projectNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "New production site"));
+
+		assertNotNull("The request starts a supplier project", projectNodeRef);
+		assertTrue("The project carries the supplier's reason", inReadTx(() -> String.valueOf(
+				nodeService.getProperty(projectNodeRef, ContentModel.PROP_DESCRIPTION)).contains("New production site")));
+		assertThrows("A second request while the first is open is refused", IllegalStateException.class,
+				() -> inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Again")));
+	}
+
+	@Test
+	public void testUpdateRequestIsRefusedToAnAccountOfAnotherSupplier() {
+		NodeRef supplierNodeRef = createSupplier(TEST_UPDATE_REQUEST_OTHER_SUPPLIER_NAME);
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierAccount(createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_NAME), createSupplier(TEST_UPDATE_REQUEST_SUPPLIER_PLANT_NAME));
+
+		NodeRef templateNodeRef = openTemplateToSuppliers();
+		assertThrows(AccessDeniedException.class, () -> inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> supplierPortalService.requestSupplierUpdate(rawMaterialNodeRef, templateNodeRef, "Not mine")));
+	}
+
+	@Test
+	public void testOnlyTemplatesReadableByExternalUsersAreOpenToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.deletePermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER);
+			return null;
+		});
+		assertFalse("Without the permission, the template is not offered",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+
+		openTemplateToSuppliers();
+		assertTrue("Consumer for GROUP_ExternalUser opens it",
+				inReadTx(() -> supplierPortalService.findSupplierProjectTemplates().contains(templateNodeRef)));
+	}
+
+	/** The configuration an administrator does: Consumer for GROUP_ExternalUser on the template. */
+	private NodeRef openTemplateToSuppliers() {
+		NodeRef templateNodeRef = getSupplierProjectTemplate();
+		inWriteTx(() -> {
+			permissionService.setPermission(templateNodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser, PermissionService.CONSUMER, true);
+			return null;
+		});
+		return templateNodeRef;
+	}
+
+	@Test
+	public void testSecondSupplierProjectIsRefusedWhileOneIsOpen() {
+		NodeRef supplierNodeRef = createSupplier(TEST_CONCURRENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_CONCURRENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+
+		assertThrows(IllegalStateException.class, () -> createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef));
+	}
 
 	@Test
 	public void testSupplierPortal() {
@@ -82,6 +194,81 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 		testProjectWorkflow(projectNodeRef);
 		testProjectWorkflow(projectNodeRef2);
 		testProjectWorkflow(projectNodeRef3);
+	}
+
+	@Test
+	public void testInternalAccountStaysEnabledWhenRemovedFromSupplier() {
+		NodeRef supplierNodeRef = createSupplier(TEST_INTERNAL_SUPPLIER_NAME);
+		deletePersonIfExists(TEST_INTERNAL_USER_NAME);
+		NodeRef internalUserNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createUser(TEST_INTERNAL_USER_NAME));
+
+		addThenRemoveSupplierAccount(supplierNodeRef, internalUserNodeRef);
+
+		assertTrue("An internal account removed from a supplier should stay enabled",
+				inReadTx(() -> AuthorityHelper.isAccountEnabled(TEST_INTERNAL_USER_NAME)));
+	}
+
+	@Test
+	public void testExternalAccountIsDisabledWhenRemovedFromSupplier() {
+		NodeRef supplierNodeRef = createSupplier(TEST_EXTERNAL_SUPPLIER_NAME);
+		deletePersonIfExists(TEST_EXTERNAL_SUPPLIER_EMAIL);
+		NodeRef externalUserNodeRef = inWriteTx(() -> supplierPortalService.createExternalUser(TEST_EXTERNAL_SUPPLIER_EMAIL,
+				TEST_SUPPLIER_FIRST_NAME, TEST_SUPPLIER_LAST_NAME, false, null));
+
+		addThenRemoveSupplierAccount(supplierNodeRef, externalUserNodeRef);
+
+		assertFalse("An external account removed from its last supplier should be disabled",
+				inReadTx(() -> AuthorityHelper.isAccountEnabled(TEST_EXTERNAL_SUPPLIER_EMAIL)));
+	}
+
+	@Test
+	public void testSupplierCanModifyEntityCommentOnlyUntilProjectFormulation() {
+		NodeRef supplierNodeRef = createSupplier(TEST_COMMENT_SUPPLIER_NAME);
+		NodeRef supplierAccountNodeRef = createSupplierAccount(supplierNodeRef, createSupplier(TEST_COMMENT_SUPPLIER_PLANT_NAME));
+		NodeRef rawMaterialNodeRef = createRawMaterial(supplierNodeRef);
+		NodeRef projectNodeRef = createSupplierProject(rawMaterialNodeRef, supplierAccountNodeRef);
+		NodeRef projectEntityNodeRef = inWriteTx(() -> {
+			NodeRef entityNodeRef = ((ProjectData) alfrescoRepository.findOne(projectNodeRef)).getEntities().get(0);
+			permissionService.setPermission(entityNodeRef, TEST_SUPPLIER_EMAIL, PermissionService.COORDINATOR, true);
+			return entityNodeRef;
+		});
+
+		NodeRef commentNodeRef = inWriteTxAs(TEST_SUPPLIER_EMAIL,
+				() -> commentService.createComment(projectEntityNodeRef, "", SUPPLIER_COMMENT, false));
+		updateCommentAsSupplier(commentNodeRef);
+
+		inWriteTx(() -> {
+			projectService.formulate(projectNodeRef);
+			return null;
+		});
+		assertThrows(AccessDeniedException.class, () -> updateCommentAsSupplier(commentNodeRef));
+	}
+
+	private void updateCommentAsSupplier(NodeRef commentNodeRef) {
+		inWriteTxAs(TEST_SUPPLIER_EMAIL, () -> {
+			commentService.updateComment(commentNodeRef, "", UPDATED_SUPPLIER_COMMENT);
+			return null;
+		});
+	}
+
+	private void deletePersonIfExists(String userName) {
+		inWriteTx(() -> {
+			if (personService.personExists(userName)) {
+				personService.deletePerson(userName);
+			}
+			return null;
+		});
+	}
+
+	private void addThenRemoveSupplierAccount(NodeRef supplierNodeRef, NodeRef accountNodeRef) {
+		inWriteTx(() -> {
+			associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(accountNodeRef));
+			return null;
+		});
+		inWriteTx(() -> {
+			associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Collections.emptyList());
+			return null;
+		});
 	}
 
 	private NodeRef createSupplier(String supplierName) {
@@ -280,6 +467,23 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 			this.totalDeliverables = totalDeliverables;
 			this.inProgress = inProgress;
 			this.planned = planned;
+		}
+	}
+
+	/**
+	 * Runs a write transaction as a user logged in, the identity Alfresco records as the creator of a node.
+	 *
+	 * @param userName the user to log in
+	 * @param callback the work to run
+	 * @return the work result
+	 */
+	private <T> T inWriteTxAs(String userName, RetryingTransactionCallback<T> callback) {
+		String previousUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		AuthenticationUtil.setFullyAuthenticatedUser(userName);
+		try {
+			return inWriteTx(callback);
+		} finally {
+			AuthenticationUtil.setFullyAuthenticatedUser(previousUser);
 		}
 	}
 }

@@ -30,6 +30,7 @@ function main() {
         "beCPG.remote.rateLimiter.capacity",
         "beCPG.remote.rateLimiter.refillRate",
         "beCPG.remote.maxResults.limit",
+        "beCPG.remote.maxResults.hardLimit",
         "beCPG.security.supplierPermission",
         "beCPG.solr.enableIndexForTypes",
         "beCPG.classify.rights.check",
@@ -56,6 +57,7 @@ function main() {
         "beCPG.product.name.format",
         "beCPG.report.title.format",
         "beCPG.quality.sampleId.format",
+        "beCPG.quality.batch.scanner.format",
         "beCPG.sendToSupplier.entityName.format",
         "beCPG.sendToSupplier.projectName.format",
         "beCPG.report.name.format",
@@ -142,7 +144,8 @@ function main() {
         "project.subProject.propsToCopyFromParent",
         "project.subProject.propsToCopyToParent",
         "project.extractor.myProjectAttributes",
-        "project.formulation.autoProjectState"
+        "project.formulation.autoProjectState",
+        "beCPG.survey.subsidiaryScope.enabled"
     ].forEach(function(p) {
         addAttribute(p, "project");
     });

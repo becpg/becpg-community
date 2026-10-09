@@ -16,6 +16,10 @@
 					<show force="false" id="bcpg:productState" />
 					<show force="false" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
+					<!-- Ecobalyse -->
+					<show force="true" id="bcpg:ecobalyseCode" />
+					<show force="true" id="bcpg:apScenario" />
+					<show force="true" id="bcpg:apCropGroup" />
 					<show force="false" id="bcpg:casNumber" />
 					<show force="false" id="bcpg:ecNumber" />
 					<show force="false" id="bcpg:ceNumber" />
@@ -112,7 +116,6 @@
 					
 					<!--score -->
 					<show for-mode="view" force="false" id="bcpg:nutrientProfilingScore" />
-					<show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails" />
 					<show force="false" id="bcpg:nutrientProfileCategory" />
 					<show force="false" id="bcpg:nutrientProfileVersion" />
 					
@@ -168,6 +171,12 @@
 					<show id="bcpg:regulatoryResult" force="false" />
 					<show id="bcpg:regulatoryFormulatedDate" force="false" />
 					<show id="bcpg:regulatoryValidationDate" force="false" />
+					<show id="bcpg:regulatoryUseMode" force="false" />
+					<show id="bcpg:regulatoryApplicationZones" force="false" />
+					<show id="bcpg:regulatoryMucousContact" force="false" />
+					<show id="bcpg:regulatoryExposureRoutes" force="false" />
+					<show id="bcpg:regulatoryTargetPopulation" force="false" />
+					<show id="bcpg:regulatoryProfessionalUse" force="false" />
 					
 					<!--workflow validation -->
 					<show id="bcpgwf:pvValidationDate" for-mode="view" />
@@ -382,6 +391,14 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"></control>
 					</field>
 
+					<set appearance="bordered-panel" id="ecobalyse" label-id="becpg.forms.set.ecobalyse.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:ecobalyseCode" set="ecobalyse">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+						</control>
+					</field>
+					<field id="bcpg:apScenario" set="ecobalyse" />
+					<field id="bcpg:apCropGroup" set="ecobalyse" />
 					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:regulatoryCountries" set="regulatory">
 						<control
@@ -405,6 +422,18 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
+
+					<set appearance="bordered-panel" id="regulatoryProduct" label-id="becpg.forms.set.regulatoryProduct.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:regulatoryUseMode" set="regulatoryProduct" />
+					<field id="bcpg:regulatoryApplicationZones" set="regulatoryProduct">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+					</field>
+					<field id="bcpg:regulatoryMucousContact" set="regulatoryProduct" />
+					<field id="bcpg:regulatoryExposureRoutes" set="regulatoryProduct">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+					</field>
+					<field id="bcpg:regulatoryTargetPopulation" set="regulatoryProduct" />
+					<field id="bcpg:regulatoryProfessionalUse" set="regulatoryProduct" />
 
 					<field id="bcpg:ingTypeV2" mandatory="false" read-only="false" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -467,9 +496,6 @@
 					<set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score" />
-					<field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
-						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
-					</field>
 					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
@@ -2026,6 +2052,7 @@
 					<show force="true" id="bcpg:productHierarchy2" />
 					<show force="true" id="bcpg:legalName" />
 					<show force="true" id="bcpg:productState" />
+					<show force="false" id="bcpg:entityScore" />
 					<show force="true" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
 					<show force="true" id="bcpg:eanCode" />
@@ -2094,7 +2121,6 @@
 					<show force="false" id="ghs:sdsOnuCode" />
 					<show force="false" id="ghs:sdsClassCode" />
 					<show force="false" id="ghs:sdsPackagingGroupCode" />
-					<show force="false" id="bcpg:entityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>

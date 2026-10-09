@@ -25,6 +25,45 @@ public interface SupplierPortalService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	NodeRef createSupplierProject(NodeRef entityNodeRef, NodeRef projectTemplateNodeRef, List<NodeRef> supplierAccountNodeRefs);
+
+	/**
+	 * Is a supplier project still open (Planned, InProgress, OnHold) on this
+	 * entity, on the entity it was branched from, or on one of its branches?
+	 *
+	 * @param entityNodeRef an entity, an entity branch or a supplier
+	 * @return the name of the first open project found, or null when there is none
+	 */
+	String findOpenSupplierProject(NodeRef entityNodeRef);
+
+	/**
+	 * A supplier asks for the update of one of its validated sheets, or of its
+	 * own supplier record: starts a supplier project on it, exactly as « Send to
+	 * supplier » does, with the reason written on the project. The whole
+	 * workflow runs again: the supplier goes back through the wizard.
+	 *
+	 * The caller must be one of the supplier's accounts, the template one of
+	 * {@link #findSupplierProjectTemplates()}, and no supplier project may already
+	 * be open on the entity.
+	 *
+	 * @param entityNodeRef the validated entity, or the supplier itself
+	 * @param templateNodeRef the project template the supplier picked
+	 * @param reason why the supplier asks, shown to the quality team
+	 * @return the project created
+	 * @throws org.alfresco.repo.security.permissions.AccessDeniedException when the caller is not an account of the supplier, or the template is not open to suppliers
+	 * @throws IllegalStateException when a supplier project is already open on the entity
+	 * @throws IllegalArgumentException when the entity is a working copy or the reason is blank
+	 */
+	NodeRef requestSupplierUpdate(NodeRef entityNodeRef, NodeRef templateNodeRef, String reason);
+
+	/**
+	 * The supplier project templates a supplier may start itself: enabled
+	 * templates carrying {@code bcpg:suppliersAspect} on which
+	 * {@code GROUP_ExternalUser} holds a read permission. That permission is the
+	 * whole configuration — no property, no extra field.
+	 *
+	 * @return the templates, possibly empty
+	 */
+	List<NodeRef> findSupplierProjectTemplates();
 	
 	/**
 	 * <p>getSupplierNodeRef.</p>

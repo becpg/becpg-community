@@ -167,6 +167,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 						if (overrideTpl) {
 							logger.info("Override report content and properties: " + tplFullName);
 							nodeService.addProperties(reportTplNodeRef, properties);
+							if (reportTplInformation.getResources() != null) {
+								associationService.update(reportTplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, reportTplInformation.getResources());
+							}
 						} else {
 							logger.info("Updating report content: " + tplFullName);
 							

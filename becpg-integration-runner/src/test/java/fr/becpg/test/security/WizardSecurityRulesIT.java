@@ -61,6 +61,7 @@ import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
+import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.utils.TestWebscriptExecuters;
@@ -332,6 +333,31 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		Assert.assertFalse("userThree should not have assigned task", jsonUserThree.getBoolean("hasAssignedTask"));
 		Assert.assertEquals("userThree should have READ access", SecurityService.READ_ACCESS, jsonUserThree.getInt("accessMode"));
 		userThreeResponse.release();
+	}
+
+	/**
+	 * becpg/project/entity is the usual nextStepWebScript of a project wizard: it must answer an error,
+	 * not an empty 200, when the project has no entity, so that the wizard does not stay on "Loading".
+	 */
+	@Test
+	public void testProjectEntityNextStepWebScript() throws Exception {
+		NodeRef noEntityProjectNodeRef = inWriteTx(() -> createTestProject("TestProjectWithoutEntity"));
+
+		String uri = "/becpg/project/entity?nodeRef=" + noEntityProjectNodeRef;
+		TestWebscriptExecuters.sendRequest(new GetRequest(uri), 400, "admin").release();
+
+		NodeRef entityNodeRef = inWriteTx(() -> {
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Wizard next step entity");
+			nodeService.createAssociation(noEntityProjectNodeRef, rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
+			return rawMaterialNodeRef;
+		});
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(uri), 200, "admin");
+		Assert.assertEquals(entityNodeRef.toString(), new JSONObject(response.getContentAsString()).getString("nodeRef"));
+		response.release();
+
+		TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/project/entity?nodeRef=workspace://SpacesStore/missing-project"), 404,
+				"admin").release();
 	}
 
 	/**

@@ -24,7 +24,28 @@
  */
 (function() {
 
-    var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector, Bubbling = YAHOO.Bubbling;
+
+    /**
+     * Delay after which a pending form dialog is unlocked, in case its template could not be loaded.
+     */
+    var FORM_DIALOG_LOCK_TIMEOUT = 10000;
+
+    /**
+     * Java exception class name the server puts in front of an error message, such as
+     * "java.lang.IllegalStateException: ", which means nothing to the user.
+     */
+    var EXCEPTION_CLASS_PREFIX = /^\s*(?:[\w$]+\.)+[\w$]*(?:Exception|Error):\s*/;
+
+    /**
+     * Width of the popups holding a checkbox picker, wide enough for its four columns.
+     */
+    var PICKER_PANEL_WIDTH = "76em";
+
+    /**
+     * Delimits the set ids a picker line carries, so that one id is never matched inside another.
+     */
+    var SET_SEPARATOR = "|";
 
     /**
      * beCPG.module.EntityDataGridActions implementation
@@ -34,6 +55,56 @@
         /**
           * ACTIONS WHICH ARE LOCAL TO THE DATAGRID COMPONENT
           */
+
+        /**
+          * Takes the form dialog lock. The create and edit dialogs share the same popup id, so a second
+          * request sent while the previous form template is still loading injects the same html ids twice
+          * and leaves the page broken until it is reloaded.
+          *
+          * @method _lockFormDialog
+          * @return {boolean} true when the caller is allowed to open the dialog
+          */
+        _lockFormDialog: function EntityDataGrid__lockFormDialog() {
+            if (this.formDialogPending) {
+                return false;
+            }
+
+            this.formDialogPending = true;
+            YAHOO.lang.later(FORM_DIALOG_LOCK_TIMEOUT, this, this._unlockFormDialog);
+
+            return true;
+        },
+
+        /**
+          * Releases the form dialog lock, once the form template is loaded or has failed to load.
+          *
+          * @method _unlockFormDialog
+          */
+        _unlockFormDialog: function EntityDataGrid__unlockFormDialog() {
+            this.formDialogPending = false;
+        },
+
+        /**
+          * Displays the failure of an action, with the message sent back by the server when there is one.
+          *
+          * @method _displayActionFailure
+          * @param title
+          *           {string} the failure message, also used when the server sends no message
+          * @param response
+          *           {object} the server response
+          */
+        _displayActionFailure: function EntityDataGrid__displayActionFailure(title, response) {
+            if (response && response.json && response.json.message) {
+                Alfresco.util.PopupManager.displayPrompt({
+                    title: title,
+                    text: response.json.message.replace(EXCEPTION_CLASS_PREFIX, "")
+                });
+            } else {
+                Alfresco.util.PopupManager.displayMessage({
+                    text: title
+                });
+            }
+        },
 
         /**
           * New Row button click handler
@@ -48,8 +119,46 @@
             var destination = this.datalistMeta.nodeRef != null ? this.datalistMeta.nodeRef : this.options.parentNodeRef, itemType = this.options.itemType != null ? this.options.itemType
                 : this.datalistMeta.itemType, me = this;
 
+            // #35600 : on the product referential there is neither a data list nor a parent entity,
+            // so the destination stays empty, the form is rendered without alf_destination and the
+            // submit fails. Fall back to the site document library, resolved once then cached.
+            if (destination == null || destination.length === 0) {
+                if (this.siteContainerNodeRef != null) {
+                    destination = this.siteContainerNodeRef;
+                } else if (this.options.siteId && !this.siteContainerResolved) {
+                    this.siteContainerResolved = true;
+                    Alfresco.util.Ajax.request({
+                        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/containers/"
+                            + encodeURIComponent(this.options.siteId),
+                        method: "GET",
+                        successCallback: {
+                            fn: function EntityDataGrid_onActionCreate_containers(response) {
+                                var containers = response.json != null ? response.json.containers : null;
+                                for (var i = 0; containers != null && i < containers.length; i++) {
+                                    if (containers[i].name === "documentLibrary") {
+                                        me.siteContainerNodeRef = containers[i].nodeRef;
+                                        break;
+                                    }
+                                }
+                                me.onActionCreate(e, p_obj);
+                            },
+                            scope: this
+                        },
+                        failureCallback: {
+                            fn: function EntityDataGrid_onActionCreate_containersFailure() {
+                                me.onActionCreate(e, p_obj);
+                            },
+                            scope: this
+                        }
+                    });
+                    return;
+                }
+            }
+
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionCreate_doBeforeDialogShow(p_form, p_dialog) {
+                this._unlockFormDialog();
+
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.new-row.title")], [
                     p_dialog.id + "-dialogHeader", this.msg("label.new-row.header")]);
 
@@ -96,6 +205,10 @@
                         list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
                     });
+
+            if (!this._lockFormDialog()) {
+                return;
+            }
 
             // Using Forms Service, so always create new instance
             var createRow = new Alfresco.module.SimpleDialog(popupId);
@@ -200,9 +313,7 @@
                 },
                 onFailure: {
                     fn: function EntityDataGrid_onActionCreate_failure(response) {
-                        Alfresco.util.PopupManager.displayMessage({
-                            text: me.msg("message.new-row.failure")
-                        });
+                        me._displayActionFailure(me.msg("message.new-row.failure"), response);
                     },
                     scope: this
                 }
@@ -218,10 +329,14 @@
         onActionEdit: function EntityDataGrid_onActionEdit(item) {
             var me = this;
 
-
+            if (!this._lockFormDialog()) {
+                return;
+            }
 
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog) {
+                this._unlockFormDialog();
+
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title")]);
 
                 this._freezeGridScroll(p_dialog);
@@ -314,9 +429,7 @@
                 },
                 onFailure: {
                     fn: function EntityDataGrid_onActionEdit_failure(response) {
-                        Alfresco.util.PopupManager.displayMessage({
-                            text: me.msg("message.details.failure")
-                        });
+                        me._displayActionFailure(me.msg("message.details.failure"), response);
                     },
                     scope: this
                 }
@@ -478,16 +591,7 @@
                         callback:
                         {
                             fn: function(response, obj) {
-                                if (response.json && response.json.message) {
-                                    Alfresco.util.PopupManager.displayPrompt({
-                                        title: me.msg("message.delete.failure"),
-                                        text: response.json.message
-                                    });
-                                } else {
-                                    Alfresco.util.PopupManager.displayMessage({
-                                        text: me.msg("message.delete.failure")
-                                    });
-                                }
+                                me._displayActionFailure(me.msg("message.delete.failure"), response);
                             }
                         }
                     },
@@ -613,8 +717,6 @@
 
         onActionColumnConf: function EntityDataGrid_onActionColumnConf() {
 
-
-            var me = this;
             var popupKind = "columns-conf";
             var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
             html += '<div class="bd">';
@@ -635,7 +737,7 @@
 
             this.widgets.columnsListPanel = Alfresco.util.createYUIPanel(containerDiv, {
                 draggable: true,
-                width: "62em"
+                width: PICKER_PANEL_WIDTH
             });
 
             var hiddenColumnsInPopup = ["bcpg_startEffectivity", "bcpg_endEffectivity", "bcpg_depthLevel"];
@@ -645,10 +747,16 @@
             }
 
             var itemType = this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
-            var containerEl = Dom.get(this.id + '-columns-list').parentNode, columnsHtml = "";
+            var containerEl = Dom.get(this.id + '-columns-list').parentNode;
             var siteId = this.options.siteId;
 
             var timeStamp = (new Date().getTime());
+
+            // The column definitions are resolved by the repository. The dialog is shown straight
+            // away so that the click answers, so it has to say what it is waiting for: an empty
+            // strip under the title bar reads as a broken dialog, not as one being filled.
+            this._renderPickerMessage(containerEl,
+                '<span class="picker-list-spinner">' + Alfresco.util.encodeHTML(this.msg("label.picker-list.loading")) + '</span>');
 
             Alfresco.util.Ajax.jsonGet({
                 url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true"
@@ -657,52 +765,22 @@
                     + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
                     + (this.options.list != null ? "&list=" + this.options.list : "")
+                    + this._buildSetsArguments(this._getSetsNodeRef(itemType))
+                    + (this.options.columnPrefsScope != null ? "&prefsScope=" + encodeURIComponent(this.options.columnPrefsScope) : "")
                     + ("&noCache=" + timeStamp),
                 successCallback: {
                     fn: function(response) {
 
-                        var idx = 0;
-                        for (var i = 0; i < response.json.columns.length; i++) {
-                            var column = response.json.columns[i];
-                            var propLabel = column.label;
-                            var value = column.name.replace(":", "_");
-                            var checked = column.checked ? "checked" : "";
+                        var setPaths = this._buildSetPaths(response.json.sets);
 
-                            if (propLabel != "hidden" && propLabel && hiddenColumnsInPopup.indexOf(value) < 0) {
-                                var encodedPropLabel = Alfresco.util.encodeHTML(propLabel);
-                                columnsHtml += '<li class="columns-conf-item"><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + value + '" ' + checked + '/>'
-                                    + '<label for="propSelected-' + idx + '" title="' + encodedPropLabel + '" style="display:inline-block; max-width:17em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">' + encodedPropLabel + '</label></li>';
-                            }
-
-                            idx++;
-                            if (column.dataType == "nested_column") {
-                                for (var j = 0; j < column.columns.length; j++) {
-                                    var nestedColumn = column.columns[j];
-                                    var subLabel = nestedColumn.label;
-                                    var subValue = value + "_" + nestedColumn.name.replace(":", "_");
-
-                                    if (subLabel != "hidden" && subLabel && hiddenColumnsInPopup.indexOf(subValue) < 0) {
-                                        var encodedSubLabel = Alfresco.util.encodeHTML(subLabel);
-                                        columnsHtml += '<li class="columns-conf-item"><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + subValue + '" ' + (nestedColumn.checked ? "checked" : "") + '/>'
-                                            + '<label for="propSelected-' + idx + '" title="' + encodedSubLabel + '" style="display:inline-block; max-width:17em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">' + encodedSubLabel + '</label></li>';
-                                    }
-                                    idx++;
-                                }
-                            }
-
-                        }
-
-                        var composeInnerHtml = function() {
-                            var htmlContent = "<span>" + me.msg("label.select-columns.title") + "</span>";
-                            htmlContent += '<div class="columns-conf-actions">'
-                                + '<input id="' + me.id + '-columns-select-all" type="button" value="' + me.msg("button.columns-conf.select-all") + '" />'
-                                + '<input id="' + me.id + '-columns-deselect-all" type="button" value="' + me.msg("button.columns-conf.deselect-all") + '" />'
-                                + '</div>';
-                            htmlContent += '<ul class="columns-conf-list" style="column-count:3;-webkit-column-count:3;-moz-column-count:3;column-gap:1.5em;">' + columnsHtml + '</ul>';
-                            return htmlContent;
-                        };
-
-                        containerEl.innerHTML = composeInnerHtml();
+                        this._renderCheckboxPicker({
+                            containerEl: containerEl,
+                            panel: this.widgets.columnsListPanel,
+                            title: this.msg("label.select-columns.title"),
+                            itemsHtml: this._buildColumnPickerItems(response.json.columns, hiddenColumnsInPopup, setPaths),
+                            setPaths: setPaths,
+                            selectAllButtons: true
+                        });
 
                         var divEl = Dom.get(this.id + '-columns-conf-ft');
 
@@ -717,20 +795,6 @@
                             }
                             return prefsValue;
                         };
-
-                        this.widgets.selectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-select-all", function() {
-                            var checkboxNodes = Selector.query('input[type="checkbox"]', containerEl);
-                            for (var b = 0; b < checkboxNodes.length; b++) {
-                                checkboxNodes[b].checked = true;
-                            }
-                        });
-
-                        this.widgets.deselectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-deselect-all", function() {
-                            var checkboxNodes = Selector.query('input[type="checkbox"]', containerEl);
-                            for (var c = 0; c < checkboxNodes.length; c++) {
-                                checkboxNodes[c].checked = false;
-                            }
-                        });
 
                         this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function() {
                             var prefsValue = updateSelection();
@@ -755,11 +819,353 @@
 
                     },
                     scope: this
+                },
+                failureCallback: {
+                    fn: function() {
+                        this._renderPickerMessage(containerEl, Alfresco.util.encodeHTML(this.msg("label.picker-list.load-failed")));
+                    },
+                    scope: this
                 }
             });
 
             this.widgets.columnsListPanel.show();
 
+        },
+
+        /**
+          * Builds the checkbox lines of the column chooser, nested columns included.
+          *
+          * @method _buildColumnPickerItems
+          * @param columns {Array} the columns returned by the configuration webscript
+          * @param hiddenColumns {Array} the column names never offered to the user
+          * @param setPaths {object} the form sets, as built by _buildSetPaths
+          * @return {String} the list items markup
+          */
+        _buildColumnPickerItems: function EntityDataGrid__buildColumnPickerItems(columns, hiddenColumns, setPaths) {
+            var me = this, itemsHtml = "", index = 0;
+
+            var appendColumn = function(column, value, setId) {
+                if (column.label && column.label != "hidden" && hiddenColumns.indexOf(value) < 0) {
+                    itemsHtml += me._buildPickerItem({
+                        id: "propSelected-" + index,
+                        value: value,
+                        label: column.label,
+                        checked: column.checked,
+                        setPath: setPaths[setId]
+                    });
+                }
+                index++;
+            };
+
+            for (var i = 0; i < columns.length; i++) {
+                var column = columns[i];
+                var value = column.name.replace(":", "_");
+
+                appendColumn(column, value, column.set);
+
+                // The columns of a nested entity are shown with it, so they belong to its set.
+                if (column.dataType == "nested_column") {
+                    for (var j = 0; j < column.columns.length; j++) {
+                        appendColumn(column.columns[j], value + "_" + column.columns[j].name.replace(":", "_"), column.set);
+                    }
+                }
+            }
+
+            return itemsHtml;
+        },
+
+        /**
+          * The nodeRef of a row of the listed type, whose edit form gives the columns their sets.
+          * A datagrid form declares no set, and the edit form of a node is the one a client
+          * configuration lays its tabs out in. A row of another type is never taken: its form
+          * would change the sections offered with whichever row the page happens to start with.
+          * A row carries its type as itemType, the key the repository data list extractor writes.
+          *
+          * @method _getSetsNodeRef
+          * @param itemType {String} the type the columns are listed for
+          * @return {String} a nodeRef, or null when the grid shows no row of that type
+          */
+        _getSetsNodeRef: function EntityDataGrid__getSetsNodeRef(itemType) {
+            var recordSet = this.widgets.dataTable != null ? this.widgets.dataTable.getRecordSet() : null;
+
+            for (var i = 0, ii = recordSet != null ? recordSet.getLength() : 0; i < ii; i++) {
+                var record = recordSet.getRecord(i);
+                var data = record != null ? record.getData() : null;
+
+                if (data != null && data.nodeRef != null && data.itemType == itemType) {
+                    return data.nodeRef;
+                }
+            }
+
+            return null;
+        },
+
+        /**
+          * The arguments asking the column webscript for the form sets.
+          *
+          * @method _buildSetsArguments
+          * @param setsNodeRef {String} the node whose edit form holds the sets, or null
+          * @return {String} the query string fragment
+          */
+        _buildSetsArguments: function EntityDataGrid__buildSetsArguments(setsNodeRef) {
+            return "&withSets=true" + (setsNodeRef != null ? "&setsNodeRef=" + encodeURIComponent(setsNodeRef) : "");
+        },
+
+        /**
+          * Indexes the form sets returned by the column webscript by id, each one with its label
+          * prefixed by its parents' ("Parent > Set") and the chain of ids leading back to its root.
+          *
+          * @method _buildSetPaths
+          * @param sets {Array} the {id, label, parentId} sets, parents first, or undefined
+          * @return {object} set id to {id, label, chain}
+          */
+        _buildSetPaths: function EntityDataGrid__buildSetPaths(sets) {
+            var setPaths = {};
+
+            for (var i = 0; sets != null && i < sets.length; i++) {
+                var set = sets[i], parentPath = set.parentId != null ? setPaths[set.parentId] : null;
+
+                setPaths[set.id] = {
+                    id: set.id,
+                    label: parentPath != null ? parentPath.label + " > " + set.label : set.label,
+                    chain: parentPath != null ? [set.id].concat(parentPath.chain) : [set.id]
+                };
+            }
+
+            return setPaths;
+        },
+
+        /**
+          * Builds one checkbox line of a picker.
+          *
+          * @method _buildPickerItem
+          * @param item {object} the html id, the submitted value, the label, the initial state and
+          *           the set path of the field, if any
+          * @return {String} the list item markup
+          */
+        _buildPickerItem: function EntityDataGrid__buildPickerItem(item) {
+            var encodedLabel = Alfresco.util.encodeHTML(item.label);
+            var setsAttribute = item.setPath != null
+                ? ' data-sets="' + Alfresco.util.encodeHTML(SET_SEPARATOR + item.setPath.chain.join(SET_SEPARATOR) + SET_SEPARATOR) + '"' : "";
+
+            return '<li class="picker-list-item" data-label="' + encodedLabel + '"' + setsAttribute + '>'
+                + '<input id="' + item.id + '" type="checkbox" name="propChecked" value="' + item.value + '"' + (item.checked ? ' checked' : '') + '/>'
+                + '<label for="' + item.id + '">'
+                + '<span class="picker-list-label" title="' + encodedLabel + '">' + encodedLabel + '</span>'
+                + '</label></li>';
+        },
+
+        /**
+          * Replaces the body of a picker by a single line of text, while its definitions are being
+          * loaded or once loading them has failed.
+          *
+          * @method _renderPickerMessage
+          * @param containerEl {object} the element holding the picker
+          * @param messageHtml {String} the message markup
+          */
+        _renderPickerMessage: function EntityDataGrid__renderPickerMessage(containerEl, messageHtml) {
+            containerEl.innerHTML = '<div class="picker-list-message">' + messageHtml + '</div>';
+        },
+
+        /**
+          * Renders the checkbox picker shared by the column chooser and the bulk edit field chooser.
+          *
+          * Both dialogs offer one checkbox per property, so they share the same search field, four
+          * column layout and internal scroll. Only the column chooser gets the select all and deselect
+          * all buttons, a bulk edit form holding every field of the type being unusable.
+          *
+          * @method _renderCheckboxPicker
+          * @param picker {object} the container element, the panel to resize, the title, the items
+          *           markup, the form sets the items belong to and whether the select all buttons
+          *           are wanted
+          */
+        _renderCheckboxPicker: function EntityDataGrid__renderCheckboxPicker(picker) {
+            var me = this;
+            var checkedOnlyId = this.id + "-picker-checked-only";
+
+            var html = '<div class="picker-list-header">';
+            html += '<span class="picker-list-title">' + picker.title + '</span>';
+            html += '<select class="picker-list-set hidden"></select>';
+            html += '<input class="picker-list-filter" type="text" autocomplete="off" placeholder="'
+                + this.msg("label.picker-list.filter") + '" />';
+            html += '<span class="picker-list-toggle">'
+                + '<input id="' + checkedOnlyId + '" class="picker-list-checked-only" type="checkbox" />'
+                + '<label for="' + checkedOnlyId + '">' + this.msg("label.picker-list.checked-only") + '</label>'
+                + '</span>';
+
+            if (picker.selectAllButtons) {
+                html += '<span class="picker-list-actions">'
+                    + '<input id="' + this.id + '-columns-select-all" type="button" value="' + this.msg("button.columns-conf.select-all") + '" />'
+                    + '<input id="' + this.id + '-columns-deselect-all" type="button" value="' + this.msg("button.columns-conf.deselect-all") + '" />'
+                    + '</span>';
+            }
+
+            html += '</div>';
+            html += '<ul class="picker-list">' + picker.itemsHtml + '</ul>';
+            html += '<div class="picker-list-no-match hidden">' + this.msg("label.picker-list.no-match") + '</div>';
+
+            picker.containerEl.innerHTML = html;
+
+            var applyFilter = function() {
+                me._filterPickerItems(picker.containerEl);
+            };
+
+            this._renderSetFilter(picker.containerEl, picker.setPaths);
+
+            Event.on(Selector.query("select.picker-list-set", picker.containerEl, true), "change", applyFilter);
+            Event.on(Selector.query("input.picker-list-filter", picker.containerEl, true), "input", applyFilter);
+            Event.on(Dom.get(checkedOnlyId), "change", applyFilter);
+
+            if (picker.selectAllButtons) {
+                this.widgets.selectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-select-all", function() {
+                    this._checkVisiblePickerItems(picker.containerEl, true);
+                });
+
+                this.widgets.deselectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-deselect-all", function() {
+                    this._checkVisiblePickerItems(picker.containerEl, false);
+                });
+            }
+
+            if (picker.panel != null) {
+                picker.panel.cfg.setProperty("width", PICKER_PANEL_WIDTH);
+                picker.panel.center();
+            }
+        },
+
+        /**
+          * Fills the set drop-down with the sets holding at least one line of the picker, and only
+          * shows it when there is one: a type whose form declares no set keeps the picker as it was.
+          *
+          * @method _renderSetFilter
+          * @param containerEl {object} the element holding the picker
+          * @param setPaths {object} the form sets, as built by _buildSetPaths, or undefined
+          */
+        _renderSetFilter: function EntityDataGrid__renderSetFilter(containerEl, setPaths) {
+            var selectEl = Selector.query("select.picker-list-set", containerEl, true);
+            var usedSetIds = this._collectPickerSetIds(containerEl);
+            var hasSet = false;
+
+            selectEl.appendChild(new Option(this.msg("label.picker-list.all-sets"), ""));
+
+            for (var setId in setPaths) {
+                if (setPaths.hasOwnProperty(setId) && usedSetIds[setId]) {
+                    selectEl.appendChild(new Option(setPaths[setId].label, setId));
+                    hasSet = true;
+                }
+            }
+
+            if (hasSet) {
+                Dom.removeClass(selectEl, "hidden");
+            }
+        },
+
+        /**
+          * @method _collectPickerSetIds
+          * @param containerEl {object} the element holding the picker
+          * @return {object} the ids of the sets, parents included, that the picker lines belong to
+          */
+        _collectPickerSetIds: function EntityDataGrid__collectPickerSetIds(containerEl) {
+            var items = Selector.query("li.picker-list-item", containerEl);
+            var setIds = {};
+
+            for (var i = 0; i < items.length; i++) {
+                var chain = (items[i].getAttribute("data-sets") || "").split(SET_SEPARATOR);
+                for (var j = 0; j < chain.length; j++) {
+                    if (chain[j].length > 0) {
+                        setIds[chain[j]] = true;
+                    }
+                }
+            }
+
+            return setIds;
+        },
+
+        /**
+          * @method _isInPickerSet
+          * @param itemEl {object} a picker line
+          * @param setId {String} the set chosen in the drop-down, empty for all of them
+          * @return {boolean} true when the line belongs to that set or to one of its sub sets
+          */
+        _isInPickerSet: function EntityDataGrid__isInPickerSet(itemEl, setId) {
+            return setId.length === 0
+                || (itemEl.getAttribute("data-sets") || "").indexOf(SET_SEPARATOR + setId + SET_SEPARATOR) > -1;
+        },
+
+        /**
+          * Hides the picker lines that the set drop-down, the search field and the selected only
+          * option leave out.
+          *
+          * Ticking a line off does not re-run the filter: a line vanishing from under the pointer
+          * while the user is unticking a series of them would make the next click land elsewhere.
+          *
+          * @method _filterPickerItems
+          * @param containerEl {object} the element holding the picker
+          */
+        _filterPickerItems: function EntityDataGrid__filterPickerItems(containerEl) {
+            var setEl = Selector.query("select.picker-list-set", containerEl, true);
+            var filterEl = Selector.query("input.picker-list-filter", containerEl, true);
+            var checkedOnlyEl = Selector.query("input.picker-list-checked-only", containerEl, true);
+            var setId = setEl != null ? setEl.value : "";
+            var normalizedFilter = this._normalizeForFilter(filterEl != null ? filterEl.value : "");
+            var checkedOnly = checkedOnlyEl != null && checkedOnlyEl.checked;
+            var items = Selector.query("li.picker-list-item", containerEl);
+            var matchCount = 0;
+
+            for (var i = 0; i < items.length; i++) {
+                var checkbox = Selector.query('input[type="checkbox"]', items[i], true);
+                var matches = this._isInPickerSet(items[i], setId)
+                    && (!checkedOnly || (checkbox != null && checkbox.checked))
+                    && (normalizedFilter.length === 0
+                        || this._normalizeForFilter(items[i].getAttribute("data-label")).indexOf(normalizedFilter) > -1);
+
+                Dom.setStyle(items[i], "display", matches ? "" : "none");
+
+                if (matches) {
+                    matchCount++;
+                }
+            }
+
+            var noMatchEl = Selector.query("div.picker-list-no-match", containerEl, true);
+
+            if (matchCount === 0) {
+                Dom.removeClass(noMatchEl, "hidden");
+            } else {
+                Dom.addClass(noMatchEl, "hidden");
+            }
+        },
+
+        /**
+          * Ticks or unticks every line the search field currently leaves visible, so that a filter
+          * narrows down what the select all buttons act on.
+          *
+          * @method _checkVisiblePickerItems
+          * @param containerEl {object} the element holding the picker
+          * @param checked {boolean} the state to apply
+          */
+        _checkVisiblePickerItems: function EntityDataGrid__checkVisiblePickerItems(containerEl, checked) {
+            var items = Selector.query("li.picker-list-item", containerEl);
+
+            for (var i = 0; i < items.length; i++) {
+                if (Dom.getStyle(items[i], "display") != "none") {
+                    var checkbox = Selector.query('input[type="checkbox"]', items[i], true);
+                    if (checkbox != null) {
+                        checkbox.checked = checked;
+                    }
+                }
+            }
+        },
+
+        /**
+          * Lowers the case and drops the diacritics so that typing "energie" finds "Énergie".
+          *
+          * @method _normalizeForFilter
+          * @param text {String} the text to compare
+          * @return {String} the comparable text
+          */
+        _normalizeForFilter: function EntityDataGrid__normalizeForFilter(text) {
+            var lowered = (text != null ? text : "").toLowerCase();
+
+            return lowered.normalize ? lowered.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : lowered;
         },
 
         _hasMultiLevelItems: function EntityDataGrid__hasMultiLevelItems(items) {

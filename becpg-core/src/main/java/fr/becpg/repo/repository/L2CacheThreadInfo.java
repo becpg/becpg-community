@@ -21,7 +21,7 @@ class L2CacheThreadInfo implements Serializable{
 	private boolean isThreadLockEnable = false;
 	private boolean isThreadCacheEnable = false;
 	private boolean isSilentModeEnable = false;
-	private Map<NodeRef, RepositoryEntity> cache = new HashMap<>(500);
+	private Map<NodeRef, RepositoryEntity> cache = HashMap.newHashMap(500);
 	
 	/**
 	 * <p>Constructor for L2CacheThreadInfo.</p>

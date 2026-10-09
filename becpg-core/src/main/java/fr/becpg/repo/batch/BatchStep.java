@@ -22,6 +22,37 @@ public class BatchStep<T> {
 	private Boolean runAsSystem;
 	
 	private String batchUser;
+
+	/*
+	 * A step is run inside a transaction by default, which is what nearly every
+	 * batch wants: the entry either lands whole or not at all.
+	 *
+	 * A step that spends most of its time outside the database - waiting on a
+	 * remote server, for one - should say so. Held across such a wait, the
+	 * transaction keeps its row locks and stops InnoDB from purging its undo
+	 * records, and every other write on the instance pays for it. Such a step is
+	 * responsible for its own transactions: short ones around the database work,
+	 * none around the wait.
+	 */
+	private Boolean transactional = Boolean.TRUE;
+
+	/**
+	 * <p>Whether the step runs inside a transaction opened for it.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
+	public Boolean getTransactional() {
+		return transactional;
+	}
+
+	/**
+	 * <p>Setter for the field <code>transactional</code>.</p>
+	 *
+	 * @param transactional a {@link java.lang.Boolean} object
+	 */
+	public void setTransactional(Boolean transactional) {
+		this.transactional = transactional;
+	}
 	
 	/**
 	 * <p>Getter for the field <code>batchUser</code>.</p>

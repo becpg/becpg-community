@@ -1,6 +1,7 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -26,8 +27,6 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	public static final String TOTAL_ITEMS = "totalItems";
 	/** Constant <code>TOTAL_ERRORS="totalErrors"</code> */
 	public static final String TOTAL_ERRORS = "totalErrors";
-	/** Constant <code>IS_COMPLETED="isCompleted"</code> */
-	public static final String IS_COMPLETED = "isCompleted";
 	/** Constant <code>BATCH_USER="batchUser"</code> */
 	public static final String BATCH_USER = "batchUser";
 	/** Constant <code>BATCH_ID="batchId"</code> */
@@ -90,6 +89,16 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 		AuthenticationUtil.popAuthentication();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * A batch is identified by its identifier, then told apart by its author.
+	 */
+	@Override
+	public List<String> getFilterHierarchy() {
+		return List.of(BATCH_ID, BATCH_USER, IS_COMPLETED);
 	}
 
 }

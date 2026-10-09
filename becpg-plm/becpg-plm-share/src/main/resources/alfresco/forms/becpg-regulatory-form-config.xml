@@ -23,6 +23,7 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryLegalStatus" />
 					<show id="bcpg:regulatoryResult" />
 					<show id="bcpg:regulatoryState" />
 					<show id="bcpg:regulatoryValidationDate" />
@@ -51,6 +52,7 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryLegalStatus" />
 					<show id="bcpg:regulatoryResult" />
 					<show id="bcpg:limitingIngredient" />
 					<show id="bcpg:regulatoryMaximumDosage" />
@@ -72,6 +74,7 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryLegalStatus" />
 					<show id="bcpg:regulatoryState" />
 				</field-visibility>
 				<appearance>
@@ -88,6 +91,7 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryLegalStatus" />
 					<show id="bcpg:regulatoryResult" />
 					<show id="bcpg:regulatoryState" />
 					<show id="bcpg:regulatoryValidationDate" />
@@ -120,6 +124,7 @@
 				<field-visibility>
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryLegalStatus" />
 					<show id="bcpg:regulatoryResult" />
 					<show id="bcpg:regulatoryState" />
 					<show id="bcpg:regulatoryValidationDate" />
@@ -134,6 +139,12 @@
 					</field>
 					<field id="bcpg:regulatoryUsageRef" set="2-col" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryLegalStatus" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:regulatoryResult" read-only="false" set="2-col" >

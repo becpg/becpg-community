@@ -187,7 +187,7 @@ public class FormulaHelper {
 
 		if (view.getDynamicCharactList() != null) {
 
-			Set<QName> nullDynColumnNames = new HashSet<>(DYN_COLUMN_SIZE);
+			Set<QName> nullDynColumnNames = HashSet.newHashSet(DYN_COLUMN_SIZE);
 			for (int i = 1; i <= DYN_COLUMN_SIZE; i++) {
 				nullDynColumnNames.add(QName.createQName(DYN_COLUMN_NAME + i, instance.namespaceService));
 			}

@@ -54,6 +54,7 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 	private Double weight;
 	private Double score;
 	private NodeRef scoreCriterion;
+	private NodeRef scoreDefinition;
 	private String detail;
 
 	private Integer depthLevel;
@@ -80,6 +81,27 @@ public class ScoreListDataItem extends AbstractManualDataItem implements  Simple
 	 */
 	public void setScoreCriterion(NodeRef scoreCriterion) {
 		this.scoreCriterion = scoreCriterion;
+	}
+
+	/**
+	 * Score this criterion contributes to, null for the legacy single entity score.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:slScoreDefinition")
+	@InternalField
+	public NodeRef getScoreDefinition() {
+		return scoreDefinition;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreDefinition</code>.</p>
+	 *
+	 * @param scoreDefinition a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setScoreDefinition(NodeRef scoreDefinition) {
+		this.scoreDefinition = scoreDefinition;
 	}
 
 	/**

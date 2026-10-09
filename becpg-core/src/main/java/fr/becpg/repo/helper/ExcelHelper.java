@@ -18,10 +18,14 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -29,7 +33,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -51,7 +54,7 @@ public class ExcelHelper {
 	
 	public static class ExcelCellStyles {
 
-	    private XSSFWorkbook workbook;
+	    private Workbook workbook;
 
 	    private CellStyle textCellStyle;
 	    private CellStyle fullDateCellStyle;
@@ -59,18 +62,18 @@ public class ExcelHelper {
 	    private CellStyle headerStyle;
 	    private CellStyle headerTextStyle;
 
-	    public ExcelCellStyles(XSSFWorkbook workbook) {
+	    public ExcelCellStyles(Workbook workbook) {
 	        this.workbook = workbook;
 	    }
 
 	    private CellStyle createTextStyle() {
-	    	XSSFCellStyle style = workbook.createCellStyle();
+	    	CellStyle style = workbook.createCellStyle();
 	    	style.setDataFormat(workbook.createDataFormat().getFormat("@"));
 	    	return style;
 	    }
 	    
 	    private CellStyle createDateStyle(boolean full) {
-	    	XSSFCellStyle style = workbook.createCellStyle();
+	    	CellStyle style = workbook.createCellStyle();
 	    	style.setDataFormat(full ? (short) 14 : (short) 22);
 	    	return style;
 	    }
@@ -111,7 +114,7 @@ public class ExcelHelper {
 	            headerTextStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
 	            headerTextStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	        
-	            XSSFFont font = workbook.createFont();
+	            Font font = workbook.createFont();
 	            font.setColor(IndexedColors.WHITE.getIndex());
 	            headerTextStyle.setFont(font);
 	        }
@@ -125,7 +128,7 @@ public class ExcelHelper {
 	 * @param computedFields a {@link java.util.List} object.
 	 * @param prefix a {@link java.lang.String} object.
 	 * @param item a {@link java.util.Map} object.
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param row a {@link org.apache.poi.ss.usermodel.Row} object.
 	 * @param cellnum a int.
 	 * @param rowNum a int.
@@ -133,7 +136,7 @@ public class ExcelHelper {
 	 * @return a int.
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
-	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFSheet sheet,
+	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, Sheet sheet,
 			Row row, int cellnum, int rowNum, List<Locale> supportedLocales, ExcelCellStyles excelCellStyles) {
 		for (AttributeExtractorStructure field : computedFields) {
 
@@ -182,7 +185,7 @@ public class ExcelHelper {
 
 							byte[] imageBytes = (byte[]) obj;
 							int pictureID = sheet.getWorkbook().addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
-							XSSFDrawing drawing = sheet.createDrawingPatriarch();
+							Drawing<?> drawing = sheet.createDrawingPatriarch();
 							XSSFClientAnchor imgAnchor = new XSSFClientAnchor();
 							imgAnchor.setCol1(cell.getColumnIndex()); // Sets the column (0 based) of the first cell.
 							imgAnchor.setCol2(cell.getColumnIndex() + 1); // Sets the column (0 based) of the Second cell.
@@ -225,11 +228,36 @@ public class ExcelHelper {
 	 *
 	 * @param formula a {@link java.lang.String} object
 	 * @param rowNum a int
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
 	 * @return a {@link java.lang.String} object
 	 */
-	private static String shiftFormula(String formula, int rowNum, XSSFSheet sheet) {
-		XSSFEvaluationWorkbook workbookWrapper = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
+	/**
+	 * Resolve the underlying XSSF workbook, the only one the formula parser can evaluate: a streamed
+	 * workbook only wraps it.
+	 *
+	 * @param workbook a {@link org.apache.poi.ss.usermodel.Workbook} object
+	 * @return the XSSF workbook, or null when formulas cannot be shifted
+	 */
+	private static XSSFWorkbook resolveXssfWorkbook(Workbook workbook) {
+		if (workbook instanceof XSSFWorkbook xssfWorkbook) {
+			return xssfWorkbook;
+		}
+
+		if (workbook instanceof SXSSFWorkbook streamedWorkbook) {
+			return streamedWorkbook.getXSSFWorkbook();
+		}
+
+		return null;
+	}
+
+	private static String shiftFormula(String formula, int rowNum, Sheet sheet) {
+		XSSFWorkbook xssfWorkbook = resolveXssfWorkbook(sheet.getWorkbook());
+
+		if (xssfWorkbook == null) {
+			return formula;
+		}
+
+		XSSFEvaluationWorkbook workbookWrapper = XSSFEvaluationWorkbook.create(xssfWorkbook);
 		Ptg[] ptgs = FormulaParser.parse(formula, workbookWrapper, FormulaType.CELL, sheet.getWorkbook().getSheetIndex(sheet));
 
 		for (Ptg ptg : ptgs) {
@@ -276,7 +304,7 @@ public class ExcelHelper {
 	 * @param titlePrefix a {@link java.lang.String} object.
 	 * @param headerRow a {@link org.apache.poi.ss.usermodel.Row} object.
 	 * @param labelRow a {@link org.apache.poi.ss.usermodel.Row} object.
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param cellnum a int.
 	 * @param titleProvider a {@link fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider} object.
 	 * @param supportedLocales a {@link java.util.List} object.
@@ -284,7 +312,7 @@ public class ExcelHelper {
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
-			ExcelCellStyles excelCellStyles, XSSFSheet sheet, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
+			ExcelCellStyles excelCellStyles, Sheet sheet, int cellnum, ExcelFieldTitleProvider titleProvider, List<Locale> supportedLocales) {
 
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {

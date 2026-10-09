@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  *   {@literal @}product.renderInvoluntaryAllergens(" / ")        // custom separator
  *   {@literal @}product.renderInvoluntaryAllergenInProcess()
  *   {@literal @}product.renderInvoluntaryInRawMaterial()
+ *   {@literal @}product.renderPALAllergens()                    // precautionary labelling, PAL frameworks only
  * </pre>
  *
  * @author matthieu
@@ -283,6 +284,61 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryAllergensForLocale(String localeCode, String separator) {
             return renderInvoluntaryAllergensForLocale(entity, localeCode, separator);
+        }
+
+        /**
+         * <p>Renders the precautionary allergen labelling (PAL) of the current entity.</p>
+         *
+         * @return a {@link java.lang.String} object
+         */
+        public String renderPALAllergens() {
+            return renderPALAllergens(RepoConsts.LABEL_SEPARATOR);
+        }
+
+        /**
+         * <p>Renders the precautionary allergen labelling with a custom separator.</p>
+         *
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderPALAllergens(String separator) {
+            return renderPALAllergens(entity, separator);
+        }
+
+        /**
+         * Renders the precautionary allergen labelling of the given product, that is
+         * the allergens whose contamination exceeds the action limit derived from the
+         * selected regulatory framework. Allergens declared as voluntary are excluded
+         * by construction: they belong to the ingredient list, not to a precautionary
+         * statement.
+         *
+         * <p>Returns an empty string when the product carries no regulatory framework,
+         * so that a labelling rule can be dedicated to the PAL frameworks without
+         * disturbing the products that still rely on the fixed thresholds.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderPALAllergens(RepositoryEntity target, String separator) {
+            if (!hasRegulatoryFramework(target)) {
+                return "";
+            }
+
+            return renderInvoluntaryAllergens(target, separator);
+        }
+
+        /**
+         * <p>Tells whether a PAL regulatory framework is selected on the target product.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @return true when a framework is selected
+         */
+        private boolean hasRegulatoryFramework(RepositoryEntity target) {
+            ProductData productData = resolveProduct(target);
+
+            return (productData != null) && (productData.getAllergenRegulatoryFramework() != null)
+                    && !productData.getAllergenRegulatoryFramework().isBlank();
         }
 
         /**

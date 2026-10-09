@@ -19,6 +19,10 @@ div.detailsChart table th {
     text-align: right;
 }
 
+div.detailsChart.nutList table td.nut-value {
+    text-align: right;
+}
+
 div.detailsChart .bd {
    overflow:auto;
    background-color:#fff;

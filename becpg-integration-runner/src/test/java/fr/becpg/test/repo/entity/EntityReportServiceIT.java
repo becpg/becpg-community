@@ -6,11 +6,16 @@ package fr.becpg.test.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -59,6 +64,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	private static final String TEST_DOCUMENT_PRODUCT_NAME = "PF Document Test";
 	private static final String SUPPLIER_DOCS_FOLDER = "Supplier documents";
 	private static final String ARTWORK_FOLDER = "Artwork";
+	private static final String CYCLIC_TPL_NAME = "Cyclic Entity Tpl";
 	private static final int EXPECTED_SYSTEM_TEMPLATES = 5;
 	private static final int EXPECTED_REPORTS_COUNT = 5;
 
@@ -567,6 +573,44 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		});
 	}
 
+	@Test
+	public void testCyclicAssocFallsBackOnName() {
+		logger.debug("testCyclicAssocFallsBackOnName()");
+
+		final NodeRef rootProductRef = inWriteTx(() -> {
+			FinishedProductData tplData = new FinishedProductData();
+			tplData.setName(CYCLIC_TPL_NAME);
+			NodeRef tplRef = alfrescoRepository.create(getTestFolderNodeRef(), tplData).getNodeRef();
+
+			FinishedProductData pfData = new FinishedProductData();
+			pfData.setName("Root Product Cyclic Assoc Test");
+			NodeRef rootRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+
+			associationService.update(tplRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, tplRef);
+			associationService.update(rootRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, tplRef);
+
+			return rootRef;
+		});
+
+		inReadTx(() -> {
+			Map<String, String> preferences = new HashMap<>();
+			preferences.put("assocsToExtract", "bcpg:entityTplRef");
+
+			EntityReportData reportData = defaultEntityReportExtractor.extract(rootProductRef, preferences);
+			assertNotNull("Report data should not be null", reportData);
+			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();
+			assertNotNull("XML document should not be null", xmlDoc);
+
+			assertNotNull("template should be extracted on the root entity", xmlDoc.selectSingleNode("//entityTplRef/finishedProduct"));
+
+			Node cutAssoc = xmlDoc.selectSingleNode("//entityTplRef/finishedProduct/entityTplRef");
+			assertNotNull("the self referencing template assoc should still be rendered", cutAssoc);
+			assertEquals("a cut assoc should render the target name instead of an empty element", CYCLIC_TPL_NAME, cutAssoc.getText());
+
+			return null;
+		});
+	}
+
 	/**
 	 * Helper method to create test documents with consistent structure
 	 */
@@ -687,6 +731,59 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			Element dataListsElt = (Element) xmlDoc.selectSingleNode("//dataLists");
 			assertNotNull("dataLists section should exist in report XML", dataListsElt);
 			
+			return null;
+		});
+	}
+
+
+	/**
+	 * The report job calls generateReports with no transaction around it, and the service has to
+	 * open the ones it needs itself. Every other test here goes through inWriteTx, so none of them
+	 * covers that path. A test body runs inside the runner's own transaction, so handing the work
+	 * to a thread that carries none is the only way to reproduce the job.
+	 */
+	@Test
+	public void testGenerateReportsWithoutASurroundingTransaction() throws Exception {
+
+		final NodeRef productNodeRef = inWriteTx(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setName("PF generated outside a transaction");
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		});
+
+		Date modifiedBefore = inReadTx(() -> (Date) nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED));
+
+		AtomicReference<Throwable> failure = new AtomicReference<>();
+		Thread worker = new Thread(() -> AuthenticationUtil.runAsSystem(() -> {
+			try {
+				entityReportService.generateReports(productNodeRef);
+			} catch (Throwable t) {
+				failure.set(t);
+			}
+			return null;
+		}), "report-generation-without-transaction");
+
+		worker.start();
+		worker.join(TimeUnit.MINUTES.toMillis(5));
+
+		assertFalse("generation should have finished", worker.isAlive());
+		if (failure.get() != null) {
+			throw new AssertionError("generation failed outside a transaction: " + failure.get(), failure.get());
+		}
+
+		inReadTx(() -> {
+			List<NodeRef> reports = associationService.getTargetAssocs(productNodeRef, ReportModel.ASSOC_REPORTS);
+			assertFalse("reports should have been generated", reports.isEmpty());
+			assertEquals("generating a report must leave cm:modified alone on the entity", modifiedBefore,
+					nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED));
+
+			// One run stamps every report it writes with the same generation date. Distinct dates
+			// mean the auditable behaviour overwrote the value the service set on the document.
+			Set<Object> stamps = new HashSet<>();
+			for (NodeRef report : reports) {
+				stamps.add(nodeService.getProperty(report, ContentModel.PROP_MODIFIED));
+			}
+			assertEquals("the reports of one generation should all carry its date, got " + stamps, 1, stamps.size());
 			return null;
 		});
 	}

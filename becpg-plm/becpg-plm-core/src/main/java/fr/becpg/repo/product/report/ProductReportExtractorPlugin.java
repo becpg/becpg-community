@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.report;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +46,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CostType;
@@ -65,6 +68,7 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -73,16 +77,20 @@ import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelRenderer;
 import fr.becpg.repo.product.helper.AllocationHelper;
 import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.report.entity.EntityReportParameters;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
+import fr.becpg.repo.report.svg.SvgDimensions;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.score.marking.ScoreMarkingReportWriter;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.model.VariantData;
@@ -96,6 +104,30 @@ import fr.becpg.repo.variant.model.VariantData;
 @SuppressWarnings("deprecation")
 @Service("productReportExtractor")
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
+
+	/** Element gathering the regulatory nutrition facts panels of an entity. */
+	private static final String TAG_NUTRITION_FACTS = "nutritionFacts";
+
+	private static final String TAG_NUTRITION_FACT = "nutritionFact";
+
+	private static final String ATTR_IMAGE_ID = "imageId";
+
+	private static final String ATTR_CODE = "code";
+
+	private static final String ATTR_LOCALE = "locale";
+
+	/** Prefix of the image id a report binds to, see reportContext.getAppContext(). */
+	private static final String NUTRITION_FACTS_IMAGE_PREFIX = "nutritionFacts_";
+
+	private static final String DEFAULT_PANEL_CODE = "default";
+
+	/** Code of the panel rendered for the technical sheet itself, when no Render rule gives one. */
+	private static final String REPORT_PANEL_CODE = "report";
+
+	private static final String SVG_ROOT_ELEMENT = "<svg";
+
+	private static final String SVG_MIME_TYPE = "image/svg+xml";
+
 
 	/** Constant <code>KEY_PRODUCT_IMAGE="productImage"</code> */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
@@ -151,6 +183,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	/** Constant <code>TAG_PACKAGING_LEVEL_MEASURES="packagingLevelMeasures"</code> */
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	/** Constant <code>TAG_PACK_MATERIAL_LISTS="packMaterialLists"</code> */
+	private static final String TAG_PACK_MATERIAL_LISTS = "packMaterialLists";
+	/** Constant <code>PARAM_EXTRACT_PACKAGING_MATERIALS="extractPackagingMaterials"</code> */
+	private static final String PARAM_EXTRACT_PACKAGING_MATERIALS = "extractPackagingMaterials";
+	/** Constant <code>KG_TO_G</code> */
+	private static final BigDecimal KG_TO_G = BigDecimal.valueOf(1000d);
+	/** Constant <code>ONE_HUNDRED</code> */
+	private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100d);
 	/** Constant <code>ATTR_NODEREF="nodeRef"</code> */
 	private static final String ATTR_NODEREF = "nodeRef";
 	/** Constant <code>ATTR_PARENT_NODEREF="parentNodeRef"</code> */
@@ -259,6 +299,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected final PackagingHelper packagingHelper;
 
+	private ScoreMarkingReportWriter scoreMarkingReportWriter;
+
+	private NutritionFactsPanelRenderer nutritionFactsPanelRenderer;
+
+	private IngredientIdentityReportWriter ingredientIdentityReportWriter;
+
 	@Autowired
 	/**
 	 * <p>Constructor for ProductReportExtractorPlugin.</p>
@@ -276,6 +322,38 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		this.packagingHelper = packagingHelper;
 		this.wUsedListService = wUsedListService;
 		this.wUsedAssociationResolver = wUsedAssociationResolver;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreMarkingReportWriter</code>, injected by setter so that the
+	 * extractors deriving from this one keep their constructor.</p>
+	 *
+	 * @param scoreMarkingReportWriter a {@link fr.becpg.repo.score.marking.ScoreMarkingReportWriter} object
+	 */
+	@Autowired
+	public void setScoreMarkingReportWriter(ScoreMarkingReportWriter scoreMarkingReportWriter) {
+		this.scoreMarkingReportWriter = scoreMarkingReportWriter;
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsPanelRenderer</code>.</p>
+	 *
+	 * @param nutritionFactsPanelRenderer a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsPanelRenderer} object
+	 */
+	@Autowired
+	public void setNutritionFactsPanelRenderer(NutritionFactsPanelRenderer nutritionFactsPanelRenderer) {
+		this.nutritionFactsPanelRenderer = nutritionFactsPanelRenderer;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ingredientIdentityReportWriter</code>, injected by setter so that the
+	 * extractors deriving from this one keep their constructor.</p>
+	 *
+	 * @param ingredientIdentityReportWriter a {@link fr.becpg.repo.product.report.IngredientIdentityReportWriter} object
+	 */
+	@Autowired
+	public void setIngredientIdentityReportWriter(IngredientIdentityReportWriter ingredientIdentityReportWriter) {
+		this.ingredientIdentityReportWriter = ingredientIdentityReportWriter;
 	}
 
 	static {
@@ -365,7 +443,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									loadProductData(entityNodeRef, compositionDataItem.getComponent(), nodeElt, context, null);
 								}
 
-								loadDataListItemAttributes(dataListItem, nodeElt, context);
+								loadDataListItemAttributesOverComponent(dataListItem, nodeElt, context);
 
 								if (dataListItem instanceof AbstractManualVariantListDataItem) {
 									extractVariants(((AbstractManualVariantListDataItem) dataListItem).getVariants(), nodeElt);
@@ -387,6 +465,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 		}
+
+		// the markings and the report panel are drawn for the entity the report is about, never for
+		// the entities its associations extract with their lists
+		boolean isReportEntity = isExtractedProduct && entityNodeRef.equals(context.getRootNodeRef());
 
 		if (productData != null) {
 			// lists extracted on entity and raw materials
@@ -411,7 +493,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
 				StopWatchSupport.addCheckpoint("start_datalist_nut");
 				loadNutLists(productData, dataListsElt, context);
+				loadNutritionFactsPanels(productData, dataListsElt, context, isReportEntity);
 				logDatalistStats(dataListsElt, PLMModel.TYPE_NUTLIST.getLocalName() + "s", "nut");
+			}
+
+			// The markings are images drawn from the score list, not the list itself: a sheet that
+			// narrows the lists it extracts, which most do, must still print its traffic lights.
+			if (isReportEntity) {
+				StopWatchSupport.addCheckpoint("start_score_markings");
+				scoreMarkingReportWriter.write(productData, dataListsElt.getParent(), context.getReportData().getImages(), I18NUtil.getLocale());
 			}
 			
 			if (!isExtractedProduct && shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_DYNAMICCHARACTLIST)) {
@@ -496,7 +586,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					|| hasExtractWUsedModePreference(context))) {
 				StopWatchSupport.addCheckpoint("start_datalist_wused");
 				extractWUsed(productData, dataListsElt, context);
-				logDatalistStats(dataListsElt, "wUseds", "wused");
+				logDatalistStats(dataListsElt, TAG_WUSEDS, "wused");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLABELINGLIST)) {
@@ -785,6 +875,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
+			// #31701: secondary/tertiary packaging of the sub-components counted at every level (added flat).
+			VariantPackagingData compositionTare = PackagingHelper.getCompositionTareByLevel(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
 				VariantPackagingData variantPackagingData = kv.getValue();
 
@@ -804,8 +896,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (variantPackagingData.getProductPerBoxes() != null) {
 
-					BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
+					BigDecimal tareSecondaryOwn = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 							.add(variantPackagingData.getTareSecondary());
+					BigDecimal tareSecondary = tareSecondaryOwn.add(compositionTare.getTareSecondary());
 
 					BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 					BigDecimal grossWeightSecondary = tareSecondary.add(netWeightSecondary);
@@ -817,8 +910,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
-								.add(variantPackagingData.getTareTertiary());
+						BigDecimal tareTertiary = tareSecondaryOwn.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
+								.add(variantPackagingData.getTareTertiary()).add(compositionTare.getTareTertiary());
 						BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
@@ -914,7 +1007,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 
 			loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Packaging);
-			loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+			loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), currentLevelQuantities.getComponentProductData().getName());
 
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), Double.toString(currentLevelQuantities.getLossRatio()));
@@ -1008,7 +1101,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 			loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Process);
-			loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+			loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 
 			partElt.addAttribute(MPMModel.ASSOC_PL_RESOURCE.getLocalName(), currentLevelQuantities.getComponentProductData().getName());
 			partElt.addAttribute(MPMModel.PROP_PL_QTY_RESOURCE.getLocalName(),
@@ -1104,7 +1197,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
 		loadProductData(entityNodeRef, currentLevelQuantities.getCompoListItem().getComponent(), partElt, context, CostType.Composition);
-		loadDataListItemAttributes(currentLevelQuantities.getCompoListItem(), partElt, context);
+		loadDataListItemAttributesOverComponent(currentLevelQuantities.getCompoListItem(), partElt, context);
 
 		partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(currentLevelQuantities.getQtyForProduct()));
 		partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(currentLevelQuantities.getQtyForCost()));
@@ -1230,6 +1323,104 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param dataListsElt a {@link org.dom4j.Element} object
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
 	 */
+	/**
+	 * Hands the nutrition facts panels rendered by the labeling rules over to the report engine.
+	 *
+	 * <p>A panel is an SVG that lives only in the labeling value, so it is streamed as an in-memory
+	 * image rather than written to the repository first. BIRT embeds it as vector graphics, which
+	 * is what keeps the typography and the rules of a regulated panel exact in the PDF.</p>
+	 */
+	private void loadNutritionFactsPanels(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isReportEntity) {
+
+		Element panelsElt = dataListsElt.getParent().addElement(TAG_NUTRITION_FACTS);
+		String reportLocale = MLTextHelper.localeKey(I18NUtil.getLocale());
+		boolean hasReportLocalePanel = false;
+
+		for (IngLabelingListDataItem dataItem : labelingList(productData)) {
+			for (Locale locale : panelLocales(dataItem)) {
+				String panel = panelValue(dataItem, locale);
+				if (isSvgPanel(panel)) {
+					addNutritionFactsPanel(panelCode(dataItem), MLTextHelper.localeKey(locale), panel, panelsElt, context);
+					hasReportLocalePanel = hasReportLocalePanel || reportLocale.equals(MLTextHelper.localeKey(locale));
+				}
+			}
+		}
+
+		if (isReportEntity && !hasReportLocalePanel) {
+			addReportPanel(productData, panelsElt, context);
+		}
+	}
+
+	private static List<IngLabelingListDataItem> labelingList(ProductData productData) {
+		List<IngLabelingListDataItem> labelingList = productData.getLabelingListView().getIngLabelingList();
+		return labelingList != null ? labelingList : List.of();
+	}
+
+	/**
+	 * Without a Render rule for the locale of the report, the sheet still gets the panel its
+	 * regulation asks for: the sheet used to draw it, it must not need a labeling rule to show it.
+	 */
+	private void addReportPanel(ProductData productData, Element panelsElt, DefaultExtractorContext context) {
+		if (nutritionFactsPanelRenderer == null) {
+			return;
+		}
+		Locale locale = I18NUtil.getLocale();
+		nutritionFactsPanelRenderer.render(productData, locale)
+				.ifPresent(panel -> addNutritionFactsPanel(REPORT_PANEL_CODE, MLTextHelper.localeKey(locale), panel, panelsElt, context));
+	}
+
+	private Set<Locale> panelLocales(IngLabelingListDataItem dataItem) {
+		Set<Locale> locales = new HashSet<>();
+		if (dataItem.getValue() != null) {
+			locales.addAll(dataItem.getValue().getLocales());
+		}
+		if (dataItem.getManualValue() != null) {
+			locales.addAll(dataItem.getManualValue().getLocales());
+		}
+		return locales;
+	}
+
+	private static boolean isSvgPanel(String panel) {
+		return (panel != null) && panel.stripLeading().startsWith(SVG_ROOT_ELEMENT);
+	}
+
+	private void addNutritionFactsPanel(String code, String localeKey, String panel, Element panelsElt, DefaultExtractorContext context) {
+
+		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + toImageIdPart(code) + "_" + localeKey;
+
+		Element panelElt = panelsElt.addElement(TAG_NUTRITION_FACT);
+		panelElt.addAttribute(ATTR_IMAGE_ID, imageId);
+		panelElt.addAttribute(ATTR_CODE, code);
+		panelElt.addAttribute(ATTR_LOCALE, localeKey);
+		SvgDimensions.of(panel).ifPresent(dimensions -> dimensions.writeTo(panelElt));
+
+		context.getReportData().getImages().add(new EntityImageInfo(imageId, panel.getBytes(StandardCharsets.UTF_8), SVG_MIME_TYPE));
+	}
+
+	private String panelValue(IngLabelingListDataItem dataItem, Locale locale) {
+		String manualValue = dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : null;
+		if ((manualValue != null) && !manualValue.isBlank()) {
+			return manualValue;
+		}
+		return dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : null;
+	}
+
+	/**
+	 * An image id travels to the report engine as a resource key, and a rule is named freely by
+	 * the user. Anything but letters, digits and underscores makes the image unreachable from the
+	 * report, which fails with "The resource of this report item is not reachable".
+	 */
+	private String toImageIdPart(String code) {
+		return code.replaceAll("[^A-Za-z0-9]+", "_");
+	}
+
+	private String panelCode(IngLabelingListDataItem dataItem) {
+		if (dataItem.getGrp() == null) {
+			return DEFAULT_PANEL_CODE;
+		}
+		return (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+	}
+
 	private void loadNutLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
@@ -1353,6 +1544,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	/**
+	 * Writes the labeling threshold of an allergen on its allergen line, so that a report can tell whether the allergen
+	 * has to be labeled, such as a fragrance allergen above 0.001 % in a leave-on cosmetic product.
+	 *
+	 * @param allergenNodeRef the allergen
+	 * @param allergenListElt the allergen line element
+	 */
+	private void addRegulatoryThreshold(NodeRef allergenNodeRef, Element allergenListElt) {
+		Double threshold = (Double) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+		if (threshold != null) {
+			allergenListElt.addAttribute(PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD.getLocalName(), threshold.toString());
+		}
+	}
+
+	/**
 	 * <p>loadAllergenLists.</p>
 	 *
 	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
@@ -1375,6 +1580,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataListItemAttributes(dataListItem, allergenListElt, context);
 
 					String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+					addRegulatoryThreshold(dataListItem.getAllergen(), allergenListElt);
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
 					String displayMode = "";
 
@@ -1472,10 +1678,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				if (dataListItem.getIng() != null) {
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
-					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
-					if (ingCEECode != null) {
-						ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
-					}
+					ingredientIdentityReportWriter.write(dataListItem.getIng(), ingListElt);
 					loadDataListItemAttributes(dataListItem, ingListElt, context);
 				}
 			}
@@ -2038,8 +2241,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			packLevel = PackagingLevel.Primary;
 		}
 
-		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-				Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+		// #31701: keep secondary/tertiary packaging of sub-components in the report (only the explicit
+		// "drop packaging of components" flag hides component packaging now).
+		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString(dropPackagingOfComponents));
 
 		extractEntityImages(product, imgsElt, context, extraAttributes);
 
@@ -2068,7 +2272,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute("previousCost", Double.toString(0d));
 			partElt.addAttribute("futureCost", Double.toString(0d));
 		}
-		loadDataListItemAttributes(dataItem, partElt, context);
+		loadDataListItemAttributesOverComponent(dataItem, partElt, context);
+		loadPackagingMaterials(partElt, dataItem, context);
 
 		extractVariants(dataItem.getVariants(), partElt);
 
@@ -2108,10 +2313,115 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(qtyForCost));
 
+			// #31701: keep secondary/tertiary packaging of sub-components in the report.
 			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-					Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+					Boolean.toString(dropPackagingOfComponents));
 		}
 		return partElt;
+	}
+
+	/**
+	 * <p>Details the materials of a packaging line, under a &lt;packMaterialLists&gt; element.</p>
+	 * <p>
+	 * The weights are computed as in
+	 * {@link fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler}, so that the detail
+	 * of a packaging line sums up to the packMaterialList formulated on the entity. Extraction is opt-in
+	 * through the <code>extractPackagingMaterials</code> report preference (see #31702).
+	 *
+	 * @param packagingElt a {@link org.dom4j.Element} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void loadPackagingMaterials(Element packagingElt, PackagingListDataItem dataItem, DefaultExtractorContext context) {
+
+		if (!context.isPrefOn(PARAM_EXTRACT_PACKAGING_MATERIALS, Boolean.FALSE) || Boolean.TRUE.equals(dataItem.getIsRecycle())
+				|| (dataItem.getProduct() == null) || !nodeService.exists(dataItem.getProduct())) {
+			return;
+		}
+
+		if (!(alfrescoRepository.findOne(dataItem.getProduct()) instanceof PackagingMaterialData packagingMaterial)) {
+			return;
+		}
+
+		BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingMaterial).multiply(KG_TO_G);
+
+		if ((packagingMaterial.getPackMaterialList() != null) && !packagingMaterial.getPackMaterialList().isEmpty()) {
+			extractPackMaterialList(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare, context);
+		} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
+			extractPackagingMaterialRefs(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare);
+		}
+	}
+
+	/**
+	 * <p>extractPackMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void extractPackMaterialList(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare,
+			DefaultExtractorContext context) {
+
+		BigDecimal unitTare = unitTareInG(packagingMaterial);
+
+		for (PackMaterialListDataItem dataItem : packagingMaterial.getPackMaterialList()) {
+			if (dataItem.getPmlWeight() == null) {
+				continue;
+			}
+
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			loadDataListItemAttributes(dataItem, packMaterialElt, context);
+
+			BigDecimal materialWeight = BigDecimal.valueOf(dataItem.getPmlWeight());
+			BigDecimal weight = materialWeight.multiply(tare);
+
+			if (unitTare.signum() != 0) {
+				weight = weight.divide(unitTare, MathContext.DECIMAL64);
+			}
+
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(weight));
+
+			if ((dataItem.getPmlPerc() == null) && (unitTare.signum() != 0)) {
+				packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(),
+						toString(materialWeight.multiply(ONE_HUNDRED).divide(unitTare, MathContext.DECIMAL64)));
+			}
+		}
+	}
+
+	/**
+	 * <p>Splits the tare evenly when the packaging only references its materials through
+	 * <code>pack:pmMaterialRefs</code>, without any packMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 */
+	private void extractPackagingMaterialRefs(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare) {
+
+		List<NodeRef> packagingMaterials = packagingMaterial.getPackagingMaterials();
+		BigDecimal materialCount = BigDecimal.valueOf(packagingMaterials.size());
+		BigDecimal tareByMaterial = tare.divide(materialCount, MathContext.DECIMAL64);
+		BigDecimal percByMaterial = ONE_HUNDRED.divide(materialCount, MathContext.DECIMAL64);
+
+		for (NodeRef packagingMaterialRef : packagingMaterials) {
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			packMaterialElt.addAttribute(PackModel.ASSOC_PACK_MATERIAL_LIST_MATERIAL.getLocalName(),
+					attributeExtractorService.extractPropName(nodeService.getType(packagingMaterialRef), packagingMaterialRef));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(tareByMaterial));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(), toString(percByMaterial));
+		}
+	}
+
+	/**
+	 * <p>unitTareInG.</p>
+	 *
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @return the tare of a single packaging unit in grams, zero when it is unknown
+	 */
+	private BigDecimal unitTareInG(PackagingMaterialData packagingMaterial) {
+		BigDecimal unitTare = FormulationHelper.getTareInKg(packagingMaterial);
+		return unitTare != null ? unitTare.multiply(KG_TO_G) : BigDecimal.ZERO;
 	}
 
 	/**
@@ -2134,7 +2444,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(entityNodeRef, dataItem.getComponent(), partElt, context, CostType.Process);
-		loadDataListItemAttributes(dataItem, partElt, context);
+		loadDataListItemAttributesOverComponent(dataItem, partElt, context);
 
 		partElt.addAttribute(ATTR_PROCESS_QTY_FOR_PRODUCT, Double.toString(currentLevelQuantities.getQtyForProduct()));
 		partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(currentLevelQuantities.getQtyForCost()));
@@ -2382,6 +2692,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				context.cacheProductData(cacheKey, tempElt);
 			}
 		}
+	}
+
+	/**
+	 * Loads the attributes of a data list item into an element already holding the ones of its
+	 * component, the item taking precedence over the component for the properties both define.
+	 *
+	 * @param dataListItem the data list item
+	 * @param nodeElt the element holding the component properties
+	 * @param context the extractor context
+	 */
+	private void loadDataListItemAttributesOverComponent(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context) {
+		List<Element> componentElements = new ArrayList<>(nodeElt.elements());
+		loadDataListItemAttributes(dataListItem, nodeElt, context);
+		ComponentElementOverride.removeOverriddenComponentElements(nodeElt, componentElements);
 	}
 
 	/** Constant <code>SHOULD_EXTRACT_COST_CACHE_KEY="shouldExtractCost"</code> */

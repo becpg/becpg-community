@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Scan Batch</shortname>
+	<description>Processes scanned barcode ERP and lot number for a Batch</description>
+	<url>/becpg/quality/scan-batch?nodeRef={nodeRef}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction>required</transaction>
+</webscript>

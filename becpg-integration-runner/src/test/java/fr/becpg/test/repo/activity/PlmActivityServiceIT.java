@@ -9,8 +9,11 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.archive.NodeArchiveService;
+import org.alfresco.repo.node.archive.RestoreNodeReport;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.NamespaceService;
@@ -58,6 +61,9 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
+
+	@Autowired
+	private NodeArchiveService nodeArchiveService;
 	
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
@@ -275,6 +281,48 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void checkEntityVariantActivity() {
+
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef finishedProductNodeRef = createFinishedProduct();
+
+		assertEquals("Check create Activity", 1, getActivities(finishedProductNodeRef, null).size());
+
+		final NodeRef variantNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Variant 1");
+			properties.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
+			return nodeService
+					.createNode(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, properties)
+					.getChildRef();
+		}, false, true);
+
+		assertEquals("Check variant create Activity", 2, getActivities(finishedProductNodeRef, null).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(variantNodeRef, ContentModel.PROP_NAME, "Variant 1 renamed");
+			nodeService.setProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
+			return null;
+		}, false, true);
+
+		assertEquals("Check variant update Activity", 3, getActivities(finishedProductNodeRef, null).size());
+
+		ActivityListDataItem lastActivity = getActivityListDataItems(finishedProductNodeRef).get(0);
+		Assert.assertEquals(ActivityType.Datalist, lastActivity.getActivityType());
+		Assert.assertTrue(lastActivity.getActivityData().contains("\"className\":\"variant\""));
+		Assert.assertTrue(lastActivity.getActivityData().contains("Variant 1 renamed"));
+		Assert.assertTrue(lastActivity.getActivityData().contains(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName()));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.deleteNode(variantNodeRef);
+			return null;
+		}, false, true);
+
+		assertEquals("Check variant delete Activity", 4, getActivities(finishedProductNodeRef, null).size());
+	}
+
+	@Test
 	public void checkEntityMoveActivity() {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
@@ -347,6 +395,51 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		List<ActivityListDataItem> activities = getActivityListDataItems(productNodeRef);
 		long moveActivityCount = activities.stream().filter(a -> a.getActivityType().equals(ActivityType.Move)).count();
 		Assert.assertEquals(0, moveActivityCount);
+	}
+
+	/**
+	 * Restoring an entity is a cross-store move: Alfresco replays a creation for every descendant, so
+	 * an entity carrying a composition would record one activity per list item. Piled up in the single
+	 * transaction of the restore, they used to exhaust the heap and make the restore itself fail.
+	 */
+	@Test
+	public void checkRestoreDoesNotRecordActivities() {
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
+			lSF1.setName("Local semi finished restore");
+			return alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
+		}, false, true);
+
+		final NodeRef productNodeRef = createFinishedProduct();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef));
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(finishedProduct);
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.deleteNode(productNodeRef);
+			return null;
+		}, false, true);
+
+		int activityCountAfterDelete = getActivities(productNodeRef, null).size();
+
+		NodeRef restoredNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef archivedNodeRef = new NodeRef(StoreRef.STORE_REF_ARCHIVE_SPACESSTORE, productNodeRef.getId());
+			RestoreNodeReport report = nodeArchiveService.restoreArchivedNode(archivedNodeRef);
+			assertEquals("Restore should be successful", RestoreNodeReport.RestoreStatus.SUCCESS, report.getStatus());
+			return report.getRestoredNodeRef();
+		}, false, true);
+
+		assertTrue("Entity should exist after restore", nodeService.exists(restoredNodeRef));
+		assertEquals("Restore should record no activity", activityCountAfterDelete, getActivities(restoredNodeRef, null).size());
 	}
 
 }

@@ -81,6 +81,19 @@ public class CharactTestHelper {
 			ChildAssociationRef childAssocRef = nodeService.createNode(folder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,name), type, properties);
 			node = childAssocRef.getChildRef();
+		} else {
+			Map<QName, Serializable> currentProperties = nodeService.getProperties(node);
+			// check if all properties are present and have the same value, if not update them
+			boolean updateNeeded = false;
+			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
+				if (!currentProperties.containsKey(entry.getKey()) || !currentProperties.get(entry.getKey()).equals(entry.getValue())) {
+					updateNeeded = true;
+					break;
+				}
+			}
+			if (updateNeeded) {
+				nodeService.addProperties(node, properties);
+			}
 		}
 
 		return node;
@@ -349,6 +362,7 @@ public class CharactTestHelper {
 	 */
 	public static NodeRef getOrCreateCertification(NodeService nodeService, String name, String description) {
 		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_TITLE, name);
 		properties.put(ContentModel.PROP_DESCRIPTION, description);
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Certifications", name, PLMModel.TYPE_CERTIFICATION,
 				properties);

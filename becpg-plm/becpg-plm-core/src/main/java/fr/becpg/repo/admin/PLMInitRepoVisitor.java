@@ -44,12 +44,14 @@ import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -90,6 +92,7 @@ import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
+import fr.becpg.repo.olap.OlapResourceImporter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -114,8 +117,11 @@ import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.SavedSearchService;
 import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.SavedSearch;
 import fr.becpg.repo.search.data.VersionFilterType;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.report.client.ReportFormat;
@@ -168,6 +174,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	/** Constant <code>PRODUCT_REPORT_RD_NAME="path.productreportrdtemplate"</code> */
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuantiForPIF.rptdesign";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME = PlmRepoConsts.PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF;
+	/**
+	 * Extraction preferences of the PIF: the process steps are extracted with their description and the subsidiary,
+	 * standing for the responsible person, with its address. They only apply to the extraction of the PIF.
+	 */
+	private static final String PIF_REPORT_PARAMETERS = "{\"prefs\":{\"assocsToExtract\":\"mpm:plStep,bcpg:subsidiaryRef\"}}";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -218,11 +231,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>NONE_KIND_REPORT="none"</code> */
 	private static final String NONE_KIND_REPORT = "none";
 
+	private static final String REPORT_KIND_MESSAGE_PREFIX = "becpg.reportkind.";
+
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
+		reportKindCodes.put(PRODUCT_REPORT_PACKAGING_PATH, "PackagingSheet");
+		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, "CompoQualiQuanti");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -316,33 +333,46 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>PRODUCT_REPORT_SETTINGS_RESOURCE="beCPG/birt/document/product/default/set"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
 	/** Constant <code>PRODUCT_REPORT_LOGO_RESOURCE="beCPG/birt/document/product/default/log"{trunked}</code> */
+	/** Constant <code>NUTRITION_FACTS_TEMPLATES_RESOURCES="classpath*:beCPG/templates/nutritionFacts-*.ftlx"</code> */
+	private static final String NUTRITION_FACTS_TEMPLATES_RESOURCES = "classpath*:beCPG/templates/nutritionFacts-*.ftlx";
+
+	private static final String SCORE_MARKING_TEMPLATES_RESOURCES = "classpath*:beCPG/templates/score-*.ftlx";
+
 	private static final String PRODUCT_REPORT_LOGO_RESOURCE = "beCPG/birt/document/product/default/logo.png";
 	/** Constant <code>PRODUCT_REPORT_CSS_RESOURCE="beCPG/birt/document/product/default/bec"{trunked}</code> */
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
-	/** Constant <code>PRODUCT_REPORT_IMG_CCCCCC="beCPG/birt/document/product/default/ccc"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_CCCCCC = "beCPG/birt/document/product/default/cccccc-200X30.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY = "beCPG/birt/document/product/default/images/trafficLights_Energy.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN = "beCPG/birt/document/product/default/images/trafficLights_Green.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE = "beCPG/birt/document/product/default/images/trafficLights_Orange.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
-	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING="beCPG/birt/document/product/default/ima"{trunked}</code> */
-	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
 	/** Constant <code>CLASSIFY_RULE_TITLE="classifyEntityRule"</code> */
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
 	
 	/** Constant <code>ARCHIVE_PJT_TPL_NAME="plm.project.archive.tpl.name"</code> */
 	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
+	/** Constant <code>FORMULATE_ENTITIES_CHANNEL_NAME="plm.publication.channel.formulate-entities.name"</code> */
+	private static final String FORMULATE_ENTITIES_CHANNEL_NAME = "plm.publication.channel.formulate-entities.name";
 	/** Constant <code>ARCHIVE_PJT_TASK_NAME="plm.project.archive.task.name"</code> */
 	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
 	/** Constant <code>ARCHIVE_PJT_DELIVERABLE_NAME="plm.project.archive.deliverable.name"</code> */
 	private static final String ARCHIVE_PJT_DELIVERABLE_NAME = "plm.project.archive.deliverable.name";
 	/** Constant <code>XPATH_DICTIONARY_SCRIPTS="./app:dictionary/app:scripts"</code> */
 	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
+
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME="Obsolete documents"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME = "Obsolete documents";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE="plm.savedsearch.obsolete-documents.title"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE = "plm.savedsearch.obsolete-documents.title";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE="product-list-bcpg:document"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE = "product-list-bcpg:document";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT = "{\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"{\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\"}\"}}";
+
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME="Quality controls to perform"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME = "Quality controls to perform";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE="plm.savedsearch.upcoming-quality-controls.title"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE = "plm.savedsearch.upcoming-quality-controls.title";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE="product-list-qa:qualityControl"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE = "product-list-qa:qualityControl";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT = "{\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"{\\\"prop_qa_qcNextAnalysisDate-date-range\\\":\\\"NOW|NOW+7DAY\\\"}\"}}";
 
 	@Autowired
 	private SiteService siteService;
@@ -355,6 +385,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private ContentHelper contentHelper;
+
+	@Autowired
+	private OlapResourceImporter olapResourceImporter;
 
 	@Autowired
 	private DictionaryService dictionaryService;
@@ -387,6 +420,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
+	private SavedSearchService savedSearchService;
+
 	@Value("${becpg.olap.enabled}")
 	private Boolean isOlapEnabled;
 
@@ -418,9 +454,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef channelListFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
 				PlmRepoConsts.PATH_PUBCHANNELS);
 		visitChannelList(channelListFolder);
-		
+
+		NodeRef documentTypesFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
+				PlmRepoConsts.PATH_DOCUMENT_TYPE);
+		visitDocumentTypes(documentTypesFolder);
+
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
+
+		// Scores, kept out of the characteristics so their four lists stay together
+		visitSystemScoresEntity(systemNodeRef, PlmRepoConsts.PATH_SCORES);
 
 		// Hierarchy
 		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
@@ -482,8 +525,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
 		createNotifications(systemNodeRef);
 
+		// Saved searches samples
+		createSampleSavedSearches();
+
 		// Reports
 		visitReports(systemNodeRef);
+
+		// Rendering templates
+		visitTemplates(systemNodeRef);
 
 		// AutoNum
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
@@ -509,13 +558,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// LCADatabases
 	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);
 
+		// PALDatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_PAL_DATABASES);
+
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
 		//Config folder
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CONFIG);
 
+		// both caches parse files of the Config folder that the visit above may have rewritten
 		beCPGCacheService.clearCache(EntityCatalogService.class.getName());
+		beCPGCacheService.clearCache(AdvSearchService.class.getName());
 
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
@@ -536,14 +590,55 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param channelListFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitChannelList(NodeRef channelListFolder) {
-		NodeRef formulateChannel = nodeService.getChildByName(channelListFolder, ContentModel.ASSOC_CONTAINS, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
-		if (formulateChannel == null) {
+		List<ChildAssociationRef> formulateChannels = nodeService.getChildAssocsByPropertyValue(channelListFolder, PublicationModel.PROP_PUBCHANNEL_ID,
+				FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+		if (formulateChannels.isEmpty()) {
 			Map<QName, Serializable> props = new HashMap<>();
-			props.put(ContentModel.PROP_NAME, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			props.put(ContentModel.PROP_NAME, I18NUtil.getMessage(FORMULATE_ENTITIES_CHANNEL_NAME));
 			props.put(PublicationModel.PROP_PUBCHANNEL_ID, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
 			props.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, "{\"query\": \" (+TYPE:\\\"bcpg:product\\\" OR +TYPE:\\\"sec:aclGroup\\\")\"}");
 			nodeService.createNode(channelListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
 					PublicationModel.TYPE_PUBLICATION_CHANNEL, props).getChildRef();
+		}
+	}
+
+	private void visitDocumentTypes(NodeRef documentTypesFolder) {
+		if (documentTypesFolder == null) {
+			return;
+		}
+
+		List<String> defaultDocumentTypes = Arrays.asList(
+				"Photos",
+				"QualityDocuments",
+				"Subcontractors",
+				"CPSR",
+				"StabilityMicro",
+				"ClaimEfficacy",
+				"GMPAnimalTesting"
+		);
+
+		for (String docTypeName : defaultDocumentTypes) {
+			MLText mltValue = new MLText();
+			for (String locKey : supportedLocale) {
+				String i18nVal = I18NUtil.getMessage("becpg.documenttype." + docTypeName.toLowerCase() + ".value", MLTextHelper.parseLocale(locKey));
+				if (i18nVal != null) {
+					mltValue.put(MLTextHelper.parseLocale(locKey), i18nVal);
+				}
+			}
+			if (mltValue.isEmpty()) {
+				mltValue.put(Locale.ENGLISH, docTypeName);
+			}
+
+			NodeRef existingDocType = nodeService.getChildByName(documentTypesFolder, ContentModel.ASSOC_CONTAINS, docTypeName);
+			if (existingDocType == null) {
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, docTypeName);
+				props.put(BeCPGModel.PROP_CHARACT_NAME, mltValue);
+				props.put(BeCPGModel.PROP_DOCUMENT_TYPE_IS_MANDATORY, Boolean.FALSE);
+
+				mlNodeService.createNode(documentTypesFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						BeCPGModel.TYPE_DOCUMENT_TYPE, props);
+			}
 		}
 	}
 
@@ -746,6 +841,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
 		if (Boolean.TRUE.equals(isOlapEnabled) && Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES) && !folderExists) {
+			// #24931: the resources are named by technical id and their labels live in the
+			// olapQueries bundles, so the importer sets cm:name in the repository locale and
+			// cm:title in every language shipped. Dashboards and applications still hold
+			// translated prose, hence one tree per language; the queries they reference are the
+			// same ids in both. Each extension needs its own pattern: ".saikudash" does not end
+			// with ".saiku".
+			String olapLanguage = Locale.FRENCH.toString().equals(Locale.getDefault().getLanguage()) ? "fr" : "en";
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saiku");
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikudash");
+			olapResourceImporter.importResources(folderNodeRef, "classpath*:beCPG/olap/" + olapLanguage + "/*.saikuapp");
+			// Kept for anything another module drops straight into beCPG/olap: no technical id,
+			// so the file name stays the identity, as it was before #24931.
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_NUT_DATABASES)) {
@@ -763,6 +870,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/clp/*.csv");
+		}
+
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_PAL_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/*.csv");
 		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
@@ -813,6 +924,46 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		createValidatedProductsNotification(notificationFolder);
 		createValidatedAndUpdatedProductsNotification(notificationFolder);
 		createArchivedProductsNotification(notificationFolder);
+	}
+
+	/**
+	 * Creates the sample global saved searches shipped with the product.
+	 */
+	private void createSampleSavedSearches() {
+		createSampleSavedSearch(OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME, OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE, OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE,
+				OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT);
+		createSampleSavedSearch(UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME, UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE,
+				UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE, UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT);
+	}
+
+	/**
+	 * Creates a sample global saved search, unless an administrator already removed or renamed it.
+	 *
+	 * @param name the technical name of the saved search
+	 * @param titleKey the message key of the multilingual title
+	 * @param searchType the search type the saved search applies to
+	 * @param content the JSON filter definition
+	 */
+	private void createSampleSavedSearch(String name, String titleKey, String searchType, String content) {
+
+		AuthenticationUtil.runAsSystem(() -> {
+
+			SavedSearch savedSearch = new SavedSearch();
+			savedSearch.setName(name);
+			savedSearch.setSearchType(searchType);
+			savedSearch.setIsGlobal(true);
+
+			NodeRef folderNodeRef = savedSearchService.getSaveSearchFolder(savedSearch);
+			if ((folderNodeRef != null) && (nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name) == null)) {
+
+				logger.info("Create sample saved search: " + name);
+
+				savedSearch.setTitle(TranslateHelper.getTranslatedKey(titleKey));
+				savedSearchService.createOrUpdate(savedSearch, content);
+			}
+
+			return null;
+		});
 	}
 
 	/**
@@ -891,7 +1042,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION);
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Obsolete documents");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "cm:folder");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:to");
@@ -1383,6 +1534,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, PackModel.TYPE_PACKAGING_MATERIAL);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_PACKAGING_COMPONENTS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_PACKAGING_PROCESSES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1418,6 +1571,26 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param path a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
+	/**
+	 * <p>Creates the system entity holding everything a score is made of.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path the name of the system entity
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private NodeRef visitSystemScoresEntity(NodeRef parentNodeRef, String path) {
+
+		Map<String, QName> entityLists = new LinkedHashMap<>();
+
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEFINITIONS, PLMModel.TYPE_SCORE_DEFINITION);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_THRESHOLDS, PLMModel.TYPE_SCORE_THRESHOLD_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_BADGES, PLMModel.TYPE_SCORE_BADGE_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEF_COEFFS, PLMModel.TYPE_SCORE_DEF_COEFF_LIST);
+		entityLists.put(PlmRepoConsts.PATH_ECOBALYSE_CROP_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
+
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+
 	private NodeRef visitSystemSecurityListValuesEntity(NodeRef parentNodeRef, String path) {
 		Map<String, QName> entityLists = new LinkedHashMap<>();
 		entityLists.put(PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, GHSModel.TYPE_PERSONAL_PROTECTION);
@@ -1497,6 +1670,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1505,6 +1679,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PLMModel.TYPE_MICROBIOLIST);
 				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
+				dataLists.add(PackModel.TYPE_SUPPLIER_PACKAGING_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1514,12 +1689,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
+				dataLists.add(PackModel.TYPE_PACKAGING_COMPONENT_LIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
+				dataLists.add(PackModel.TYPE_SUPPLIER_PACKAGING_LIST);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -1529,6 +1707,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
@@ -1552,6 +1731,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1575,6 +1755,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_INGLABELINGLIST);
@@ -1592,6 +1773,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
@@ -1721,6 +1903,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 *
 	 * @param reportKindListDefaultValues a {@link java.util.Map} object
 	 */
+	/** One value of the report kind list, named in both languages from its own message key. */
+	private Map<QName, Serializable> reportKindListValue(String reportKindCode) {
+		MLText value = new MLText();
+		value.put(Locale.FRENCH, I18NUtil.getMessage(REPORT_KIND_MESSAGE_PREFIX + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
+		value.put(Locale.ENGLISH, I18NUtil.getMessage(REPORT_KIND_MESSAGE_PREFIX + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
+
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, reportKindCode);
+		properties.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
+		properties.put(BeCPGModel.PROP_LV_VALUE, value);
+		return properties;
+	}
+
 	private void visitReportKindList(Map<String, Map<QName, Serializable>> reportKindListDefaultValues) {
 		NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
@@ -1742,6 +1937,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 *
 	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
+	/**
+	 * Uploads the rendering templates shipped on the classpath into the repository, so that a
+	 * customer can adapt one without redeploying the module. The renderer looks the repository up
+	 * first and falls back to the classpath, so an untouched instance behaves the same either way.
+	 */
+	private void visitTemplates(NodeRef systemNodeRef) {
+		NodeRef templatesNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_TEMPLATES);
+		contentHelper.addFilesResources(templatesNodeRef, NUTRITION_FACTS_TEMPLATES_RESOURCES);
+		contentHelper.addFilesResources(templatesNodeRef, SCORE_MARKING_TEMPLATES_RESOURCES);
+	}
+
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
 			// reports folder
@@ -1772,24 +1978,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
-					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
-					PRODUCT_REPORT_IMG_CCCCCC, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN,
-					PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED, PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING };
+					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE };
 
 			String[] commonReportResource = { PRODUCT_REPORT_LOGO_RESOURCE, PRODUCT_REPORT_SETTINGS_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
 			Map<String, Map<QName, Serializable>> reportKindDefaultValues = new HashMap<>();
 			Map<String, Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
-			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
-			defaultKindReport.add(NONE_KIND_REPORT);
-
-			for (String reportKind : defaultKindReport) {
-				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind)
-						|| PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
-					continue;
-				}
-
-				String reportKindCode = reportKindCodes.get(reportKind);
+			for (Map.Entry<String, String> entry : reportKindCodes.entrySet()) {
+				String reportPath = entry.getKey();
+				String reportKindCode = entry.getValue();
 
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
@@ -1798,15 +1995,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
-				reportKindTplAssoc.put(reportKind, reportKindTplProps);
+				reportKindTplAssoc.put(reportPath, reportKindTplProps);
 
 				//for reportKindList default values
 				Map<QName, Serializable> reportKindListProps = new HashMap<>();
 				reportKindListProps.put(ContentModel.PROP_NAME, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
-				reportKindDefaultValues.put(reportKind, reportKindListProps);
+				reportKindDefaultValues.put(reportPath, reportKindListProps);
 			}
+
+			// The marking of a supplemental ingredient rides on the report kinds of a nutrition
+			// line; it is a value of that list, but it is never the kind of a report.
+			reportKindDefaultValues.put(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT,
+					reportKindListValue(PlmRepoConsts.REPORT_KIND_SUPPLEMENTAL_INGREDIENT));
 
 			visitReportKindList(reportKindDefaultValues);
 
@@ -1866,6 +2068,110 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 					}
 
+				}
+
+				if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+					try {
+						NodeRef aggJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.agg.json", true);
+						NodeRef aggPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.properties", true);
+						NodeRef aggFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport_fr.properties", true);
+						NodeRef aggEnPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport_en.properties", true);
+
+						List<NodeRef> aggResources = new ArrayList<>(resources);
+						aggResources.add(aggJsonNodeRef);
+						aggResources.add(aggPropNodeRef);
+						aggResources.add(aggFrPropNodeRef);
+						aggResources.add(aggEnPropNodeRef);
+
+						ReportTplInformation aggTplInfo = new ReportTplInformation();
+						aggTplInfo.setReportType(ReportType.Document);
+						aggTplInfo.setReportFormat(ReportFormat.PDF);
+						aggTplInfo.setNodeType(productType);
+						aggTplInfo.setDefaultTpl(false);
+						aggTplInfo.setSystemTpl(false);
+						aggTplInfo.setResources(aggResources);
+						aggTplInfo.setSupportedLocale(supportedLocale);
+
+						NodeRef aggTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT),
+								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, false);
+						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT);
+						if (titleMlt != null && !titleMlt.isEmpty()) {
+							nodeService.setProperty(aggTplNodeRef, ContentModel.PROP_TITLE, titleMlt);
+						}
+					} catch (Exception e) {
+						logger.error("Failed to create Specification Technique aggregate report template", e);
+					}
+
+					try {
+						ReportTplInformation compoForPifTplInfo = new ReportTplInformation();
+						compoForPifTplInfo.setReportType(ReportType.Document);
+						compoForPifTplInfo.setReportFormat(ReportFormat.PDF);
+						compoForPifTplInfo.setNodeType(productType);
+						compoForPifTplInfo.setDefaultTpl(false);
+						compoForPifTplInfo.setSystemTpl(false);
+						compoForPifTplInfo.setReportKindAspectProperties(reportKindTplAssoc.get(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH));
+						compoForPifTplInfo.setResources(resources);
+						compoForPifTplInfo.setSupportedLocale(supportedLocale);
+
+						String compoForPifReportName = TranslateHelper.getTranslatedPath(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME);
+						if (compoForPifReportName == null || compoForPifReportName.isEmpty()) {
+							compoForPifReportName = "Composition Quali-Quanti pour DIP (PIF)";
+						}
+
+						NodeRef compoForPifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								compoForPifReportName,
+								PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, compoForPifTplInfo, false);
+
+						MLText compoTitleMlt = TranslateHelper.getTranslatedPathMLText(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME);
+						if (compoTitleMlt != null && !compoTitleMlt.isEmpty()) {
+							nodeService.setProperty(compoForPifTplNodeRef, ContentModel.PROP_TITLE, compoTitleMlt);
+						}
+					} catch (Exception e) {
+						logger.error("Failed to create Composition Quali-Quanti for PIF report template", e);
+					}
+
+					try {
+						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
+						NodeRef pifPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.properties", true);
+						NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
+						NodeRef pifEnPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_en.properties", true);
+
+						List<NodeRef> pifResources = new ArrayList<>(resources);
+						pifResources.add(pifJsonNodeRef);
+						pifResources.add(pifPropNodeRef);
+						pifResources.add(pifFrPropNodeRef);
+						pifResources.add(pifEnPropNodeRef);
+
+						ReportTplInformation pifTplInfo = new ReportTplInformation();
+						pifTplInfo.setReportType(ReportType.Document);
+						pifTplInfo.setReportFormat(ReportFormat.PDF);
+						pifTplInfo.setNodeType(productType);
+						pifTplInfo.setDefaultTpl(false);
+						pifTplInfo.setSystemTpl(false);
+						pifTplInfo.setResources(pifResources);
+						pifTplInfo.setSupportedLocale(supportedLocale);
+						pifTplInfo.setTextParameter(PIF_REPORT_PARAMETERS);
+
+						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
+						if (pifReportName == null || pifReportName.isEmpty()) {
+							pifReportName = "Product Information File";
+						}
+
+						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								pifReportName,
+								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, false);
+						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PIF_REPORT);
+						if (titleMlt != null && !titleMlt.isEmpty()) {
+							nodeService.setProperty(pifTplNodeRef, ContentModel.PROP_TITLE, titleMlt);
+						}
+					} catch (Exception e) {
+						logger.error("Failed to create PIF aggregate report template", e);
+					}
 				}
 
 				i++;

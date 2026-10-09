@@ -182,15 +182,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			return 0.0;
 		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			String regulUnit = nutUnit;
-			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
-			if (def != null) {
-				regulUnit = def.getUnit();
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
-			}
-			return roundByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+			return roundByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode);
 		}
 		return roundValue(value, 1d);
 	}
@@ -198,38 +190,71 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit) {
-	
-		Pair<Double,Double> ret = null;
-		
+		return tolerances(value, nutrientTypeCode, nutUnit, false);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutrientTypeCode, nutUnit, NutrientToleranceCriteria.ofClaim(isClaimed));
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, NutrientToleranceCriteria criteria) {
 
 		if (value == null) {
 			return null;
 		}
-		
+
 		if (Double.isInfinite(value) || Double.isNaN(value)) {
 			return null;
 		}
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			String regulUnit = nutUnit;
-			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
-			if (def != null) {
-				regulUnit = def.getUnit();
-			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
-			}
-			return tolerancesByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+			return tolerancesByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), nutrientTypeCode, criteria);
 		}
-		return ret;
+		return null;
 	}
 
 
 
+	/**
+	 * <p>Converts a value expressed in the unit of the nutrient list to the unit of the regulation.</p>
+	 *
+	 * <p>The rounded values stored on the nutrient list are expressed in the unit of the regulation
+	 * (eg. g for the EU sodium) whereas the raw values are expressed in the unit of the nutrient
+	 * itself (eg. mg/100g): every rule reading a raw value has to go through this method first.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
+	protected Double toRegulUnit(Double value, String nutrientTypeCode, String nutUnit) {
+		String regulUnit = nutUnit;
+		NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
+		if (def != null) {
+			regulUnit = def.getUnit();
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("toRegulUnit : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit "
+					+ regulUnit);
+		}
+		return convertValue(value, nutUnit, regulUnit);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
+		return displayValue(value, roundedValue, nutrientTypeCode, measurementPrecision, locale, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale,
+			String nutUnit) {
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			return displayValueByCode(value, roundedValue, nutrientTypeCode, measurementPrecision , locale);
+			return displayValueByCode(toRegulUnit(value, nutrientTypeCode, nutUnit), roundedValue, nutrientTypeCode, measurementPrecision, locale);
 		}
 		return formatDouble(roundedValue, locale);
 	}
@@ -402,6 +427,38 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 */
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		return null;
+	}
+
+	/**
+	 * <p>tolerancesByCode.</p>
+	 *
+	 * <p>Claim-aware variant. By default it ignores the claim flag and delegates to the standard
+	 * {@link #tolerancesByCode(Double, String)}. Regulations that support claim tolerances
+	 * (EU Table 3) override this method.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a claim
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, boolean isClaimed) {
+		return tolerancesByCode(value, nutrientTypeCode);
+	}
+
+	/**
+	 * <p>tolerancesByCode.</p>
+	 *
+	 * <p>Criteria-aware variant. By default it only keeps the claim flag and delegates to
+	 * {@link #tolerancesByCode(Double, String, boolean)}. Regulations that tell added nutrients
+	 * apart (Canadian class I) override this method.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object expressed in the unit of the regulation
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param criteria what is known about the nutrient line
+	 * @return the (maximum, minimum) tolerated values, or {@code null} when the regulation has none
+	 */
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, NutrientToleranceCriteria criteria) {
+		return tolerancesByCode(value, nutrientTypeCode, criteria.claimed());
 	}
 
 }

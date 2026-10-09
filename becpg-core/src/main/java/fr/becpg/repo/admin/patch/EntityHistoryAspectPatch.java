@@ -128,7 +128,7 @@ public class EntityHistoryAspectPatch extends AbstractBeCPGPatch {
                 nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
             }
             if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL)) {
-                Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+                Map<QName, Serializable> aspectProperties = HashMap.newHashMap(2);
                 aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
                 aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
                 nodeService.addAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);

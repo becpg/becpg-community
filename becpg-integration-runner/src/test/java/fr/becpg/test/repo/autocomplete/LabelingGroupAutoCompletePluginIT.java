@@ -16,8 +16,10 @@ import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.autocomplete.LabelingGroupAutoCompletePlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.SynchronisableState;
 
 public class LabelingGroupAutoCompletePluginIT extends AbstractAutoCompletePluginTest
 {
@@ -39,6 +41,8 @@ public class LabelingGroupAutoCompletePluginIT extends AbstractAutoCompletePlugi
             FinishedProductData savedTemplate = (FinishedProductData) alfrescoRepository.findOne(templateRef);
             List<LabelingRuleListDataItem> tplRules = new ArrayList<>();
             LabelingRuleListDataItem ruleTpl = new LabelingRuleListDataItem();
+            ruleTpl.setSynchronisableState(SynchronisableState.Template);
+            ruleTpl.setLabelingRuleType(LabelingRuleType.Render);
             ruleTpl.setName("SecondRuleTpl");
             
             MLText titleTpl = new MLText();

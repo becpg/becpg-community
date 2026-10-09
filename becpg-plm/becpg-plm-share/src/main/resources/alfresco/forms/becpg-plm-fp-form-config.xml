@@ -59,18 +59,21 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="false" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
-          <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
           <show force="false" id="bcpg:ecoScoreCategory"/>
           <show force="false" id="bcpg:nutrientProfileCategory"/>
           <show force="false" id="bcpg:nutrientProfileVersion"/>
-          <show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails"/>
           <show for-mode="view" force="false" id="bcpg:nutrientProfilingScore"/>
           <show force="false" id="bcpg:lcaScoreMethod"/>
           <show for-mode="view" force="false" id="bcpg:lcaScore"/>
@@ -144,6 +147,7 @@
 		  
 		  <show force="false" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="false" id="gs1:sustainabilityStatement"/>
+		  <show force="false" id="gs1:carbonFootprintDate"/>
 		  
           <show force="true" id="bcpg:unitPrice"/>
           <show force="true" id="bcpg:unitTotalCost"/>
@@ -317,6 +321,12 @@
 		  <show id="bcpg:regulatoryResult" />
 		  <show id="bcpg:regulatoryFormulatedDate" />
 		  <show id="bcpg:regulatoryValidationDate" />
+		  <show id="bcpg:regulatoryUseMode" force="false" />
+		  <show id="bcpg:regulatoryApplicationZones" force="false" />
+		  <show id="bcpg:regulatoryMucousContact" force="false" />
+		  <show id="bcpg:regulatoryExposureRoutes" force="false" />
+		  <show id="bcpg:regulatoryTargetPopulation" force="false" />
+		  <show id="bcpg:regulatoryProfessionalUse" force="false" />
 		  
 		  <!--workflow validation -->
 		  <show id="bcpgwf:pvValidationDate" for-mode="view" />
@@ -387,7 +397,7 @@
           <field id="bcpg:flNumber" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">13</control-param>
+                 <control-param name="maxLength">14</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -536,14 +546,28 @@
           <field id="bcpg:productLossPerc" mandatory="false" read-only="false" set="formulation"/>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" set="formulation"/>          
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" set="formulation"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>   
+          </field>
           <field  help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -553,9 +577,6 @@
           </field>
           <set appearance="bordered-panel" id="ecoscore" label-id="becpg.forms.set.eco.score.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:ecoScore" mandatory="false" read-only="false" set="ecoscore"/>
-          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="false" set="ecoscore">
-            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
-          </field>
           <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false" set="ecoscore">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ecoscore</control-param>
@@ -571,9 +592,6 @@
           <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false" set="score">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
-          </field>
-          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
-            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score"/>
           <set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -687,6 +705,7 @@
 		  <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
 		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
+		  <field id="gs1:carbonFootprintDate" mandatory="false" read-only="false" set="sustainability"/>
 
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
@@ -728,6 +747,18 @@
               <control-param name="showTime">false</control-param>
             </control>
           </field>
+
+          <set appearance="bordered-panel" id="regulatoryProduct" label-id="becpg.forms.set.regulatoryProduct.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:regulatoryUseMode" set="regulatoryProduct"/>
+          <field id="bcpg:regulatoryApplicationZones" set="regulatoryProduct">
+            <control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+          </field>
+          <field id="bcpg:regulatoryMucousContact" set="regulatoryProduct"/>
+          <field id="bcpg:regulatoryExposureRoutes" set="regulatoryProduct">
+            <control template="/org/alfresco/components/form/controls/selectmany.ftl" />
+          </field>
+          <field id="bcpg:regulatoryTargetPopulation" set="regulatoryProduct"/>
+          <field id="bcpg:regulatoryProfessionalUse" set="regulatoryProduct"/>
           
           <set appearance="bordered-panel" id="security" label-id="becpg.forms.set.security.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="ghs:sdsStandardCode" mandatory="false" read-only="false" set="security"/>
@@ -1228,6 +1259,7 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:servingSize"/>
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:preparationTips"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:compareWithEntities"/>
@@ -1261,6 +1293,11 @@
           </field>
           <field id="bcpg:servingSize" mandatory="false" read-only="false"/>
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:preparationTips" mandatory="false" read-only="false"/>
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1367,7 +1404,7 @@
           </field>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">13</control-param>
+                 <control-param name="maxLength">14</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -1471,7 +1508,9 @@
       <form id="nutList">
         <field-visibility>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
@@ -1493,7 +1532,15 @@
         <appearance>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false"/>
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false">
@@ -1549,15 +1596,15 @@
           <field id="bcpg:lcaScore" mandatory="false" read-only="true"/>
           <field id="bcpg:lcaScoreMethod" mandatory="false" read-only="false"/>
           <field id="bcpg:ecoScore" mandatory="false" read-only="true"/>
+          <field id="bcpg:ecoScoreDetails" label-id="becpg.forms.field.green-score.label" mandatory="false" read-only="true">
+            <control template="/org/alfresco/components/form/controls/greenscore-class.ftl"/>
+          </field>
           <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ecoscore</control-param>
               <control-param name="showTooltip">false</control-param>
               <control-param name="saveTitle">false</control-param>
             </control>
-          </field>
-          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="true">
-            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
           </field>
         </appearance>
       </form>
@@ -1628,6 +1675,12 @@
           <show force="true" id="bcpg:advPclValue2"/>
           <show force="true" id="bcpg:advLca"/>
           <show force="true" id="bcpg:lcaListValue"/>
+          <show force="true" id="bcpg:advScoreDef1"/>
+          <show force="true" id="bcpg:advEslValue1"/>
+          <show force="true" id="bcpg:advEslClass1"/>
+          <show force="true" id="bcpg:advScoreDef2"/>
+          <show force="true" id="bcpg:advEslValue2"/>
+          <show force="true" id="bcpg:advEslClass2"/>
           <show force="true" id="bcpg:advSvhcAnd"/>
           <show force="true" id="bcpg:svhcListQtyPerc"/>
           <show force="true" id="bcpg:advSvhcNot"/>
@@ -1723,7 +1776,7 @@
           </field>
           <field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria">
 	          <control>
-	            <control-param name="maxLength">13</control-param>
+	            <control-param name="maxLength">14</control-param>
 	          	<control-param name="forceEditable">true</control-param>
 	          </control>
           </field>
@@ -2000,6 +2053,31 @@
               <control-param name="forceEditable">true</control-param>
             </control>
           </field>
+          <set appearance="bordered-panel" id="score-criteria" label-id="becpg.forms.set.score-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:advScoreDef1" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslValue1" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslClass1" mandatory="false" read-only="false" set="score-criteria" />
+          <field id="bcpg:advScoreDef2" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslValue2" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslClass2" mandatory="false" read-only="false" set="score-criteria" />
           <set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2225,11 +2303,16 @@
           <show force="true" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
@@ -2302,7 +2385,7 @@
           <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">13</control-param>
+                 <control-param name="maxLength">14</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -2365,7 +2448,15 @@
           </field>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" set="formulation"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
@@ -2373,6 +2464,11 @@
           </field>
            <field  id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
            <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2463,6 +2559,7 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:servingSize"/>
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:glopTargetCharact"/>
           <show force="false" id="bcpg:glopTargetTask"/>
@@ -2493,6 +2590,11 @@
           </field>
           <field id="bcpg:servingSize" mandatory="false" read-only="false"/>
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
@@ -2557,21 +2659,24 @@
           <show force="true" id="bcpg:netVolume"/>
           <show force="true" id="bcpg:productLossPerc"/>
           <show force="true" id="bcpg:servingSize"/>
+          <!-- <show force="true" id="bcpg:servingSizeByCountry"/> -->
           <show force="true" id="bcpg:servingSizeUnit"/>
+          <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="true" id="bcpg:nutrientPreparationQty" />
           <show force="true" id="bcpg:nutrientPreparationReconstituantRef" />
 		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
           <show force="true" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="true" id="bcpg:ecoScore"/>
-          <show for-mode="view" force="true" id="bcpg:ecoScoreDetails"/>
           <show force="true" id="bcpg:ecoScoreCategory"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
-          <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
           <show force="true" id="bcpg:useByDate"/>
           <show force="true" id="bcpg:bestBeforeDate"/>
@@ -2632,6 +2737,7 @@
           <show force="true" id="bcpg:dropPackagingOfComponents"/>
           <show force="true" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="true" id="gs1:sustainabilityStatement"/>
+		  <show force="true" id="gs1:carbonFootprintDate"/>
           <show force="true" id="gs1:innerPackTypeCode"/>
           <show force="true" id="gs1:productPerInnerPack"/>
           <show force="true" id="gs1:innerPackPerBox"/>
@@ -2928,7 +3034,15 @@
           <field id="bcpg:productLossPerc" mandatory="false" read-only="false" set="formulation"/>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" set="formulation"/>
+          <field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+            </control>
+          </field>
           <field id="bcpg:servingSizeText" mandatory="false" read-only="false" set="formulation">
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:servingSizeByCountry" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
@@ -2936,6 +3050,11 @@
           </field>
           <field help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
+          	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
           
          <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
@@ -2956,9 +3075,6 @@
           </field>
           <set appearance="bordered-panel" id="ecoscore" label-id="becpg.forms.set.eco.score.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:ecoScore" mandatory="false" read-only="false" set="ecoscore"/>
-          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="false" set="ecoscore">
-            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
-          </field>
           <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false" set="ecoscore">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ecoscore</control-param>
@@ -2970,9 +3086,6 @@
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
-          </field>
-          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
-            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score"/>
           <set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -3011,6 +3124,7 @@
           <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
 		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
+		  <field id="gs1:carbonFootprintDate" mandatory="false" read-only="false" set="sustainability"/>
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
           <field id="bcpg:unitTotalCost" mandatory="false" read-only="true" set="profitability"/>
@@ -3450,6 +3564,7 @@
 		  <show force="true" id="bcpg:productHierarchy2" />
 		  <show force="true" id="bcpg:legalName" />
 		  <show force="true" id="bcpg:productState" />
+		  <show force="false" id="bcpg:entityScore"/>
 		  <show force="true" id="bcpg:code" />
 		  <show force="true" id="bcpg:erpCode"/>
 		  <show force="true" id="bcpg:eanCode" />
@@ -3482,7 +3597,6 @@
           <show force="false" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
           <show force="false" id="pjt:projectScore"/>
-          <show force="false" id="bcpg:entityScore"/>
           <show force="false" id="gs1:tradeItemMarketingMessage"/>
           <show force="false" id="gs1:tradeItemFeatureBenefit"/>
           <show force="false" id="gs1:specialItemCode"/>
@@ -3496,10 +3610,14 @@
           <show force="false" id="bcpg:productLossPerc"/>
           <show force="false" id="bcpg:servingSize"/>
           <show force="false" id="bcpg:servingSizeUnit"/>
+          <show force="false" id="bcpg:allergenRegulatoryFramework"/>
           <show force="false" id="bcpg:servingSizeText"/>
           <show force="false" id="bcpg:numberOfServings"/>
           <show force="false" id="bcpg:nutrientPreparationState"/>
           <show force="false" id="bcpg:nutrientPreparedUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantity"/>
+          <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
+          <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
           <show force="false" id="bcpg:nutrientPreparationQty" />
           <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
@@ -3570,6 +3688,7 @@
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
           <show force="false" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="false" id="gs1:sustainabilityStatement"/>
+		  <show force="false" id="gs1:carbonFootprintDate"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>

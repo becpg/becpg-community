@@ -13,7 +13,7 @@
 		<version>26.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>26.1.0.20-SNAPSHOT</version>
+    <version>26.1.0.51-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -301,6 +301,14 @@
 				</property>
 			</activation>
 			<dependencies>
+				<!-- Patched Alfresco classes, required by the repository initialisation -->
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>alfresco-core-patch</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
 				<!-- beCPG AMPs -->
 				<dependency>
 					<groupId>fr.becpg</groupId>
@@ -393,7 +401,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.13</version>
+						<version>0.8.15</version>
 						<configuration>
 							<append>true</append>
 
@@ -466,4 +474,8 @@
 			</build>
 		</profile>
 	</profiles>
+
+  <scm>
+    <tag>26.1.0.49</tag>
+  </scm>
 </project>

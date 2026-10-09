@@ -23,6 +23,16 @@ public class PlmRepoConsts {
 	public static final String PATH_NUT_TYPES = "NutTypes";
 	/** Constant <code>PATH_NUT_FACTS_METHODS="NutFactsMethods"</code> */
 	public static final String PATH_NUT_FACTS_METHODS = "NutFactsMethods";
+
+	/**
+	 * Report kind marking a nutrient of a product as a supplemental ingredient, which is what the
+	 * Canadian supplemented food facts table declares in a block of its own.
+	 *
+	 * <p>It is a report kind so that the marking is done in the nutrition list itself, in a column
+	 * that already exists. No report template may ever be given this kind: a report kind carried by
+	 * a line filters the other lines out of that report.</p>
+	 */
+	public static final String REPORT_KIND_SUPPLEMENTAL_INGREDIENT = "SupplementalIngredient";
 	/** Constant <code>PATH_NUTS="Nuts"</code> */
 	public static final String PATH_NUTS = "Nuts";
 	/** Constant <code>PATH_INGS="Ings"</code> */
@@ -36,6 +46,20 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_LCA="LifeCycleAnalysis"</code> */
 	public static final String PATH_LCA = "LifeCycleAnalysis";
+
+	/** Constant <code>PATH_SCORES="Scores"</code> */
+	public static final String PATH_SCORES = "Scores";
+	/** Constant <code>PATH_SCORE_DEFINITIONS="ScoreDefinitions"</code> */
+	public static final String PATH_SCORE_DEFINITIONS = "ScoreDefinitions";
+	/** Constant <code>PATH_SCORE_THRESHOLDS="ScoreThresholds"</code> */
+	public static final String PATH_SCORE_THRESHOLDS = "ScoreThresholds";
+	/** Constant <code>PATH_SCORE_BADGES="ScoreBadges"</code> */
+	public static final String PATH_SCORE_BADGES = "ScoreBadges";
+	/** Constant <code>PATH_SCORE_DEF_COEFFS="ScoreCoefficients"</code> */
+	public static final String PATH_SCORE_DEF_COEFFS = "ScoreCoefficients";
+
+	/** Constant <code>PATH_ECOBALYSE_CROP_GROUPS="EcobalyseCropGroups"</code> */
+	public static final String PATH_ECOBALYSE_CROP_GROUPS = "EcobalyseCropGroups";
 
 	/** Constant <code>PATH_LCA_LIST_METHODS="LcaListMethods"</code> */
 	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
@@ -92,6 +116,10 @@ public class PlmRepoConsts {
 	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
 	/** Constant <code>PATH_PM_PRINT_VANISHS="pmPrintVarnishs"</code> */
 	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
+	/** Constant <code>PATH_PACKAGING_COMPONENTS="PackagingComponents"</code> */
+	public static final String PATH_PACKAGING_COMPONENTS = "PackagingComponents";
+	/** Constant <code>PATH_PACKAGING_PROCESSES="PackagingProcesses"</code> */
+	public static final String PATH_PACKAGING_PROCESSES = "PackagingProcesses";
 	/** Constant <code>PATH_GS1_HIERARCHY="gs1_Hierarchy"</code> */
 	public static final String PATH_GS1_HIERARCHY = "gs1_Hierarchy";
 
@@ -260,6 +288,10 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS = "ExportQualityControls";
 	/** Constant <code>PATH_REPORTS_ECO="ECOReports"</code> */
 	public static final String PATH_REPORTS_ECO = "ECOReports";
+	
+	public static final String PATH_PRODUCT_SPEC_REPORT = "ProductSpecReport";
+	public static final String PATH_PIF_REPORT = "PIFReport";
+	public static final String PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF = "productreportcompoqualiquantiforpiftemplate";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";
@@ -329,9 +361,14 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_LCA_DATABASES="LCADatabases"</code> */
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
+
+
 	
 	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
 	public static final String PATH_CLP_DATABASES = "CLPDatabases";
+
+	/** Constant <code>PATH_PAL_DATABASES="PALDatabases"</code> */
+	public static final String PATH_PAL_DATABASES = "PALDatabases";
 
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */

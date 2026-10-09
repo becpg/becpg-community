@@ -17,11 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.repo.tenant.TenantUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -68,64 +72,123 @@ public class ProjectFormulationWorker {
 
 	/**
 	 * <p>executeFormulation.</p>
+	 *
+	 * Projects that could not be formulated because of database contention are retried once at the
+	 * end of the run, so that they are not left stale until the next scheduled execution.
 	 */
 	public void executeFormulation() {
 
-		List<NodeRef> projectNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		List<NodeRef> contendedProjectNodeRefs = formulateAll(queryProjectsToFormulate());
 
-			Calendar cal = Calendar.getInstance();
-			
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.excludeVersions()
-					.excludeArchivedEntities()
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
-					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
+		if (!contendedProjectNodeRefs.isEmpty()) {
+			logger.warn("Reformulation delayed by database contention for " + contendedProjectNodeRefs.size() + " project(s), retrying once");
 
-			List<NodeRef> ret = WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect();
+			List<NodeRef> stillContendedProjectNodeRefs = formulateAll(contendedProjectNodeRefs);
 
-			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.excludeVersions()
-					.excludeArchivedEntities()
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
-					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
-			
-			ret.addAll(WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect());
-			
-			// query
-			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-			.excludeVersions()
-			.excludeArchivedEntities()
-			.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
-			.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
-			
-			ret.addAll(WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect());
-
-			return ret;
-
-		}, false, true);
-
-		for (NodeRef projectNodeRef : projectNodeRefs) {
-			try {
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Reformulating project: " + projectNodeRef);
-					}
-					projectService.formulate(projectNodeRef);
-
-					return true;
-
-				}, false, true);
-
-			} catch (Exception e) {
-				logger.error("Cannot reformulate project:" + projectNodeRef+ " "+ TenantUtil.getCurrentDomain(), e);
+			if (!stillContendedProjectNodeRefs.isEmpty()) {
+				logger.error("Reformulation still blocked by database contention for " + stillContendedProjectNodeRefs.size() + " project(s): "
+						+ stillContendedProjectNodeRefs);
 			}
-
 		}
 
+	}
+
+	/**
+	 * Formulate the given projects.
+	 *
+	 * @param projectNodeRefs a {@link java.util.List} object
+	 * @return the projects that could not be formulated because of database contention
+	 */
+	private List<NodeRef> formulateAll(List<NodeRef> projectNodeRefs) {
+		List<NodeRef> contendedProjectNodeRefs = new ArrayList<>();
+
+		for (NodeRef projectNodeRef : projectNodeRefs) {
+			if (!formulateProject(projectNodeRef)) {
+				contendedProjectNodeRefs.add(projectNodeRef);
+			}
+		}
+
+		return contendedProjectNodeRefs;
+	}
+
+	/**
+	 * Formulate a single project in its own transaction.
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return false when the formulation was abandoned because of database contention, true otherwise
+	 */
+	private boolean formulateProject(NodeRef projectNodeRef) {
+		try {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Reformulating project: " + projectNodeRef);
+				}
+				projectService.formulate(projectNodeRef);
+
+				return true;
+
+			}, false, true);
+
+			return true;
+
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				logger.warn("Database contention while reformulating project: " + projectNodeRef + " " + TenantUtil.getCurrentDomain() + " - "
+						+ e.getMessage());
+				return false;
+			}
+
+			logger.error("Cannot reformulate project:" + projectNodeRef + " " + TenantUtil.getCurrentDomain(), e);
+			return true;
+		}
+	}
+
+	/**
+	 * Query the projects that have to be reformulated: in progress or on hold projects not formulated
+	 * today, and planned projects whose start date has been reached.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	private List<NodeRef> queryProjectsToFormulate() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			Date startOfDay = getStartOfDay();
+
+			List<NodeRef> projectNodeRefs = new ArrayList<>(queryProjects(ProjectState.InProgress, BeCPGModel.PROP_FORMULATED_DATE, startOfDay));
+			projectNodeRefs.addAll(queryProjects(ProjectState.OnHold, BeCPGModel.PROP_FORMULATED_DATE, startOfDay));
+			projectNodeRefs.addAll(queryProjects(ProjectState.Planned, ProjectModel.PROP_PROJECT_START_DATE, Calendar.getInstance().getTime()));
+
+			return projectNodeRefs;
+
+		}, false, true);
+	}
+
+	/**
+	 * Query the projects of a given state whose date property is before the given date.
+	 *
+	 * @param projectState a {@link fr.becpg.repo.project.data.ProjectState} object
+	 * @param dateProperty a {@link org.alfresco.service.namespace.QName} object
+	 * @param maxDate a {@link java.util.Date} object
+	 * @return a {@link java.util.List} object
+	 */
+	private List<NodeRef> queryProjects(ProjectState projectState, QName dateProperty, Date maxDate) {
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+				.excludeVersions()
+				.excludeArchivedEntities()
+				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, projectState.toString())
+				.andBetween(dateProperty, "MIN", ISO8601DateFormat.format(maxDate));
+
+		return WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect();
+	}
+
+	private Date getStartOfDay() {
+		Calendar cal = Calendar.getInstance();
+
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
 	}
 }

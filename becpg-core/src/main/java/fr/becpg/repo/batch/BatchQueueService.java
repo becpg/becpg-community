@@ -66,10 +66,10 @@ public interface BatchQueueService {
     List<String> getBatchesInQueue();
 
 	/**
-	 * <p>removeBatchFromQueue.</p>
+	 * Removes a pending batch from the execution queue, or cancels it when it is paused.
 	 *
-	 * @param batchId a {@link java.lang.String} object
-	 * @return a boolean
+	 * @param batchId the id of the batch to remove
+	 * @return true if a pending or paused batch matched the id, false otherwise
 	 */
 	boolean removeBatchFromQueue(String batchId);
 
@@ -81,10 +81,10 @@ public interface BatchQueueService {
 	BatchMonitor getLastRunningBatch();
 	
 	/**
-	 * <p>cancelBatch.</p>
+	 * Requests the cancellation of a running or paused batch.
 	 *
-	 * @param batchId a {@link java.lang.String} object
-	 * @return a boolean
+	 * @param batchId the id of the batch to cancel
+	 * @return true if a running or paused batch matched the id, false otherwise
 	 */
 	boolean cancelBatch(String batchId);
 	
@@ -119,12 +119,39 @@ public interface BatchQueueService {
 	BatchInfo retryBatchInError(String batchId);
 
 	/**
+	 * <p>retryBatchEntryInError.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
+	BatchInfo retryBatchEntryInError(String batchId, NodeRef nodeRef);
+
+	/**
 	 * <p>viewErrors.</p>
 	 *
 	 * @param batchId a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
 	String viewErrors(String batchId);
+
+	/**
+	 * <p>viewErrors.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 * @param offset an int
+	 * @param limit an int
+	 * @return a {@link java.lang.String} object
+	 */
+	String viewErrors(String batchId, int offset, int limit);
+
+	/**
+	 * <p>clearBatchError.</p>
+	 *
+	 * @param entry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param batchFullId a {@link java.lang.String} object
+	 */
+	void clearBatchError(NodeRef entry, String batchFullId);
 
 	/**
 	 * <p>createBatchStepWithErrorHandling.</p>

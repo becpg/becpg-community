@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -269,6 +270,140 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
 
             return null;
         });
+    }
+
+    /**
+     * Validates that a negative composition line (a co-product or a brine removed) is left out of the
+     * ingredient details, as it is out of the ingredient list, so that the details sum up to the ingredient
+     * list values instead of being related to the signed recipe quantity (see #37100).
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testNegativeCompoLineMatchesIngList() throws Exception {
+
+        final NodeRef finishedProductNodeRef = inWriteTx(() -> createProductWithNegativeLine("PF ligne négative - #37100", rawMaterial1NodeRef,
+                rawMaterial2NodeRef).getNodeRef());
+
+        inWriteTx(() -> {
+            productService.formulate(finishedProductNodeRef);
+
+            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            CharactDetails ingDetails = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, 0);
+
+            logger.info(CharactDetailsHelper.toJSONObject(ingDetails, nodeService, attributeExtractorService).toString(3));
+
+            assertNoDetailLineFor(ingDetails, rawMaterial2NodeRef);
+            assertDetailsSumUpToIngList(finishedProduct, ingDetails);
+
+            return null;
+        });
+    }
+
+    /**
+     * Validates that the lines of a semi-finished product holding a negative composition line sum up to
+     * the semi-finished line, the ingredient list of the semi-finished product being spread over its
+     * positive lines only (see #37100).
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testNegativeCompoLineInSemiFinishedProduct() throws Exception {
+
+        final NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+            SemiFinishedProductData semiFinished = new SemiFinishedProductData();
+            semiFinished.setName("SF ligne négative - #37100");
+            semiFinished.setLegalName("Legal SF ligne négative");
+            semiFinished.setUnit(ProductUnit.kg);
+            semiFinished.setQty(0.94d);
+            semiFinished.getCompoListView().setCompoList(createCompoListWithNegativeLine(rawMaterial1NodeRef, rawMaterial2NodeRef));
+            return alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+        });
+
+        final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+            productService.formulate(semiFinishedNodeRef);
+
+            FinishedProductData finishedProduct = new FinishedProductData();
+            finishedProduct.setName("PF avec SF ligne négative - #37100");
+            finishedProduct.setLegalName("Legal PF avec SF ligne négative");
+            finishedProduct.setUnit(ProductUnit.kg);
+            List<CompoListDataItem> compoList = new ArrayList<>();
+            compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+                    .withDeclarationType(DeclarationType.Declare).withProduct(semiFinishedNodeRef));
+            finishedProduct.getCompoListView().setCompoList(compoList);
+            return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+        });
+
+        inWriteTx(() -> {
+            productService.formulate(finishedProductNodeRef);
+
+            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            CharactDetails ingDetails = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, 2);
+
+            logger.info(CharactDetailsHelper.toJSONObject(ingDetails, nodeService, attributeExtractorService).toString(3));
+
+            assertNoDetailLineFor(ingDetails, rawMaterial2NodeRef);
+            assertDetailsSumUpToIngList(finishedProduct, ingDetails);
+
+            for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : ingDetails.getData().entrySet()) {
+                double semiFinishedLine = sumDetailValues(entry.getValue(), 0);
+                double semiFinishedChildren = sumDetailValues(entry.getValue(), 1);
+                Assert.assertEquals("Semi-finished children should sum up to the semi-finished line", semiFinishedLine, semiFinishedChildren,
+                        0.001d);
+            }
+
+            return null;
+        });
+    }
+
+    private FinishedProductData createProductWithNegativeLine(String name, NodeRef positiveProduct, NodeRef negativeProduct) {
+        FinishedProductData finishedProduct = new FinishedProductData();
+        finishedProduct.setName(name);
+        finishedProduct.setLegalName("Legal " + name);
+        finishedProduct.setUnit(ProductUnit.kg);
+        finishedProduct.getCompoListView().setCompoList(createCompoListWithNegativeLine(positiveProduct, negativeProduct));
+        return (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
+    }
+
+    private List<CompoListDataItem> createCompoListWithNegativeLine(NodeRef positiveProduct, NodeRef negativeProduct) {
+        List<CompoListDataItem> compoList = new ArrayList<>();
+        compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+                .withProduct(positiveProduct));
+        compoList.add(CompoListDataItem.build().withQtyUsed(-0.06d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+                .withProduct(negativeProduct));
+        return compoList;
+    }
+
+    private void assertNoDetailLineFor(CharactDetails ingDetails, NodeRef product) {
+        for (List<CharactDetailsValue> values : ingDetails.getData().values()) {
+            for (CharactDetailsValue detailsValue : values) {
+                Assert.assertNotEquals("A negative composition line should not be detailed", product, detailsValue.getKeyNodeRef());
+            }
+        }
+    }
+
+    private void assertDetailsSumUpToIngList(FinishedProductData finishedProduct, CharactDetails ingDetails) {
+        int checkedIngredients = 0;
+        for (IngListDataItem ingListDataItem : finishedProduct.getIngList()) {
+            List<CharactDetailsValue> values = ingDetails.getData().get(ingListDataItem.getIng());
+            if ((values == null) || (ingListDataItem.getQtyPerc() == null)) {
+                continue;
+            }
+            Assert.assertEquals("Details of " + ingListDataItem.getName() + " should sum up to the ingredient list",
+                    ingListDataItem.getQtyPerc(), sumDetailValues(values, 0), 0.001d);
+            checkedIngredients++;
+        }
+        Assert.assertTrue("At least one ingredient should be checked", checkedIngredients > 0);
+    }
+
+    private double sumDetailValues(List<CharactDetailsValue> values, int level) {
+        double sum = 0d;
+        for (CharactDetailsValue detailsValue : values) {
+            if (Integer.valueOf(level).equals(detailsValue.getLevel()) && (detailsValue.getValue() != null)) {
+                sum += detailsValue.getValue();
+            }
+        }
+        return sum;
     }
 
     /**

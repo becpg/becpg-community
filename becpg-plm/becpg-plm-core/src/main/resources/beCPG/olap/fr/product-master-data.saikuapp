@@ -1,0 +1,471 @@
+{
+ "id": "product-master-data",
+ "name": "Référentiel produit",
+ "version": 1,
+ "theme": {
+  "mode": "light",
+  "ground": "#f4f7f8",
+  "surface": "#ffffff",
+  "fg": "#0d2b33",
+  "muted": "#5b7780",
+  "accent": "#009dcc"
+ },
+ "nav": {
+  "position": "rail",
+  "railFullHeight": true,
+  "footer": {
+   "settings": true
+  }
+ },
+ "header": {
+  "wordmarkAccent": "produit",
+  "eyebrow": "beCPG",
+  "liveBadge": "En direct"
+ },
+ "assistantSlot": {
+  "enabled": true,
+  "title": "Assistant produit",
+  "persona": "Analyste du référentiel produit beCPG",
+  "scope": "Répondre uniquement sur les cubes products, nutrients et lca.",
+  "greeting": "Posez une question sur le portefeuille produit, la nutrition ou les coûts.",
+  "suggestedPrompts": [
+   "Répartition des produits par état",
+   "Rentabilité moyenne par famille",
+   "Produits par Nutri-Score"
+  ],
+  "cube": {
+   "connectionName": "beCPG",
+   "catalog": "beCPG OLAP Schema",
+   "schema": "beCPG OLAP Schema",
+   "cubeName": "products"
+  }
+ },
+ "tags": [
+  "beCPG",
+  "produit"
+ ],
+ "pages": [
+  {
+   "id": "portefeuille",
+   "title": "Portefeuille",
+   "icon": "package",
+   "heading": "Portefeuille produit",
+   "subheading": "Volumes, prix, coûts et rentabilité par famille",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Volumes, prix, coûts et rentabilité",
+      "query": {
+       "kind": "reference",
+       "path": "/portfolio-volumes-and-margins.saiku"
+      }
+     },
+     {
+      "id": "t2",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Profit par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/portfolio-profit-per-family.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t3",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition par état",
+      "query": {
+       "kind": "reference",
+       "path": "/products-per-state.saiku"
+      },
+      "chartType": "pie"
+     }
+    ]
+   }
+  },
+  {
+   "id": "qualite",
+   "title": "Qualité",
+   "icon": "leaf",
+   "heading": "Qualité et profil nutritionnel",
+   "subheading": "Nutri-Score, Eco-Score et nutriments formulés",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition par Nutri-Score",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-per-nutri-score.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition par Eco-Score",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-per-eco-score.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Nutriments formulés par type de produit",
+      "query": {
+       "kind": "reference",
+       "path": "/formulated-nutrients-per-product-type.saiku"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "logistique",
+   "title": "Logistique",
+   "icon": "truck",
+   "heading": "Conditions et coûts",
+   "subheading": "Stockage, emballage et quantités projetées",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Produits par condition de stockage",
+      "query": {
+       "kind": "reference",
+       "path": "/products-per-storage-condition.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t2",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Poids d'emballage par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/packaging-materials-weight-by-product-family.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t3",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 4,
+      "type": "table",
+      "title": "Quantités projetées par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-projected-quantities-per-family.saiku"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "couts",
+   "title": "Coûts",
+   "icon": "coins",
+   "heading": "Structure et dérive des coûts",
+   "subheading": "Coût par poste, évolution N-1 / N+1 et écart au maximum",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t10",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Structure par poste",
+      "query": {
+       "kind": "reference",
+       "path": "/costs-breakdown-by-item.saiku"
+      }
+     },
+     {
+      "id": "t11",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Dérive par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/costs-trend-by-family.saiku"
+      },
+      "chartType": "bar"
+     },
+     {
+      "id": "t12",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Écart au maximum",
+      "query": {
+       "kind": "reference",
+       "path": "/costs-gap-to-maximum-by-family.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "emballage",
+   "title": "Emballage",
+   "icon": "package",
+   "heading": "Emballage et durabilité",
+   "subheading": "Quantités par niveau, matériaux et part recyclée",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t13",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Quantités par niveau",
+      "query": {
+       "kind": "reference",
+       "path": "/packaging-quantities-by-level.saiku"
+      }
+     },
+     {
+      "id": "t14",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Part recyclée par matériau",
+      "query": {
+       "kind": "reference",
+       "path": "/packaging-materials-recycled-content.saiku"
+      }
+     },
+     {
+      "id": "t15",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Poids d'emballage par famille",
+      "query": {
+       "kind": "reference",
+       "path": "/packaging-materials-weight-by-product-family.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "composition",
+   "title": "Composition",
+   "icon": "layers",
+   "heading": "Composition et rendement",
+   "subheading": "Pertes, rendement matière et composants les plus utilisés",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t16",
+      "x": 0,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Pertes et rendement",
+      "query": {
+       "kind": "reference",
+       "path": "/composition-loss-and-yield-by-family.saiku"
+      }
+     },
+     {
+      "id": "t17",
+      "x": 6,
+      "y": 0,
+      "w": 6,
+      "h": 5,
+      "type": "table",
+      "title": "Composants les plus utilisés",
+      "query": {
+       "kind": "reference",
+       "path": "/composition-most-used-components.saiku"
+      }
+     },
+     {
+      "id": "t18",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Composants d'emballage",
+      "query": {
+       "kind": "reference",
+       "path": "/packaging-most-used-components.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "scores",
+   "title": "Scores",
+   "icon": "gauge",
+   "heading": "Scores produit",
+   "subheading": "Nutri-Score, Eco-Score et scores réglementaires du socle beCPG",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t19",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Scores par définition",
+      "query": {
+       "kind": "reference",
+       "path": "/scores-breakdown-by-definition.saiku"
+      }
+     },
+     {
+      "id": "t20",
+      "x": 0,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition Nutri-Score",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-per-nutri-score.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t21",
+      "x": 6,
+      "y": 5,
+      "w": 6,
+      "h": 5,
+      "type": "chart",
+      "title": "Répartition Eco-Score",
+      "query": {
+       "kind": "reference",
+       "path": "/fp-per-eco-score.saiku"
+      },
+      "chartType": "pie"
+     },
+     {
+      "id": "t22",
+      "x": 0,
+      "y": 10,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Classes par définition",
+      "query": {
+       "kind": "reference",
+       "path": "/scores-classes-by-definition.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "environnement",
+   "title": "Environnement",
+   "icon": "leaf",
+   "heading": "Impact environnemental",
+   "subheading": "Analyse du cycle de vie par type de produit et par site",
+   "grid": {
+    "cols": 12,
+    "tiles": [
+     {
+      "id": "t1",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 5,
+      "type": "table",
+      "title": "Impact par type de produit",
+      "query": {
+       "kind": "reference",
+       "path": "/lca-impact-per-product-type.saiku"
+      }
+     },
+     {
+      "id": "t2",
+      "x": 0,
+      "y": 5,
+      "w": 12,
+      "h": 5,
+      "type": "chart",
+      "title": "Impact par site",
+      "query": {
+       "kind": "reference",
+       "path": "/lca-impact-per-site.saiku"
+      },
+      "chartType": "bar"
+     }
+    ]
+   }
+  }
+ ]
+}

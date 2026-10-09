@@ -1,0 +1,1126 @@
+/*
+ * #%L
+ * Alfresco Repository
+ * %%
+ * Copyright (C) 2005 - 2016 Alfresco Software Limited
+ * %% -- patched beCPG Version
+ */
+package org.alfresco.repo.solr;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.zip.CRC32;
+
+import org.alfresco.error.AlfrescoRuntimeException;
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.domain.node.Node;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.node.NodeDAO.ChildAssocRefQueryCallback;
+import org.alfresco.repo.domain.node.NodeEntity;
+import org.alfresco.repo.domain.permissions.AclDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.domain.solr.SearchDAO;
+import org.alfresco.repo.index.shard.ShardRegistry;
+import org.alfresco.repo.index.shard.ShardState;
+import org.alfresco.repo.search.AspectIndexFilter;
+import org.alfresco.repo.search.SearchTrackingComponent;
+import org.alfresco.repo.search.TypeIndexFilter;
+import org.alfresco.repo.search.impl.QueryParserUtils;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.repo.version.VersionModel;
+import org.alfresco.repo.version.common.VersionUtil;
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.ModelDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeRef.Status;
+import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.repository.Path.ChildAssocElement;
+import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
+import org.alfresco.service.cmr.security.OwnableService;
+import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
+import org.alfresco.util.PropertyCheck;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+/**
+ * Component providing data for SOLR tracking
+ *
+ * @since 4.0
+ */
+public class SOLRTrackingComponentImpl implements SearchTrackingComponent {
+	private NodeDAO nodeDAO;
+	private QNameDAO qnameDAO;
+	private SearchDAO searchDAO;
+	private DictionaryDAO dictionaryDAO;
+	private PermissionService permissionService;
+	private AclDAO aclDAO;
+	private OwnableService ownableService;
+	private TenantService tenantService;
+	private DictionaryService dictionaryService;
+	private boolean enabled = true;
+	private boolean cacheAncestors = true;
+	private TypeIndexFilter typeIndexFilter;
+	private AspectIndexFilter aspectIndexFilter;
+	private ShardRegistry shardRegistry;
+	private NamespaceService namespaceService;
+
+	private static Log logger = LogFactory.getLog(SOLRTrackingComponentImpl.class);
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	/**
+	 * @param cacheAncestors
+	 *            the cacheAncestors to set
+	 */
+	public void setCacheAncestors(boolean cacheAncestors) {
+		this.cacheAncestors = cacheAncestors;
+	}
+
+	public void setSearchDAO(SearchDAO searchDAO) {
+		this.searchDAO = searchDAO;
+	}
+
+	public void setNodeDAO(NodeDAO nodeDAO) {
+		this.nodeDAO = nodeDAO;
+	}
+
+	public void setQnameDAO(QNameDAO qnameDAO) {
+		this.qnameDAO = qnameDAO;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public void setOwnableService(OwnableService ownableService) {
+		this.ownableService = ownableService;
+	}
+
+	public void setTenantService(TenantService tenantService) {
+		this.tenantService = tenantService;
+	}
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+	public void setAclDAO(AclDAO aclDAO) {
+		this.aclDAO = aclDAO;
+	}
+
+	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
+		this.dictionaryDAO = dictionaryDAO;
+	}
+
+	public void setTypeIndexFilter(TypeIndexFilter typeIndexFilter) {
+		this.typeIndexFilter = typeIndexFilter;
+	}
+
+	public void setAspectIndexFilter(AspectIndexFilter aspectIndexFilter) {
+		this.aspectIndexFilter = aspectIndexFilter;
+	}
+
+	public void setShardRegistry(ShardRegistry shardRegistry) {
+		this.shardRegistry = shardRegistry;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	/**
+	 * Initialize
+	 */
+	public void init() {
+		PropertyCheck.mandatory(this, "solrDAO", searchDAO);
+		PropertyCheck.mandatory(this, "nodeDAO", nodeDAO);
+		PropertyCheck.mandatory(this, "qnameDAO", qnameDAO);
+		PropertyCheck.mandatory(this, "permissionService", permissionService);
+		PropertyCheck.mandatory(this, "ownableService", ownableService);
+		PropertyCheck.mandatory(this, "tenantService", tenantService);
+		PropertyCheck.mandatory(this, "dictionaryService", dictionaryService);
+		PropertyCheck.mandatory(this, "dictionaryDAO", dictionaryDAO);
+		PropertyCheck.mandatory(this, "aclDAO", aclDAO);
+		PropertyCheck.mandatory(this, "typeIndexFilter", typeIndexFilter);
+		PropertyCheck.mandatory(this, "aspectIndexFilter", aspectIndexFilter);
+		PropertyCheck.mandatory(this, "namespaceService", namespaceService);
+	}
+
+	@Override
+	public List<AclChangeSet> getAclChangeSets(Long minAclChangeSetId, Long fromCommitTime, Long maxAclChangeSetId, Long toCommitTime,
+			int maxResults) {
+		if (enabled) {
+			return searchDAO.getAclChangeSets(minAclChangeSetId, fromCommitTime, maxAclChangeSetId, toCommitTime, maxResults);
+		} else {
+			return Collections.<AclChangeSet> emptyList();
+		}
+	}
+
+	@Override
+	public List<Acl> getAcls(List<Long> aclChangeSetIds, Long minAclId, int maxResults) {
+		if (enabled) {
+			return searchDAO.getAcls(aclChangeSetIds, minAclId, maxResults);
+		} else {
+			return Collections.<Acl> emptyList();
+		}
+	}
+
+	@Override
+	public List<AclReaders> getAclsReaders(List<Long> aclIds) {
+		if (enabled) {
+			// We don't want the caches to lie and we may not be part of the cluster
+			aclDAO.setCheckAclConsistency();
+
+			/* This is an N+1 query that should, in theory, make use of cached ACL readers data. */
+
+			Map<Long, String> aclChangeSetTenant = new HashMap<>(aclIds.size());
+
+			List<AclReaders> aclsReaders = new ArrayList<>(aclIds.size() * 10);
+			for (Long aclId : aclIds) {
+				AclReaders readers = new AclReaders();
+				readers.setAclId(aclId);
+				Set<String> readersSet = permissionService.getReaders(aclId);
+				readers.setReaders(readersSet);
+				Set<String> deniedSet = permissionService.getReadersDenied(aclId);
+				readers.setDenied(deniedSet);
+
+				Long aclChangeSetId = aclDAO.getAccessControlList(aclId).getProperties().getAclChangeSetId();
+				readers.setAclChangeSetId(aclChangeSetId);
+
+				if (AuthenticationUtil.isMtEnabled()) {
+					// MT - for now, derive the tenant for acl (via acl change set)
+					String tenantDomain = aclChangeSetTenant.get(aclChangeSetId);
+					if (tenantDomain == null) {
+						tenantDomain = getTenant(aclId, aclChangeSetId);
+						if (tenantDomain == null) {
+							// skip this acl !
+							continue;
+						}
+						aclChangeSetTenant.put(aclChangeSetId, tenantDomain);
+					}
+					readers.setTenantDomain(tenantDomain);
+				}
+
+				aclsReaders.add(readers);
+			}
+
+			return aclsReaders;
+		} else {
+			return Collections.<AclReaders> emptyList();
+		}
+	}
+
+	private String getTenant(long aclId, long aclChangeSetId) {
+		String tenantDomain = getAclTenant(aclId);
+		if (tenantDomain == null) {
+			List<Long> aclChangeSetIds = new ArrayList<>(1);
+			aclChangeSetIds.add(aclChangeSetId);
+
+			List<Acl> acls = searchDAO.getAcls(aclChangeSetIds, null, 1024);
+			for (Acl acl : acls) {
+				tenantDomain = getAclTenant(acl.getId());
+				if (tenantDomain != null) {
+					break;
+				}
+			}
+
+			if (tenantDomain == null) {
+				// tenant not found - log warning ?
+				tenantDomain = null; // temp - for debug breakpoint only
+			}
+		}
+		return tenantDomain;
+	}
+
+	private String getAclTenant(long aclId) {
+		List<Long> nodeIds = aclDAO.getADMNodesByAcl(aclId, 1);
+		if (nodeIds.isEmpty()) {
+			return null;
+		}
+
+		nodeDAO.setCheckNodeConsistency();
+		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeIds.get(0));
+		if (nodePair == null) {
+			return null;
+		}
+
+		return tenantService.getDomain(nodePair.getSecond().getStoreRef().getIdentifier());
+	}
+
+	@Override
+	public List<Transaction> getTransactions(Long minTxnId, Long fromCommitTime, Long maxTxnId, Long toCommitTime, int maxResults) {
+		if (enabled) {
+			return searchDAO.getTransactions(minTxnId, fromCommitTime, maxTxnId, toCommitTime, maxResults);
+		} else {
+			return Collections.<Transaction> emptyList();
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void getNodes(NodeParameters nodeParameters, NodeQueryCallback callback) {
+		if (enabled) {
+			QName shardPropertQName = null;
+			QName shardPropertyType = null;
+
+			if (nodeParameters.getShardProperty() != null) {
+				PropertyDefinition pdef = QueryParserUtils.matchPropertyDefinition(NamespaceService.CONTENT_MODEL_1_0_URI, namespaceService,
+						dictionaryService, nodeParameters.getShardProperty());
+				if (pdef == null) {
+					logger.warn("Invalid shard property: " + nodeParameters.getShardProperty());
+				} else {
+					shardPropertyType = pdef.getDataType().getName();
+
+					if (!shardPropertyType.equals(DataTypeDefinition.TEXT) && !shardPropertyType.equals(DataTypeDefinition.DATE)
+							&& !shardPropertyType.equals(DataTypeDefinition.DATETIME) && !shardPropertyType.equals(DataTypeDefinition.INT)
+							&& !shardPropertyType.equals(DataTypeDefinition.LONG)) {
+						logger.warn(
+								"Unsupported shard property type: " + (pdef.getDataType().getName() + " for " + nodeParameters.getShardProperty()));
+					} else {
+						shardPropertQName = pdef.getName();
+					}
+				}
+			}
+
+			List<Node> nodes = searchDAO.getNodes(nodeParameters, shardPropertQName, shardPropertyType);
+
+			for (Node node : nodes) {
+				if (shardRegistry != null) {
+					shardRegistry.getShardInstanceByTransactionTimestamp(nodeParameters.getCoreName(), node.getTransaction().getCommitTimeMs())
+							.ifPresent(shardId -> ((NodeEntity) node).setExplicitShardId(shardId));
+
+				}
+
+				callback.handleNode(node);
+			}
+		}
+	}
+
+	/**
+	 * A dumb iterator that iterates over longs in sequence.
+	 */
+	private static class SequenceIterator implements Iterable<Long>, Iterator<Long> {
+		private long fromId;
+		private long toId;
+		private long counter;
+		private int maxResults;
+		private boolean inUse = false;
+
+		SequenceIterator(Long fromId, Long toId, int maxResults) {
+			this.fromId = (fromId == null ? 1 : fromId.longValue());
+			this.toId = (toId == null ? Long.MAX_VALUE : toId.longValue());
+			this.maxResults = maxResults;
+			this.counter = this.fromId;
+		}
+
+		@Override
+		public Iterator<Long> iterator() {
+			if (inUse) {
+				throw new IllegalStateException("Already in use");
+			}
+			this.counter = this.fromId;
+			this.inUse = true;
+			return this;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return ((counter - this.fromId) < maxResults) && (counter <= toId);
+		}
+
+		@Override
+		public Long next() {
+			return counter++;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	private boolean isCategorised(AspectDefinition aspDef) {
+		if (aspDef == null) {
+			return false;
+		}
+		AspectDefinition current = aspDef;
+		while (current != null) {
+			if (current.getName().equals(ContentModel.ASPECT_CLASSIFIABLE)) {
+				return true;
+			} else {
+				QName parentName = current.getParentName();
+				if (parentName == null) {
+					break;
+				}
+				current = dictionaryService.getAspect(parentName);
+			}
+		}
+		return false;
+	}
+
+	static class CategoryPaths {
+		Collection<Pair<Path, QName>> paths;
+		List<ChildAssociationRef> categoryParents;
+
+		CategoryPaths(Collection<Pair<Path, QName>> paths, List<ChildAssociationRef> categoryParents) {
+			this.paths = paths;
+			this.categoryParents = categoryParents;
+		}
+
+		/**
+		 * @return the paths
+		 */
+		public Collection<Pair<Path, QName>> getPaths() {
+			return paths;
+		}
+
+		/**
+		 * @return the categoryParents
+		 */
+		public List<ChildAssociationRef> getCategoryParents() {
+			return categoryParents;
+		}
+
+	}
+
+	private CategoryPaths getCategoryPaths(NodeRef nodeRef, Set<QName> aspects, Map<QName, Serializable> properties) {
+		ArrayList<Pair<Path, QName>> categoryPaths = new ArrayList<>();
+		ArrayList<ChildAssociationRef> categoryParents = new ArrayList<>();
+
+		nodeDAO.setCheckNodeConsistency();
+		for (QName classRef : aspects) {
+			AspectDefinition aspDef = dictionaryService.getAspect(classRef);
+			if (!isCategorised(aspDef)) {
+				continue;
+			}
+			LinkedList<Pair<Path, QName>> aspectPaths = new LinkedList<>();
+			for (PropertyDefinition propDef : aspDef.getProperties().values()) {
+				if (!propDef.getDataType().getName().equals(DataTypeDefinition.CATEGORY)) {
+					// The property is not a category
+					continue;
+				}
+				// Don't try to iterate if the property is null
+				Serializable propVal = properties.get(propDef.getName());
+				if (propVal == null) {
+					continue;
+				}
+				for (NodeRef catRef : DefaultTypeConverter.INSTANCE.getCollection(NodeRef.class, propVal)) {
+					if (catRef == null) {
+						continue;
+					}
+					// can be running in context of System user, hence use input nodeRef
+					catRef = tenantService.getName(nodeRef, catRef);
+
+					try {
+						Pair<Long, NodeRef> pair = nodeDAO.getNodePair(catRef);
+						if (pair != null) {
+							for (Path path : nodeDAO.getPaths(pair, false)) {
+								aspectPaths.add(new Pair<>(path, aspDef.getName()));
+							}
+						}
+					} catch (InvalidNodeRefException e) {
+						// If the category does not exists we move on the next
+					}
+				}
+			}
+			categoryPaths.addAll(aspectPaths);
+		}
+		// Add member final element
+		for (Pair<Path, QName> pair : categoryPaths) {
+			if (pair.getFirst().last() instanceof Path.ChildAssocElement) {
+				Path.ChildAssocElement cae = (Path.ChildAssocElement) pair.getFirst().last();
+				ChildAssociationRef assocRef = cae.getRef();
+				ChildAssociationRef categoryParentRef = new ChildAssociationRef(assocRef.getTypeQName(), assocRef.getChildRef(),
+						QName.createQName("member"), nodeRef);
+				pair.getFirst().append(new Path.ChildAssocElement(categoryParentRef));
+				categoryParents.add(categoryParentRef);
+			}
+		}
+
+		return new CategoryPaths(categoryPaths, categoryParents);
+	}
+
+	private List<Long> preCacheNodes(NodeMetaDataParameters nodeMetaDataParameters) {
+		int maxResults = nodeMetaDataParameters.getMaxResults();
+		boolean isLimitSet = ((maxResults != 0) && (maxResults != Integer.MAX_VALUE));
+
+		List<Long> nodeIds = null;
+		Iterable<Long> iterable = null;
+		List<Long> allNodeIds = nodeMetaDataParameters.getNodeIds();
+		if (allNodeIds != null) {
+			int toIndex = (maxResults > allNodeIds.size() ? allNodeIds.size() : maxResults);
+			nodeIds = isLimitSet ? allNodeIds.subList(0, toIndex) : nodeMetaDataParameters.getNodeIds();
+			iterable = nodeMetaDataParameters.getNodeIds();
+		} else {
+			Long fromNodeId = nodeMetaDataParameters.getFromNodeId();
+			Long toNodeId = nodeMetaDataParameters.getToNodeId();
+			nodeIds = new ArrayList<>(isLimitSet ? maxResults : 100); // TODO better default here?
+			iterable = new SequenceIterator(fromNodeId, toNodeId, maxResults);
+			int counter = 1;
+			for (Long nodeId : iterable) {
+				if (isLimitSet && (counter++ > maxResults)) {
+					break;
+				}
+				nodeIds.add(nodeId);
+			}
+		}
+
+		// Pre-evaluate ancestors so we can bulk load them
+		List<Long> ancestors;
+		if (cacheAncestors) {
+			ancestors = cacheAncestors(nodeIds);
+		} else {
+			ancestors = nodeIds;
+		}
+		// Ensure that we get fresh node references
+		nodeDAO.setCheckNodeConsistency();
+		// bulk load nodes and their ancestors
+		nodeDAO.cacheNodesById(ancestors);
+
+		return nodeIds;
+	}
+
+	/**
+	 * Does a 'breadth first' search of ancestors, caching as it goes
+	 * 
+	 * @param nodeIds
+	 *            initial list of nodes to visit
+	 * @return all visited nodes, in no particular order
+	 */
+	private List<Long> cacheAncestors(List<Long> nodeIds) {
+		final LinkedList<Long> toVisit = new LinkedList<>(nodeIds);
+		Set<Long> visited = new TreeSet<>();
+		Long nodeId;
+		nodeDAO.cacheNodesById(toVisit);
+		Long lastCached = toVisit.peekLast();
+		while ((nodeId = toVisit.pollFirst()) != null) {
+			if (visited.add(nodeId) && (nodeDAO.getNodeIdStatus(nodeId) != null) && !nodeDAO.getNodeIdStatus(nodeId).isDeleted()) {
+				nodeDAO.getParentAssocs(nodeId, null, null, null, new ChildAssocRefQueryCallback() {
+					@Override
+					public boolean preLoadNodes() {
+						return false;
+					}
+
+					@Override
+					public boolean orderResults() {
+						return false;
+					}
+
+					@Override
+					public boolean handle(Pair<Long, ChildAssociationRef> childAssocPair, Pair<Long, NodeRef> parentNodePair,
+							Pair<Long, NodeRef> childNodePair) {
+						toVisit.add(parentNodePair.getFirst());
+						return true;
+					}
+
+					@Override
+					public void done() {
+					}
+				});
+			}
+			final boolean nodeIdEqualsLastCached = ((nodeId == null) && (lastCached == null)) || ((nodeId != null) && nodeId.equals(lastCached));
+			if (nodeIdEqualsLastCached && !toVisit.isEmpty()) {
+				nodeDAO.cacheNodesById(toVisit);
+				lastCached = toVisit.peekLast();
+			}
+		}
+		return new ArrayList<>(visited);
+	}
+
+	/** Get properties that we want to be indexed. */
+	protected Map<QName, Serializable> getProperties(Long nodeId) {
+		// ALF-10641
+		// Residual properties are un-indexed -> break serialisation
+		nodeDAO.setCheckNodeConsistency();
+		Map<QName, Serializable> sourceProps = nodeDAO.getNodeProperties(nodeId);
+		Map<QName, Serializable> props = new HashMap<>(sourceProps.size());
+		for (QName propertyQName : sourceProps.keySet()) {
+			PropertyDefinition propDef = dictionaryService.getProperty(propertyQName);
+			if ((propDef != null) && propDef.isIndexed()) {
+				props.put(propertyQName, sourceProps.get(propertyQName));
+			}
+		}
+
+		return props;
+	}
+
+	@Override
+	public long getCRC(Long nodeId) {
+
+		final List<ChildAssociationRef> parentAssocs = new ArrayList<>(100);
+		nodeDAO.getParentAssocs(nodeId, null, null, null, new ChildAssocRefQueryCallback() {
+			@Override
+			public boolean preLoadNodes() {
+				return false;
+			}
+
+			@Override
+			public boolean orderResults() {
+				return false;
+			}
+
+			@Override
+			public boolean handle(Pair<Long, ChildAssociationRef> childAssocPair, Pair<Long, NodeRef> parentNodePair,
+					Pair<Long, NodeRef> childNodePair) {
+				parentAssocs.add(tenantService.getBaseName(childAssocPair.getSecond(), true));
+				return true;
+			}
+
+			@Override
+			public void done() {
+			}
+		});
+	
+
+		CRC32 crc = new CRC32();
+		for (ChildAssociationRef car : parentAssocs) {
+			try {
+				crc.update(car.toString().getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException("UTF-8 encoding is not supported");
+			}
+		}
+		return crc.getValue();
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void getNodesMetadata(NodeMetaDataParameters nodeMetaDataParameters, MetaDataResultsFilter resultFilter,
+			NodeMetaDataQueryCallback callback) {
+		if (!enabled) {
+			return;
+		}
+
+		NodeMetaDataQueryRowHandler rowHandler = new NodeMetaDataQueryRowHandler(callback);
+		boolean includeType = (resultFilter == null ? true : resultFilter.getIncludeType());
+		boolean includeProperties = (resultFilter == null ? true : resultFilter.getIncludeProperties());
+		boolean includeAspects = (resultFilter == null ? true : resultFilter.getIncludeAspects());
+		boolean includePaths = (resultFilter == null ? true : resultFilter.getIncludePaths());
+		boolean includeNodeRef = (resultFilter == null ? true : resultFilter.getIncludeNodeRef());
+		boolean includeParentAssociations = (resultFilter == null ? true : resultFilter.getIncludeParentAssociations());
+		boolean includeChildAssociations = (resultFilter == null ? true : resultFilter.getIncludeChildAssociations());
+		boolean includeOwner = (resultFilter == null ? true : resultFilter.getIncludeOwner());
+		boolean includeChildIds = (resultFilter == null ? true : resultFilter.getIncludeChildIds());
+		boolean includeTxnId = (resultFilter == null ? true : resultFilter.getIncludeTxnId());
+
+		List<Long> nodeIds = preCacheNodes(nodeMetaDataParameters);
+
+		for (Long nodeId : nodeIds) {
+			Status status = nodeDAO.getNodeIdStatus(nodeId);
+			if (status == null) {
+				// We've been called with the ID of a purged node, probably due to processing a transaction with a
+				// cascading delete. Fine to skip and assume it will be processed in a transaction.
+				// See org.alfresco.solr.tracker.CoreTracker.updateDescendantAuxDocs(NodeMetaData, boolean, SolrIndexSearcher)
+				continue;
+			}
+			NodeRef nodeRef = status.getNodeRef();
+
+			NodeRef unversionedNodeRef = null;
+			if (isVersionNodeRef(nodeRef)) {
+				unversionedNodeRef = convertVersionNodeRefToVersionedNodeRef(VersionUtil.convertNodeRef(nodeRef));
+			}
+
+			NodeMetaData nodeMetaData = new NodeMetaData();
+			nodeMetaData.setNodeId(nodeId);
+
+			if (includeNodeRef) {
+				nodeMetaData.setNodeRef(tenantService.getBaseName(nodeRef, true));
+			}
+
+			if (includeTxnId) {
+				nodeMetaData.setTxnId(status.getDbTxnId());
+			}
+
+			if (status.isDeleted()) {
+				rowHandler.processResult(nodeMetaData);
+				continue;
+			}
+
+			Map<QName, Serializable> props = null;
+			Set<QName> aspects = null;
+
+			Status unversionedStatus = null;
+			if (unversionedNodeRef != null) {
+				unversionedStatus = nodeDAO.getNodeRefStatus(unversionedNodeRef);
+			}
+
+			if (unversionedStatus != null) {
+				nodeMetaData.setAclId(nodeDAO.getNodeAclId(unversionedStatus.getDbId()));
+			} else {
+				nodeMetaData.setAclId(nodeDAO.getNodeAclId(nodeId));
+			}
+
+			if (includeType) {
+				QName nodeType = getNodeType(nodeId);
+				if (nodeType != null) {
+					nodeMetaData.setNodeType(nodeType);
+				} else {
+					QName typeQName = null;
+					StringBuilder errorMessage = new StringBuilder("NodeId ").append(nodeId).append(" with nodeRef ").append(nodeRef);
+
+					typeQName = nodeDAO.getNodeType(nodeId);
+					if (typeQName != null) {
+						errorMessage.append(" has type ").append(typeQName).append(", but this type is not registered in DictionaryService.");
+					} else {
+						errorMessage.append(" has no type.");
+					}
+
+					throw new AlfrescoRuntimeException(errorMessage.append(" It will be ignored by SOLR.").toString());
+				}
+			}
+
+			if (includeProperties) {
+				if (props == null) {
+					props = getProperties(nodeId);
+				}
+				nodeMetaData.setProperties(props);
+			} else {
+				nodeMetaData.setProperties(Collections.<QName, Serializable> emptyMap());
+			}
+
+			if (includeAspects || includePaths || includeParentAssociations) {
+				aspects = getNodeAspects(nodeId);
+			}
+			nodeMetaData.setAspects(aspects);
+
+			boolean ignoreLargeMetadata = (typeIndexFilter.shouldBeIgnored(getNodeType(nodeId))
+					|| aspectIndexFilter.shouldBeIgnored(getNodeAspects(nodeId)));
+
+			CategoryPaths categoryPaths = new CategoryPaths(new ArrayList<>(), new ArrayList<>());
+			if (!ignoreLargeMetadata && (includePaths || includeParentAssociations)) {
+				if (props == null) {
+					props = getProperties(nodeId);
+				}
+				categoryPaths = getCategoryPaths(status.getNodeRef(), aspects, props);
+			}
+
+			if (!ignoreLargeMetadata && (typeIndexFilter.isIgnorePathsForSpecificTypes() || aspectIndexFilter.isIgnorePathsForSpecificAspects()
+					|| includeParentAssociations)) {
+				// check if parent should be ignored
+				final List<ChildAssociationRef> parentAssocs = new ArrayList<>(100);
+				//beCPG Fix #30894
+				final Long[] primaryParentIdHolder = new Long[1];
+				nodeDAO.getParentAssocs(nodeId, null, null, true, new ChildAssocRefQueryCallback() {
+					@Override
+					public boolean preLoadNodes() {
+						return false;
+					}
+
+					@Override
+					public boolean orderResults() {
+						return false;
+					}
+
+					@Override
+					public boolean handle(Pair<Long, ChildAssociationRef> childAssocPair, Pair<Long, NodeRef> parentNodePair,
+							Pair<Long, NodeRef> childNodePair) {
+						ChildAssociationRef assoc = tenantService.getBaseName(childAssocPair.getSecond(), true);
+						parentAssocs.add(assoc);
+
+						if (childAssocPair.getSecond().isPrimary() && (primaryParentIdHolder[0] == null)) {
+							primaryParentIdHolder[0] = parentNodePair.getFirst();
+						}
+
+						return false;
+					}
+
+					@Override
+					public void done() {
+					}
+				});
+
+				Long parentId = primaryParentIdHolder[0];
+				if (parentId != null) {
+					if (typeIndexFilter.isIgnorePathsForSpecificTypes()) {
+						QName parentType = getNodeType(parentId);
+						ignoreLargeMetadata = typeIndexFilter.shouldBeIgnored(parentType);
+					}
+					if (!ignoreLargeMetadata && aspectIndexFilter.isIgnorePathsForSpecificAspects()) {
+						ignoreLargeMetadata = aspectIndexFilter.shouldBeIgnored(getNodeAspects(parentId));
+					}
+				}
+
+				if (includeParentAssociations) {
+					for (ChildAssociationRef ref : categoryPaths.getCategoryParents()) {
+						parentAssocs.add(tenantService.getBaseName(ref, true));
+					}
+
+					CRC32 crc = new CRC32();
+					for (ChildAssociationRef car : parentAssocs) {
+						try {
+							crc.update(car.toString().getBytes("UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+							throw new RuntimeException("UTF-8 encoding is not supported");
+						}
+					}
+					nodeMetaData.setParentAssocs(parentAssocs, crc.getValue());
+				}
+			}
+
+			nodeMetaData.setTenantDomain(tenantService.getDomain(nodeRef.getStoreRef().getIdentifier()));
+
+			if (includeChildAssociations || includeChildIds) {
+				final List<ChildAssociationRef> childAssocs = new ArrayList<>(100);
+				final List<Long> childIds = new ArrayList<>(100);
+				nodeDAO.getChildAssocs(nodeId, null, null, null, null, null, new ChildAssocRefQueryCallback() {
+					@Override
+					public boolean preLoadNodes() {
+						return false;
+					}
+
+					@Override
+					public boolean orderResults() {
+						return false;
+					}
+
+					@Override
+					public boolean handle(Pair<Long, ChildAssociationRef> childAssocPair, Pair<Long, NodeRef> parentNodePair,
+							Pair<Long, NodeRef> childNodePair) {
+						QName nodeType = nodeDAO.getNodeType(childNodePair.getFirst());
+						if (includeChildAssociations) {
+							boolean addCurrentChildAssoc = true;
+							if (typeIndexFilter.isIgnorePathsForSpecificTypes()) {
+								addCurrentChildAssoc = !typeIndexFilter.shouldBeIgnored(nodeType);
+							}
+							if (!addCurrentChildAssoc && aspectIndexFilter.isIgnorePathsForSpecificAspects()) {
+								addCurrentChildAssoc = !aspectIndexFilter.shouldBeIgnored(getNodeAspects(childNodePair.getFirst()));
+							}
+							if (addCurrentChildAssoc) {
+								childAssocs.add(tenantService.getBaseName(childAssocPair.getSecond(), true));
+							}
+						}
+
+						if (includeChildIds) {
+							boolean addCurrentId = true;
+							if (typeIndexFilter.isIgnorePathsForSpecificTypes()) {
+								addCurrentId = !typeIndexFilter.shouldBeIgnored(nodeType);
+							}
+							if (!addCurrentId) {
+								addCurrentId = !aspectIndexFilter.shouldBeIgnored(getNodeAspects(childNodePair.getFirst()));
+							}
+							if (addCurrentId) {
+								childIds.add(childNodePair.getFirst());
+							}
+						}
+						return true;
+					}
+
+					@Override
+					public void done() {
+					}
+				});
+				nodeMetaData.setChildAssocs(childAssocs);
+				nodeMetaData.setChildIds(childIds);
+			}
+
+			if (includePaths && !ignoreLargeMetadata) {
+				List<Path> directPaths = nodeDAO.getPaths(new Pair<>(nodeId, status.getNodeRef()), false);
+				Collection<Pair<Path, QName>> paths = new ArrayList<>(directPaths.size() + categoryPaths.getPaths().size());
+
+				for (Path path : directPaths) {
+					paths.add(new Pair<>(path.getBaseNamePath(tenantService), null));
+				}
+				for (Pair<Path, QName> catPair : categoryPaths.getPaths()) {
+					paths.add(new Pair<>(catPair.getFirst().getBaseNamePath(tenantService), catPair.getSecond()));
+				}
+				if (unversionedStatus != null) {
+					List<Path> unversionedPaths = nodeDAO
+							.getPaths(new Pair<>(unversionedStatus.getDbId(), unversionedStatus.getNodeRef()), false);
+					for (Path path : unversionedPaths) {
+						paths.add(new Pair<>(path.getBaseNamePath(tenantService), null));
+					}
+				}
+
+				nodeMetaData.setPaths(paths);
+
+				// Calculate name path
+				Collection<Collection<String>> namePaths = new ArrayList<>(2);
+				nodeMetaData.setNamePaths(namePaths);
+				for (Pair<Path, QName> catPair : paths) {
+					Path path = catPair.getFirst();
+
+					boolean added = false;
+					List<String> namePath = new ArrayList<>(path.size());
+					NEXT_ELEMENT: for (Path.Element pathElement : path) {
+						if (!(pathElement instanceof ChildAssocElement pathChildAssocElement)) {
+							// This is some path element that is terminal to a cm:name path
+							break;
+						}
+						NodeRef childNodeRef = pathChildAssocElement.getRef().getChildRef();
+						Pair<Long, NodeRef> childNodePair = nodeDAO.getNodePair(childNodeRef);
+						if (childNodePair == null) {
+							// Gone
+							break;
+						}
+						Long childNodeId = childNodePair.getFirst();
+						String childNodeName = (String) nodeDAO.getNodeProperty(childNodeId, ContentModel.PROP_NAME);
+						if (childNodeName == null) {
+							// We have hit a non-name node, which acts as a root for cm:name
+							// DH: There is no particular constraint here. This is just a decision made.
+							namePath.clear();
+							// We have to continue down the path as there could be a name path lower down
+							continue NEXT_ELEMENT;
+						}
+						// We can finally add the name to the path
+						namePath.add(childNodeName);
+						// Add the path if this is the first entry in the name path
+						if (!added) {
+							namePaths.add(namePath);
+							added = true;
+						}
+					}
+				}
+			}
+
+			if (includeOwner) {
+				// cached in OwnableService
+				nodeMetaData.setOwner(ownableService.getOwner(status.getNodeRef()));
+			}
+
+			rowHandler.processResult(nodeMetaData);
+		}
+	}
+
+	private boolean isVersionNodeRef(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
+	}
+
+	@SuppressWarnings("deprecation")
+	protected NodeRef convertVersionNodeRefToVersionedNodeRef(NodeRef versionNodeRef) {
+		Status status = nodeDAO.getNodeRefStatus(versionNodeRef);
+		if (status == null) {
+			return versionNodeRef;
+		}
+
+		Map<QName, Serializable> properties = nodeDAO.getNodeProperties(status.getDbId());
+
+		NodeRef nodeRef = null;
+
+		// Switch VersionStore depending on configured impl
+		if (versionNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID)) {
+			// V2 version store (eg. workspace://version2Store)
+			nodeRef = (NodeRef) properties.get(Version2Model.PROP_QNAME_FROZEN_NODE_REF);
+		} else if (versionNodeRef.getStoreRef().getIdentifier().equals(VersionModel.STORE_ID)) {
+			// Deprecated V1 version store (eg. workspace://lightWeightVersionStore)
+			nodeRef = new NodeRef((String) properties.get(VersionModel.PROP_QNAME_FROZEN_NODE_STORE_PROTOCOL),
+					(String) properties.get(VersionModel.PROP_QNAME_FROZEN_NODE_STORE_ID),
+					(String) properties.get(VersionModel.PROP_QNAME_FROZEN_NODE_ID));
+		}
+
+		return nodeRef;
+	}
+
+	private QName getNodeType(Long nodeId) {
+		QName result = nodeDAO.getNodeType(nodeId);
+		TypeDefinition type = dictionaryService.getType(result);
+		return (null == type) ? (null) : (result);
+	}
+
+	private Set<QName> getNodeAspects(Long nodeId) {
+		Set<QName> aspects = new HashSet<>();
+		if (null == nodeId) {
+			return aspects;
+		}
+		Set<QName> sourceAspects = nodeDAO.getNodeAspects(nodeId);
+		for (QName aspectQName : sourceAspects) {
+			AspectDefinition aspect = dictionaryService.getAspect(aspectQName);
+			if (aspect != null) {
+				aspects.add(aspectQName);
+			}
+		}
+		return aspects;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AlfrescoModel getModel(QName modelName) {
+		if (enabled) {
+			ModelDefinition modelDef = dictionaryService.getModel(modelName);
+			return (modelDef != null ? new AlfrescoModel(modelDef) : null);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AlfrescoModelDiff> getModelDiffs(Map<QName, Long> models) {
+		if (!enabled) {
+			return Collections.<AlfrescoModelDiff> emptyList();
+		}
+
+		List<AlfrescoModelDiff> diffs = new ArrayList<>();
+
+		// get all models the repository knows about and add each to a list with its checksum
+		Collection<QName> allModels = dictionaryService.getAllModels();
+
+		// look for changed and removed models
+		for (QName modelName : models.keySet()) {
+			if (allModels.contains(modelName)) {
+				Long checksum = models.get(modelName);
+				AlfrescoModel serverModel = getModel(modelName);
+				if (serverModel.getChecksum() != checksum.longValue()) {
+					// model has changed, add the changed server model
+					diffs.add(new AlfrescoModelDiff(modelName, AlfrescoModelDiff.TYPE.CHANGED, checksum, serverModel.getChecksum()));
+				}
+			} else {
+				// model no longer exists, just add it's name
+				diffs.add(new AlfrescoModelDiff(modelName, AlfrescoModelDiff.TYPE.REMOVED, null, null));
+			}
+		}
+
+		// look for new models
+		for (QName modelName : allModels) {
+			if (!models.containsKey(modelName)) {
+				// new model, add the model xml and checksum
+				AlfrescoModel model = getModel(modelName);
+				diffs.add(new AlfrescoModelDiff(modelName, AlfrescoModelDiff.TYPE.NEW, null, model.getChecksum()));
+			}
+		}
+
+
+		return diffs;
+	}
+
+	/**
+	 * Class that passes results from a result entity into the client callback
+	 */
+	protected class NodeQueryRowHandler {
+		private final NodeQueryCallback callback;
+		private boolean more;
+
+		private NodeQueryRowHandler(NodeQueryCallback callback) {
+			this.callback = callback;
+			this.more = true;
+		}
+
+		public void processResult(Node row) {
+			if (!more) {
+				// No more results required
+				return;
+			}
+
+			more = callback.handleNode(row);
+		}
+	}
+
+	/**
+	 * Class that passes results from a result entity into the client callback
+	 */
+	protected class NodeMetaDataQueryRowHandler {
+		private final NodeMetaDataQueryCallback callback;
+		private boolean more;
+
+		private NodeMetaDataQueryRowHandler(NodeMetaDataQueryCallback callback) {
+			this.callback = callback;
+			this.more = true;
+		}
+
+		public void processResult(NodeMetaData row) {
+			if (!more) {
+				// No more results required
+				return;
+			}
+
+			more = callback.handleNodeMetaData(row);
+		}
+	}
+
+	@Override
+	public Long getMaxTxnCommitTime() {
+		nodeDAO.setCheckNodeConsistency();
+		return nodeDAO.getMaxTxnCommitTime();
+	}
+
+	@Override
+	public Long getMaxTxnId() {
+		long maxCommitTime = System.currentTimeMillis() + 1L;
+		nodeDAO.setCheckNodeConsistency();
+		return nodeDAO.getMaxTxnIdByCommitTime(maxCommitTime);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.alfresco.repo.solr.SOLRTrackingComponent#getMaxChangeSetCommitTime()
+	 */
+	@Override
+	public Long getMaxChangeSetCommitTime() {
+		return aclDAO.getMaxChangeSetCommitTime();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.alfresco.repo.solr.SOLRTrackingComponent#getMaxChangeSetId()
+	 */
+	@Override
+	public Long getMaxChangeSetId() {
+		long maxCommitTime = System.currentTimeMillis() + 1L;
+		return aclDAO.getMaxChangeSetIdByCommitTime(maxCommitTime);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.alfresco.repo.solr.SOLRTrackingComponent#registerShardState(org.alfresco.repo.index.ShardState)
+	 */
+	@Override
+	public void registerShardState(ShardState shardState) {
+		if (shardRegistry != null) {
+			shardRegistry.registerShardState(shardState);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.alfresco.repo.solr.SOLRTrackingComponent#getShardRegistry()
+	 */
+	@Override
+	public ShardRegistry getShardRegistry() {
+		return this.shardRegistry;
+	}
+}

@@ -67,6 +67,7 @@
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="expressionService" ref="expressionService"/>
       <property name="alfrescoRepository" ref="alfrescoRepository"/>
+      <property name="beCPGAuditService" ref="beCPGAuditService"/>
    </bean>
    
    <!-- Export Search actions -->
@@ -84,6 +85,7 @@
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="entityActivityService" ref="entityActivityService" />
       <property name="personService" ref="personService" />
+      <property name="beCPGAuditService" ref="beCPGAuditService"/>
    </bean>
     
     
@@ -100,6 +102,7 @@
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="entityActivityService" ref="entityActivityService" />
        <property name="personService" ref="personService" />
+      <property name="beCPGAuditService" ref="beCPGAuditService"/>
    </bean>
     
     

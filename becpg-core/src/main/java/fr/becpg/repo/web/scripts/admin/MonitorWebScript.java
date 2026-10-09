@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,8 +53,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
-	/** Constant <code>SYSTEM_PATH="/app:company_home/cm:System/"</code> */
-	private static final String SYSTEM_PATH = "/app:company_home/cm:System/";
+	/** Constant <code>COMPANY_HOME_PATH="/app:company_home/"</code> */
+	private static final String COMPANY_HOME_PATH = "/app:company_home/";
 
 	/** Constant <code>SUCCESS_STATUS="SUCCESS"</code> */
 	private static final String SUCCESS_STATUS = "SUCCESS";
@@ -119,7 +118,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 	private AbstractAuthenticationService authenticationService;
 
-	private BeCPGLicenseManager licenseManager;
+	protected BeCPGLicenseManager licenseManager;
 
 	private TenantAdminService tenantAdminService;
 
@@ -164,13 +163,18 @@ public class MonitorWebScript extends DeclarativeWebScript {
 				fillMonitoringInformation(ret, true);
 				ret.put(AUTHENTICATED_KEY, true);
 				try {
-					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inPath(SYSTEM_PATH).ftsLanguage().maxResults(1).list();
-					if (!result.isEmpty()) {
+					// Anchored on company home, which cannot be moved nor renamed, so that an empty
+					// result really means the index is unusable. The PATH condition cannot be
+					// answered by the database, the query is therefore always run against SOLR.
+					NodeRef result = BeCPGQueryBuilder.createQuery().inPath(COMPANY_HOME_PATH).ftsLanguage().singleValue();
+					if (result != null) {
 						ret.put(SOLR_STATUS, UP_STATUS);
 					} else {
+						logger.warn("SOLR reported DOWN, no result returned under " + COMPANY_HOME_PATH);
 						ret.put(SOLR_STATUS, DOWN_STATUS);
 					}
 				} catch (Exception e) {
+					logger.warn("SOLR reported DOWN", e);
 					ret.put(SOLR_STATUS, DOWN_STATUS);
 				}
 

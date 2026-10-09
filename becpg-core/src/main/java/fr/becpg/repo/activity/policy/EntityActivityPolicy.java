@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -52,7 +53,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy,
-		NodeServicePolicies.OnMoveNodePolicy {
+		NodeServicePolicies.OnMoveNodePolicy, NodeServicePolicies.OnRestoreNodePolicy {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
@@ -69,6 +70,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
 	
 	public static final String KEY_IGNORE_MOVE_ACTIVITIES = "EntityActivity_IgnoreMoveActivities";
+
+	/** Constant <code>KEY_RESTORING_ARCHIVED_NODE="EntityActivity_RestoringArchivedNode"</code> */
+	private static final String KEY_RESTORING_ARCHIVED_NODE = "EntityActivity_RestoringArchivedNode";
 
 	/** Constant <code>DELIMITER="###"</code> */
 	private static final String DELIMITER = "###";
@@ -137,6 +141,11 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onDeleteAssociation"));
 
+		// A variant is a cm:content child of the entity, so its creation and deletion are already caught by
+		// the cm:content bindings below: only the property update needs a binding of its own.
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_VARIANT,
+				new JavaBehaviour(this, "onUpdateProperties"));
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ForumModel.TYPE_POST,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ForumModel.TYPE_POST,
@@ -150,6 +159,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ContentModel.TYPE_CONTENT,
 				new JavaBehaviour(this, "beforeDeleteNode"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRestoreNodePolicy.QNAME, ContentModel.TYPE_BASE,
+				new JavaBehaviour(this, "onRestoreNode"));
 
 		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), BeCPGModel.TYPE_ACTIVITY_LIST,
 				new JavaBehaviour(this, "getCopyCallback"));
@@ -506,6 +518,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 
+		if (isArchived(childAssocRef.getChildRef())) {
+			return;
+		}
+
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
@@ -531,6 +547,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 
+		if (isArchived(nodeRef)) {
+			return;
+		}
+
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
 				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
 			if (L2CacheSupport.isThreadLockEnable()) {
@@ -549,9 +569,46 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Restoring an archived node is a cross-store move: Alfresco replays a creation for every
+	 * descendant, which would turn a single restore into one activity per node. Those activities
+	 * describe no user edit and, piled up in the single transaction of the restore, exhaust both the
+	 * heap and the database locks, so the whole restore fails.
+	 *
+	 * Alfresco fires the same policy for a locked node on its way to the archive, hence the check on
+	 * the destination store: only a node coming back to the live store is being restored.
+	 */
+	@Override
+	public void onRestoreNode(ChildAssociationRef childAssocRef) {
+		if (!isArchived(childAssocRef.getChildRef())) {
+			TransactionSupportUtil.bindResource(KEY_RESTORING_ARCHIVED_NODE, Boolean.TRUE);
+		}
+	}
+
+	/**
+	 * <p>Tells whether the node lives in the archive store, where activities are pointless: an
+	 * archived node is only reachable from the trashcan, and both archiving and restoring walk the
+	 * whole subtree.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return true when the node has been archived
+	 */
+	private boolean isArchived(NodeRef nodeRef) {
+		return StoreRef.PROTOCOL_ARCHIVE.equals(nodeRef.getStoreRef().getProtocol());
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		if (Boolean.TRUE.equals(TransactionSupportUtil.getResource(KEY_RESTORING_ARCHIVED_NODE))) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Restoring an archived node, skip " + pendingNodes.size() + " pending activities for key " + key);
+			}
+			return false;
+		}
+
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
 				QName type = nodeService.getType(nodeRef);
@@ -595,6 +652,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	private boolean accept(QName type) {
 		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
+				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_VARIANT)
 				|| ((entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) 
 						&& !BeCPGModel.TYPE_ACTIVITY_LIST.equals(type)
 						&& !BeCPGModel.TYPE_NOTIFICATIONRULELIST.equals(type)
@@ -627,7 +685,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 					} else {
 						Map<QName, Pair<Serializable, Serializable>> updatedFields = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString());
 						if (!BehaviourRegistry.shouldIgnoreActivity(actionedUponNodeRef, type, updatedFields)) {
-							if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+							if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)
+									|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_VARIANT)) {
 								if(logger.isDebugEnabled()) {
 									logger.debug("Action upon datalist, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " ("+nodeService.getType(actionedUponNodeRef)+")");
 								}

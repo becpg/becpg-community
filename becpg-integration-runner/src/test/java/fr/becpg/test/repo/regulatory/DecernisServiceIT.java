@@ -3,11 +3,13 @@ package fr.becpg.test.repo.regulatory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.regulatory.ComplianceResult;
 import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryService;
 import fr.becpg.repo.regulatory.decernis.ProductDataDecernisJsonService;
@@ -20,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
@@ -220,6 +223,12 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 
 			nodeService.setProperty(ing4, PLMModel.PROP_REGULATORY_CODE, 4476);
 			nodeService.setProperty(ing4, PLMModel.PROP_ING_TYPE_V2, preservativeNodeRef);
+
+			nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "BECPG_123");
+			nodeService.setProperty(ing5, PLMModel.PROP_ING_TYPE_V2, preservativeNodeRef);
+
+			nodeService.setProperty(ing6, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,42");
+			nodeService.setProperty(ing6, PLMModel.PROP_ING_TYPE_V2, preservativeNodeRef);
 
 			return null;
 		});
@@ -532,6 +541,182 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			});
 		}
 
+	}
+
+	@Test
+	public void testRequestsToDecernisDoesNotOverrideBecpgRegulatoryCode()  {
+		inWriteTx(() -> {
+			nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "BECPG_123");
+			nodeService.removeProperty(ing6, PLMModel.PROP_REGULATORY_CODE);
+			return null;
+		});
+
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/v5-analysis-response.json")));
+			mockWebServer.enqueue(new MockResponse().setBody(""));
+			return null;
+		});
+
+		try {
+			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testRequestsToDecernisDoesNotOverrideBecpgRegulatoryCode");
+
+			inWriteTx(() -> {
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+				List<IngListDataItem> ingList = product.getIngList();
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing5).withIsManual(null));
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing6).withIsManual(null));
+
+				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
+
+				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage2NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country3NodeRef)));
+				item1.setRegulatoryState(SystemState.Simulation);
+
+				regulatoryList.add(item1);
+
+				return alfrescoRepository.save(product);
+			});
+
+			DecernisRegulatoryService mockRegulatoryService = new DecernisRegulatoryService(
+					nodeService,
+					alfrescoRepository,
+					formulationService,
+					batchQueueService,
+					policyBehaviourFilter,
+					entityActivityService,
+					systemConfigurationService,
+					mutexFactory,
+					productDataDecernisJsonService
+			) {
+				@Override
+				public String fetchIngredientId(IngListDataItem ingListDataItem, String companyName) {
+					return "42";
+				}
+			};
+
+			inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                ComplianceResult result = new ComplianceResult();
+				mockRegulatoryService.doCheck(false, result, product);
+				// ingredient characts should get updated
+				return null;
+			});
+
+			inWriteTx(() -> {
+				IngItem updatedIng5 = (IngItem) alfrescoRepository.findOne(ing5);
+				IngItem updatedIng6 = (IngItem) alfrescoRepository.findOne(ing6);
+
+				Set<String> ing5codes = Arrays.stream(updatedIng5.getRegulatoryCode().split(",")).collect(Collectors.toSet());
+				Set<String> ing6codes = Arrays.stream(updatedIng6.getRegulatoryCode().split(",")).collect(Collectors.toSet());
+				assertEquals(Set.of("BECPG_123", "DECERNIS_42"), ing5codes);
+				assertEquals(Set.of("DECERNIS_42"), ing6codes);
+				return null;
+			});
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
+				return null;
+			});
+		}
+	}
+
+	@Order(/* last */)
+	@Test
+	public void testRequestsToDecernisOnlyContainRid()  {
+		inWriteTx(() -> {
+			nodeService.setProperty(ing1, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+			nodeService.setProperty(ing2, PLMModel.PROP_REGULATORY_CODE, ",,DECERNIS_42,");
+			nodeService.setProperty(ing3, PLMModel.PROP_REGULATORY_CODE, "DECERNIS_42");
+			nodeService.setProperty(ing4, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,DECERNIS_42");
+			nodeService.setProperty(ing5, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,BECPG_4567,DECERNIS_42");
+			nodeService.setProperty(ing6, PLMModel.PROP_REGULATORY_CODE, "BECPG_123,BECPG_4567,DECERNIS_42,DECERNIS_43");
+			return null;
+		});
+
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/v5-analysis-response.json")));
+			mockWebServer.enqueue(new MockResponse().setBody(""));
+			return null;
+		});
+
+		try {
+			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testRequestsToDecernisOnlyContainRid");
+
+			inWriteTx(() -> {
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+				List<IngListDataItem> ingList = product.getIngList();
+
+				for (NodeRef ing : List.of(ing1, ing2, ing3, ing4, ing5, ing6)) {
+					ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing).withIsManual(null));
+				}
+
+				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
+
+				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage2NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country3NodeRef)));
+				item1.setRegulatoryState(SystemState.Simulation);
+
+				regulatoryList.add(item1);
+
+				return alfrescoRepository.save(product);
+			});
+
+			inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                ComplianceResult result = new ComplianceResult();
+                regulatoryService.doCheck(false, result, product);
+				RecordedRequest postRequest = null;
+
+				for (int i = 0; i < 10; i++) {
+					RecordedRequest request = mockWebAnalysis.takeRequest(3, TimeUnit.SECONDS);
+					if (request.getMethod().equals("POST") && request.getRequestUrl().toString().contains("/recipe-analysis/transaction")) {
+						postRequest = request;
+						break;
+					}
+				}
+
+				if (postRequest == null)
+					fail("POST request to recipe analysis endpoint should have been sent");
+
+				ObjectMapper objectMapper = new ObjectMapper();
+				JsonNode body = objectMapper.readTree(postRequest.getBody().readUtf8());
+
+				JsonNode ingredients = body
+						.path("transaction")
+						.path("recipe")
+						.path("ingredients");
+
+				assertEquals(6, ingredients.size());
+
+				for (JsonNode ingredient : ingredients) {
+					assertEquals("Decernis ID", ingredient.path("idType").asText());
+					assertEquals("42", ingredient.path("idValue").asText());
+				}
+
+				return null;
+			});
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
+				return null;
+			});
+		}
 	}
 
 }

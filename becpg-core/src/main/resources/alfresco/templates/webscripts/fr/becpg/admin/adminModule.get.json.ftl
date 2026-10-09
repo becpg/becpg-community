@@ -40,25 +40,37 @@
    <#if users?? >
 	,"users":
 	   [
-	      <#list users as item>
+	      <#list users as userItem>
+	      <#if userItem?is_hash>
+	      	<#assign item = userItem.username>
+	      	<#assign licenseGroup = userItem.licenseGroup!"" >
+	      	<#assign customFullName = userItem.fullName!"" >
+	      <#else>
+	      	<#assign item = userItem>
+	      	<#assign licenseGroup = "" >
+	      	<#assign customFullName = "" >
+	      </#if>
 	      {
 	      <#attempt>
 	      	<#if people.getPerson(item) ??>
 	     	 <#assign currentPerson = people.getPerson(item)>
-	         	 "username" : "${item}",
-		         "fullName" : "${currentPerson.properties["cm:firstName"]!""} ${currentPerson.properties["cm:lastName"]!""}",
-		         "email" : "${currentPerson.properties["cm:email"]!""}"
+	         	 "username" : "${item?js_string}",
+		         "fullName" : "${((currentPerson.properties["cm:firstName"]!"") + " " + (currentPerson.properties["cm:lastName"]!""))?js_string}",
+		         "email" : "${(currentPerson.properties["cm:email"]!"")?js_string}",
+		         "licenseGroup" : "${licenseGroup?js_string}"
 		     <#else>
-		     	  "username" : "${item}",
-		      	  "fullName" : "${item}",
-	        	  "email" : ""  
+		     	  "username" : "${item?js_string}",
+		      	  "fullName" : "<#if customFullName != "">${customFullName?js_string}<#else>${item?js_string}</#if>",
+	        	  "email" : "",
+	        	  "licenseGroup" : "${licenseGroup?js_string}"
 	         </#if>
 	      <#recover>
-	      	"username" : "${item}",
-	        "fullName" : "${item}",
-	        "email" : ""
+	      	"username" : "${item?js_string}",
+	        "fullName" : "<#if customFullName != "">${customFullName?js_string}<#else>${item?js_string}</#if>",
+	        "email" : "",
+	        "licenseGroup" : "${licenseGroup?js_string}"
 	      </#attempt>   
-	      }<#if item_has_next>,</#if>
+	      }<#if userItem_has_next>,</#if>
 	     </#list>
 	   ]
 	  </#if>

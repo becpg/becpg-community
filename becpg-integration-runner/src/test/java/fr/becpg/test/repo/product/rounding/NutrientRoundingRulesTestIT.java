@@ -152,6 +152,32 @@ public class NutrientRoundingRulesTestIT {
 
 		assertEquals(2.9d, RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getFirst(), 0d);
 		assertEquals(0d, RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getSecond(), 0d);
+
+		// Vitamins / minerals now yield a tolerance (EU Table 1: +50 % / -35 % for vitamins)
+		assertEquals(18d, RegulationFormulationHelper.tolerances(12d, NutrientCode.VitC, Locale.FRENCH, null).getFirst(), 0d);
+		assertEquals(7.8d, RegulationFormulationHelper.tolerances(12d, NutrientCode.VitC, Locale.FRENCH, null).getSecond(), 0d);
+	}
+
+	@Test
+	public void testEuropeanClaimTolerances() {
+
+		// When the nutrient is subject to a claim, EU Table 3 (side 1 / side 2) applies instead of Table 1.
+
+		// Protein (min-content claim, eg. "source of protein"): side 1 is the upward margin (+40 % in 10-40 g),
+		// side 2 is limited to the measurement uncertainty (the declared value)
+		assertEquals(15d, RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein, Locale.FRENCH, null, false).getFirst(), 0d);
+		assertEquals(17d, RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein, Locale.FRENCH, null, true).getFirst(), 0d);
+		assertEquals(12d, RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein, Locale.FRENCH, null, true).getSecond(), 0d);
+
+		// Fat (max-content claim, eg. "low fat"): side 1 is the downward margin (-40 % in 10-40 g),
+		// side 2 is limited to the measurement uncertainty (the declared value)
+		assertEquals(15d, RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat, Locale.FRENCH, null, false).getSecond(), 0d);
+		assertEquals(11d, RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat, Locale.FRENCH, null, true).getSecond(), 0d);
+		assertEquals(19d, RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat, Locale.FRENCH, null, true).getFirst(), 0d);
+
+		// Vitamin claim: upward margin kept (+50 %), downward limited to the measurement uncertainty
+		assertEquals(18d, RegulationFormulationHelper.tolerances(12d, NutrientCode.VitC, Locale.FRENCH, null, true).getFirst(), 0d);
+		assertEquals(12d, RegulationFormulationHelper.tolerances(12d, NutrientCode.VitC, Locale.FRENCH, null, true).getSecond(), 0d);
 	}
 
 	@Test
@@ -191,6 +217,23 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(0.01d, RegulationFormulationHelper.round(10.36d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 		assertEquals(0.10d, RegulationFormulationHelper.round(101d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 		assertEquals(1.2d, RegulationFormulationHelper.round(1150d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
+
+		// #35829 : the raw value is expressed in mg whereas the EU regulation expects g
+		assertEquals("< 0,005", RegulationFormulationHelper.displayValue(2.33d,
+				RegulationFormulationHelper.round(2.33d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("0,01", RegulationFormulationHelper.displayValue(10.36d,
+				RegulationFormulationHelper.round(10.36d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("0,1", RegulationFormulationHelper.displayValue(101d,
+				RegulationFormulationHelper.round(101d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH, "EU",
+				"mg/100g"));
+		assertEquals("2,0", RegulationFormulationHelper.displayValue(2000d,
+				RegulationFormulationHelper.round(2000d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
+		assertEquals("11", RegulationFormulationHelper.displayValue(11000d,
+				RegulationFormulationHelper.round(11000d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), NutrientCode.Sodium, null, Locale.FRENCH,
+				"EU", "mg/100g"));
 
 		// less than
 		assertEquals(null, RegulationFormulationHelper.displayValue(null,

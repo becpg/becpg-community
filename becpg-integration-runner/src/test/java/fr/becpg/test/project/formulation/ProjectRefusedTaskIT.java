@@ -144,4 +144,38 @@ public class ProjectRefusedTaskIT extends AbstractProjectTestCase {
 		}, false, true);
 
 	}
+
+	@Test
+	public void testMultipleCancelledPredecessors() {
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			// Complete intermediate tasks to unlock task4 and task5
+			projectData.getTaskList().get(0).setTaskState(TaskState.Completed); // task1
+			projectData.getTaskList().get(1).setTaskState(TaskState.Completed); // task2
+			projectData.getTaskList().get(2).setTaskState(TaskState.Completed); // task3
+
+			// Cancel both task4 and task5 which share task3 as ancestor
+			// and both are predecessors to task6 (index 5)
+			projectData.getTaskList().get(3).setTaskState(TaskState.Cancelled); // task4
+			projectData.getTaskList().get(4).setTaskState(TaskState.Cancelled); // task5
+
+			alfrescoRepository.save(projectData);
+			projectService.formulate(projectNodeRef);
+
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			// Verify that task6 is now InProgress, which means both cancelled predecessors
+			// were successfully traversed without triggering a false cycle detection.
+			assertEquals(TaskState.InProgress, projectData.getTaskList().get(5).getTaskState());
+
+			return null;
+		}, false, true);
+	}
 }

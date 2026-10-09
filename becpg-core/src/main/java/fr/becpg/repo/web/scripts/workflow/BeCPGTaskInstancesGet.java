@@ -71,7 +71,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	@Override
 	protected Map<String, Object> buildModel(WorkflowModelBuilder modelBuilder, WebScriptRequest req, Status status, Cache cache) {
 		Map<String, String> params = req.getServiceMatch().getTemplateVars();
-		Map<String, Object> filters = new HashMap<>(4);
+		Map<String, Object> filters = HashMap.newHashMap(4);
 
 		// authority is not included into filters list as it will be taken into
 		// account before filtering

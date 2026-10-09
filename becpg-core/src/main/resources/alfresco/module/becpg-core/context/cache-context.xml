@@ -45,6 +45,8 @@
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
 			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="5000" />
 			  <entry key="fr.becpg.repo.product.formulation.SecurityFormulationHandler" value="20" />
+			  <entry key="fr.becpg.repo.product.formulation.allergen.PALDatabaseService" value="20" />
+			  <entry key="fr.becpg.repo.score.ScoreDefinitionService" value="20" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager.sessions" value="200" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager.writeLicenses" value="200" />
@@ -58,6 +60,7 @@
 			  <entry key="fr.becpg.repo.survey.data.SurveyQuestion" value="1000" />
 			  <entry key="fr.becpg.repo.helper.AuthorityHelper" value="100" />
 			  <entry key="fr.becpg.repo.batch.BatchQueueServiceImpl" value="100" />
+			  <entry key="fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor" value="100" />
 			</map>
 		</property>
 	</bean>

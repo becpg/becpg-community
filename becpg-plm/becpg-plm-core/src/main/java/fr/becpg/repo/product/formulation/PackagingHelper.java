@@ -1,9 +1,11 @@
 package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -336,6 +338,96 @@ public class PackagingHelper implements InitializingBean {
 	 */
 	public static List<PackagingListDataItem> flatPackagingList(ProductData productData) {
 		return instance.flatPackagingList(productData, 1d);
+	}
+
+	/**
+	 * #31701: aggregates the SECONDARY / TERTIARY / INNER packaging tare (kg) declared on the
+	 * sub-components of the composition, scaled by each component quantity, so that a secondary
+	 * packaging (e.g. a "caisse") placed at a lower composition level is counted at every level -
+	 * exactly as the primary tare already is.
+	 * <p>
+	 * Only secondary/tertiary/inner levels are returned: the primary tare of components is already
+	 * aggregated separately (see {@link FormulationHelper#getTareInKg(CompoListDataItem, ProductData)}).
+	 * The returned holder carries the composition contribution to be added flat to the product secondary /
+	 * tertiary / inner tare, without re-multiplication by productPerBoxes / boxesPerPallet.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @return a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} holding the aggregated secondary/tertiary/inner tare
+	 */
+	public static VariantPackagingData getCompositionTareByLevel(ProductData productData) {
+		return instance.doGetCompositionTareByLevel(productData, new HashSet<>());
+	}
+
+	/**
+	 * Walks the composition, guarding against a recipe that refers to itself: a cyclic composition
+	 * would otherwise recurse until the stack overflows and fail the whole formulation.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @param visited the products already walked on the current branch
+	 * @return the aggregated secondary/tertiary/inner tare
+	 */
+	private VariantPackagingData doGetCompositionTareByLevel(ProductData productData, Set<NodeRef> visited) {
+		VariantPackagingData ret = new VariantPackagingData();
+
+		NodeRef productNodeRef = productData.getNodeRef();
+
+		if ((productNodeRef != null) && !visited.add(productNodeRef)) {
+			logger.warn("Cycle detected in composition, skipping packaging tare of: " + productData.getName());
+			return ret;
+		}
+
+		try {
+			appendCompositionTareByLevel(productData, ret, visited);
+		} finally {
+			visited.remove(productNodeRef);
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Adds to the given holder the secondary/tertiary/inner tare of every sub-component of the
+	 * composition, scaled by its quantity.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @param ret the holder being filled
+	 * @param visited the products already walked on the current branch
+	 */
+	private void appendCompositionTareByLevel(ProductData productData, VariantPackagingData ret, Set<NodeRef> visited) {
+
+		if (Boolean.TRUE.equals(productData.getDropPackagingOfComponents())) {
+			return;
+		}
+
+		for (CompoListDataItem compoList : productData
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+
+			if ((compoList.getProduct() == null) || PLMModel.TYPE_RAWMATERIAL.equals(nodeService.getType(compoList.getProduct()))) {
+				continue;
+			}
+
+			ProductData subProduct = alfrescoRepository.findOne(compoList.getProduct());
+
+			if (!subProduct.hasPackagingListEl() && !subProduct.hasCompoListEl()) {
+				continue;
+			}
+
+			BigDecimal qtyFactor = FormulationHelper.getPackagingListQtyForProduct(compoList, subProduct);
+			if ((qtyFactor == null) || (qtyFactor.doubleValue() == 0d)) {
+				continue;
+			}
+
+			VariantPackagingData subOwn = getDefaultVariantPackagingData(subProduct);
+			VariantPackagingData subComposition = doGetCompositionTareByLevel(subProduct, visited);
+
+			BigDecimal subSecondary = (subOwn != null ? subOwn.getTareSecondary() : BigDecimal.ZERO).add(subComposition.getTareSecondary());
+			BigDecimal subTertiary = (subOwn != null ? subOwn.getTareTertiary() : BigDecimal.ZERO).add(subComposition.getTareTertiary());
+			BigDecimal subInner = (subOwn != null ? subOwn.getTareInner() : BigDecimal.ZERO).add(subComposition.getTareInner());
+
+			ret.addTareSecondary(subSecondary.multiply(qtyFactor));
+			ret.addTareTertiary(subTertiary.multiply(qtyFactor));
+			ret.addTareInner(subInner.multiply(qtyFactor));
+		}
 	}
 
 	/**

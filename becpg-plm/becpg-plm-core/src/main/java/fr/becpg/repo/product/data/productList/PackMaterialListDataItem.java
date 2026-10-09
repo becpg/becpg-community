@@ -1,10 +1,13 @@
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -35,6 +38,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	private Double pmlWeight;
 	private Double pmlRecycledPercentage;
 	private NodeRef pmlMaterial;
+	private List<NodeRef> geoOrigins = new ArrayList<>();
 	private PackagingLevel pkgLevel = PackagingLevel.Primary;
 	private Boolean isManual = Boolean.FALSE;
 
@@ -190,6 +194,26 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	}
 
 	/**
+	 * <p>Getter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "pack:pmlGeoOrigin")
+	public List<NodeRef> getGeoOrigins() {
+		return geoOrigins;
+	}
+
+	/**
+	 * <p>Setter for the field <code>geoOrigins</code>.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object
+	 */
+	public void setGeoOrigins(List<NodeRef> geoOrigins) {
+		this.geoOrigins = geoOrigins;
+	}
+
+	/**
 	 * <p>Constructor for PackMaterialListDataItem.</p>
 	 */
 	public PackMaterialListDataItem() {
@@ -260,6 +284,17 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return this;
 	}
 
+	/**
+	 * <p>withGeoOrigins.</p>
+	 *
+	 * @param geoOrigins a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
+	public PackMaterialListDataItem withGeoOrigins(List<NodeRef> geoOrigins) {
+		this.geoOrigins = new ArrayList<>(geoOrigins);
+		return this;
+	}
+
 
 	/**
 	 * <p>Constructor for PackMaterialListDataItem.</p>
@@ -274,6 +309,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pkgLevel = o.pkgLevel;
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
 		this.isManual = o.isManual;
+		this.geoOrigins = new ArrayList<>(o.geoOrigins);
 	}
 
 	/** {@inheritDoc} */
@@ -291,7 +327,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
+		result = prime * result + Objects.hash(geoOrigins, isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
 		return result;
 	}
 
@@ -305,7 +341,8 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		if (getClass() != obj.getClass())
 			return false;
 		PackMaterialListDataItem other = (PackMaterialListDataItem) obj;
-		return Objects.equals(isManual, other.isManual) && pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial)
+		return Objects.equals(geoOrigins, other.geoOrigins) && Objects.equals(isManual, other.isManual) && pkgLevel == other.pkgLevel
+				&& Objects.equals(pmlMaterial, other.pmlMaterial)
 				&& Objects.equals(pmlPerc, other.pmlPerc) && Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage)
 				&& Objects.equals(pmlWeight, other.pmlWeight);
 	}

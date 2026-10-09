@@ -283,9 +283,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                             }
                             if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value != null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length > 1) {
                                 var regulatoryCode = reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value;
+                                var displayLabel = reqCtrl["displayLabel"] ? reqCtrl["displayLabel"] : regulatoryCode;
                                 desc += '      <span class="rclReq-regulatoryCode" title="'
                                     + beCPG.util.encodeAttr(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode, "")) + '"  >'
-                                    + Alfresco.util.encodeHTML(regulatoryCode);
+                                    + Alfresco.util.encodeHTML(displayLabel);
                                 if (reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"] && reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].value != null) {
                                     desc += " (" + reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].displayValue + " %)";
                                 }
@@ -329,6 +330,31 @@ if (beCPG.module.EntityDataGridRenderers) {
 				return Alfresco.util.formatDate(data.value,"dd/mm/yyyy").toLowerCase();
 			}
 			return "";
+		}
+
+	});
+
+
+	/**
+	  * A characteristic or a list value that was retired is greyed out, the way a row outside its
+	  * effectivity window is: it can no longer be picked, but the data still referring to it has to
+	  * stay readable.
+	  */
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : "bcpg:isDeleted",
+		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
+			if (typeof data.value === "undefined" || data.value === null || data.value === "") {
+				return "";
+			}
+
+			var isDeleted = data.value === true || data.value === "true";
+
+			if (isDeleted) {
+				YAHOO.util.Dom.setStyle(scope.widgets.dataTable.getTrEl(elCell), "opacity", "0.5");
+			}
+
+			return Alfresco.util.encodeHTML(scope.msg(isDeleted ? "data.boolean.true" : "data.boolean.false"));
 		}
 
 	});

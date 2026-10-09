@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper.json;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -130,6 +131,49 @@ public class JsonData implements Iterable<JsonData> {
 		} else {
 			throw new UnsupportedOperationException("put() only works on ObjectNode");
 		}
+	}
+
+	/**
+	 * <p>fieldNames.</p>
+	 *
+	 * @return a {@link java.util.Iterator} object
+	 */
+	public Iterator<String> fieldNames() {
+		if (jsonNode instanceof ObjectNode objectNode) {
+			return objectNode.fieldNames();
+		}
+		return Collections.emptyIterator();
+	}
+
+	/**
+	 * <p>Getter for the field <code>jsonNode</code>.</p>
+	 *
+	 * @return a {@link com.fasterxml.jackson.databind.JsonNode} object
+	 */
+	public JsonNode getJsonNode() {
+		return jsonNode;
+	}
+
+	/**
+	 * <p>remove.</p>
+	 *
+	 * @param field a {@link java.lang.String} object
+	 */
+	public void remove(String field) {
+		if (jsonNode instanceof ObjectNode objectNode) {
+			objectNode.remove(field);
+		} else {
+			throw new UnsupportedOperationException("remove() only works on ObjectNode");
+		}
+	}
+
+	/**
+	 * <p>isEmpty.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isEmpty() {
+		return jsonNode == null || jsonNode.isEmpty();
 	}
 
 	/**
