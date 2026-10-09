@@ -1,4 +1,4 @@
-FROM mysql:9.7
+FROM mysql:26.7
 
 RUN microdnf update -y && microdnf clean all && rm -rf /var/cache/yum
 

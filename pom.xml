@@ -137,7 +137,7 @@
 
 		<alfresco.aos.version>3.4.1</alfresco.aos.version>
 
-		<mysql.connector.version>9.7.0</mysql.connector.version>
+		<mysql.connector.version>26.7.0</mysql.connector.version>
         
     
         <!-- Docker images -->
