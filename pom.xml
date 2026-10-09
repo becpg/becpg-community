@@ -143,6 +143,8 @@
         <!-- Docker images -->
         <docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
         <docker.share.image>alfresco/alfresco-share</docker.share.image>
+        <!-- JDK copied into the core and Share images in place of the JDK 21 Alfresco ships -->
+        <docker.jdk.image>eclipse-temurin:25.0.4.1_1-jdk</docker.jdk.image>
         
           <keystore.settings>-Dencryption.keystore.type=JCEKS
             -Dencryption.cipherAlgorithm=AES/CBC/PKCS5Padding

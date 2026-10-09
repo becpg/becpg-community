@@ -31,7 +31,6 @@ COPY --chown=33000:1000 alfresco/disable-hotswap-agent.properties $TOMCAT_DIR/we
 # Copy configuration files
 COPY --chown=33000:1000 alfresco/beCPG.properties $TOMCAT_DIR/shared/classes/
 COPY --chown=33000:1000 alfresco/alfresco-global.properties $TOMCAT_DIR/shared/classes/
-COPY --chown=33000:1000 alfresco/catalina.policy $TOMCAT_DIR/conf/
 
 # Copy built artifacts from builder stage
 COPY --chown=33000:1000 --from=builder ${TOMCAT_DIR}/webapps/alfresco/ ${TOMCAT_DIR}/webapps/alfresco/
