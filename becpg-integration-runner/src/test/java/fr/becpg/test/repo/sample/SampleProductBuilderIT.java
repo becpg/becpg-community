@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -55,6 +56,9 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	private static final QName ASSOC_SDS_PRECAUTIONARY_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsPrecautionaryStatements");
 	private static final QName ASSOC_SDS_PERSONAL_PROTECTIONS = QName.createQName(GHSModel.GHS_URI, "sdsPersonalProtections");
 	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
+	private static final QName PROP_SUPPLIER_REF_CODE = QName.createQName(BeCPGModel.BECPG_URI, "supplierRefCode");
+	private static final QName PROP_CONTRACT_DATE = QName.createQName(BeCPGModel.BECPG_URI, "contractDate");
+	private static final QName PROP_PACKAGING_DESCRIPTION = QName.createQName(BeCPGModel.BECPG_URI, "packagingDescription");
 	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
 
 	@Autowired
@@ -160,6 +164,39 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 			Assert.assertFalse("The flammable fragrance should hold its UN number", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_ONU_CODE).isEmpty());
 			return null;
 		});
+	}
+
+	@Test
+	public void testProductInformationFileRawMaterialsHoldTheirSheetData() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			for (CompoListDataItem compoItem : product.getCompoList()) {
+				assertHoldsSheetData(compoItem.getProduct());
+			}
+			Assert.assertNotNull("A single substance raw material should hold its CAS number",
+					nodeService.getProperty(findRawMaterial(productNodeRef, ProductInformationFileTestProduct.GLYCERIN), PLMModel.PROP_CAS_NUMBER));
+			return null;
+		});
+	}
+
+	/**
+	 * Checks a raw material holds the data its technical sheet prints: codes, commercial data, conditions and shelf life.
+	 *
+	 * @param rawMaterialNodeRef the raw material
+	 */
+	private void assertHoldsSheetData(NodeRef rawMaterialNodeRef) {
+		String name = (String) nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME);
+		for (QName property : List.of(BeCPGModel.PROP_ERP_CODE, PLMModel.PROP_EAN_CODE, PROP_SUPPLIER_REF_CODE, ContentModel.PROP_TITLE,
+				ContentModel.PROP_DESCRIPTION, PLMModel.PROP_PRODUCT_COMMENTS, PLMModel.PROP_PRODUCT_DENSITY, PLMModel.PROP_USE_BY_DATE,
+				PLMModel.PROP_PERIOD_AFTER_OPENING, PROP_CONTRACT_DATE, PROP_PACKAGING_DESCRIPTION, PLMModel.PROP_ING_TYPE_V2)) {
+			Assert.assertNotNull(name + " should hold " + property.getLocalName(), nodeService.getProperty(rawMaterialNodeRef, property));
+		}
+		Assert.assertFalse(name + " should hold storage conditions",
+				nodeService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_STORAGE_CONDITIONS).isEmpty());
+		Assert.assertFalse(name + " should hold precautions of use", nodeService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_PRECAUTION_OF_USE).isEmpty());
 	}
 
 	@Test

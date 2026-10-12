@@ -94,6 +94,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
 	private static final QName ASSOC_SDS_CLASS_CODE = QName.createQName(GHSModel.GHS_URI, "sdsClassCode");
 	private static final QName ASSOC_SDS_PACKAGING_GROUP_CODE = QName.createQName(GHSModel.GHS_URI, "sdsPackagingGroupCode");
+	private static final QName PROP_SUPPLIER_REF_CODE = QName.createQName(BeCPGModel.BECPG_URI, "supplierRefCode");
+	private static final QName PROP_CONTRACT_DATE = QName.createQName(BeCPGModel.BECPG_URI, "contractDate");
 	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
 	private static final QName PROP_PRECAUTIONARY_CODE = QName.createQName(GHSModel.GHS_URI, "precautionaryCode");
 	private static final QName PROP_PERSONAL_PROTECTION_CODE = QName.createQName(GHSModel.GHS_URI, "personalProtectionCode");
@@ -261,6 +263,68 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			FRAGRANCE, new HazardSpec(WARNING, List.of(H226, H317), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
 			PRESERVATIVE, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)),
 			CITRIC_ACID, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)));
+
+	/**
+	 * The commercial data of a raw material printed on its technical sheet: supplier designation and reference,
+	 * description, density, shelf life and period after opening in days, storage, precautions and packaging.
+	 */
+	private record RawMaterialSheetSpec(String commercialName, String supplierReference, String description, String comments, double density,
+			int shelfLifeDays, int periodAfterOpeningDays, String storageConditions, String precautionOfUse, String packaging) {
+	}
+
+	private static final String STORE_COOL_DRY = "Store in a cool, dry place in the closed original container.";
+	private static final String STORE_AWAY_FROM_LIGHT = "Store between 10 °C and 25 °C, away from light and heat.";
+	private static final String HANDLE_GMP = "For industrial use only. Handle according to good manufacturing practices.";
+	private static final String HOMOGENIZE_BEFORE_USE = "Homogenize the drum before sampling and use.";
+	private static final String DRUM_200_KG = "200 kg HDPE drum";
+	private static final String BAG_25_KG = "25 kg multi-wall paper bag with PE liner";
+	private static final String CARTON_25_KG = "25 kg carton with PE liner";
+	private static final String JERRYCAN_25_KG = "25 kg HDPE jerrycan";
+
+	/** Commercial data of each raw material, as its supplier specification gives it. */
+	private static final Map<String, RawMaterialSheetSpec> RAW_MATERIAL_SHEETS = Map.ofEntries(
+			Map.entry(WATER, new RawMaterialSheetSpec("Purified Water Ph. Eur.", "AQP-PW-01",
+					"Purified water produced on site by reverse osmosis and UV treatment, compliant with the European Pharmacopoeia.",
+					"Conductivity and microbiological quality checked on each batch.", 1d, 30, 7,
+					"Store in closed stainless steel tanks with recirculation.", HANDLE_GMP, "Stainless steel storage tank")),
+			Map.entry(GLYCERIN, new RawMaterialSheetSpec("Vegetable Glycerin 99.5% USP", "OLC-GLY-995",
+					"Refined glycerin of vegetable origin, colourless viscous liquid.",
+					"Certificate of analysis supplied with each batch.", 1.26, 730, 180, STORE_COOL_DRY, HANDLE_GMP, DRUM_200_KG)),
+			Map.entry(SUNFLOWER_OIL, new RawMaterialSheetSpec("Refined Sunflower Oil HO", "OLC-SUN-HO",
+					"High oleic refined sunflower seed oil, stabilized with tocopherol.",
+					"Peroxide value checked at reception.", 0.92, 540, 90, STORE_AWAY_FROM_LIGHT, HOMOGENIZE_BEFORE_USE, DRUM_200_KG)),
+			Map.entry(TRIGLYCERIDES, new RawMaterialSheetSpec("MCT Oil 60/40", "OLC-MCT-6040",
+					"Medium chain triglycerides of caprylic and capric acids, light non-greasy emollient.",
+					"Certificate of analysis supplied with each batch.", 0.95, 730, 180, STORE_COOL_DRY, HANDLE_GMP, DRUM_200_KG)),
+			Map.entry(CETYL_PALMITATE, new RawMaterialSheetSpec("Cetyl Palmitate Flakes", "OLC-CP-FL",
+					"Wax ester of cetyl alcohol and palmitic acid in white flakes, consistency factor for emulsions.",
+					"Melting range checked at reception.", 0.83, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(SHEA_BUTTER, new RawMaterialSheetSpec("Refined Shea Butter", "ALP-SHB-RF",
+					"Refined and deodorized shea butter from Burkina Faso, off-white solid.",
+					"Fair trade sourcing certificate available on request.", 0.91, 730, 180, STORE_AWAY_FROM_LIGHT, HANDLE_GMP, CARTON_25_KG)),
+			Map.entry(EMULSIFIER, new RawMaterialSheetSpec("Olive Glucoside Emulsifier", "ALP-OGE-01",
+					"PEG-free O/W emulsifier made of cetearyl glucoside, sorbitan olivate and cetearyl alcohol, in pellets.",
+					"Natural origin index of 1 according to ISO 16128.", 0.95, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(XANTHAN, new RawMaterialSheetSpec("Xanthan Gum Clear", "ALP-XG-CL",
+					"Transparent grade xanthan gum obtained by fermentation, rheology modifier.",
+					"Viscosity of a 1% solution checked at reception.", 1.5, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(PRESERVATIVE, new RawMaterialSheetSpec("Preservative Blend CG-EHG", "ALP-PB-CGE",
+					"Preservative booster blend of caprylyl glycol and ethylhexylglycerin, free of parabens and formaldehyde donors.",
+					"Recommended use level: 0.5% to 1%.", 0.9, 730, 180, STORE_COOL_DRY, HOMOGENIZE_BEFORE_USE, JERRYCAN_25_KG)),
+			Map.entry(FRAGRANCE, new RawMaterialSheetSpec("Fresh Floral 2026", "GFH-FF-2026",
+					"Fresh floral fragrance compound with notes of lily of the valley, rose and citrus.",
+					"IFRA certificate of conformity (51st amendment) supplied: maximum 1.5% in category 5A.", 0.88, 730, 180,
+					STORE_AWAY_FROM_LIGHT, HOMOGENIZE_BEFORE_USE, "5 kg aluminium bottle")),
+			Map.entry(CITRIC_ACID, new RawMaterialSheetSpec("Citric Acid Anhydrous Fine Granular", "ALP-CA-ANH",
+					"Anhydrous citric acid in fine white crystals, pH adjuster.",
+					"Hygroscopic: reclose the bag immediately after use.", 1.66, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)));
+
+	private static final String ERP_CODE_PREFIX = "RM-";
+	private static final int ERP_CODE_START = 1001;
+	private static final String RAW_MATERIAL_EAN_PREFIX = "376012345";
+	private static final double MINIMUM_LIFE_RATIO = 2d / 3d;
+	private static final double SINGLE_SUBSTANCE_MIN_PERC = 99d;
+	private static final List<QName> CHEMICAL_CODES = List.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER);
 
 	private static final List<RawMaterialSpec> FORMULA = List.of(
 			new RawMaterialSpec(WATER, 77.45, SUPPLIER_AQUA, "FR", "France", List.of(new IngredientShare("AQUA", 100d))),
@@ -460,9 +524,76 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			rawMaterial.setAllergenList(createAllergenList());
 		}
 
+		rawMaterial.setDensity(RAW_MATERIAL_SHEETS.get(spec.name()).density());
+
 		NodeRef rawMaterialNodeRef = alfrescoRepository.create(destFolder, rawMaterial).getNodeRef();
 		addSafetyDataSheet(rawMaterialNodeRef, spec.name());
+		fillSheetData(rawMaterialNodeRef, spec);
 		return rawMaterialNodeRef;
+	}
+
+	/**
+	 * Sets the data the technical sheet of a raw material prints: codes, commercial data, shelf life, conditions, and
+	 * the function and chemical codes taken from its main ingredient.
+	 *
+	 * @param rawMaterialNodeRef the created raw material
+	 * @param spec the raw material description
+	 */
+	private void fillSheetData(NodeRef rawMaterialNodeRef, RawMaterialSpec spec) {
+		RawMaterialSheetSpec sheet = RAW_MATERIAL_SHEETS.get(spec.name());
+		int index = FORMULA.indexOf(spec);
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_ERP_CODE, ERP_CODE_PREFIX + (ERP_CODE_START + index));
+		properties.put(PLMModel.PROP_EAN_CODE, buildEan13(RAW_MATERIAL_EAN_PREFIX + String.format(Locale.ROOT, "%03d", index)));
+		properties.put(PROP_SUPPLIER_REF_CODE, sheet.supplierReference());
+		properties.put(ContentModel.PROP_TITLE, new MLText(sheet.commercialName()));
+		properties.put(ContentModel.PROP_DESCRIPTION, sheet.description());
+		properties.put(PLMModel.PROP_PRODUCT_COMMENTS, new MLText(sheet.comments()));
+		properties.put(PLMModel.PROP_USE_BY_DATE, sheet.shelfLifeDays());
+		properties.put(PLMModel.PROP_PERIOD_AFTER_OPENING, sheet.periodAfterOpeningDays());
+		properties.put(PROP_CONTRACT_DATE, (int) Math.round(sheet.shelfLifeDays() * MINIMUM_LIFE_RATIO));
+		properties.put(PROP_PACKAGING_DESCRIPTION, new MLText(sheet.packaging()));
+		properties.putAll(readMainIngredientIdentity(spec));
+		nodeService.addProperties(rawMaterialNodeRef, properties);
+		nodeService.setAssociations(rawMaterialNodeRef, PLMModel.ASSOC_STORAGE_CONDITIONS,
+				List.of(getOrCreateDescribedCharact(sheet.storageConditions(), PLMModel.TYPE_STORAGE_CONDITIONS, STORAGE_CONDITIONS_LIST)));
+		nodeService.setAssociations(rawMaterialNodeRef, PLMModel.ASSOC_PRECAUTION_OF_USE,
+				List.of(getOrCreateDescribedCharact(sheet.precautionOfUse(), PLMModel.TYPE_PRECAUTION_OF_USE, PRECAUTION_OF_USE_LIST)));
+	}
+
+	/**
+	 * Reads the function of the main ingredient of a raw material, and its chemical codes when the raw material is a
+	 * single substance: a mixture has no CAS or EC number of its own.
+	 *
+	 * @param spec the raw material description
+	 * @return the function and chemical code properties
+	 */
+	private Map<QName, Serializable> readMainIngredientIdentity(RawMaterialSpec spec) {
+		IngredientShare mainIngredient = spec.ingredients().get(0);
+		NodeRef ingredient = CharactTestHelper.getOrCreateIng(nodeService, mainIngredient.inciName());
+		Map<QName, Serializable> identity = new HashMap<>();
+		identity.put(PLMModel.PROP_ING_TYPE_V2, nodeService.getProperty(ingredient, PLMModel.PROP_ING_TYPE_V2));
+		if (mainIngredient.qtyPerc() >= SINGLE_SUBSTANCE_MIN_PERC) {
+			for (QName chemicalCode : CHEMICAL_CODES) {
+				identity.put(chemicalCode, nodeService.getProperty(ingredient, chemicalCode));
+			}
+		}
+		return identity;
+	}
+
+	/**
+	 * Builds an EAN-13 code from its first twelve digits by appending its check digit.
+	 *
+	 * @param twelveDigits the first twelve digits
+	 * @return the EAN-13 code
+	 */
+	private static String buildEan13(String twelveDigits) {
+		int sum = 0;
+		for (int i = 0; i < twelveDigits.length(); i++) {
+			int digit = twelveDigits.charAt(i) - '0';
+			sum += (i % 2 == 0) ? digit : digit * 3;
+		}
+		return twelveDigits + ((10 - (sum % 10)) % 10);
 	}
 
 	/**
