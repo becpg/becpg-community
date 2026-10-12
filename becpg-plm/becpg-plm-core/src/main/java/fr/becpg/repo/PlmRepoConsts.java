@@ -33,6 +33,11 @@ public class PlmRepoConsts {
 	 * a line filters the other lines out of that report.</p>
 	 */
 	public static final String REPORT_KIND_SUPPLEMENTAL_INGREDIENT = "SupplementalIngredient";
+	/**
+	 * Report kind of the cosmetic raw material sheet, the raw material sheet a product information file embeds in its
+	 * raw material annex.
+	 */
+	public static final String REPORT_KIND_COSMETIC_SUPPLIER_SHEET = "CosmeticSupplierSheet";
 	/** Constant <code>PATH_NUTS="Nuts"</code> */
 	public static final String PATH_NUTS = "Nuts";
 	/** Constant <code>PATH_INGS="Ings"</code> */
@@ -292,6 +297,8 @@ public class PlmRepoConsts {
 	public static final String PATH_PRODUCT_SPEC_REPORT = "ProductSpecReport";
 	public static final String PATH_PIF_REPORT = "PIFReport";
 	public static final String PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF = "productreportcompoqualiquantiforpiftemplate";
+	/** Path key of the cosmetic raw material report template. */
+	public static final String PATH_PRODUCT_REPORT_COSMETIC_RAWMATERIAL = "productreportcosmeticrawmaterialtemplate";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";

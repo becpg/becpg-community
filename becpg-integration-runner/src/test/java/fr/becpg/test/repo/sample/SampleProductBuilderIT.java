@@ -18,15 +18,22 @@
  ******************************************************************************/
 package fr.becpg.test.repo.sample;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
 import fr.becpg.repo.sample.ProductInformationFileTestProduct;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
@@ -111,6 +118,43 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 			Assert.assertEquals(ProductInformationFileTestProduct.EAN_CODE, nodeService.getProperty(productNodeRef, PLMModel.PROP_EAN_CODE));
 			return null;
 		});
+	}
+
+	@Test
+	public void testProductInformationFileRawMaterialsHoldTheCosmeticSheet() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			Assert.assertFalse("The PIF product should have raw materials", product.getCompoList().isEmpty());
+			for (CompoListDataItem compoItem : product.getCompoList()) {
+				assertHoldsCosmeticSheet(compoItem.getProduct());
+			}
+			return null;
+		});
+	}
+
+	/**
+	 * Checks a raw material is associated with the cosmetic raw material sheet: a template of raw materials that is
+	 * neither a system nor a default template, so that it is only generated for the raw materials it is given to.
+	 *
+	 * @param rawMaterialNodeRef the raw material
+	 */
+	private void assertHoldsCosmeticSheet(NodeRef rawMaterialNodeRef) {
+		NodeRef cosmeticSheet = null;
+		for (AssociationRef assocRef : nodeService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORT_TEMPLATES)) {
+			Serializable reportKinds = nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS);
+			if ((reportKinds instanceof List<?> kinds) && kinds.contains(PlmRepoConsts.REPORT_KIND_COSMETIC_SUPPLIER_SHEET)) {
+				cosmeticSheet = assocRef.getTargetRef();
+			}
+		}
+		Assert.assertNotNull("The raw material should hold the cosmetic raw material sheet", cosmeticSheet);
+		Assert.assertEquals(PLMModel.TYPE_RAWMATERIAL.toString(), nodeService.getProperty(cosmeticSheet, ReportModel.PROP_REPORT_TPL_CLASS_NAME).toString());
+		Assert.assertFalse("The cosmetic sheet should not be a system template",
+				Boolean.TRUE.equals(nodeService.getProperty(cosmeticSheet, ReportModel.PROP_REPORT_TPL_IS_SYSTEM)));
+		Assert.assertFalse("The cosmetic sheet should not be a default template",
+				Boolean.TRUE.equals(nodeService.getProperty(cosmeticSheet, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)));
 	}
 
 	@Test
