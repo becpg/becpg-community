@@ -1079,7 +1079,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (data.value != null) {
 
-                var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                 var jsonData = JSON.parse(data.value);
                 if (jsonData && jsonData.v) {
                     if (jsonData.v[key] != null) {
@@ -2580,7 +2580,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                 if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"]
                     && oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value != null) {
-                    var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                    var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                     var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
                     if (jsonData.ul && jsonData.ul[key]) {
                         ul = jsonData.ul[key];
