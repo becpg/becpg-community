@@ -297,7 +297,10 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if (VARIANT_ENTITIES.equals(key)) {
 			for (NodeRef entityNodeRef : pendingNodes) {
-				updateEntityAuditedFields(entityNodeRef, null, false);
+				// The entity may have been deleted with its variants in this transaction
+				if (nodeService.exists(entityNodeRef)) {
+					updateEntityAuditedFields(entityNodeRef, null, false);
+				}
 			}
 			return true;
 		}
