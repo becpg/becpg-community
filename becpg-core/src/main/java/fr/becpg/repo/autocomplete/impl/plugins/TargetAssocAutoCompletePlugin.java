@@ -57,6 +57,7 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>TargetAssocAutoCompletePlugin class.</p>
@@ -199,6 +200,9 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	/** Constant <code>personSearchTemplate="%(cm:userName cm:firstName cm:lastName "{trunked}</code> */
 	protected static final String PERSON_SEARH_TEMPLATE = "%(cm:userName cm:firstName cm:lastName cm:email)";
 
+	/** Prefix of the system configuration key holding the search template of a target type, eg. <code>beCPG.autocomplete.searchTemplate.bcpg_geoOrigin</code> */
+	protected static final String TYPE_SEARCH_TEMPLATE_CONF_PREFIX = "beCPG.autocomplete.searchTemplate.";
+
 	/** Constant <code>PARAM_VALUES_SEPARATOR=","</code> */
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
@@ -220,6 +224,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	protected TargetAssocAutoCompleteExtractor targetAssocValueExtractor;
 	@Autowired
 	protected AssociationService associationService;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -324,6 +330,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			queryBuilder.addSort(ContentModel.PROP_NAME, true);
 		}
 		
+		template = resolveTypeSearchTemplate(type, template);
+
 		if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE)) {
 			template = extras.get(AutoCompleteService.EXTRA_PARAM_SEARCH_TEMPLATE);
 		}
@@ -341,6 +349,24 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		
 		return new AutoCompletePage(filter(queryBuilder, path, arrClassNames, pageSize, props), pageNum, pageSize, getTargetAssocValueExtractor(), extras != null ? extras.get(PROP_CHARAC_NAME_FORMAT) : null);
 
+	}
+
+	/**
+	 * Returns the search template the system configuration sets for a target type, so that a type
+	 * searched on its own codes (eg. the ISO codes of a geographic origin) needs no control
+	 * parameter on every form field pointing at it.
+	 *
+	 * @param type the type of the suggested items
+	 * @param defaultTemplate the template used when the configuration sets none for the type
+	 * @return the configured template, or <code>defaultTemplate</code>
+	 */
+	String resolveTypeSearchTemplate(QName type, String defaultTemplate) {
+		String confKey = TYPE_SEARCH_TEMPLATE_CONF_PREFIX + type.toPrefixString(namespaceService).replace(':', '_');
+		String configuredTemplate = systemConfigurationService.confValue(confKey);
+		if ((configuredTemplate == null) || configuredTemplate.isBlank()) {
+			return defaultTemplate;
+		}
+		return configuredTemplate;
 	}
 
 	/**
