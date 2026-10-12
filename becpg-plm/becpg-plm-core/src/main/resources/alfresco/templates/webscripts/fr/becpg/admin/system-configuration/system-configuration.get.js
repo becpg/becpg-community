@@ -69,6 +69,7 @@ function main() {
     [
         "beCPG.defaultSearchTemplate",
         "beCPG.product.searchTemplate",
+        "beCPG.autocomplete.searchTemplate.bcpg_geoOrigin",
         "beCPG.report.includeReportInSearch"
     ].forEach(function(p) {
         addAttribute(p, "search");
