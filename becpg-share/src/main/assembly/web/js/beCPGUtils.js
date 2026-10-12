@@ -153,6 +153,19 @@
         return Alfresco.constants.JS_LOCALE.replace("_", "-");
     };
 
+    /**
+     * Returns the locale that names the country of the displayed data: the content language of the
+     * user when it carries a country (eg. "fr_CA"), the language of the interface otherwise, so
+     * that a country-less content language ("en") does not hide the country of an "en_US" interface.
+     */
+    beCPG.util.getContentLocale = function getContentLocale() {
+        var contentLocale = beCPG.constants ? beCPG.constants.CONTENT_LOCALE : null;
+        if (contentLocale && contentLocale.indexOf("_") > 0) {
+            return contentLocale;
+        }
+        return Alfresco.constants.JS_LOCALE;
+    };
+
     beCPG.util.exp = function exp(val) {
         if (val == 0) {
             return "0";

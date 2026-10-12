@@ -6,6 +6,7 @@
       beCPG.constants = beCPG.constants || {};
       beCPG.constants.AI_AUTH_TOKEN = "${beCPGAuthTocken!''}";
       beCPG.constants.AI_ENABLED = ${isAIEnable?string};
+      beCPG.constants.CONTENT_LOCALE = <#if userContentLocale??>"${userContentLocale?js_string}"<#else>null</#if>;
    </@>
     <@script type="text/javascript" src="${url.context}/res/components/basket/basket-service.js"  group="template-common" />
     <@script type="text/javascript" src="${url.context}/res/components/entity-suggestions/suggestion-service.js"  group="template-common" />
