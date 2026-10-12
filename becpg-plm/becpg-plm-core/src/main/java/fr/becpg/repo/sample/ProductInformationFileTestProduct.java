@@ -89,6 +89,19 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final QName PROP_SDS_SIGNAL_WORD = QName.createQName(GHSModel.GHS_URI, "sdsSignalWord");
 	private static final QName ASSOC_SDS_HAZARD_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsHazardStatements");
 	private static final QName ASSOC_SDS_PICTOGRAMS = QName.createQName(GHSModel.GHS_URI, "sdsPictograms");
+	private static final QName ASSOC_SDS_PRECAUTIONARY_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsPrecautionaryStatements");
+	private static final QName ASSOC_SDS_PERSONAL_PROTECTIONS = QName.createQName(GHSModel.GHS_URI, "sdsPersonalProtections");
+	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
+	private static final QName ASSOC_SDS_CLASS_CODE = QName.createQName(GHSModel.GHS_URI, "sdsClassCode");
+	private static final QName ASSOC_SDS_PACKAGING_GROUP_CODE = QName.createQName(GHSModel.GHS_URI, "sdsPackagingGroupCode");
+	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
+	private static final QName PROP_PRECAUTIONARY_CODE = QName.createQName(GHSModel.GHS_URI, "precautionaryCode");
+	private static final QName PROP_PERSONAL_PROTECTION_CODE = QName.createQName(GHSModel.GHS_URI, "personalProtectionCode");
+	private static final QName PROP_ONU_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "onuCodeNumber");
+	private static final QName PROP_CLASS_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "classCodeNumber");
+	private static final QName PROP_PACKAGING_GROUP_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "packagingGroupCodeNumber");
+	private static final String PHRASE_SEPARATOR = " ";
+	private static final String SECURITY_LISTS_PATH = "/app:company_home/cm:System/cm:SecurityLists/bcpg:entityLists/cm:";
 
 	public static final String PRODUCT_NAME = "🧴 Moisturizing Body Milk - PIF sample";
 	public static final String LEGAL_NAME = "Moisturizing body milk";
@@ -175,8 +188,21 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private record PhysicoChemSpec(String name, String unit, double value, Double mini, Double maxi) {
 	}
 
-	/** The classification of a safety data sheet: signal word, hazard statement codes and pictogram codes. */
-	private record HazardSpec(String signalWord, List<String> hazardStatements, List<String> pictograms) {
+	/** A coded phrase of a safety data sheet, such as a precautionary statement or a personal protection. */
+	private record CodedPhrase(String code, String phrase) {
+	}
+
+	/** The transport classification of a dangerous good: UN number, hazard class and packing group. */
+	private record TransportSpec(String unNumber, String hazardClass, String packingGroup) {
+	}
+
+	/** The classification of a safety data sheet: signal word, hazard statements and pictogram codes. */
+	private record HazardSpec(String signalWord, List<CodedPhrase> hazardStatements, List<String> pictograms) {
+	}
+
+	/** The handling section of a safety data sheet: precautionary statements, protections, instructions and transport. */
+	private record HandlingSpec(List<CodedPhrase> precautions, List<CodedPhrase> protections, String safetyInstructions,
+			TransportSpec transport) {
 	}
 
 	private static final String WARNING = "Warning";
@@ -184,10 +210,36 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String GHS07_EXCLAMATION_MARK = "GHS07";
 
 	/** Classification of the safety data sheets of the hazardous raw materials, consistent with their ingredients. */
+	private static final CodedPhrase H226 = new CodedPhrase("H226", "Flammable liquid and vapour.");
+	private static final CodedPhrase H317 = new CodedPhrase("H317", "May cause an allergic skin reaction.");
+	private static final CodedPhrase H319 = new CodedPhrase("H319", "Causes serious eye irritation.");
+	private static final CodedPhrase P210 = new CodedPhrase("P210",
+			"Keep away from heat, hot surfaces, sparks, open flames and other ignition sources. No smoking.");
+	private static final CodedPhrase P261 = new CodedPhrase("P261", "Avoid breathing mist/vapours/spray.");
+	private static final CodedPhrase P264 = new CodedPhrase("P264", "Wash hands thoroughly after handling.");
+	private static final CodedPhrase P280 = new CodedPhrase("P280", "Wear protective gloves/eye protection.");
+	private static final CodedPhrase P302_P352 = new CodedPhrase("P302+P352", "IF ON SKIN: Wash with plenty of water.");
+	private static final CodedPhrase P305_P351_P338 = new CodedPhrase("P305+P351+P338",
+			"IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses, if present and easy to do. Continue rinsing.");
+	private static final CodedPhrase P333_P313 = new CodedPhrase("P333+P313", "If skin irritation or rash occurs: Get medical advice/attention.");
+	private static final CodedPhrase P337_P313 = new CodedPhrase("P337+P313", "If eye irritation persists: Get medical advice/attention.");
+	private static final CodedPhrase PROTECTIVE_GLOVES = new CodedPhrase("GLOVES", "Protective gloves");
+	private static final CodedPhrase EYE_PROTECTION = new CodedPhrase("EYES", "Safety glasses with side shields");
+
+	/** Handling of the hazardous raw materials, consistent with their classification. */
+	private static final Map<String, HandlingSpec> RAW_MATERIAL_HANDLING = Map.of(
+			FRAGRANCE, new HandlingSpec(List.of(P210, P261, P280, P302_P352, P333_P313), List.of(PROTECTIVE_GLOVES, EYE_PROTECTION),
+					"Store in a cool, well-ventilated place away from ignition sources. Ground the containers when transferring.",
+					new TransportSpec("UN1266", "3", "III")),
+			PRESERVATIVE, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES),
+					"Avoid contact with eyes. Keep the container tightly closed.", null),
+			CITRIC_ACID, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION),
+					"Avoid dust formation. Keep the container dry and tightly closed.", null));
+
 	private static final Map<String, HazardSpec> RAW_MATERIAL_HAZARDS = Map.of(
-			FRAGRANCE, new HazardSpec(WARNING, List.of("H226", "H317"), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
-			PRESERVATIVE, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)),
-			CITRIC_ACID, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)));
+			FRAGRANCE, new HazardSpec(WARNING, List.of(H226, H317), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
+			PRESERVATIVE, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)),
+			CITRIC_ACID, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)));
 
 	private static final List<RawMaterialSpec> FORMULA = List.of(
 			new RawMaterialSpec(WATER, 77.45, SUPPLIER_AQUA, "FR", "France", List.of(new IngredientShare("AQUA", 100d))),
@@ -421,7 +473,96 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		nodeService.addAspect(rawMaterialNodeRef, ASPECT_SDS, properties);
 		if (RAW_MATERIAL_HAZARDS.containsKey(name)) {
 			addHazardClassification(rawMaterialNodeRef, RAW_MATERIAL_HAZARDS.get(name));
+			addHandling(rawMaterialNodeRef, RAW_MATERIAL_HANDLING.get(name));
 		}
+	}
+
+	/**
+	 * Sets the handling section of a safety data sheet: precautionary statements, personal protections, safety
+	 * instructions and, for a dangerous good, its transport classification.
+	 *
+	 * @param rawMaterialNodeRef the raw material holding the safety data sheet
+	 * @param handling the handling section of the sheet
+	 */
+	private void addHandling(NodeRef rawMaterialNodeRef, HandlingSpec handling) {
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PRECAUTIONARY_STATEMENTS, getOrCreateCodedPhrases(handling.precautions(),
+				PlmRepoConsts.PATH_PRECAUTIONARY_STATEMENTS, GHSModel.TYPE_PRECAUTIONARY_STATEMENT, PROP_PRECAUTIONARY_CODE));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PERSONAL_PROTECTIONS, getOrCreateProtections(handling.protections()));
+		nodeService.setProperty(rawMaterialNodeRef, PROP_SDS_SAFETY_INSTRUCTIONS, handling.safetyInstructions());
+		if (handling.transport() != null) {
+			addTransport(rawMaterialNodeRef, handling.transport());
+		}
+	}
+
+	/**
+	 * Sets the transport classification of a dangerous good.
+	 *
+	 * @param rawMaterialNodeRef the raw material holding the safety data sheet
+	 * @param transport the UN number, hazard class and packing group
+	 */
+	private void addTransport(NodeRef rawMaterialNodeRef, TransportSpec transport) {
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_ONU_CODE, List.of(
+				getOrCreateSecurityValue(PlmRepoConsts.PATH_ONU_CODES, GHSModel.TYPE_ONU_CODE, PROP_ONU_CODE_NUMBER, transport.unNumber())));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_CLASS_CODE, List.of(
+				getOrCreateSecurityValue(PlmRepoConsts.PATH_CLASS_CODES, GHSModel.TYPE_CLASS_CODE, PROP_CLASS_CODE_NUMBER, transport.hazardClass())));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PACKAGING_GROUP_CODE, List.of(getOrCreateSecurityValue(
+				PlmRepoConsts.PATH_PACKAGING_GROUP_CODES, GHSModel.TYPE_PACKAGING_GROUP_CODE, PROP_PACKAGING_GROUP_CODE_NUMBER, transport.packingGroup())));
+	}
+
+	/**
+	 * Gets or creates coded phrases of a security list, each one named by its code followed by its phrase so the
+	 * reports print the phrase. The node name stays the code, so a value created by the other sample products is
+	 * reused.
+	 *
+	 * @param phrases the coded phrases
+	 * @param listName the name of the security list
+	 * @param type the type of the list values
+	 * @param codeProperty the property holding the code
+	 * @return the list values
+	 */
+	private List<NodeRef> getOrCreateCodedPhrases(List<CodedPhrase> phrases, String listName, QName type, QName codeProperty) {
+		List<NodeRef> values = new ArrayList<>();
+		for (CodedPhrase phrase : phrases) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, phrase.code() + PHRASE_SEPARATOR + phrase.phrase());
+			properties.put(codeProperty, phrase.code());
+			values.add(CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + listName, phrase.code(), type, properties));
+		}
+		return values;
+	}
+
+	/**
+	 * Gets or creates personal protections, each one named by its description.
+	 *
+	 * @param protections the coded personal protections
+	 * @return the personal protections
+	 */
+	private List<NodeRef> getOrCreateProtections(List<CodedPhrase> protections) {
+		List<NodeRef> values = new ArrayList<>();
+		for (CodedPhrase protection : protections) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, protection.phrase());
+			properties.put(PROP_PERSONAL_PROTECTION_CODE, protection.code());
+			values.add(CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, protection.code(),
+					GHSModel.TYPE_PERSONAL_PROTECTION, properties));
+		}
+		return values;
+	}
+
+	/**
+	 * Gets or creates a coded value of a security list, named by its code.
+	 *
+	 * @param listName the name of the security list
+	 * @param type the type of the list value
+	 * @param codeProperty the property holding the code
+	 * @param code the code
+	 * @return the list value
+	 */
+	private NodeRef getOrCreateSecurityValue(String listName, QName type, QName codeProperty, String code) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, code);
+		properties.put(codeProperty, code);
+		return CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + listName, code, type, properties);
 	}
 
 	/**
@@ -432,11 +573,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	 */
 	private void addHazardClassification(NodeRef rawMaterialNodeRef, HazardSpec hazard) {
 		nodeService.setProperty(rawMaterialNodeRef, PROP_SDS_SIGNAL_WORD, hazard.signalWord());
-		List<NodeRef> hazardStatements = new ArrayList<>();
-		for (String code : hazard.hazardStatements()) {
-			hazardStatements.add(CharactTestHelper.getOrCreateH(nodeService, code));
-		}
-		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_HAZARD_STATEMENTS, hazardStatements);
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_HAZARD_STATEMENTS, getOrCreateCodedPhrases(hazard.hazardStatements(),
+				PlmRepoConsts.PATH_HAZARD_STATEMENTS, GHSModel.TYPE_HAZARD_STATEMENT, GHSModel.PROP_HAZARD_CODE));
 		List<NodeRef> pictograms = new ArrayList<>();
 		for (String code : hazard.pictograms()) {
 			pictograms.add(CharactTestHelper.getOrCreatePicto(nodeService, code));

@@ -21,12 +21,15 @@ package fr.becpg.test.repo.sample;
 import java.io.Serializable;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -47,6 +50,12 @@ import fr.becpg.test.PLMBaseTestCase;
  * enabled, which is the configuration produced by {@code SampleProductHelper} for scripts.
  */
 public class SampleProductBuilderIT extends PLMBaseTestCase {
+
+	private static final QName ASSOC_SDS_HAZARD_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsHazardStatements");
+	private static final QName ASSOC_SDS_PRECAUTIONARY_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsPrecautionaryStatements");
+	private static final QName ASSOC_SDS_PERSONAL_PROTECTIONS = QName.createQName(GHSModel.GHS_URI, "sdsPersonalProtections");
+	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
+	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
 
 	@Autowired
 	protected ProductService productService;
@@ -133,6 +142,41 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 			}
 			return null;
 		});
+	}
+
+	@Test
+	public void testProductInformationFileHazardousRawMaterialsHoldTheirSafetyData() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			NodeRef fragrance = findRawMaterial(productNodeRef, ProductInformationFileTestProduct.FRAGRANCE);
+			Assert.assertFalse("The fragrance should hold hazard statements", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_HAZARD_STATEMENTS).isEmpty());
+			Assert.assertFalse("The fragrance should hold precautionary statements",
+					nodeService.getTargetAssocs(fragrance, ASSOC_SDS_PRECAUTIONARY_STATEMENTS).isEmpty());
+			Assert.assertFalse("The fragrance should hold personal protections",
+					nodeService.getTargetAssocs(fragrance, ASSOC_SDS_PERSONAL_PROTECTIONS).isEmpty());
+			Assert.assertNotNull("The fragrance should hold safety instructions", nodeService.getProperty(fragrance, PROP_SDS_SAFETY_INSTRUCTIONS));
+			Assert.assertFalse("The flammable fragrance should hold its UN number", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_ONU_CODE).isEmpty());
+			return null;
+		});
+	}
+
+	/**
+	 * Finds a raw material of the composition by the name its unique node name starts with.
+	 *
+	 * @param productNodeRef the product
+	 * @param name the name of the raw material
+	 * @return the raw material
+	 */
+	private NodeRef findRawMaterial(NodeRef productNodeRef, String name) {
+		ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+		for (CompoListDataItem compoItem : product.getCompoList()) {
+			if (((String) nodeService.getProperty(compoItem.getProduct(), ContentModel.PROP_NAME)).startsWith(name)) {
+				return compoItem.getProduct();
+			}
+		}
+		throw new AssertionError("The composition should hold " + name);
 	}
 
 	/**
