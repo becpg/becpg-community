@@ -225,16 +225,37 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final CodedPhrase P337_P313 = new CodedPhrase("P337+P313", "If eye irritation persists: Get medical advice/attention.");
 	private static final CodedPhrase PROTECTIVE_GLOVES = new CodedPhrase("GLOVES", "Protective gloves");
 	private static final CodedPhrase EYE_PROTECTION = new CodedPhrase("EYES", "Safety glasses with side shields");
+	private static final CodedPhrase DUST_MASK = new CodedPhrase("DUST_MASK", "Dust mask with P2 filter");
+	private static final String NOT_CLASSIFIED = "Not classified as hazardous according to Regulation (EC) No 1272/2008. ";
 
-	/** Handling of the hazardous raw materials, consistent with their classification. */
-	private static final Map<String, HandlingSpec> RAW_MATERIAL_HANDLING = Map.of(
-			FRAGRANCE, new HandlingSpec(List.of(P210, P261, P280, P302_P352, P333_P313), List.of(PROTECTIVE_GLOVES, EYE_PROTECTION),
+	/**
+	 * Handling of every raw material, consistent with its classification: a raw material that is not classified holds no
+	 * precautionary statement and no transport classification, only its handling instructions and protections.
+	 */
+	private static final Map<String, HandlingSpec> RAW_MATERIAL_HANDLING = Map.ofEntries(
+			Map.entry(WATER, new HandlingSpec(List.of(), List.of(), NOT_CLASSIFIED
+					+ "Store in closed stainless steel tanks and use within the validated hold time to prevent microbial growth.", null)),
+			Map.entry(GLYCERIN, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Hygroscopic: keep the container tightly closed. Spills make floors slippery.", null)),
+			Map.entry(SUNFLOWER_OIL, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Store away from light and heat to prevent rancidity. Spills make floors slippery.", null)),
+			Map.entry(TRIGLYCERIDES, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Store in a cool, dry place in the closed original container.", null)),
+			Map.entry(CETYL_PALMITATE, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES), NOT_CLASSIFIED
+					+ "Melt with indirect heating and avoid skin contact with the molten product.", null)),
+			Map.entry(SHEA_BUTTER, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES), NOT_CLASSIFIED
+					+ "Store below 25 °C away from light. Melt with indirect heating.", null)),
+			Map.entry(EMULSIFIER, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, DUST_MASK), NOT_CLASSIFIED
+					+ "Avoid dust formation when handling the flakes. Keep dry.", null)),
+			Map.entry(XANTHAN, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, DUST_MASK), NOT_CLASSIFIED
+					+ "Avoid dust formation and accumulation: fine dust may form explosive mixtures with air. Keep dry.", null)),
+			Map.entry(FRAGRANCE, new HandlingSpec(List.of(P210, P261, P280, P302_P352, P333_P313), List.of(PROTECTIVE_GLOVES, EYE_PROTECTION),
 					"Store in a cool, well-ventilated place away from ignition sources. Ground the containers when transferring.",
-					new TransportSpec("UN1266", "3", "III")),
-			PRESERVATIVE, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES),
-					"Avoid contact with eyes. Keep the container tightly closed.", null),
-			CITRIC_ACID, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION),
-					"Avoid dust formation. Keep the container dry and tightly closed.", null));
+					new TransportSpec("UN1266", "3", "III"))),
+			Map.entry(PRESERVATIVE, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES),
+					"Avoid contact with eyes. Keep the container tightly closed.", null)),
+			Map.entry(CITRIC_ACID, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION),
+					"Avoid dust formation. Keep the container dry and tightly closed.", null)));
 
 	private static final Map<String, HazardSpec> RAW_MATERIAL_HAZARDS = Map.of(
 			FRAGRANCE, new HazardSpec(WARNING, List.of(H226, H317), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
@@ -460,8 +481,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Adds the supplier safety data sheet to a raw material: its reference, and its classification when the raw
-	 * material is hazardous.
+	 * Adds the supplier safety data sheet to a raw material: its reference, its handling, and its classification when
+	 * the raw material is hazardous.
 	 *
 	 * @param rawMaterialNodeRef the raw material
 	 * @param name the raw material name the sheet number derives from
@@ -473,8 +494,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		nodeService.addAspect(rawMaterialNodeRef, ASPECT_SDS, properties);
 		if (RAW_MATERIAL_HAZARDS.containsKey(name)) {
 			addHazardClassification(rawMaterialNodeRef, RAW_MATERIAL_HAZARDS.get(name));
-			addHandling(rawMaterialNodeRef, RAW_MATERIAL_HANDLING.get(name));
 		}
+		addHandling(rawMaterialNodeRef, RAW_MATERIAL_HANDLING.get(name));
 	}
 
 	/**

@@ -162,6 +162,22 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 		});
 	}
 
+	@Test
+	public void testProductInformationFileRawMaterialsHoldTheirSafetyInstructions() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			Assert.assertFalse("The PIF product should have raw materials", product.getCompoList().isEmpty());
+			for (CompoListDataItem compoItem : product.getCompoList()) {
+				Assert.assertNotNull("Each raw material should hold safety instructions: " + nodeService.getProperty(compoItem.getProduct(), ContentModel.PROP_NAME),
+						nodeService.getProperty(compoItem.getProduct(), PROP_SDS_SAFETY_INSTRUCTIONS));
+			}
+			return null;
+		});
+	}
+
 	/**
 	 * Finds a raw material of the composition by the name its unique node name starts with.
 	 *
