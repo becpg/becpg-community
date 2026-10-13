@@ -1575,7 +1575,9 @@
 
 	<#-- Catalogue completeness (#24931). bcpg:entityScore is a d:text holding the JSON the catalog
 	     formulation produces: one entry per catalog, with its score and the fields still missing.
-	     JSON_TABLE unnests it so the completeness becomes a cube like any other.
+	     JSON_TABLE unnests it so the completeness becomes a cube like any other. The remote API serves
+	     it as a JSON object, which the OLAP connector must copy whole: read like an association, it
+	     is reduced to a name it does not have and the cube stays empty.
 
 	     CAST(NULLIF(...,'') AS JSON) on a product carrying no score yields NULL, and JSON_TABLE on
 	     NULL returns no row rather than failing - which matters, because a view that errors takes
@@ -1603,7 +1605,7 @@
 					JSON_TABLE(CAST(NULLIF(p.doc->>"$.bcpg_entityScore", '') AS JSON), '$.catalogs[*]'
 						COLUMNS (
 							catalogId VARCHAR(255) PATH '$.id',
-							catalogName VARCHAR(255) PATH '$.displayName',
+							catalogName VARCHAR(255) PATH '$.label',
 							catalogScore DECIMAL(20,6) PATH '$.score',
 							missingFields JSON PATH '$.missingFields'
 						)) c
@@ -2875,8 +2877,6 @@
 							a.doc->>"$.bcpg_toxListTox[0]" as toxName,
 							a.doc->>"$.bcpg_toxListTox_bcpg_nodeRef[0]" as toxNodeRef,
 							CAST(NULLIF(a.doc->>"$.bcpg_toxListValue", 'null') AS DECIMAL(20,6)) as toxValue,
-							CAST(NULLIF(a.doc->>"$.bcpg_toxListMini", 'null') AS DECIMAL(20,6)) as toxMini,
-							CAST(NULLIF(a.doc->>"$.bcpg_toxListMaxi", 'null') AS DECIMAL(20,6)) as toxMaxi,
 							b.nodeRef as productNodeRef,
 							b.doc->>"$.cm_name" as productName,
 							b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
@@ -2955,8 +2955,11 @@
 		</Dimension>
 
 		<Measure name="toxValue" caption="${msg("jsolap.toxValue.title")}" column="toxValue" datatype="Numeric" aggregator="avg" visible="true" />
-		<Measure name="toxMini" caption="${msg("jsolap.toxMini.title")}" column="toxMini" datatype="Numeric" aggregator="avg" visible="true" />
-		<Measure name="toxMaxi" caption="${msg("jsolap.toxMaxi.title")}" column="toxMaxi" datatype="Numeric" aggregator="avg" visible="true" />
+		<#-- bcpg:toxListMini and bcpg:toxListMaxi are specification thresholds, only entered on a product
+		     specification, which the OLAP channel does not export: on a product they are unset. The
+		     minimum and maximum therefore range over the formulated value itself. -->
+		<Measure name="toxMini" caption="${msg("jsolap.toxMini.title")}" column="toxValue" datatype="Numeric" aggregator="min" visible="true" />
+		<Measure name="toxMaxi" caption="${msg("jsolap.toxMaxi.title")}" column="toxValue" datatype="Numeric" aggregator="max" visible="true" />
 		<Measure name="toxCount" caption="${msg("jsolap.toxCount.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 	</Cube>
 
