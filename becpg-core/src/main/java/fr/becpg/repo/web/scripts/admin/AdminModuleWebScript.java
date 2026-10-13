@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -18,6 +19,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
@@ -98,6 +100,12 @@ public class AdminModuleWebScript extends MonitorWebScript {
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
+		
+		if (!authorityService.hasAdminAuthority()
+				&& !authorityService.getAuthorities().contains(PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr)) {
+			throw new WebScriptException(Status.STATUS_FORBIDDEN, "You must be an administrator or system manager to access this webscript");
+		}
+		
 		logger.debug("start admin webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
