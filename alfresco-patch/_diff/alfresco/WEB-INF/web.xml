@@ -371,25 +371,9 @@
    </servlet>
    -->
 
-    <servlet>
-        <servlet-name>cmisws10</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
-        <init-param>
-            <param-name>cmisVersion</param-name>
-            <param-value>1.0</param-value>
-        </init-param>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-    
-    <servlet>
-        <servlet-name>cmisws11</servlet-name>
-        <servlet-class>org.apache.chemistry.opencmis.server.impl.webservices.CmisWebServicesServlet</servlet-class>
-        <init-param>
-            <param-name>cmisVersion</param-name>
-            <param-value>1.1</param-value>
-        </init-param>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
+    <!-- The CMIS Web Services binding (/cmisws, Apache CXF) is disabled: it parses SOAP
+         requests before authentication and has no consumer (CVE-2026-49875).
+         Use the AtomPub (/cmisatom) or Browser (/cmisbrowser) bindings instead. -->
 
     <servlet>
         <servlet-name>cmisatom10</servlet-name>
@@ -472,11 +456,6 @@
    </servlet-mapping>
    -->
    
-   <servlet-mapping>
-      <servlet-name>cmisws10</servlet-name>
-      <url-pattern>/cmisws/*</url-pattern>
-   </servlet-mapping>
-
    <servlet-mapping>
       <servlet-name>cmisatom10</servlet-name>
       <url-pattern>/cmisatom/*</url-pattern>
