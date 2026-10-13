@@ -1582,7 +1582,11 @@
 	     CAST(NULLIF(...,'') AS JSON) on a product carrying no score yields NULL, and JSON_TABLE on
 	     NULL returns no row rather than failing - which matters, because a view that errors takes
 	     the whole schema down with it, not just its own cube. A product is scored only once it has
-	     been formulated, so an instance that never formulates simply gets an empty cube. -->
+	     been formulated, so an instance that never formulates simply gets an empty cube.
+
+	     The formulation also writes one entry per report locale next to the main one, carrying a
+	     locale and its own score: only the main entry is kept, otherwise every catalog is counted
+	     once per language and its missing fields with it. -->
 	<Cube name="catalogCompleteness" caption="${msg("jsolap.catalogCompleteness.title")}" cache="true" enabled="true" defaultMeasure="catalogScore">
 
 		<View name="catalogCompletenessView" alias="catalogCompletenessView">
@@ -1607,14 +1611,19 @@
 							catalogId VARCHAR(255) PATH '$.id',
 							catalogName VARCHAR(255) PATH '$.label',
 							catalogScore DECIMAL(20,6) PATH '$.score',
-							missingFields JSON PATH '$.missingFields'
+							missingFields JSON PATH '$.missingFields',
+							catalogLocale VARCHAR(20) PATH '$.locale'
 						)) c
+				where c.catalogLocale is null
 			</SQL>
 		</View>
 
 		<Dimension name="catalog" caption="${msg("jsolap.catalog.title")}">
 			<Hierarchy name="catalog" hasAll="true" allMemberCaption="${msg("jsolap.catalog.caption")}">
-				<Level name="catalogName" caption="${msg("jsolap.catalog.title")}" column="catalogId" nameColumn="catalogName" type="String" />
+				<#-- Named by the catalog id and only captioned with its label: two catalogs may share a
+				     label (the INCO finished product and raw material catalogs do), and a name column would
+				     merge them into one member showing the same figures twice. -->
+				<Level name="catalogName" caption="${msg("jsolap.catalog.title")}" column="catalogId" captionColumn="catalogName" type="String" />
 			</Hierarchy>
 		</Dimension>
 
