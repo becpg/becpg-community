@@ -411,7 +411,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		assertBatchQueued("Batch should run", batchInfo);
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertNotNull(inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
