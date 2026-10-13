@@ -24,7 +24,13 @@
       <filter-name>MTAuthenticationFilter</filter-name>
       <filter-class>org.alfresco.web.site.servlet.MTAuthenticationFilter</filter-class>
    </filter>
-   
+
+   <filter>
+      <description>Rejects resource paths reaching WEB-INF, META-INF or classes (MNT-25374, CVE-2026-26336).</description>
+      <filter-name>ResourcePathValidationFilter</filter-name>
+      <filter-class>org.alfresco.web.site.servlet.ResourcePathValidationFilter</filter-class>
+   </filter>
+
    <filter>
       <description>Redirects view and service URLs to the dispatcher servlet.</description>
       <filter-name>UrlRewriteFilter</filter-name>
@@ -59,6 +65,16 @@
       <filter-name>Security Headers Filter</filter-name>
       <filter-class>org.springframework.extensions.webscripts.servlet.SecurityHeadersFilter</filter-class>
    </filter>
+
+   <!-- ResourcePathValidationFilter mappings, first so that it runs before any other filter -->
+   <filter-mapping>
+      <filter-name>ResourcePathValidationFilter</filter-name>
+      <url-pattern>/res/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+      <filter-name>ResourcePathValidationFilter</filter-name>
+      <url-pattern>/page/resource/*</url-pattern>
+   </filter-mapping>
 
    <!-- MTAuthenticationFilter mappings -->
    <filter-mapping>
