@@ -34,6 +34,61 @@ function initDatagridPrefsRoot(prefsScope) {
 	}
 }
 
+var preferenceRoot = null;
+
+/**
+ * Reads the whole user preference tree, once per request.
+ *
+ * AlfrescoUtil.getPreferences() re-parses preferences.value on every single call - this web script
+ * calls it twice per column - and blows up when no user is bound to the request context (the stock
+ * "preferences" root object encodes a null user id). A missing preference must never fail the
+ * column definitions, so any failure degrades to "no preference set".
+ *
+ * It also skips a missing segment of the path instead of stopping on it: a scoped path such as
+ * datagrid-prefs.projectList.pjt_project would then read the unscoped datagrid-prefs.pjt_project.
+ *
+ * @method getPreferenceRoot
+ * @return Object the preference tree, never null
+ */
+function getPreferenceRoot() {
+	if (preferenceRoot === null) {
+		preferenceRoot = {};
+		try {
+			var value = preferences.value;
+			if (value) {
+				preferenceRoot = jsonUtils.toObject(value);
+			}
+		} catch (e) {
+			if (logger.isLoggingEnabled()) {
+				logger.log("Unable to read the user preferences, falling back on an empty set: " + e);
+			}
+		}
+	}
+
+	return preferenceRoot;
+}
+
+/**
+ * Resolves a dotted preference path, same contract as AlfrescoUtil.getPreferences.
+ *
+ * @method getPreference
+ * @param filter
+ *            The dotted preference path
+ * @return The preference node or null when the path is not set
+ */
+function getPreference(filter) {
+	var node = getPreferenceRoot(), parts = filter.split(".");
+
+	for (var i = 0; i < parts.length; i++) {
+		if ((node === null) || (typeof node !== "object") || !node[parts[i]]) {
+			return null;
+		}
+		node = node[parts[i]];
+	}
+
+	return node;
+}
+
 /**
  * Retrieves the value of the given named argument from the URL arguments
  * 
@@ -270,7 +325,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
 				} else  {
-					var preferences = AlfrescoUtil.getPreferences(datagridPrefsRoot + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+					var preferences = getPreference(datagridPrefsRoot + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
 					
 					if(existInPref(preferences) && isChecked(preferences)){
 						postBodyForcedFields.push(fieldId);
@@ -437,7 +492,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
 				   } 
 				   
-					var preferences = AlfrescoUtil.getPreferences(datagridPrefsRoot + "." + prefKey);
+					var preferences = getPreference(datagridPrefsRoot + "." + prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
