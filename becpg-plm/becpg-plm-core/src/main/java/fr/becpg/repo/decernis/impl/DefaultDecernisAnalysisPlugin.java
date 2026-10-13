@@ -253,11 +253,11 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				try {
 					analysisResults = postRecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
 				} catch (HttpStatusCodeException e) {
-					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
+					logger.error("Error during Decernis analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 					for (String country : countries) {
 						ReqCtrlListDataItem req = new ReqCtrlListDataItem();
 						req.setReqType(RequirementType.Forbidden);
-						req.setReqMlMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()));
+						req.setReqMlMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())));
 						req.setReqDataType(RequirementDataType.Formulation);
 						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 						req.setRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
