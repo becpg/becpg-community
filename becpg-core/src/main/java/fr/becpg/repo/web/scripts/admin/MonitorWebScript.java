@@ -53,7 +53,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 
 	private String becpgSchema;
 
-	private AuthorityService authorityService;
+	protected AuthorityService authorityService;
 
 	private BatchQueueService batchQueueService;
 

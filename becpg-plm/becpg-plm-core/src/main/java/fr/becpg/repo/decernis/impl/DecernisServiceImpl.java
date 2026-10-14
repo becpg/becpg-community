@@ -144,6 +144,17 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 
 	}
 
+	private String cleanError(String error) {
+		if ((error != null) && (token != null) && !token.isBlank()) {
+			String cleanedToken = token.replace("Bearer ", "").strip();
+			error = error.replace(token, "XXX");
+			if (!cleanedToken.isEmpty()) {
+				error = error.replace(cleanedToken, "XXX");
+			}
+		}
+		return error;
+	}
+
 	private Set<String> countries = new HashSet<>();
 
 	private JSONObject getAvaillableCountries() throws JSONException {
@@ -192,7 +203,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 
 			} catch (RestClientException | JSONException e) {
 				countries.clear();
-				logger.error(e);
+				logger.error(cleanError(e.toString()));
 			}
 
 		}
@@ -651,7 +662,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 			}
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			logger.error("Decernis HTTP ERROR STATUS:" + e.getStatusText());
-			logger.error("- error body:" + e.getResponseBodyAsString());
+			logger.error("- error body:" + cleanError(e.getResponseBodyAsString()));
 			StringBuilder message = new StringBuilder();
 			if (HttpStatus.BAD_REQUEST.equals(e.getStatusCode())) {
 				try {
@@ -666,7 +677,7 @@ public class DecernisServiceImpl  extends AbstractLifecycleBean implements Decer
 					logger.error(e1, e1);
 				}
 			}
-			throw new FormulateException("Error calling decernis service: " + e.getLocalizedMessage() + message, e);
+			throw new FormulateException("Error calling decernis service: " + cleanError(e.getLocalizedMessage()) + message, e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error", e);
 		}
