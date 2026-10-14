@@ -1586,7 +1586,11 @@
 
 	     The formulation also writes one entry per report locale next to the main one, carrying a
 	     locale and its own score: only the main entry is kept, otherwise every catalog is counted
-	     once per language and its missing fields with it. -->
+	     once per language and its missing fields with it.
+
+	     The label is resolved once per catalog id: a product may carry another label, or none, for
+	     the same catalog, and Mondrian then reads one row per (id, label) pair and lists the same
+	     member once per row. -->
 	<Cube name="catalogCompleteness" caption="${msg("jsolap.catalogCompleteness.title")}" cache="true" enabled="true" defaultMeasure="catalogScore">
 
 		<View name="catalogCompletenessView" alias="catalogCompletenessView">
@@ -1601,7 +1605,7 @@
 					p.doc->>"$.metadata_siteId" as siteId,
 					p.doc->>"$.metadata_siteName" as siteName,
 					c.catalogId,
-					c.catalogName,
+					COALESCE(MAX(c.catalogName) OVER (PARTITION BY c.catalogId), c.catalogId) as catalogName,
 					c.catalogScore,
 					JSON_LENGTH(c.missingFields) as missingFieldCount
 				from
