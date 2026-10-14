@@ -4,11 +4,7 @@
  "version": 1,
  "theme": {
   "mode": "light",
-  "ground": "#f4f7f8",
-  "surface": "#ffffff",
-  "fg": "#0d2b33",
-  "muted": "#5b7780",
-  "accent": "#009dcc"
+  "preset": "becpg"
  },
  "nav": {
   "position": "rail",
