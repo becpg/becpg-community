@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.system.SystemConfigurationRegistry;
+
 public class DecernisHelper {
 	
 	private static final Pattern THRESHOLD_PATTERN_1 = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
@@ -48,4 +50,25 @@ public class DecernisHelper {
 		
 		return null;
 	}
+
+	/**
+	 * Removes the Decernis token from an error message before it is logged or displayed.
+	 *
+	 * @param error the error message
+	 * @return the error message without the token
+	 */
+	public static String cleanError(String error) {
+		if (error != null) {
+			String token = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+			if ((token != null) && !token.isBlank()) {
+				String cleanedToken = token.replace("Bearer ", "").strip();
+				error = error.replace(token, "XXX");
+				if (!cleanedToken.isEmpty()) {
+					error = error.replace(cleanedToken, "XXX");
+				}
+			}
+		}
+		return error;
+	}
+
 }
