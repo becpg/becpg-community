@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Product assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG product master-data analyst",
   "scope": "Answer only about the cubes products, nutrients et lca.",
   "greeting": "Ask about the product portfolio, nutrition or costs.",

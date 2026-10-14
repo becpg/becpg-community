@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Projects assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG project portfolio analyst",
   "scope": "Answer only about the cubes projects, projectsSteps et evaluation.",
   "greeting": "Ask about progress, the funnel or evaluations.",

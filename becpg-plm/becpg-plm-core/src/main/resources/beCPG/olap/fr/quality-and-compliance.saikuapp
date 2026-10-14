@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant conformité",
+  "title": "Chef IA",
+  "icon": "chef",
   "persona": "Analyste conformité et réglementaire beCPG",
   "scope": "Répondre uniquement sur les cubes regulatoryScores, toxicology, requirements et plantCertifications.",
   "greeting": "Posez une question sur les scores réglementaires, la toxicologie ou les certifications.",

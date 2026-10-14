@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant fournisseur",
+  "title": "Chef IA",
+  "icon": "chef",
   "persona": "Analyste des fournisseurs et de la conformité beCPG",
   "scope": "Répondre uniquement sur les cubes products, projectsSteps et requirements.",
   "greeting": "Posez une question sur les fournisseurs, leurs tâches ou la conformité.",

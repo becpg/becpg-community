@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Compliance assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG compliance and regulatory analyst",
   "scope": "Answer only about the regulatoryScores, toxicology, requirements and plantCertifications cubes.",
   "greeting": "Ask about regulatory scores, toxicology or certifications.",
