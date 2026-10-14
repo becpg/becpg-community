@@ -62,6 +62,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	private static final String USE_MODE_RINSE_OFF = "RINSE_OFF";
 	private static final String TARGET_POPULATION_ADULT = "ADULT";
 	private static final String APPLICATION_ZONE_BODY = "BODY";
+	private static final String LEGAL_STATUS_COSMETIC = "COSMETIC";
 
 	static {
 		ISO_COUNTRY_NAMES.put("ES", "Spain");
@@ -173,6 +174,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 		if (isWithRegulatory) {
 			addRegulatoryProductAspect(bodyMilkProduct);
+			setMarketsLegalStatus(bodyMilkProduct);
 		}
 
 		// Save associations if specifications are enabled
@@ -237,6 +239,18 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		properties.put(PLMModel.PROP_REGULATORY_APPLICATION_ZONES, new ArrayList<>(List.of(APPLICATION_ZONE_BODY)));
 		properties.put(PLMModel.PROP_REGULATORY_USE_MODE, USE_MODE_RINSE_OFF);
 		nodeService.addAspect(bodyMilkProduct.getNodeRef(), PLMModel.ASPECT_REGULATORY_PRODUCT, properties);
+	}
+
+	/**
+	 * Sets the cosmetic legal status on every market of the regulatory list. It is written through the node service,
+	 * as the repository mapping of a regulatory line does not hold it.
+	 *
+	 * @param bodyMilkProduct the created body milk
+	 */
+	private void setMarketsLegalStatus(RawMaterialData bodyMilkProduct) {
+		for (RegulatoryListDataItem market : bodyMilkProduct.getRegulatoryList()) {
+			nodeService.setProperty(market.getNodeRef(), PLMModel.PROP_REGULATORY_LEGAL_STATUS, LEGAL_STATUS_COSMETIC);
+		}
 	}
 
 	/**
