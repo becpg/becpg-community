@@ -1573,16 +1573,16 @@
 		<Measure name="allergenQtyPerc" caption="${msg("jsolap.allergenQtyPerc.title")}" column="allergenQtyPerc" datatype="Numeric" aggregator="avg" visible="true" />
 	</Cube>
 
-	<#-- Catalogue completeness (#24931). bcpg:entityScore is a d:text holding the JSON the catalog
-	     formulation produces: one entry per catalog, with its score and the fields still missing.
-	     JSON_TABLE unnests it so the completeness becomes a cube like any other. The remote API serves
-	     it as a JSON object, which the OLAP connector must copy whole: read like an association, it
-	     is reduced to a name it does not have and the cube stays empty.
+	<#-- Catalogue completeness (#24931). bcpg:entityScore holds the JSON the catalog formulation
+	     produces: one entry per catalog, with its score and the fields still missing. JSON_TABLE
+	     unnests it so the completeness becomes a cube like any other. The remote API serves it as a
+	     JSON object, which the OLAP connector (1.0.19 and later) copies whole into the document.
 
-	     CAST(NULLIF(...,'') AS JSON) on a product carrying no score yields NULL, and JSON_TABLE on
-	     NULL returns no row rather than failing - which matters, because a view that errors takes
-	     the whole schema down with it, not just its own cube. A product is scored only once it has
-	     been formulated, so an instance that never formulates simply gets an empty cube.
+	     JSON_TABLE reads the object in place. Extracting it as text first and casting it back to
+	     JSON re-parsed some 14 kB per product on every query Mondrian sends: 5 s for each of the
+	     several SQL queries behind one MDX query, against 0.2 s in place. A product carrying no
+	     score yields no row rather than failing - which matters, because a view that errors takes
+	     the whole schema down with it, not just its own cube.
 
 	     The formulation also writes one entry per report locale next to the main one, carrying a
 	     locale and its own score: only the main entry is kept, otherwise every catalog is counted
@@ -1590,7 +1590,12 @@
 
 	     The label is resolved once per catalog id: a product may carry another label, or none, for
 	     the same catalog, and Mondrian then reads one row per (id, label) pair and lists the same
-	     member once per row. -->
+	     member once per row.
+
+	     The global score is the one the PLM wheel shows, a blend of the catalogs, the specifications
+	     and the components validation. It belongs to the product, not to a catalog, so it is carried
+	     by the first catalog row of each product only: averaged over the rows, it would otherwise
+	     weigh each product by its number of catalogs. -->
 	<Cube name="catalogCompleteness" caption="${msg("jsolap.catalogCompleteness.title")}" cache="true" enabled="true" defaultMeasure="catalogScore">
 
 		<View name="catalogCompletenessView" alias="catalogCompletenessView">
@@ -1607,11 +1612,14 @@
 					c.catalogId,
 					COALESCE(MAX(c.catalogName) OVER (PARTITION BY c.catalogId), c.catalogId) as catalogName,
 					c.catalogScore,
-					JSON_LENGTH(c.missingFields) as missingFieldCount
+					JSON_LENGTH(c.missingFields) as missingFieldCount,
+					CASE WHEN ROW_NUMBER() OVER (PARTITION BY p.nodeRef ORDER BY c.catalogIndex) = 1
+						THEN CAST(p.doc->>"$.bcpg_entityScore.global" AS DECIMAL(20,6)) END as globalScore
 				from
 					bcpg_product p,
-					JSON_TABLE(CAST(NULLIF(p.doc->>"$.bcpg_entityScore", '') AS JSON), '$.catalogs[*]'
+					JSON_TABLE(p.doc, '$.bcpg_entityScore.catalogs[*]'
 						COLUMNS (
+							catalogIndex FOR ORDINALITY,
 							catalogId VARCHAR(255) PATH '$.id',
 							catalogName VARCHAR(255) PATH '$.label',
 							catalogScore DECIMAL(20,6) PATH '$.score',
@@ -1656,6 +1664,7 @@
 
 		<Measure name="catalogScore" caption="${msg("jsolap.catalogScore.title")}" column="catalogScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="globalScore" caption="${msg("jsolap.globalScore.title")}" column="globalScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="scoredProducts" caption="${msg("jsolap.scoredProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 	</Cube>
 
