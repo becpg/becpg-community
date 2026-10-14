@@ -23,11 +23,11 @@
   "title": "Chef AI",
   "icon": "chef",
   "persona": "beCPG product master-data analyst",
-  "scope": "Answer only about the cubes products, nutrients et lca.",
+  "scope": "Answers from the Products cube.",
   "greeting": "Ask about the product portfolio, nutrition or costs.",
   "suggestedPrompts": [
    "Breakdown of products per state",
-   "Average profitability per family",
+   "Average profitability per product family",
    "Products per Nutri-Score"
   ],
   "cube": {

@@ -23,12 +23,12 @@
   "title": "Chef IA",
   "icon": "chef",
   "persona": "Analyste du portefeuille projets beCPG",
-  "scope": "Répondre uniquement sur les cubes projects, projectsSteps et evaluation.",
-  "greeting": "Posez une question sur l'avancement, l'entonnoir ou les évaluations.",
+  "scope": "Répond à partir du cube Projets.",
+  "greeting": "Posez une question sur l'avancement, la durée ou l'état des projets.",
   "suggestedPrompts": [
-   "Tâches par étape du processus",
+   "Nombre de projets par état",
    "Avancement moyen par chef de projet",
-   "Notes d'évaluation par critère"
+   "Durée moyenne des projets par priorité"
   ],
   "cube": {
    "connectionName": "beCPG",

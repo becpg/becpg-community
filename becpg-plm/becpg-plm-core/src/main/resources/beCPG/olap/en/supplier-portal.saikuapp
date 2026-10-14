@@ -23,12 +23,12 @@
   "title": "Chef AI",
   "icon": "chef",
   "persona": "beCPG supplier and compliance analyst",
-  "scope": "Answer only about the cubes products, projectsSteps et requirements.",
-  "greeting": "Ask about suppliers, their tasks or compliance.",
+  "scope": "Answers from the Products cube.",
+  "greeting": "Ask about suppliers and their products.",
   "suggestedPrompts": [
-   "Top 10 suppliers",
-   "Planned versus actual duration of portal tasks",
-   "Unmet requirements"
+   "Top 10 suppliers by number of products",
+   "Products per supplier family",
+   "Supplier products per state"
   ],
   "cube": {
    "connectionName": "beCPG",

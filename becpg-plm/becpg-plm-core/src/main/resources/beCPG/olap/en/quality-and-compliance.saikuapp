@@ -23,12 +23,12 @@
   "title": "Chef AI",
   "icon": "chef",
   "persona": "beCPG compliance and regulatory analyst",
-  "scope": "Answer only about the regulatoryScores, toxicology, requirements and plantCertifications cubes.",
-  "greeting": "Ask about regulatory scores, toxicology or certifications.",
+  "scope": "Answers from the Regulatory scores cube.",
+  "greeting": "Ask about the regulatory scores of products.",
   "suggestedPrompts": [
    "Regulatory score by class",
-   "Certifications by body",
-   "Unmet requirements"
+   "Scored products per regulatory category",
+   "Average regulatory score per product family"
   ],
   "cube": {
    "connectionName": "beCPG",
