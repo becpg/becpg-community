@@ -2774,6 +2774,8 @@
 
 	<Cube name="regulatoryScores" caption="${msg("jsolap.regulatoryScores.title")}" cache="true" enabled="true">
 
+		<#-- A numeric class is stored either as an integer or as a decimal ("1" or "1.0") depending on
+		     the score engine, which made every whole class appear twice: the trailing zeros are dropped. -->
 		<View name="regulatoryScoreListView" alias="regulatoryScoreListView">
 					<SQL dialect="generic">
 						select
@@ -2781,8 +2783,8 @@
 							a.entityNodeRef,
 							a.doc->>"$.bcpg_rslScoreDef[0]" as scoreDefName,
 							a.doc->>"$.bcpg_rslScoreDef_bcpg_nodeRef[0]" as scoreDefNodeRef,
-							a.doc->>"$.bcpg_rslClass" as rslClass,
-							a.doc->>"$.bcpg_rslPreviousClass" as rslPreviousClass,
+							REGEXP_REPLACE(a.doc->>"$.bcpg_rslClass", '\\.0+$', '') as rslClass,
+							REGEXP_REPLACE(a.doc->>"$.bcpg_rslPreviousClass", '\\.0+$', '') as rslPreviousClass,
 							a.doc->>"$.bcpg_rslCategory" as rslCategory,
 							a.doc->>"$.bcpg_rslVersion" as rslVersion,
 							CAST(NULLIF(a.doc->>"$.bcpg_rslValue", 'null') AS DECIMAL(20,6)) as rslValue,

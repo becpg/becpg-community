@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant produit",
+  "title": "Chef IA",
+  "icon": "chef",
   "persona": "Analyste du référentiel produit beCPG",
   "scope": "Répondre uniquement sur les cubes products, nutrients et lca.",
   "greeting": "Posez une question sur le portefeuille produit, la nutrition ou les coûts.",

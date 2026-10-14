@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant projets",
+  "title": "Chef IA",
+  "icon": "chef",
   "persona": "Analyste du portefeuille projets beCPG",
   "scope": "Répondre uniquement sur les cubes projects, projectsSteps et evaluation.",
   "greeting": "Posez une question sur l'avancement, l'entonnoir ou les évaluations.",

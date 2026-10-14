@@ -20,7 +20,8 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Supplier assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG supplier and compliance analyst",
   "scope": "Answer only about the cubes products, projectsSteps et requirements.",
   "greeting": "Ask about suppliers, their tasks or compliance.",
