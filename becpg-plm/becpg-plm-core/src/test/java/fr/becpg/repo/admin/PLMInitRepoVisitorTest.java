@@ -27,13 +27,16 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * Languages the default report templates are generated in (#37522).
+ * Languages the technical sheet templates are generated in (#37522, #37560).
  */
 public class PLMInitRepoVisitorTest {
 
 	private static final String CLIENT_SHEET = "beCPG/birt/document/product/default/ProductReport.rptdesign";
 	private static final String PRODUCTION_SHEET = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
+	private static final String COSMETIC_RAW_MATERIAL_SHEET = "beCPG/birt/document/product/default/RawMaterialReport_Cosmetic.rptdesign";
 	private static final String ARABIC = "ar";
+	private static final String POLISH = "pl";
+	private static final String FRENCH = "fr";
 
 	@Test
 	public void theClientSheetIsGeneratedInArabic() {
@@ -52,6 +55,18 @@ public class PLMInitRepoVisitorTest {
 	@Test
 	public void anUntranslatedTemplateIsNotGeneratedInArabic() {
 		assertFalse(PLMInitRepoVisitor.getReportTemplateLocales(PRODUCTION_SHEET).contains(ARABIC));
+	}
+
+	@Test
+	public void everyTechnicalSheetIsGeneratedInPolish() {
+		assertTrue(PLMInitRepoVisitor.getReportTemplateLocales(CLIENT_SHEET).contains(POLISH));
+		assertTrue(PLMInitRepoVisitor.getReportTemplateLocales(PRODUCTION_SHEET).contains(POLISH));
+		assertTrue(PLMInitRepoVisitor.getReportTemplateLocales(COSMETIC_RAW_MATERIAL_SHEET).contains(POLISH));
+	}
+
+	@Test
+	public void aTechnicalSheetKeepsTheSharedLanguages() {
+		assertTrue(PLMInitRepoVisitor.getReportTemplateLocales(PRODUCTION_SHEET).contains(FRENCH));
 	}
 
 	@Test
