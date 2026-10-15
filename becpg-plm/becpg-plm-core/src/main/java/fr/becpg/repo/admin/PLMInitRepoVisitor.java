@@ -148,6 +148,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>supportedLocale</code> */
 	private static List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
+	/** Language the client technical sheet is also generated in, laid out right to left */
+	private static final String ARABIC_LOCALE = "ar";
+
 	/** Constant <code>SIMULATION_SITE_ID="simulation"</code> */
 	private static final String SIMULATION_SITE_ID = "simulation";
 	/** Constant <code>VALID_SITE_ID="valid"</code> */
@@ -331,6 +334,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RU_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ru.properties";
 	/** Constant <code>PRODUCT_REPORT_SV_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SV_RESOURCE = "beCPG/birt/document/product/default/ProductReport_sv.properties";
+	/** Constant <code>PRODUCT_REPORT_AR_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
+	private static final String PRODUCT_REPORT_AR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ar.properties";
 
 	/** Constant <code>PRODUCT_REPORT_SETTINGS_RESOURCE="beCPG/birt/document/product/default/set"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
@@ -1980,6 +1985,24 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(templatesNodeRef, SCORE_MARKING_TEMPLATES_RESOURCES);
 	}
 
+	/**
+	 * Returns the languages a default report template is generated in.
+	 *
+	 * The client technical sheet is the only template translated in Arabic. The shared list stays
+	 * without it, because it also seeds the list values, which have no Arabic translation.
+	 *
+	 * @param reportPath the classpath of the report design
+	 * @return the locales supported by the template
+	 */
+	static List<String> getReportTemplateLocales(String reportPath) {
+		if (PRODUCT_REPORT_CLIENT_PATH.equals(reportPath)) {
+			List<String> locales = new ArrayList<>(supportedLocale);
+			locales.add(ARABIC_LOCALE);
+			return locales;
+		}
+		return supportedLocale;
+	}
+
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
 			// reports folder
@@ -2010,7 +2033,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
-					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE };
+					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
+					PRODUCT_REPORT_AR_RESOURCE };
 
 			String[] commonReportResource = { PRODUCT_REPORT_LOGO_RESOURCE, PRODUCT_REPORT_SETTINGS_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
@@ -2073,7 +2097,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					reportTplInformation.setSystemTpl(true);
 					reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(defaultReport[i]));
 					reportTplInformation.setResources(resources);
-					reportTplInformation.setSupportedLocale(supportedLocale);
+					reportTplInformation.setSupportedLocale(getReportTemplateLocales(defaultReport[i]));
 					if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
 						reportTplInformation.setTextParameter("{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }");
 					}
