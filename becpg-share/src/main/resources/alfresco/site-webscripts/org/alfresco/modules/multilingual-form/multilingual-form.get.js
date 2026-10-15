@@ -2,6 +2,23 @@
 
 
 
+/**
+ * Rich text editor control of the value in one locale. The writing direction is resolved in the
+ * browser by beCPG.util.getTextDirection, the single rule shared with the other fields.
+ */
+function createEditorControl(locale)
+{
+   var safeLocale = String(locale).replace(/[^A-Za-z_-]/g, "");
+   return {
+      params: {
+         editorAppearance: "custom",
+         editorWidth: 750,
+         branding: false,
+         editorParameters: model.defaultEditorParameters + ", directionality: beCPG.util.getTextDirection(\"" + safeLocale + "\")"
+      }
+   };
+}
+
 function main()
 {
  AlfrescoUtil.param('nodeRef', null);
@@ -69,14 +86,7 @@ function main()
            				description = field.description;
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
-           					field.control = {
-								params: {
-								 editorAppearance: "custom",
-								 editorWidth: 750,
-								 branding: false,
-           						 editorParameters:  model.defaultEditorParameters
-           						}
-           					 };
+           					field.control = createEditorControl(field.locale);
 
            					model.mlFields.push(field);
            					added = true;
@@ -89,9 +99,7 @@ function main()
            			  	if(lang.key.indexOf("_")>0){
            			  	 country = lang.key.split("_")[1].toLowerCase();
            			  	}
-           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": { "params": 
-           					{"editorAppearance": "custom",  "branding": false, "editorWidth" : 750, "editorParameters":  model.defaultEditorParameters}
-           					}};
+           				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": createEditorControl(lang.key)};
            				model.mlFields.push(toAdd);
            			}
            			
