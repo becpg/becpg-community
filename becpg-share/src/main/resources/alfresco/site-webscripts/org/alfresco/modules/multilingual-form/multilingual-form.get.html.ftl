@@ -154,7 +154,7 @@ var addFormFieldForLocale = function(){
 		   	         +"<span></label>";
 		   	 <#if args.textarea??>
 			   	 <#if args.htmlEditor??>
-		   	 	 <#assign mlField = {"control": {"params": {"editorAppearance": "custom","branding":false , "editorWidth" : 750 , "editorParameters":defaultEditorParameters }}}>
+		   	 	 <#assign mlField = {"control": {"params": {"editorAppearance": "custom","branding":false , "editorWidth" : 750 , "editorParameters":defaultEditorParameters + ", directionality: beCPG.util.getTextDirection(lc)" }}}>
 			   	 var mlFieldHtmlId = "${el}-"+lc;
 				 if(this.editors === undefined){
 				    this.editors = {};
@@ -177,9 +177,18 @@ var addFormFieldForLocale = function(){
 				htmlEl.innerHTML = varHtml;
 		  	 
 		  	 container.appendChild(htmlEl);
+		  	 beCPG.util.applyTextDirection(document.getElementById("${el}-"+lc), lc);
  		}
   		
     
 };
+
+// The dialog runs these scripts before it inserts the markup, hence the wait for the form
+YAHOO.util.Event.onContentReady("${el}-form", function() {
+   var localeFields = YAHOO.util.Selector.query(".form-field [name]", "${el}-form");
+   for (var i = 0; i < localeFields.length; i++) {
+      beCPG.util.applyTextDirection(localeFields[i], localeFields[i].getAttribute("name"));
+   }
+});
 
 //]]></script>

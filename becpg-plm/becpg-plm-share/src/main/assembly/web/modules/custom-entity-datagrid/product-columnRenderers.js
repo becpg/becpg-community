@@ -1967,7 +1967,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var html = '', displayValue = data.displayValue,
                 htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue",
-                editPermission = oRecord.getData().permissions.userAccess.edit;
+                editPermission = oRecord.getData().permissions.userAccess.edit,
+                dirAttribute = '';
 
             if (data.value != null) {
                 if (data.displayValue == null || data.displayValue == "") {
@@ -1979,8 +1980,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
 
+            if (data.displayValue != null && data.displayValue != "" && beCPG.util.getContentTextDirection() == "rtl") {
+                dirAttribute = ' dir="rtl"';
+            }
 
-            html += '<div class="note rounded"><div id="' + htmlId + suffix + '" > ' + displayValue + '</div>';
+            html += '<div class="note rounded"><div id="' + htmlId + suffix + '"' + dirAttribute + ' > ' + displayValue + '</div>';
 
             var nodeRef = oRecord._oData.nodeRef;
             html += '<div class="labeling-action-container">';
