@@ -13,7 +13,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  *
  * @author matthieu
  */
-public class AccentFilter extends TokenFilter {
+public final class AccentFilter extends TokenFilter {
 	
 	/** Constant <code>substitutions</code> */
 	private static final HashMap<String,String> substitutions = initSubstitutions();
