@@ -403,6 +403,9 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			NodeRef entityNodeRef = entityListDAO.getEntity(channelListItemNodeRef);
 			NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
+			if (channelNodeRef == null || isEntityBeingDeleted(entityNodeRef)) {
+				return;
+			}
 			String channelId = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ID);
 
 			List<String> failedChannelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS);
@@ -420,6 +423,17 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			policyBehaviourFilter.enableBehaviour(PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
+	}
+
+	/**
+	 * Tells whether the entity owning a channel list item is gone or about to be deleted, in which case its
+	 * channel ids need no update.
+	 *
+	 * @param entityNodeRef the entity owning the channel list item, may be null
+	 * @return true if the entity is missing or pending deletion
+	 */
+	private boolean isEntityBeingDeleted(NodeRef entityNodeRef) {
+		return entityNodeRef == null || nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_PENDING_DELETE);
 	}
 
 	// Helper method to get property or default empty list
