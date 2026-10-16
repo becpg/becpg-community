@@ -317,8 +317,8 @@
 				<entry key="SiteManager" value="6" />
 				<entry key="SiteCollaborator" value="5" />
 				<entry key="SiteContributor" value="4" />
-				<entry key="SiteBranchOnlyManager" value="3" />
-				<entry key="SiteBranchManager" value="2" />
+				<entry key="SiteBranchManager" value="3" />
+				<entry key="SiteBranchOnlyManager" value="2" />
 				<entry key="SiteConsumer" value="1" />
 			</map>
 		</property>
