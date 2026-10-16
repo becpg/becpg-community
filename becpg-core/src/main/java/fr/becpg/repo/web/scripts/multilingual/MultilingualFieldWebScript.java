@@ -390,8 +390,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				String url = DEEPL_API_URL;
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				headers.add("Authorization", "DeepL-Auth-Key " + deepLAPIKey);
 				MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-				map.add(DEEPL_AUTH_KEY, deepLAPIKey);
 				map.add(DEEPL_TEXT, defaultValue);
 				map.add(DEEPL_SOURCE_LANG, language);
 				map.add(DEEPL_TARGET_LANG, target.split("_")[0]);
