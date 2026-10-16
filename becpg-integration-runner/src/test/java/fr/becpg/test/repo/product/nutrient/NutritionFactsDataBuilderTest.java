@@ -44,9 +44,16 @@ public class NutritionFactsDataBuilderTest {
 
 	private static final String CANADA_FORMAT = "canada";
 
+	private static final String CANADA_LINEAR_FORMAT = "canadaLinear";
+
+	private static final String CANADA_LINEAR_BILINGUAL_FORMAT = "canadaLinearBilingual";
+
 	private static final String US_REGULATION_KEY = NutritionFactsOptions.US_REGULATION_KEY;
 
 	private static final String CA_REGULATION_KEY = NutritionFactsOptions.CA_REGULATION_KEY;
+
+	/** What Canada puts between a figure and its unit or its percent sign. */
+	private static final String NBSP = "\u00A0";
 
 	private static final NodeRef PRODUCT_NODE_REF = new NodeRef("workspace://SpacesStore/product");
 
@@ -233,7 +240,7 @@ public class NutritionFactsDataBuilderTest {
 		NutritionFactsData data = builder.build(product, Locale.CANADA, "canada",
 				NutritionFactsOptions.forRegulation(NutritionFactsOptions.CA_REGULATION_KEY));
 
-		Assert.assertEquals("Saturated and trans fat share a single percentage under B.01.401", "15%",
+		Assert.assertEquals("Saturated and trans fat share a single percentage under B.01.401", "15" + NBSP + "%",
 				lineOf(data, "Saturated").dailyValuePercent());
 		Assert.assertFalse("The trans fat line carries no percentage of its own", lineOf(data, "+ Trans").showDailyValue());
 	}
@@ -261,7 +268,7 @@ public class NutritionFactsDataBuilderTest {
 		Assert.assertEquals("Nutrition Facts", data.label(NutritionFactsLabelResolver.LABEL_TITLE));
 		Assert.assertEquals("Valeur nutritive", data.secondaryLabel(NutritionFactsLabelResolver.LABEL_TITLE));
 		Assert.assertTrue("Its footnote is stated in both languages", data.footNote().startsWith("* 5% or less"));
-		Assert.assertTrue(data.secondaryFootNote().startsWith("* 5 % ou moins"));
+		Assert.assertTrue(data.secondaryFootNote().startsWith("* 5" + NBSP + "% ou moins"));
 	}
 
 	@Test
@@ -309,7 +316,7 @@ public class NutritionFactsDataBuilderTest {
 
 		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
 
-		Assert.assertEquals("An amount the regulation gives no unit is stated in the unit of the characteristic", "100mg",
+		Assert.assertEquals("An amount the regulation gives no unit is stated in the unit of the characteristic", "100" + NBSP + "mg",
 				data.supplementalIngredients().get(0).value());
 	}
 
@@ -388,6 +395,53 @@ public class NutritionFactsDataBuilderTest {
 				NutritionFactsOptions.forRegulation(US_REGULATION_KEY).withOptionalNutrients());
 
 		Assert.assertEquals("A node identifier must never be printed on a label", "Salt", data.nutrients().get(0).label());
+	}
+
+	@Test
+	public void testCanadianFiguresAreSpacedFromTheirUnitAndPercentSign() {
+
+		NutritionFactsLine fat = buildBilingualCanadian(canadianProduct()).nutrients().get(0);
+
+		Assert.assertEquals("Canada writes 8 g, the space being a no-break one", "8" + NBSP + "g", fat.value());
+		Assert.assertEquals("and 10 %", "10" + NBSP + "%", fat.dailyValuePercent());
+	}
+
+	@Test
+	public void testCanadianServingWeightIsSpacedFromItsUnit() {
+
+		ProductData product = canadianProduct();
+		product.setServingSize(56d);
+		product.setServingSizeUnit(ProductUnit.g);
+
+		Assert.assertEquals("56" + NBSP + "g", builder.build(product, Locale.CANADA, CANADA_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY)).serving().servingSize());
+	}
+
+	@Test
+	public void testBilingualCanadianPanelCarriesThePanelOfEachLanguage() {
+
+		List<NutritionFactsData> panels = builder.build(canadianProduct(), Locale.CANADA, CANADA_LINEAR_BILINGUAL_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY).withBothOfficialLanguages()).languagePanels();
+
+		Assert.assertEquals("One panel per official language, English first", 2, panels.size());
+		Assert.assertEquals("Fat", panels.get(0).nutrients().get(0).label());
+		Assert.assertEquals("Lipides", panels.get(1).nutrients().get(0).label());
+		Assert.assertFalse("Each of them is written in its language alone", panels.get(1).isBilingual());
+		Assert.assertEquals("Valeur nutritive", panels.get(1).label(NutritionFactsLabelResolver.LABEL_TITLE));
+	}
+
+	@Test
+	public void testBilingualTableCarriesNoPanelPerLanguage() {
+
+		Assert.assertTrue("A table joins its languages line by line and needs no panel per language",
+				buildBilingualCanadian(canadianProduct()).languagePanels().isEmpty());
+	}
+
+	@Test
+	public void testUnilingualPanelCarriesNoPanelPerLanguage() {
+
+		Assert.assertTrue(builder.build(canadianProduct(), Locale.CANADA, CANADA_LINEAR_FORMAT,
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY)).languagePanels().isEmpty());
 	}
 
 	@Test

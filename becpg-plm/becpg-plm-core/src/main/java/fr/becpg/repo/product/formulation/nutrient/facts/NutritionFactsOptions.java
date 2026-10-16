@@ -70,6 +70,16 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 
 	private static final String TRANS_FAT_NUT_CODE = "FATRN";
 
+	/**
+	 * What Canada puts between a figure and its unit or its percent sign, "8 g" and "11 %". It is a
+	 * no-break space: a figure printed at the end of a line and its unit at the start of the next one
+	 * no longer read as one amount.
+	 */
+	private static final String CA_FIGURE_SEPARATOR = "\u00A0";
+
+	/** The FDA sets the unit and the percent sign against the figure, "8g" and "10%". */
+	private static final String NO_FIGURE_SEPARATOR = "";
+
 	/** The two official languages of Canada, in the order the directory of formats figures them. */
 	private static final List<Locale> CA_OFFICIAL_LANGUAGES = List.of(Locale.ENGLISH, Locale.FRENCH);
 
@@ -107,6 +117,26 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	 */
 	public NutritionFactsOptions withBothOfficialLanguages() {
 		return new NutritionFactsOptions(regulationKey, showOptional, true, micronutrientStartSort, sharedDailyValues);
+	}
+
+	/**
+	 * <p>Same options, stating the panel in the language of the label only. A bilingual linear
+	 * panel is drawn as two complete texts, one per language, each of which is such a panel.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions} object
+	 */
+	public NutritionFactsOptions withSingleLanguage() {
+		return new NutritionFactsOptions(regulationKey, showOptional, false, micronutrientStartSort, sharedDailyValues);
+	}
+
+	/**
+	 * <p>What the regulation puts between a figure and its unit, or its percent sign: nothing for
+	 * the FDA, "8g", a no-break space for Canada, "8 g".</p>
+	 *
+	 * @return a {@link java.lang.String} object, never null
+	 */
+	public String figureSeparator() {
+		return CA_REGULATION_KEY.equals(regulationKey) ? CA_FIGURE_SEPARATOR : NO_FIGURE_SEPARATOR;
 	}
 
 	/**

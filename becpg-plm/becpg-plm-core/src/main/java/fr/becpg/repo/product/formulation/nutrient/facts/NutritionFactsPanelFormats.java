@@ -49,6 +49,12 @@ public final class NutritionFactsPanelFormats {
 	 */
 	private static final String BILINGUAL_FORMAT_SUFFIX = "Bilingual";
 
+	/**
+	 * Format stating its two languages as two complete texts set side by side, the directory of
+	 * formats figuring no bilingual linear panel, where every other format joins them line by line.
+	 */
+	private static final String CANADIAN_LINEAR_FORMAT = "canadaLinear";
+
 	private NutritionFactsPanelFormats() {
 		// Do nothing
 	}
@@ -62,6 +68,17 @@ public final class NutritionFactsPanelFormats {
 	public static String templateName(String format) {
 		String template = isBilingual(format) ? format.substring(0, format.length() - BILINGUAL_FORMAT_SUFFIX.length()) : format;
 		return TEMPLATE_PREFIX + template + TEMPLATE_SUFFIX;
+	}
+
+	/**
+	 * <p>Tells whether a format draws each of its languages as a text of its own, which is what the
+	 * model then has to carry a panel per language for.</p>
+	 *
+	 * @param format the panel format code, may be null
+	 * @return a boolean
+	 */
+	public static boolean statesEachLanguageApart(String format) {
+		return (format != null) && templateName(format).equals(templateName(CANADIAN_LINEAR_FORMAT));
 	}
 
 	/**

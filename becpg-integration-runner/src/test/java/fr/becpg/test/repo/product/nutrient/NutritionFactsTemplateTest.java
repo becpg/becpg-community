@@ -58,13 +58,22 @@ public class NutritionFactsTemplateTest {
 
 	private static final double PANEL_WIDTH = 144d;
 
-	/** Width of a Canadian panel stating "% valeur quotidienne*", which widens it past its minimum. */
-	private static final String CANADA_PANEL_WIDTH = "170pt";
+	/** Width of a Canadian panel, which holds "% valeur quotidienne*" beside 10 point calories. */
+	private static final String CANADA_PANEL_WIDTH = "162pt";
 
 	/** Minimum width of a bilingual Canadian panel, which already holds its daily value header. */
 	private static final String CANADA_BILINGUAL_PANEL_WIDTH = "180pt";
 
-	private static final double RULE_MEDIUM = 3d;
+	/** Rules of the Canadian standard table, figure 1.1 of the directory of formats. */
+	private static final double CA_HAIRLINE = 0.5d;
+
+	private static final double CA_RULE_THICK = 2.5d;
+
+	/** Thick rules of the Canadian horizontal format, figure 4.1. */
+	private static final double CA_HORIZONTAL_RULE_THICK = 2d;
+
+	/** Where the two columns of nutrients of the Canadian horizontal format start. */
+	private static final double CA_HORIZONTAL_COLUMN_X = 140d;
 
 	/** Weight of the rule closing the opening block of a Canadian panel, lighter than its parts. */
 	private static final double RULE_LIGHT = 1d;
@@ -463,9 +472,10 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianPanelRulesTheGroupsAndNotEveryLine() throws Exception {
 		List<Element> rects = elements(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "rect");
 
-		Assert.assertEquals("A medium rule closes the calories, the core nutrients and the minerals", 3, countByHeight(rects, RULE_MEDIUM));
+		Assert.assertEquals("A thick rule closes the calories, the core nutrients and the minerals", 3, countByHeight(rects, CA_RULE_THICK));
 		Assert.assertEquals("The title and the serving are closed by a lighter rule", 1, countByHeight(rects, RULE_LIGHT));
-		Assert.assertEquals("A hairline separates the declarations inside a group, and nothing else", 2, countByHeight(rects, HAIRLINE));
+		Assert.assertEquals("A half point hairline separates the declarations inside a group, and nothing else", 2,
+				countRulesByHeight(rects, CA_HAIRLINE));
 	}
 
 	@Test
@@ -474,7 +484,7 @@ public class NutritionFactsTemplateTest {
 
 		double shortest = canadaPanelWidth();
 		for (Element rect : rects) {
-			if (Math.abs(Double.parseDouble(rect.getAttribute("height")) - RULE_MEDIUM) < 0.001d) {
+			if (Math.abs(Double.parseDouble(rect.getAttribute("height")) - CA_RULE_THICK) < 0.001d) {
 				shortest = Math.min(shortest, Double.parseDouble(rect.getAttribute("width")));
 			}
 		}
@@ -524,7 +534,7 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
-	public void testCanadianPanelIsWidenedToFitItsDailyValueHeader() throws Exception {
+	public void testCanadianPanelHoldsItsDailyValueHeaderBesideTheCalories() throws Exception {
 		Element french = parse(renderToString(CANADA_TEMPLATE, canadianPanel())).getDocumentElement();
 		Element bilingual = parse(renderToString(CANADA_TEMPLATE, bilingualCanadianPanel())).getDocumentElement();
 
@@ -538,8 +548,8 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianLinearPanelRunsItsHeadingIntoTheSentence() throws Exception {
 		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel()));
 
-		Assert.assertTrue("The title, the serving and the calories open the same sentence",
-				findText(panel, "Valeur nutritive").getTextContent().startsWith("Valeur nutritive Pour 1 tasse (250 mL): Calories 230,"));
+		Assert.assertEquals("The title, the serving in lower case and the calories open the same sentence, a colon parting the last two",
+				"Valeur nutritive pour 1 tasse (250 mL) : Calories 230", findText(panel, "Valeur nutritive").getTextContent().replace(NBSP, " "));
 	}
 
 	@Test
@@ -554,8 +564,8 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianLinearPanelStatesItsNutrientsInTheFourLinesOfTheRegulation() throws Exception {
 		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel()));
 
-		Assert.assertTrue("The fat line closes on the cholesterol, whatever the order of the table",
-				findText(panel, "Lipides").getTextContent().startsWith("Lipides 8 g (10%), saturés 1 g, + trans 0 g (5%)"));
+		Assert.assertTrue("The fat line closes on the cholesterol, whatever the order of the table, no comma parting the two fats one percentage covers",
+				findText(panel, "Lipides").getTextContent().replace(NBSP, " ").startsWith("Lipides 8 g (10%), saturés 1 g + trans 0 g (5%)"));
 		Assert.assertNotNull("The sodium closes the line of the carbohydrates and the protein", findText(panel, "Sodium"));
 		Assert.assertNotNull("The minerals take a line of their own", findText(panel, "Potassium"));
 	}
@@ -627,6 +637,135 @@ public class NutritionFactsTemplateTest {
 		Assert.assertEquals("A horizontal panel runs across the width", "504pt", svg.getAttribute("width"));
 	}
 
+	@Test
+	public void testCanadianStandardPanelIsSetInTheTypeOfTheDirectory() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals("A 13 point title", "13", findText(panel, "Valeur nutritive").getAttribute("font-size"));
+		Assert.assertEquals("Calories in 10 point bold", "10", findText(panel, "Calories").getAttribute("font-size"));
+		Assert.assertEquals("A 6.5 point footnote", "6.5", findText(panel, "* 5 %").getAttribute("font-size"));
+	}
+
+	@Test
+	public void testCanadianFootnoteRunsOverTwoLinesRatherThanOutOfThePanel() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Element opening = findText(panel, "* 5 %");
+		Assert.assertFalse("The French footnote does not hold on one line at 6.5 points", opening.getTextContent().endsWith("beaucoup"));
+		Assert.assertEquals("Its verdict keeps the heavy face on the line it is wrapped to", BOLD,
+				((Element) findText(panel, "beaucoup").getElementsByTagName("tspan").item(0)).getAttribute("font-weight"));
+	}
+
+	@Test
+	public void testBilingualCanadianPanelStatesTheFirstDailyValueHeaderOnTheCaloriesLine() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, bilingualCanadianPanel()));
+
+		double calories = y(findText(panel, "Calories"));
+		Assert.assertEquals("The English header sits on the line of the calories", calories, y(findText(panel, "% Daily Value*")), 0.001d);
+		Assert.assertTrue("The French header comes right under it", y(findText(panel, "% valeur quotidienne*")) > calories);
+	}
+
+	@Test
+	public void testCanadianHorizontalPanelPartsItsBandsWithoutVerticalRules() throws Exception {
+		Document panel = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel()));
+
+		for (Element rect : elements(panel, "rect")) {
+			double x = Double.parseDouble(rect.getAttribute("x"));
+			boolean isFrame = (x < 1d) || (x > 503d) || (rect.getAttribute("width").equals(rect.getAttribute("height")));
+			Assert.assertTrue("Only the frame is drawn upright, a gutter parts the columns",
+					isFrame || (Double.parseDouble(rect.getAttribute("width")) > Double.parseDouble(rect.getAttribute("height"))));
+		}
+	}
+
+	@Test
+	public void testCanadianHorizontalPanelExplainsItsDailyValueHeaderUnderTheCalories() throws Exception {
+		Document panel = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel()));
+
+		double calories = y(findText(panel, "Calories"));
+		Assert.assertTrue("The legend of %DV* comes under the calories", y(findText(panel, "* DV = Daily Value")) > calories);
+		Assert.assertTrue("and so does the one of %VQ*", y(findText(panel, "* VQ = valeur quotidienne")) > calories);
+	}
+
+	@Test
+	public void testCanadianHorizontalFootnoteRunsUnderTheColumnsOnly() throws Exception {
+		Element footNote = findText(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())), "* 5% or less");
+
+		Assert.assertEquals("The footnote starts at the first column of nutrients", CA_HORIZONTAL_COLUMN_X,
+				Double.parseDouble(footNote.getAttribute("x")), 0.01d);
+		Assert.assertTrue("and states both languages on its line", footNote.getTextContent().contains(" / * 5 % ou moins"));
+	}
+
+	@Test
+	public void testCanadianHorizontalColumnsCloseOnRulesStoppingShortOfEachOther() throws Exception {
+		List<Element> closing = new java.util.ArrayList<>();
+		for (Element rect : elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())), "rect")) {
+			if (Math.abs(Double.parseDouble(rect.getAttribute("height")) - CA_HORIZONTAL_RULE_THICK) < 0.001d) {
+				closing.add(rect);
+			}
+		}
+		Element first = closing.get(closing.size() - 2);
+		Element second = closing.get(closing.size() - 1);
+
+		Assert.assertEquals("Five points part the rule closing the first column from the one closing the second", 5d,
+				Double.parseDouble(second.getAttribute("x")) - Double.parseDouble(first.getAttribute("x"))
+						- Double.parseDouble(first.getAttribute("width")),
+				0.01d);
+	}
+
+	@Test
+	public void testCanadianHorizontalPanelLeavesTheMineralsUnruled() throws Exception {
+		List<Element> rects = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, canadianPanel())), "rect");
+
+		Assert.assertEquals("A hairline heads each column, and none parts the minerals", 2, countRulesByHeight(rects, CA_HAIRLINE));
+	}
+
+	@Test
+	public void testCanadianHorizontalPanelSetsItsNutrientsInACondensedFace() throws Exception {
+		Element columns = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, canadianPanel())), "g").get(0);
+
+		Assert.assertTrue("Figure 4.1 sets the nutrients in a condensed face", columns.getAttribute("font-family").startsWith("'Liberation Sans Narrow'"));
+	}
+
+	@Test
+	public void testBilingualCanadianLinearPanelStatesTwoCompleteTextsSideBySide() throws Exception {
+		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, bilingualCanadianPanelWithLanguagePanels()));
+
+		Element english = findText(panel, "Nutrition Facts");
+		Element french = findText(panel, "Valeur nutritive");
+		Assert.assertEquals("The two texts open on the same line", y(english), y(french), 0.001d);
+		Assert.assertTrue("the French one beside the English one", Double.parseDouble(french.getAttribute("x")) > 200d);
+		Assert.assertFalse("No nutrient mixes the two languages", renderToString(CANADA_LINEAR_TEMPLATE, bilingualCanadianPanelWithLanguagePanels())
+				.contains("Lipides / "));
+	}
+
+	@Test
+	public void testCanadianLinearPanelDrawsNoRuleAboveItsFooter() throws Exception {
+		List<Element> rects = elements(parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel())), "rect");
+
+		Assert.assertEquals("The ground and the four sides of the frame, nothing else", 5, rects.size());
+	}
+
+	@Test
+	public void testCanadianLinearLineAlwaysClosesOnAWholeDeclaration() throws Exception {
+		Document panel = parse(renderToString(CANADA_LINEAR_TEMPLATE, bilingualCanadianPanelWithLanguagePanels()));
+
+		for (Element text : elements(panel, "text")) {
+			String content = text.getTextContent().trim();
+			boolean isSentenceLine = "7".equals(text.getAttribute("font-size"));
+			Assert.assertTrue("A nutrient is never parted from its amount: " + content,
+					!isSentenceLine || content.endsWith(",") || content.endsWith("."));
+		}
+	}
+
+	@Test
+	public void testCanadianLinearPanelIsSetInTheTypeOfTheDirectory() throws Exception {
+		String svg = renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel());
+
+		Assert.assertTrue("A 10 point title", svg.contains("font-size=\"10\">Valeur nutritive</tspan>"));
+		Assert.assertEquals("Nutrients in 7 point", "7", findText(parse(svg), "Lipides").getAttribute("font-size"));
+		Assert.assertEquals("A 6 point legend", "6", findText(parse(svg), "% = %").getAttribute("font-size"));
+	}
+
 	private NutritionFactsData canadianPanel() {
 		return canadianPanel(canadianLabels(false), NutritionFactsTranslation.none(), CANADIAN_FOOTNOTE);
 	}
@@ -635,6 +774,15 @@ public class NutritionFactsTemplateTest {
 	private NutritionFactsData bilingualCanadianPanel() {
 		NutritionFactsTranslation secondary = new NutritionFactsTranslation(canadianLabels(false), null, CANADIAN_FOOTNOTE);
 		return canadianPanel(canadianLabels(true), secondary, ENGLISH_CANADIAN_FOOTNOTE);
+	}
+
+	/** The bilingual panel carrying the panel of each language, which the linear format states as two texts. */
+	private NutritionFactsData bilingualCanadianPanelWithLanguagePanels() {
+		NutritionFactsData bilingual = bilingualCanadianPanel();
+		NutritionFactsData english = canadianPanel(canadianLabels(true), NutritionFactsTranslation.none(), ENGLISH_CANADIAN_FOOTNOTE);
+		return new NutritionFactsData("canadaLinearBilingual", "CA", bilingual.serving(), bilingual.calories(), bilingual.nutrients(),
+				bilingual.micronutrients(), List.of(), bilingual.footNote(), "", bilingual.labels(), bilingual.secondary(),
+				List.of(english, canadianPanel()));
 	}
 
 	private NutritionFactsData canadianPanel(Map<String, String> labels, NutritionFactsTranslation secondary, String footNote) {
@@ -670,7 +818,9 @@ public class NutritionFactsTemplateTest {
 		labels.put("servingSize", english ? "Per" : "Pour");
 		labels.put("dailyValue", english ? "% Daily Value*" : "% valeur quotidienne*");
 		labels.put("dailyValueSuffix", "");
-		labels.put("linearLegend", english ? "% = % Daily Value" : "% = % valeur quotidienne");
+		labels.put("linearLegend", english ? "% = % Daily Value*" : "% = % valeur quotidienne*");
+		labels.put("dailyValueLegend", english ? "* DV = Daily Value" : "* VQ = valeur quotidienne");
+		labels.put("servingColon", english ? ":" : NBSP + ":");
 		labels.put("footNoteEmphasis", english ? "a little,a lot" : "peu,beaucoup");
 		labels.put("dailyValueShort", english ? "%DV*" : "%VQ*");
 		labels.put("supplementedTitle", english ? "Supplemented Food Facts" : "Info-aliment supplémenté");
@@ -724,6 +874,17 @@ public class NutritionFactsTemplateTest {
 			}
 		}
 		return count;
+	}
+
+	/** Same count, the frame left out: its sides are as thick as a Canadian hairline. */
+	private int countRulesByHeight(List<Element> rects, double height) {
+		List<Element> rules = new java.util.ArrayList<>();
+		for (Element rect : rects) {
+			if (Double.parseDouble(rect.getAttribute("x")) > 0d) {
+				rules.add(rect);
+			}
+		}
+		return countByHeight(rules, height);
 	}
 
 	private List<Element> elements(Document panel, String tagName) {
