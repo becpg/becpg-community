@@ -31,6 +31,14 @@ public class NutritionFactsPanelFormatsTest {
 	}
 
 	@Test
+	public void testOnlyTheCanadianLinearFormatStatesEachLanguageApart() {
+		assertTrue(NutritionFactsPanelFormats.statesEachLanguageApart("canadaLinearBilingual"));
+		assertFalse(NutritionFactsPanelFormats.statesEachLanguageApart("canadaBilingual"));
+		assertFalse(NutritionFactsPanelFormats.statesEachLanguageApart("linear"));
+		assertFalse(NutritionFactsPanelFormats.statesEachLanguageApart(null));
+	}
+
+	@Test
 	public void testReportParameterIsFoundInAListOrAsASingleValue() {
 		assertTrue(NutritionFactsPanelFormats.hasReportParameter(new ArrayList<>(List.of("Show traffic lights", "Show dual NFP")), "Show dual NFP"));
 		assertTrue(NutritionFactsPanelFormats.hasReportParameter("Show dual NFP", "Show dual NFP"));

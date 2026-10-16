@@ -89,6 +89,12 @@ public class NutritionFactsLabelResolver {
 	/** Key of the legend a linear panel prints for the percentages it states, Canada only. */
 	public static final String LABEL_LINEAR_LEGEND = "linearLegend";
 
+	/** Key of what closes the serving a linear panel runs into its calories, ":" or " :" in French. */
+	public static final String LABEL_SERVING_COLON = "servingColon";
+
+	/** Key of the legend a panel prints for its shortened daily value header, "* DV = Daily Value". */
+	public static final String LABEL_DAILY_VALUE_LEGEND = "dailyValueLegend";
+
 	/** Key of the wordings of the footnote the regulation sets in the heavy face, comma separated. */
 	public static final String LABEL_FOOTNOTE_EMPHASIS = "footNoteEmphasis";
 
@@ -107,7 +113,7 @@ public class NutritionFactsLabelResolver {
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
 			LABEL_SERVINGS_SHORT, LABEL_SERVING_SIZE_SHORT, LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE,
 			LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING, LABEL_PER_CONTAINER, LABEL_DAILY_VALUE_SUFFIX, LABEL_LINEAR_LEGEND,
-			LABEL_FOOTNOTE_EMPHASIS, LABEL_ITALIC_WORD, LABEL_SUPPLEMENTED_TITLE, LABEL_SUPPLEMENTED_WITH, LABEL_SUPPLEMENTED_NOTE);
+			LABEL_DAILY_VALUE_LEGEND, LABEL_SERVING_COLON, LABEL_FOOTNOTE_EMPHASIS, LABEL_ITALIC_WORD, LABEL_SUPPLEMENTED_TITLE, LABEL_SUPPLEMENTED_WITH, LABEL_SUPPLEMENTED_NOTE);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 
