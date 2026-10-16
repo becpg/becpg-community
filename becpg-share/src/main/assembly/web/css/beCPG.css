@@ -1261,3 +1261,9 @@ div.yui-dialog {
 .people-finder .detail {
 	overflow-wrap: anywhere;
 }
+
+/** Align a value written from right to left (Arabic, Hebrew...) to the right, Share dialogs inherit text-align: left **/
+
+[dir="rtl"] {
+	text-align: right;
+}

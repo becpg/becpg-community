@@ -115,6 +115,31 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
 
 
 ]]></method>
+    <method name="beforeFactory"><![CDATA[// A sheet in a language written right to left (Arabic, Hebrew...) is laid out right to left:
+// BIRT then mirrors the column order of the tables and the alignment of the cells.
+var rightToLeftLanguages = ["ar", "he", "iw", "fa", "ur", "ps", "yi", "dv", "ckb", "sd", "ug"];
+
+// The chapter headers are styled in sans-serif, an alias of the Type 1 Helvetica, and the PDF emitter
+// draws nothing for an Arabic text in that font instead of falling back on a font that has the glyphs.
+// The style comes from the external CSS, which is read only, hence the font set on each header.
+var useUnicodeFontOnChapterHeaders = function (element) {
+	if (element.getStringProperty("style") == "becpg-chapter-header") {
+		element.setProperty("fontFamily", "arial");
+	}
+	var definition = element.getDefn();
+	for (var i = 0; i < definition.getSlotCount(); i++) {
+		var contents = element.getSlot(i).getContents();
+		for (var j = 0; j < contents.size(); j++) {
+			useUnicodeFontOnChapterHeaders(contents.get(j));
+		}
+	}
+};
+
+if (rightToLeftLanguages.indexOf(String(reportContext.getLocale().getLanguage())) >= 0) {
+	var design = reportContext.getDesignHandle();
+	design.setBidiOrientation("rtl");
+	useUnicodeFontOnChapterHeaders(design);
+}]]></method>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
     <property name="bidiLayoutOrientation">ltr</property>
