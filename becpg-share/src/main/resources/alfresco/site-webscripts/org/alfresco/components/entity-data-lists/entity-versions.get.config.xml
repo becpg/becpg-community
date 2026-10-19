@@ -1,0 +1,4 @@
+<entity-versions>
+   <!-- Branches in these states are hidden by default in the entity versions panel -->
+   <hidden-states>Refused,Stopped,Archived</hidden-states>
+</entity-versions>
