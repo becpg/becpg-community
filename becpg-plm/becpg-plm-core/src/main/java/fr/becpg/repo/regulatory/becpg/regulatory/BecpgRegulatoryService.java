@@ -2,6 +2,7 @@ package fr.becpg.repo.regulatory.becpg.regulatory;
 
 import com.google.common.collect.Streams;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -110,7 +111,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
                 ProductData finalProductData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
                 finalizeRecipeCheck(context, finalProductData);
-                processRegulatoryList(finalProductData, context.getIngRegulatoryListDataItems());
+                fillIngRegulatoryList(finalProductData, context.getIngRegulatoryListDataItems());
                 alfrescoRepository.save(finalProductData);
             }
         });
@@ -127,7 +128,25 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     protected void delegateSyncComplianceCheck(RegulatoryContext context) {
         checkRecipe(context);
         finalizeRecipeCheck(context, context.getProduct());
-        processRegulatoryList(context.getProduct(), context.getIngRegulatoryListDataItems());
+        fillIngRegulatoryList(context.getProduct(), context.getIngRegulatoryListDataItems());
+    }
+
+    /**
+     * Fills the ingredient compliance list ({@code bcpg:ingRegulatoryList}) only when the product has
+     * it, as the Decernis service does. A product showing the real-time regulatory view instead of
+     * that list has no such list, and filling it would create it again on every check.
+     *
+     * @param productData the checked product
+     * @param ingRegulatoryListDataItems the ingredient compliance rows returned by the check
+     * @return whether the list was filled
+     */
+    boolean fillIngRegulatoryList(ProductData productData, List<IngRegulatoryListDataItem> ingRegulatoryListDataItems) {
+        if (productData.getIngRegulatoryList() == null
+                || !alfrescoRepository.hasDataList(productData, PLMModel.TYPE_ING_REGULATORY_LIST)) {
+            return false;
+        }
+        processRegulatoryList(productData, ingRegulatoryListDataItems);
+        return true;
     }
 
     private void checkRecipe(RegulatoryContext context) {
