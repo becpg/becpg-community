@@ -91,6 +91,9 @@
 <#-- Air kept between a vertical rule, or the edge of a column, and the figures next to it. -->
 <#assign CELL_INSET = 4>
 
+<#-- Air a horizontal rule leaves on each side of a vertical rule it stops at. -->
+<#assign COLUMN_RULE_GAP = 1.5>
+
 <#-- Air kept above a caption that a rule would otherwise touch -->
 <#assign CAPTION_LEAD = 3>
 
@@ -106,6 +109,19 @@
 <#assign GLYPH_RATIO = svg.GLYPH_RATIO>
 <#assign FIGURE_GLYPH_RATIO = 0.53>
 <#assign HEAVY_GLYPH_RATIO = 0.55>
+
+<#--
+  Advance widths of Arial Bold, as a ratio of the font size, by class of glyph. Where an average
+  ratio is enough to wrap prose, deciding whether two texts share a line needs a closer measure:
+  a serving size is mostly figures and parentheses, much narrower than letters.
+-->
+<#assign NARROW_GLYPHS = " ijlftr.,:;()[]/'!|-">
+<#assign WIDE_GLYPHS = "mwMW%">
+<#assign NARROW_HEAVY_RATIO = 0.31>
+<#assign WIDE_HEAVY_RATIO = 0.86>
+<#assign CAPITAL_HEAVY_RATIO = 0.72>
+<#assign DIGIT_HEAVY_RATIO = 0.556>
+<#assign LETTER_HEAVY_RATIO = 0.58>
 
 <#--
   Baseline of a text whose top edge sits at "top". The y attribute of an SVG text is its
@@ -156,6 +172,47 @@
 <#-- Panel border. Drawn as four rects so that its thickness is exact on every side. -->
 <#macro border height>
 	<@svg.frame width=W height=height thickness=BORDER/>
+</#macro>
+
+<#-- Width a text set in the bold weight takes, measured glyph by glyph. -->
+<#function heavyWidth text size>
+	<#local units = 0>
+	<#list 0..<text?length as index>
+	<#local units = units + heavyGlyphRatio(text[index])>
+	</#list>
+	<#return units * size>
+</#function>
+
+<#function heavyGlyphRatio glyph>
+	<#if NARROW_GLYPHS?contains(glyph)>
+	<#return NARROW_HEAVY_RATIO>
+	<#elseif WIDE_GLYPHS?contains(glyph)>
+	<#return WIDE_HEAVY_RATIO>
+	<#elseif glyph?matches("[0-9]")>
+	<#return DIGIT_HEAVY_RATIO>
+	<#elseif glyph != glyph?lower_case>
+	<#return CAPITAL_HEAVY_RATIO>
+	</#if>
+	<#return LETTER_HEAVY_RATIO>
+</#function>
+
+<#--
+  "Serving size" on the left margin and the serving itself on the right one. A serving too long
+  to stand beside its wording, half an em of air kept between them, goes to the next line rather
+  than running into it. Leaves the ordinate under the serving in cursorY.
+-->
+<#macro servingSizeLine data y size=SERVING_SIZE rowHeight=SERVING_ROW_H>
+	<#local wording = data.label("servingSize")>
+	<#assign cursorY = y>
+	<text x="${PAD}" y="${baseline(cursorY, size)}" font-size="${size}" font-weight="${HEAVY_WEIGHT}">${wording}</text>
+	<#if data.serving().servingSize()??>
+	<#local serving = data.serving().servingSize()>
+	<#if (heavyWidth(wording, size) + size / 2 + heavyWidth(serving, size) gt contentWidth())>
+	<#assign cursorY = cursorY + rowHeight>
+	</#if>
+	<text x="${right()}" y="${baseline(cursorY, size)}" font-size="${size}" font-weight="${HEAVY_WEIGHT}" text-anchor="end">${serving}</text>
+	</#if>
+	<#assign cursorY = cursorY + rowHeight>
 </#macro>
 
 <#--
@@ -697,7 +754,7 @@
 	<#assign cursorY = cursorY + lineHeight(CALORIES_LABEL_SIZE)>
 	</#if>
 
-	<@rule y=cursorY height=RULE_MEDIUM/>
+	<@dualColumnRule y=cursorY labelW=labelW columnW=columnW height=RULE_MEDIUM/>
 	<#assign cursorY = cursorY + RULE_MEDIUM + CAPTION_LEAD>
 
 	<text x="${servingPercentX}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-weight="${HEAVY_WEIGHT}" text-anchor="end">${data.label("dailyValueShort")}</text>
@@ -705,7 +762,7 @@
 	<#assign cursorY = cursorY + CAPTION_ROW_H + 1>
 
 	<#list data.nutrients() as line>
-	<@rule y=cursorY fromX=ruleStart(line)/>
+	<@dualColumnRule y=cursorY labelW=labelW columnW=columnW fromX=ruleStart(line)/>
 	<#assign cursorY = cursorY + HAIRLINE>
 	<@dualColumnRow line=line y=cursorY servingValueX=servingValueX servingPercentX=servingPercentX
 		containerValueX=containerValueX containerPercentX=containerPercentX/>
@@ -713,11 +770,11 @@
 	</#list>
 
 	<#if data.micronutrients()?has_content>
-	<@rule y=cursorY height=RULE_THICK/>
+	<@dualColumnRule y=cursorY labelW=labelW columnW=columnW height=RULE_THICK/>
 	<#assign cursorY = cursorY + RULE_THICK>
 	<#list data.micronutrients() as line>
 	<#if (line?index gt 0)>
-	<@rule y=cursorY/>
+	<@dualColumnRule y=cursorY labelW=labelW columnW=columnW/>
 	<#assign cursorY = cursorY + HAIRLINE>
 	</#if>
 	<@dualColumnRow line=line y=cursorY servingValueX=servingValueX servingPercentX=servingPercentX
@@ -736,6 +793,19 @@
 	</#if>
 
 	<#assign cursorY = cursorY + BORDER + 1>
+</#macro>
+
+<#--
+  Rule across the wording and the two columns of figures, broken on each side of the vertical
+  rules the way the FDA figure draws it: each vertical rule then runs on unbroken from the column
+  headers down to the last vitamin.
+-->
+<#macro dualColumnRule y labelW columnW height=HAIRLINE fromX=PAD>
+	<#list [[fromX, labelW], [labelW, labelW + columnW], [labelW + columnW, W - PAD]] as span>
+	<#local start = (span?index == 0)?then(span[0], span[0] + COLUMN_RULE_GAP)>
+	<#local end = (span?is_last)?then(span[1], span[1] - COLUMN_RULE_GAP)>
+	<@bandRule x=start y=y width=end - start height=height/>
+	</#list>
 </#macro>
 
 <#--

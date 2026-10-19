@@ -89,6 +89,13 @@ public class NutritionFactsTemplateTest {
 
 	private static final String TABULAR_TEMPLATE = "nutritionFacts-tabular.ftlx";
 
+	private static final String SIMPLIFIED_TEMPLATE = "nutritionFacts-simplified.ftlx";
+
+	/** A serving size wider than the room "Serving size" leaves beside it on a vertical panel. */
+	private static final String LONG_SERVING_SIZE = "2/3 coupes (56g)";
+
+	private static final double CAPTION_SIZE = 6d;
+
 	private static final String DUAL_COLUMN_TEMPLATE = "nutritionFacts-dualColumn.ftlx";
 
 	private static final String LINEAR_TEMPLATE = "nutritionFacts-linear.ftlx";
@@ -457,6 +464,61 @@ public class NutritionFactsTemplateTest {
 	public void testSimplifiedFormatClosesOnItsStatement() throws Exception {
 		Assert.assertTrue("A simplified panel states what it does not list",
 				renderToString("nutritionFacts-simplified.ftlx", standardPanel()).contains("Not a significant source"));
+	}
+
+	@Test
+	public void testServingSizeStandsBesideItsWordingWhenItFits() throws Exception {
+		Document panel = parse(renderToString(SIMPLIFIED_TEMPLATE, standardPanel()));
+
+		Assert.assertEquals(y(findText(panel, "Serving size")), y(findText(panel, "2/3 cup (55g)")), 0.001d);
+	}
+
+	@Test
+	public void testServingSizeTooLongForItsLineGoesUnderItsWording() throws Exception {
+		for (String template : List.of(SIMPLIFIED_TEMPLATE, VERTICAL_TEMPLATE)) {
+			Document panel = parse(renderToString(template, withServingSize(standardPanel(), LONG_SERVING_SIZE)));
+
+			Assert.assertTrue(template + " must not run the serving size into its wording",
+					y(findText(panel, LONG_SERVING_SIZE)) > y(findText(panel, "Serving size")));
+			Assert.assertEquals("end", findText(panel, LONG_SERVING_SIZE).getAttribute("text-anchor"));
+		}
+	}
+
+	@Test
+	public void testDualColumnRulesStopShortOfTheColumnRules() throws Exception {
+		List<Element> rects = elements(parse(renderToString(DUAL_COLUMN_TEMPLATE, standardPanel())), "rect");
+
+		for (Element columnRule : rects) {
+			if (isColumnRule(columnRule)) {
+				for (Element rule : rects) {
+					Assert.assertFalse("A rule of the body stops on each side of a column rule, as the FDA figure draws it",
+							crossesColumnRule(rule, columnRule));
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testTabularColumnsEndOnTheLineTheCaloriesEnd() throws Exception {
+		Document panel = parse(renderToString(TABULAR_TEMPLATE, standardPanel()));
+
+		Assert.assertEquals("No air is left under the vitamins: they close the columns on the line Per serving closes the left band",
+				y(findText(panel, "Per serving")), y(findTextContaining(panel, "Potassium")), 0.01d);
+	}
+
+	@Test
+	public void testTabularFootnoteIsCentredAgainstTheBands() throws Exception {
+		Document panel = parse(renderToString(TABULAR_TEMPLATE, standardPanel()));
+
+		List<Double> baselines = new java.util.ArrayList<>();
+		for (Element text : elements(panel, "text")) {
+			if ("middle".equals(text.getAttribute("text-anchor")) && (Double.parseDouble(text.getAttribute("font-size")) == CAPTION_SIZE)) {
+				baselines.add(y(text));
+			}
+		}
+		double footnoteMiddle = (baselines.get(0) + baselines.get(baselines.size() - 1)) / 2;
+		double panelMiddle = Double.parseDouble(panel.getDocumentElement().getAttribute("height").replace("pt", "")) / 2;
+		Assert.assertEquals("The footnote stands in the middle of its column", panelMiddle, footnoteMiddle, CAPTION_SIZE);
 	}
 
 	@Test
@@ -840,6 +902,34 @@ public class NutritionFactsTemplateTest {
 		return text.getTextContent().length() * Double.parseDouble(text.getAttribute("font-size")) * 0.43d;
 	}
 
+	/** A vertical rule of the dual column format, parting the wording from the figures or the two columns. */
+	private boolean isColumnRule(Element rect) {
+		return (Math.abs(width(rect) - HAIRLINE) < 0.001d) && (height(rect) > 10d);
+	}
+
+	/** Whether a horizontal rule runs through a column rule within the height the column rule covers. */
+	private boolean crossesColumnRule(Element rule, Element columnRule) {
+		double x = Double.parseDouble(columnRule.getAttribute("x"));
+		double top = y(columnRule);
+		double ruleX = Double.parseDouble(rule.getAttribute("x"));
+		return (width(rule) > height(rule)) && (ruleX < x + HAIRLINE) && (ruleX + width(rule) > x) && (y(rule) >= top)
+				&& (y(rule) < top + height(columnRule));
+	}
+
+	private double width(Element rect) {
+		return Double.parseDouble(rect.getAttribute("width"));
+	}
+
+	private double height(Element rect) {
+		return Double.parseDouble(rect.getAttribute("height"));
+	}
+
+	private NutritionFactsData withServingSize(NutritionFactsData data, String servingSize) {
+		return new NutritionFactsData(data.format(), data.regulationKey(), new NutritionFactsServing(data.serving().servingsPerContainer(), servingSize),
+				data.calories(), data.nutrients(), data.micronutrients(), data.supplementalIngredients(), data.footNote(), data.notSignificantSource(),
+				data.labels(), data.secondary());
+	}
+
 	private double textStart(Document panel, String label) {
 		return Double.parseDouble(findText(panel, label).getAttribute("x"));
 	}
@@ -855,6 +945,15 @@ public class NutritionFactsTemplateTest {
 
 	private double y(Element text) {
 		return Double.parseDouble(text.getAttribute("y"));
+	}
+
+	private Element findTextContaining(Document panel, String part) {
+		for (Element text : elements(panel, "text")) {
+			if (text.getTextContent().contains(part)) {
+				return text;
+			}
+		}
+		throw new AssertionError("No text containing " + part);
 	}
 
 	private Element findText(Document panel, String startsWith) {
