@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -49,6 +50,7 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>StandardSoapTestProduct class.</p>
@@ -95,6 +97,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	private static final String MICROBIOS_LIST = "Microbios";
 	private static final String PROCESS_STEPS_LIST = "ProcessSteps";
 	private static final String REGULATORY_USAGES_PATH = CHARACTS_PATH + "RegulatoryUsages";
+	private static final String ING_TYPE_ITEM_PATH = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:ingTypeItem";
 	private static final String REGULATORY_MODULE_COSMETICS = "COSMETICS";
 	private static final String CFU_PER_G = "CFU/g";
 	private static final String INCI_LIST_RULE = "INCI list";
@@ -636,11 +639,53 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	protected NodeRef getOrCreateUsageRef(String name, String regulatoryCode) {
+		return getOrCreateUsage(name, usageProperties(name, regulatoryCode, REGULATORY_MODULE_COSMETICS));
+	}
+
+	/**
+	 * Gets or creates a regulatory usage of the given regulatory module, named in several locales.
+	 *
+	 * @param name           the usage charact name, whose default value also names the node
+	 * @param regulatoryCode the regulatory code of the usage
+	 * @param module         the regulatory module the usage belongs to, such as {@code COSMETICS} or {@code IFRA}
+	 * @return the regulatory usage
+	 */
+	protected NodeRef getOrCreateUsageRef(MLText name, String regulatoryCode, String module) {
+		return getOrCreateUsage(name.getDefaultValue(), usageProperties(name, regulatoryCode, module));
+	}
+
+	private NodeRef getOrCreateUsage(String nodeName, Map<QName, Serializable> properties) {
+		return CharactTestHelper.getOrCreateNode(nodeService, REGULATORY_USAGES_PATH, nodeName, PLMModel.TYPE_REGULATORY_USAGE, properties);
+	}
+
+	private static Map<QName, Serializable> usageProperties(Serializable name, String regulatoryCode, String module) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_REGULATORY_CODE, regulatoryCode);
-		properties.put(PLMModel.PROP_REGULATORY_MODULE, REGULATORY_MODULE_COSMETICS);
-		return CharactTestHelper.getOrCreateNode(nodeService, REGULATORY_USAGES_PATH, name, PLMModel.TYPE_REGULATORY_USAGE, properties);
+		properties.put(PLMModel.PROP_REGULATORY_MODULE, module);
+		return properties;
+	}
+
+	/**
+	 * Gets the ingredient type holding this code, or creates it. The lookup is made on the code, which must be unique
+	 * in the list, so that a value created with another name is reused instead of being duplicated.
+	 *
+	 * @param ingTypeStr serves both as identifier and a regulatory code
+	 * @return the ingredient type
+	 */
+	protected NodeRef getOrCreateIngredientType(String ingTypeStr) {
+		NodeRef ingTypeList = BeCPGQueryBuilder.createQuery().selectNodeByPath(ING_TYPE_ITEM_PATH);
+		List<ChildAssociationRef> sameCodeValues = nodeService.getChildAssocsByPropertyValue(ingTypeList, BeCPGModel.PROP_LV_CODE, ingTypeStr);
+		if (!sameCodeValues.isEmpty()) {
+			return sameCodeValues.get(0).getChildRef();
+		}
+
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_LV_CODE, ingTypeStr);
+		properties.put(BeCPGModel.PROP_LV_VALUE, ingTypeStr);
+		properties.put(BeCPGModel.PROP_LEGAL_NAME, ingTypeStr.toLowerCase(Locale.ROOT));
+		properties.put(PLMModel.PROP_REGULATORY_CODE, ingTypeStr);
+		return CharactTestHelper.getOrCreateNode(nodeService, ING_TYPE_ITEM_PATH, ingTypeStr, PLMModel.TYPE_ING_TYPE_ITEM, properties);
 	}
 
 	/**

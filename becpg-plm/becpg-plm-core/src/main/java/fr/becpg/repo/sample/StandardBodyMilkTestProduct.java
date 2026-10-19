@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.*;
 
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -17,7 +16,6 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryMode;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>StandardBodyMilkTestProduct class.</p>
@@ -29,7 +27,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	private static final Map<String, String> ISO_COUNTRY_NAMES = new HashMap<>();
-	private static final String ING_TYPE_ITEM_PATH = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:ingTypeItem";
 	public static final String SKIN_CONDITIONING_EMOLLIENT = "SKIN CONDITIONING - EMOLLIENT";
 	public static final String FRAGRANCE = "FRAGRANCE"; //  Ex-MASKING - The closest fit - "Imparting an odour or taste. Creating a perceivable pleasant smell and/or masking a bad smell."
 	public static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
@@ -251,28 +248,6 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		for (RegulatoryListDataItem market : bodyMilkProduct.getRegulatoryList()) {
 			nodeService.setProperty(market.getNodeRef(), PLMModel.PROP_REGULATORY_LEGAL_STATUS, LEGAL_STATUS_COSMETIC);
 		}
-	}
-
-	/**
-	 * Gets the ingredient type holding this code, or creates it. The lookup is made on the code, which must be unique
-	 * in the list, so that a value created with another name is reused instead of being duplicated.
-	 *
-	 * @param ingTypeStr serves both as identifier and a regulatory code
-	 * @return the ingredient type
-	 */
-	private NodeRef getOrCreateIngredientType(String ingTypeStr) {
-		NodeRef ingTypeList = BeCPGQueryBuilder.createQuery().selectNodeByPath(ING_TYPE_ITEM_PATH);
-		List<ChildAssociationRef> sameCodeValues = nodeService.getChildAssocsByPropertyValue(ingTypeList, BeCPGModel.PROP_LV_CODE, ingTypeStr);
-		if (!sameCodeValues.isEmpty()) {
-			return sameCodeValues.get(0).getChildRef();
-		}
-
-		HashMap<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_LV_CODE, ingTypeStr);
-		properties.put(BeCPGModel.PROP_LV_VALUE, ingTypeStr);
-		properties.put(BeCPGModel.PROP_LEGAL_NAME, ingTypeStr.toLowerCase(Locale.ROOT));
-		properties.put(PLMModel.PROP_REGULATORY_CODE, ingTypeStr);
-		return CharactTestHelper.getOrCreateNode(nodeService, ING_TYPE_ITEM_PATH, ingTypeStr, PLMModel.TYPE_ING_TYPE_ITEM, properties);
 	}
 
 	/**
