@@ -25,6 +25,8 @@ import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 import fr.becpg.repo.sample.CosmeticRequirementTestProduct;
 import fr.becpg.repo.sample.CosmeticRequirementTestProduct.CosmeticScenario;
+import fr.becpg.repo.sample.IfraTestProduct;
+import fr.becpg.repo.sample.IfraTestProduct.IfraScenario;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -68,6 +70,7 @@ import static fr.becpg.repo.sample.CosmeticRequirementTestProduct.UNKNOWN_INGRED
 import static fr.becpg.repo.sample.CosmeticRequirementTestProduct.UNKNOWN_USAGE_CODE;
 import static fr.becpg.repo.sample.CosmeticRequirementTestProduct.WATER;
 import static fr.becpg.repo.sample.CosmeticRequirementTestProduct.ZINC_GLUCONATE;
+import static fr.becpg.repo.sample.IfraTestProduct.*;
 
 public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
@@ -290,6 +293,140 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             IngListDataItem offenderListItem = (IngListDataItem) alfrescoRepository.findOne(regulatoryElement.getLimitingIngredients().getFirst());
             IngItem offender = (IngItem) alfrescoRepository.findOne(offenderListItem.getIng());
             assertEquals("CHROMIUM", offender.getCharactName());
+            return null;
+        });
+    }
+
+    /**
+     * Category 4 refuses the two ingredients above their limit, and lets through the ingredient sitting exactly at
+     * its limit as well as the ingredients with no IFRA line.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraFineFragranceRefusesIngredientsAboveTheirLimit() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.FINE_FRAGRANCE);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.assertExceeds(CINNAMIC_ALDEHYDE, "0.25");
+            requirements.assertExceeds(AHMI, "2");
+            requirements.assertNotForbidden(CITRAL, AMYL_CINNAMIC_ALDEHYDE, BENZYL_SALICYLATE, ALCOHOL_DENAT, AQUA, PARFUM);
+            requirements.assertLimitingIngredients(CINNAMIC_ALDEHYDE, AHMI);
+            return null;
+        });
+    }
+
+    /**
+     * One regulatory line declared for categories 5A and 5D: the same recipe passes in 5A and is refused in 5D,
+     * each result carrying the usage it belongs to.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraBodyLotionLimitsFollowTheCategory() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.BODY_LOTION_TWO_CATEGORIES);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.forUsage(USAGE_CODE_CATEGORY_5A).assertNotForbidden(CINNAMIC_ALDEHYDE, CITRAL, AMYL_CINNAMIC_ALDEHYDE,
+                    BENZYL_SALICYLATE, AQUA, GLYCERIN, CELLULOSE_GUM);
+            RegulatoryRequirements babyCream = requirements.forUsage(USAGE_CODE_CATEGORY_5D);
+            babyCream.assertExceeds(CINNAMIC_ALDEHYDE, "0.014");
+            babyCream.assertExceeds(CITRAL, "0.051");
+            babyCream.assertNotForbidden(AMYL_CINNAMIC_ALDEHYDE, BENZYL_SALICYLATE, AQUA, GLYCERIN, CELLULOSE_GUM);
+            return null;
+        });
+    }
+
+    /**
+     * Category 9 refuses the two ingredients above their limit; AHMI, restricted in most categories, has no
+     * requirement in this one and is let through at 3 %.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraShampooHasNoAhmiRequirement() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.RINSE_OFF_SHAMPOO);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.assertExceeds(CITRAL, "1.2");
+            requirements.assertExceeds(AMYL_CINNAMIC_ALDEHYDE, "1.5");
+            requirements.assertNotForbidden(AHMI, CINNAMIC_ALDEHYDE, BENZYL_SALICYLATE, AQUA, GLYCERIN, CELLULOSE_GUM);
+            return null;
+        });
+    }
+
+    /**
+     * Category 12 refuses the three enforced prohibitions, reports the two prohibitions the service does not enforce
+     * as not evaluated, naming their standard, and lets the listed ingredient through.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraScentedCandleReportsEnforcedAndNotEnforcedProhibitions() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.SCENTED_CANDLE);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.assertProhibited(ALLYL_ISOTHIOCYANATE, MINTLACTONE, ACETYL_DIMETHYLFURAN);
+            requirements.assertNotEnforced(CYCLAMEN_ALCOHOL, "125");
+            requirements.assertNotEnforced(ISOPHORONE, "154");
+            requirements.assertNotForbidden(CYCLAMEN_ALCOHOL, ISOPHORONE, LIMONENE, MICROCRYSTALLINE_WAX, BEESWAX);
+            return null;
+        });
+    }
+
+    /**
+     * Category 4 refuses as prohibited each ingredient IFRA prohibits on every category, each of them limiting the
+     * market, and lets the unregulated solvent through.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraCategory4RefusesProhibitedIngredients() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.PROHIBITED_IN_CATEGORY_4);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.assertProhibited(QUINOLINE, MUSK_XYLENE, FURFURYL_ALCOHOL, MASSOIA_LACTONE, BOLDO_OIL);
+            requirements.assertNotForbidden(ALCOHOL_DENAT);
+            requirements.assertLimitingIngredients(QUINOLINE, MUSK_XYLENE, FURFURYL_ALCOHOL, MASSOIA_LACTONE, BOLDO_OIL);
+            return null;
+        });
+    }
+
+    /**
+     * The recipe lines that reach the IFRA row are refused above their category 2 limit, and the two lines that cannot
+     * be resolved are reported as such. The two hexyl base lines are identified by their regulatory code, which wins
+     * over the CAS number of benzyl salicylate on the second one: both get the hexyl cinnamic aldehyde limit of 0.53 %,
+     * never the benzyl salicylate limit of 0.39 %. The citral line that carries the CAS number of cinnamic aldehyde
+     * reaches both records and gets both limits. The line whose CAS and EC numbers point to two records is not
+     * evaluated, so it is reported but not refused.
+     * <p>
+     * By the standard, the amyl cinnamal lines exceed 0.53 % and the benzyl salicylate line exceeds 0.39 %. They are
+     * left unasserted, as the service does not refuse them yet: the name narrows the CAS match of the amyl cinnamal line
+     * down to a record with no IFRA line, the IFRA record of benzyl salicylate carries no EC number and drops out when
+     * the CAS and EC matches are crossed, and the IFRA records are not linked to the INCI records the names reach.
+     */
+    @Ignore(LIVE_REGULATORY_REQUIRED)
+    @Test
+    public void testIfraIdentificationMatrixMatchesMissesAndFailures() {
+        NodeRef productNodeRef = createCheckedIfraProduct(IfraScenario.IDENTIFICATION_MATRIX);
+
+        inReadTx(() -> {
+            RegulatoryRequirements requirements = new RegulatoryRequirements(productNodeRef);
+            requirements.assertExceeds(ACCORD_17, "2");
+            requirements.assertExceeds(CINNAMIC_ALDEHYDE, "0.014");
+            requirements.assertExceeds(ALLYL_PHENOXYACETATE, "0.016");
+            requirements.assertExceeds(PROPYLIDENEPHTHALIDE, "0.022");
+            requirements.assertExceedsOnLine(requirements.line(CITRAL, CAS_GERANIAL), CITRAL, "0.032");
+            NodeRef mismatchingCasLine = requirements.line(CITRAL, CAS_CINNAMIC_ALDEHYDE);
+            requirements.assertExceedsOnLine(mismatchingCasLine, CITRAL + " with the CAS of " + CINNAMIC_ALDEHYDE, "0.032");
+            requirements.assertExceedsOnLine(mismatchingCasLine, CITRAL + " with the CAS of " + CINNAMIC_ALDEHYDE, "0.014");
+            requirements.assertExceedsOnLine(requirements.line(HEXYL_BASE, null), HEXYL_BASE + " without CAS", "0.53");
+            NodeRef conflictingCasLine = requirements.line(HEXYL_BASE, CAS_BENZYL_SALICYLATE);
+            requirements.assertExceedsOnLine(conflictingCasLine, HEXYL_BASE + " with the CAS of " + BENZYL_SALICYLATE, "0.53");
+            requirements.assertDoesNotExceedOnLine(conflictingCasLine, HEXYL_BASE + " with the CAS of " + BENZYL_SALICYLATE, "0.39");
+            requirements.assertNotForbidden(ALCOHOL_DENAT, AQUA, SENSATE_ACCORD);
+            requirements.assertReported(SENSATE_ACCORD, CAS_CONFLICT_MESSAGE);
+            requirements.assertReported(HOUSE_WOODY_ACCORD, UNIDENTIFIED_MESSAGE);
             return null;
         });
     }
@@ -943,6 +1080,22 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     public void testZincToothpasteUnderUnsupportedLegalStatusIsRefused() {
         assertCosmeticRequirements(CosmeticScenario.ZINC_TOOTHPASTE_OTC_DRUG,
                 requirements -> requirements.assertProductRefused(String.format(LEGAL_STATUS_NOT_CARRIED_FORMAT, LEGAL_STATUS_OTC_DRUG)));
+    }
+
+    /**
+     * Creates the product of an IFRA scenario and checks it against the running becpg-regulatory.
+     *
+     * @param scenario the IFRA situation to create
+     * @return the checked product
+     */
+    private NodeRef createCheckedIfraProduct(IfraScenario scenario) {
+        return checkWithLiveRegulatory(inWriteTx(() -> new IfraTestProduct.Builder().withScenario(scenario)
+                .withAlfrescoRepository(alfrescoRepository)
+                .withNodeService(nodeService)
+                .withDestFolder(getTestFolderNodeRef())
+                .build()
+                .createTestProduct()
+                .getNodeRef()));
     }
 
     /**
