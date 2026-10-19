@@ -1019,12 +1019,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 								logger.debug("Retrying the formulation for " + entry + " due to exception: " + e.getMessage());
 								throw e; // Re-throw to trigger retry
 							}
-							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							logger.error("Error processing entry '" + entry + "' for batch : '" + batchInfo.getBatchId(), e);
-							markEntryInError(batchFullId, entry, e);
-							if (errorHandler != null) {
-								errorHandler.accept(entry, e);
-							}
+							// Joins the entry transaction, or opens one when the step is not transactional
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								markEntryInError(batchFullId, entry, e);
+								if (errorHandler != null) {
+									errorHandler.accept(entry, e);
+								}
+								return null;
+							}, false, false);
 						}
 					} else {
 						if (logger.isDebugEnabled()) {
