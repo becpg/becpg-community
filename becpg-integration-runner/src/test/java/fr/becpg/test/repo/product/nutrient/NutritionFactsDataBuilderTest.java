@@ -46,6 +46,8 @@ public class NutritionFactsDataBuilderTest {
 
 	private static final String CANADA_LINEAR_FORMAT = "canadaLinear";
 
+	private static final String CANADA_SUPPLEMENTED_FORMAT = "canadaSupplemented";
+
 	private static final String CANADA_LINEAR_BILINGUAL_FORMAT = "canadaLinearBilingual";
 
 	private static final String US_REGULATION_KEY = NutritionFactsOptions.US_REGULATION_KEY;
@@ -298,10 +300,11 @@ public class NutritionFactsDataBuilderTest {
 		product.setNutList(List.of(markedAsSupplemental(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY)),
 				nutListItem("VITC-", "Vitamin C", 12d, 13d, CA_REGULATION_KEY)));
 
-		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+		NutritionFactsData data = supplementedCanadianPanel(product);
 
 		Assert.assertTrue("A marked nutrient is declared even though the regulation only authorises it", data.hasSupplementalIngredients());
-		Assert.assertEquals(List.of("Caffein"), data.supplementalIngredients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertEquals("Named by the regulated wording, not the characteristic", List.of("Caffeine"),
+				data.supplementalIngredients().stream().map(NutritionFactsLine::label).toList());
 		Assert.assertTrue("An authorised nutrient that is not marked stays out of the panel", data.nutrients().isEmpty());
 		Assert.assertTrue(data.micronutrients().isEmpty());
 	}
@@ -314,7 +317,7 @@ public class NutritionFactsDataBuilderTest {
 		product.setNutList(List.of(
 				markedAsSupplemental(withCharactUnit(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY), "mg/100g"))));
 
-		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+		NutritionFactsData data = supplementedCanadianPanel(product);
 
 		Assert.assertEquals("An amount the regulation gives no unit is stated in the unit of the characteristic", "100" + NBSP + "mg",
 				data.supplementalIngredients().get(0).value());
@@ -337,18 +340,85 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	@Test
-	public void testMandatoryNutrientStaysInItsBlockEvenWhenMarked() {
+	public void testMarkingOfAnIngredientTheListDoesNotPermitIsIgnored() {
 
 		ProductData product = new ProductData();
 		product.setNodeRef(PRODUCT_NODE_REF);
 		product.setNutList(List.of(markedAsSupplemental(nutListItem("NA", "Sodium", 160d, 7d, CA_REGULATION_KEY))));
 
+		NutritionFactsData data = supplementedCanadianPanel(product);
+
+		Assert.assertEquals("Sodium is no permitted supplemental ingredient: its line stays where the regulation puts it",
+				List.of("Sodium"), data.nutrients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertFalse(data.nutrients().get(0).supplemental());
+		Assert.assertFalse(data.hasSupplementalIngredients());
+	}
+
+	@Test
+	public void testMarkedAddedSugarsAndWaterStayOutOfTheSupplementalBlock() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("SUGAD", "Added sugars", 10d, null, CA_REGULATION_KEY)),
+				markedAsSupplemental(nutListItem("WATER", "Water", 56d, null, CA_REGULATION_KEY))));
+
+		Assert.assertFalse("Only what the List of Permitted Supplemental Ingredients names is declared under Supplemented with",
+				supplementedCanadianPanel(product).hasSupplementalIngredients());
+	}
+
+	@Test
+	public void testSupplementalIngredientsAreDeclaredInTheOrderOfTheList() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY)),
+				markedAsSupplemental(nutListItem("VITD-", "Vitamin D", 2d, 10d, CA_REGULATION_KEY)),
+				markedAsSupplemental(nutListItem("VITB6-", "Vitamin B-6", 1d, 76d, CA_REGULATION_KEY))));
+
+		Assert.assertEquals("Vitamins first, B6 before D, then the other ingredients", List.of("Vitamin B6", "Vitamin D", "Caffeine"),
+				supplementedCanadianPanel(product).supplementalIngredients().stream().map(NutritionFactsLine::label).toList());
+	}
+
+	@Test
+	public void testMarkedCoreNutrientIsDeclaredInTheSupplementalBlockOnly() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("K", "Potassium", 250d, 7d, CA_REGULATION_KEY)),
+				nutListItem("CA", "Calcium", 260d, 20d, CA_REGULATION_KEY)));
+
+		NutritionFactsData data = supplementedCanadianPanel(product);
+
+		Assert.assertEquals("Guidelines 4.3.1.1 b: the table states neither its amount nor its daily value", List.of("Calcium"),
+				data.micronutrients().stream().map(NutritionFactsLine::label).toList());
+		Assert.assertEquals(List.of("Potassium"), data.supplementalIngredients().stream().map(NutritionFactsLine::label).toList());
+	}
+
+	@Test
+	public void testSupplementalIngredientIsNamedInBothOfficialLanguages() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY))));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_SUPPLEMENTED_FORMAT + "Bilingual",
+				NutritionFactsOptions.forRegulation(CA_REGULATION_KEY).withBothOfficialLanguages());
+
+		Assert.assertEquals("Caffeine / Caf\u00E9ine", data.supplementalIngredients().get(0).label());
+	}
+
+	@Test
+	public void testStandardCanadianPanelIgnoresTheMarking() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(markedAsSupplemental(nutListItem("K", "Potassium", 250d, 7d, CA_REGULATION_KEY)),
+				markedAsSupplemental(nutListItem("CAFFN", "Caffein", 100d, null, CA_REGULATION_KEY))));
+
 		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
 
-		Assert.assertEquals("The regulation requires the sodium line where it puts it", List.of("Sodium"),
-				data.nutrients().stream().map(NutritionFactsLine::label).toList());
-		Assert.assertTrue("It is marked there instead, its amount covering the naturally occurring one as well",
-				data.nutrients().get(0).supplemental());
+		Assert.assertEquals("The standard table keeps its potassium line and declares no supplemental ingredient", List.of("Potassium"),
+				data.micronutrients().stream().map(NutritionFactsLine::label).toList());
 		Assert.assertFalse(data.hasSupplementalIngredients());
 	}
 
@@ -359,7 +429,7 @@ public class NutritionFactsDataBuilderTest {
 		product.setNodeRef(PRODUCT_NODE_REF);
 		product.setNutList(List.of(markedAsSupplemental(nutListItem("NOT_A_NUT_CODE", "Exotic", 12d, 3d, CA_REGULATION_KEY))));
 
-		NutritionFactsData data = builder.build(product, Locale.CANADA, CANADA_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
+		NutritionFactsData data = supplementedCanadianPanel(product);
 
 		Assert.assertFalse("A regulated table declares nothing the regulation does not name", data.hasSupplementalIngredients());
 		Assert.assertTrue(data.isEmpty());
@@ -489,6 +559,10 @@ public class NutritionFactsDataBuilderTest {
 
 	private NutritionFactsData build(ProductData product) {
 		return builder.build(product, Locale.US, VERTICAL_FORMAT);
+	}
+
+	private NutritionFactsData supplementedCanadianPanel(ProductData product) {
+		return builder.build(product, Locale.CANADA, CANADA_SUPPLEMENTED_FORMAT, NutritionFactsOptions.forRegulation(CA_REGULATION_KEY));
 	}
 
 	private NutritionFactsData buildBilingualCanadian(ProductData product) {

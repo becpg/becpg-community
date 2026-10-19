@@ -120,7 +120,7 @@ public class NutritionFactsDataBuilder {
 		List<Locale> languages = options.languages(locale);
 		Locale panelLocale = languages.get(0);
 		Map<String, String> labels = NutritionFactsLabelResolver.panelLabels(options.regulationKey(), panelLocale);
-		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options);
+		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options, permittedSupplementalIngredients(format, options));
 
 		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, languages, labels, options),
 				buildCalories(regulated, languages, options), buildLines(regulated, languages, options, Block.NUTRIENTS),
@@ -159,20 +159,32 @@ public class NutritionFactsDataBuilder {
 				secondaryServingSize(product, languages, options.figureSeparator()), NutritionFactsLabelResolver.footNote(options.regulationKey(), secondary));
 	}
 
-	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options) {
+	/**
+	 * Ingredients a line marked as supplemental is declared as. Only a supplemented food facts table
+	 * declares any: every other format ignores the marking, a core nutrient keeping its line there.
+	 */
+	private PermittedSupplementalIngredients permittedSupplementalIngredients(String format, NutritionFactsOptions options) {
+		return NutritionFactsPanelFormats.declaresSupplementalIngredients(format)
+				? PermittedSupplementalIngredients.forRegulation(options.regulationKey())
+				: PermittedSupplementalIngredients.none();
+	}
 
-		List<RegulatedNutrient> nutrients = new ArrayList<>();
-		Characteristics characteristics = new Characteristics(new HashMap<>(), new HashMap<>());
-		Set<String> supplementalNutCodes = new HashSet<>();
+	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options,
+			PermittedSupplementalIngredients permitted) {
+
+		CollectedNutrients collected = new CollectedNutrients(new ArrayList<>(), new Characteristics(new HashMap<>(), new HashMap<>()),
+				new HashSet<>());
 
 		if (product.getNutList() != null) {
 			for (NutListDataItem nutListItem : product.getNutList()) {
-				addNutrient(nutListItem, nutrients, characteristics, supplementalNutCodes, locale, options);
+				addNutrient(nutListItem, collected, locale, options, permitted);
 			}
 		}
 
+		List<RegulatedNutrient> nutrients = collected.nutrients();
 		nutrients.sort(Comparator.comparing(nutrient -> nutrient.displayRule().sort(), Comparator.nullsLast(Comparator.naturalOrder())));
-		return new RegulatedNutrients(nutrients, characteristics, shareDailyValues(nutrients, options), supplementalNutCodes);
+		return new RegulatedNutrients(nutrients, collected.characteristics(), shareDailyValues(nutrients, options), permitted,
+				collected.supplementalNutCodes());
 	}
 
 	/**
@@ -237,8 +249,8 @@ public class NutritionFactsDataBuilder {
 		return contentLocale;
 	}
 
-	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Characteristics characteristics,
-			Set<String> supplementalNutCodes, Locale locale, NutritionFactsOptions options) {
+	private void addNutrient(NutListDataItem nutListItem, CollectedNutrients collected, Locale locale, NutritionFactsOptions options,
+			PermittedSupplementalIngredients permitted) {
 
 		if (nutListItem.getNut() == null) {
 			return;
@@ -247,14 +259,14 @@ public class NutritionFactsDataBuilder {
 		NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListItem.getNut());
 		RegulatedNutrient regulated = RegulationFormulationHelper.extractRegulatedNutrient(nutListItem, nut.getNutCode(),
 				numberLocale(options.regulationKey(), locale), options.regulationKey());
-		boolean isSupplemental = isSupplementalIngredient(nutListItem);
+		boolean isSupplemental = permitted.isPermitted(regulated.nutCode()) && isSupplementalIngredient(nutListItem);
 
 		if (isDeclared(regulated, options) || (isSupplemental && regulated.displayRule().isDefined())) {
-			nutrients.add(regulated);
-			characteristics.names().put(regulated.nutCode(), charactName(nut, locale));
-			characteristics.units().put(regulated.nutCode(), charactUnit(nut));
+			collected.nutrients().add(regulated);
+			collected.characteristics().names().put(regulated.nutCode(), charactName(nut, locale));
+			collected.characteristics().units().put(regulated.nutCode(), charactUnit(nut));
 			if (isSupplemental) {
-				supplementalNutCodes.add(regulated.nutCode());
+				collected.supplementalNutCodes().add(regulated.nutCode());
 			}
 		}
 	}
@@ -262,7 +274,8 @@ public class NutritionFactsDataBuilder {
 	/**
 	 * Tells whether the formulator marked that line as an ingredient added to the product, which a
 	 * supplemented food declares in a block of its own. The marking is a report kind carried by the
-	 * line, so that it is done in the nutrition list rather than in a screen of its own.
+	 * line, so that it is done in the nutrition list rather than in a screen of its own. It only
+	 * counts for an ingredient the regulation permits, which the caller checks.
 	 */
 	private boolean isSupplementalIngredient(NutListDataItem nutListItem) {
 		if ((nutListItem.getNodeRef() == null) || !mlNodeService.exists(nutListItem.getNodeRef())) {
@@ -327,21 +340,36 @@ public class NutritionFactsDataBuilder {
 	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options, Block block) {
 
 		List<NutritionFactsLine> lines = new ArrayList<>();
-		for (RegulatedNutrient nutrient : regulated.nutrients()) {
-			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (blockOf(nutrient, regulated, options) == block)) {
-				lines.add(toLine(nutrient, regulated, languages, options));
-			}
+		for (RegulatedNutrient nutrient : nutrientsOf(regulated, options, block)) {
+			lines.add(toLine(nutrient, regulated, languages, options));
 		}
 		return lines;
 	}
 
 	/**
+	 * Nutrients drawn in a block, calories left out. The supplemental ingredients are declared in the
+	 * order of the list that permits them, the other blocks in the order of the regulation.
+	 */
+	private List<RegulatedNutrient> nutrientsOf(RegulatedNutrients regulated, NutritionFactsOptions options, Block block) {
+		List<RegulatedNutrient> nutrients = new ArrayList<>();
+		for (RegulatedNutrient nutrient : regulated.nutrients()) {
+			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (blockOf(nutrient, regulated, options) == block)) {
+				nutrients.add(nutrient);
+			}
+		}
+		if (block == Block.SUPPLEMENTAL) {
+			nutrients.sort(Comparator.comparing(RegulatedNutrient::nutCode, regulated.permitted().listOrder()));
+		}
+		return nutrients;
+	}
+
+	/**
 	 * Block a nutrient is drawn in. A nutrient marked as added is declared as a supplemental
-	 * ingredient, unless the regulation requires its line anyway: a mandatory declaration stays
-	 * where the regulation puts it.
+	 * ingredient only, even a core nutrient such as calcium or potassium: the guidelines on
+	 * supplemented foods (4.3.1.1 b) forbid stating its amount or its daily value in the table too.
 	 */
 	private Block blockOf(RegulatedNutrient nutrient, RegulatedNutrients regulated, NutritionFactsOptions options) {
-		if (regulated.supplementalNutCodes().contains(nutrient.nutCode()) && !nutrient.isMandatory()) {
+		if (regulated.supplementalNutCodes().contains(nutrient.nutCode())) {
 			return Block.SUPPLEMENTAL;
 		}
 		return isMicronutrient(nutrient, options) ? Block.MICRONUTRIENTS : Block.NUTRIENTS;
@@ -585,7 +613,11 @@ public class NutritionFactsDataBuilder {
 
 	/** Regulated nutrients of a product, with what the referential says of the characteristics themselves. */
 	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Characteristics characteristics, SharedDailyValues sharedDailyValues,
-			Set<String> supplementalNutCodes) {
+			PermittedSupplementalIngredients permitted, Set<String> supplementalNutCodes) {
+	}
+
+	/** What the reading of the nutrition list gathers, line after line, before the nutrients are ordered. */
+	private record CollectedNutrients(List<RegulatedNutrient> nutrients, Characteristics characteristics, Set<String> supplementalNutCodes) {
 	}
 
 	/**

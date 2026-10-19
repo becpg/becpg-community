@@ -6,13 +6,13 @@
   else — the rounding, the order of the nutrients, the daily values — is that of the standard
   table, which is why this template only adds to the Canadian body rather than drawing its own.
 
-  Every declaration whose amount covers a naturally occurring amount as well carries the mark the
-  closing note explains, the block itself and the supplemented nutrients the regulation keeps on
-  their own line.
+  The caption of the block carries the mark the closing note explains: the amount declared for an
+  ingredient covers its naturally occurring amount as well.
 
   A nutrient enters the block by being marked as a supplemental ingredient on its line of the
-  nutrition list, and the block declares nothing else: a substance the regulation does not name
-  has no place in a regulated table.
+  nutrition list, provided the List of Permitted Supplemental Ingredients names it, and leaves the
+  table for it even when it is a core nutrient. The block declares nothing else, in the order of
+  that list.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
