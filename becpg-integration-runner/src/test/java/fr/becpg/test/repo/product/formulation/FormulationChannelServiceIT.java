@@ -1,5 +1,6 @@
 package fr.becpg.test.repo.product.formulation;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -369,12 +370,8 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return alfrescoRepository.save(rawMaterial).getNodeRef();
 		});
 		NodeRef finishedProductNodeRef = createFinishedProductUsing("FP where used of RM formulated by hand", rawMaterialNodeRef);
-
-		inWriteTx(() -> {
-			productService.formulate(rawMaterialNodeRef);
-			return null;
-		});
-		Date formulatedDate = inReadTx(() -> (Date) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+		Date whereUsedFormulatedDate = formulateByHand(finishedProductNodeRef);
+		Date formulatedDate = formulateByHand(rawMaterialNodeRef);
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
@@ -384,7 +381,44 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertIsPublished(rawMaterialNodeRef);
 		assertIsPublished(finishedProductNodeRef);
 		assertEquals(formulatedDate, inReadTx(() -> nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
-		assertNotNull(inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+		assertNotEquals(whereUsedFormulatedDate, inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	@Test
+	public void testWhereUsedFormulationOfProductWithChannelListFormulatedByHand() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM with channel list formulated by hand test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		inWriteTx(() -> publicationChannelService.getOrCreateChannelListNodeRef(rawMaterialNodeRef, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID));
+		NodeRef finishedProductNodeRef = createFinishedProductUsing("FP where used of RM with channel list formulated by hand", rawMaterialNodeRef);
+		Date whereUsedFormulatedDate = formulateByHand(finishedProductNodeRef);
+		formulateByHand(rawMaterialNodeRef);
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+		assertIsPublished(finishedProductNodeRef);
+		assertNotEquals(whereUsedFormulatedDate, inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	/**
+	 * Formulates a product the way a user does, which leaves its modified date untouched.
+	 *
+	 * @param productNodeRef the product to formulate
+	 * @return the formulated date of the product
+	 */
+	private Date formulateByHand(NodeRef productNodeRef) {
+		inWriteTx(() -> {
+			productService.formulate(productNodeRef);
+			return null;
+		});
+		return inReadTx(() -> (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
 	}
 
 	@Test

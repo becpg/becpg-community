@@ -353,6 +353,9 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				impactedProducts.addAll(getSecurityRuleProducts(channelProduct, referenceDate));
 			} else {
 				ChannelProductAction channelProductAction = evaluateChannelProductAction(channelProduct);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Channel product " + channelProduct + " action: " + channelProductAction + ", reference date: " + referenceDate);
+				}
 				if (channelProductAction == ChannelProductAction.FORMULATE && toFormulateProductsSet.add(channelProduct)) {
 					toFormulateProducts.add(channelProduct);
 				}
@@ -600,10 +603,18 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				List<NodeRef> wUsedList = new ArrayList<>(allWhereUsed);
 				wUsedList.removeIf(w -> {
 					Date formulatedDate = (Date) nodeService.getProperty(w, BeCPGModel.PROP_FORMULATED_DATE);
-					return formulatedDate != null && formulatedDate.after(referenceDate);
+					boolean isUpToDate = formulatedDate != null && formulatedDate.after(referenceDate);
+					if (isUpToDate && logger.isDebugEnabled()) {
+						logger.debug("Skipping where-used product " + w + " of " + channelProduct + ": formulated on " + formulatedDate
+								+ ", after the reference date " + referenceDate);
+					}
+					return isUpToDate;
 				});
-				
+
 				wUsedList.removeIf(e -> !accept(e));
+				if (logger.isDebugEnabled()) {
+					logger.debug("Where-used products to mark for " + channelProduct + ": " + wUsedList.size() + " of " + allWhereUsed.size());
+				}
 				return wUsedList;
 			}
 		} catch (Exception e) {
@@ -751,15 +762,20 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	}
 	
 	/**
-	 * <p>extractReferenceDate.</p>
+	 * Returns the date of the last change of the entity data, its where-used products formulated after it being up to date. A
+	 * formulation by hand does not update the modified date, hence the formulated date when it is more recent.
 	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link java.util.Date} object
+	 * @param entityNodeRef the entity found in the channel
+	 * @return the most recent of the modified and formulated dates, the created date when none is set
 	 */
 	private Date extractReferenceDate(NodeRef entityNodeRef) {
 		Date referenceDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
 		if (referenceDate == null) {
 			referenceDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED);
+		}
+		Date formulatedDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
+		if (formulatedDate != null && (referenceDate == null || formulatedDate.after(referenceDate))) {
+			return formulatedDate;
 		}
 		return referenceDate;
 	}
@@ -973,7 +989,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
 			if ((productState == null) || productState.isEmpty() || !statesToRegister().contains(productState)) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Skipping product state : " + productState);
+					logger.debug("Skipping product " + entityNodeRef + " in state: " + productState);
 				}
 				return false;
 			}
@@ -982,7 +998,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 
 			if (PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Skipping local semi finished product");
+					logger.debug("Skipping local semi finished product " + entityNodeRef);
 				}
 				return false;
 			}
