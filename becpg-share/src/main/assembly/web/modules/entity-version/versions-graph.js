@@ -556,24 +556,18 @@
          var box_size = Math.min(18, Math.floor((canvasWidth - edge_pad * 2) / (nbCols)));
          var base_x = canvasWidth - edge_pad - 10;
 
-         var prec = {}, extra = 15;
+         var prec = {};
          nbCols = 0;
          
          var idx = this.graphData.length - 1;
 
 
-         var yOffset = Dom.getY(this.id + "-graphNodes") - extra;
+         var yOffset = Dom.getY(this.id + "-graphNodes");
 
          for ( var i in this.graphData) {
-            var rowElement = Dom.get("graph-version-row-" + idx);
-            var nextRowElement = Dom.get("graph-version-row-" + (idx - 1));
-            
-            // Calculate Y position at the vertical center of the row
-            var rowHeight = rowElement ? rowElement.offsetHeight : 20;
-            var nextRowHeight = nextRowElement ? nextRowElement.offsetHeight : 20;
-            
-            var nextY = nextRowElement ? (Dom.getY(nextRowElement) - yOffset + nextRowHeight / 2) : 0;
-            var rowY = rowElement ? (Dom.getY(rowElement) - yOffset + rowHeight / 2) : 0;
+            var rowY = this._getRowAnchorY(idx, yOffset, 0);
+            // The newest version has no next row: the line stops on its dot
+            var nextY = this._getRowAnchorY(idx - 1, yOffset, rowY);
 
             var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].entityFromBranch;
 
@@ -595,9 +589,7 @@
                this.ctx.beginPath();
 
                if (start != end) {
-                  var prevRowElement = Dom.get("graph-version-row-" + prec[precNodeRef]);
-                  var prevRowHeight = prevRowElement ? prevRowElement.offsetHeight : 20;
-                  var prevY = prevRowElement ? (Dom.getY(prevRowElement) - yOffset + prevRowHeight / 2 - this.dot_radius) : 0;
+                  var prevY = this._getRowAnchorY(prec[precNodeRef], yOffset, this.dot_radius) - this.dot_radius;
                   this.ctx.moveTo(x, prevY);
                   var x2 = base_x - box_size * end;
                   var ymid = (rowY + prevY) / 2;
@@ -628,6 +620,26 @@
             idx--;
          }
 
+      },
+
+      /**
+       * Returns the canvas ordinate of a version row, at the vertical center of its version badge
+       * so that the dot lines up with the version number rather than with the whole row.
+       * 
+       * @method _getRowAnchorY
+       * @param rowIndex {int} Index of the row in the datatable
+       * @param canvasY {int} Page ordinate of the top of the canvas
+       * @param defaultY {int} Ordinate returned when the row does not exist
+       * @return {int} The ordinate of the row in the canvas
+       * @private
+       */
+      _getRowAnchorY : function VersionsGraph__getRowAnchorY(rowIndex, canvasY, defaultY) {
+         var rowElement = Dom.get("graph-version-row-" + rowIndex);
+         if (!rowElement) {
+            return defaultY;
+         }
+         var anchor = Dom.getElementsByClassName("document-version", "span", rowElement)[0] || rowElement;
+         return Dom.getY(anchor) - canvasY + anchor.offsetHeight / 2;
       },
 
       /**
