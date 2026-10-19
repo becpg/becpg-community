@@ -249,15 +249,12 @@
 
   A percentage covering two lines is dropped half a line down so that it reads as belonging to
   both, which is how the Canadian panel states saturated and trans fat together.
-
-  mark is the reference the panel prints after the declaration, the supplemented food facts table
-  marking that way the amounts its closing note covers.
 -->
-<#macro nutrientRow line y boldPercent=true mark="">
+<#macro nutrientRow line y boldPercent=true>
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.label()/><#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if><#if mark?has_content><tspan font-weight="normal">${mark}</tspan></#if></text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.label()/><#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
 	<#if line.hasDailyValue()>
 	<text x="${right()}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-weight="${HEAVY_WEIGHT}"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>
@@ -503,10 +500,19 @@
 <#assign CA_RULE_OPENING = 1>
 
 <#--
-  Mark a supplemented food facts table prints on every declaration whose amount covers more than
-  what was added to the food, and which its closing note explains.
+  Mark a supplemented food facts table prints on the caption of its supplemental block and at the
+  head of the note explaining it. Figure 1.1 of the directory of supplemented food formats sets it
+  in the regular weight and as a superscript: smaller, and raised above the baseline.
 -->
 <#assign SUPPLEMENT_MARK = "†">
+<#assign SUPERSCRIPT_RATIO = 0.7>
+<#assign SUPERSCRIPT_RISE = 0.35>
+<#-- Advance width of the dagger in Arial, as a ratio of its size: that of a figure. -->
+<#assign DIGIT_WIDTH_RATIO = 0.556>
+
+<#-- The mark set as a superscript after the text it closes, in a text of that size. -->
+<#macro supplementMark size>
+<tspan font-weight="normal" font-size="${size * SUPERSCRIPT_RATIO}" dy="${-size * SUPERSCRIPT_RISE}">${SUPPLEMENT_MARK}</tspan></#macro>
 
 <#--
   Ordinate the daily value headers of a Canadian panel end on, left by caloriesBand: in a bilingual
@@ -538,13 +544,13 @@
 	<@rule y=cursorY height=CA_RULE_THICK toX=PAD + contentWidth() / 2/>
 	<#assign cursorY = [cursorY + CA_RULE_THICK, headersBottom]?max>
 
-	<@canadianGroup lines=data.nutrients() y=cursorY marked=withSupplemental/>
+	<@canadianGroup lines=data.nutrients() y=cursorY/>
 	<#assign cursorY = groupBottom>
 
 	<#if (data.micronutrients()?size gt 0)>
 	<@rule y=cursorY height=CA_RULE_THICK/>
 	<#assign cursorY = cursorY + CA_RULE_THICK>
-	<@canadianGroup lines=data.micronutrients() y=cursorY marked=withSupplemental/>
+	<@canadianGroup lines=data.micronutrients() y=cursorY/>
 	<#assign cursorY = groupBottom>
 	</#if>
 
@@ -565,19 +571,16 @@
   One group of nutrient lines, hairlines separating the top level declarations inside it. The
   ordinate it ended on is left in groupBottom, the group being drawn between two rules the caller
   places itself.
-
-  A supplemented table marks the nutrients the food was supplemented with and that the regulation
-  keeps on their own line: their amount covers the naturally occurring one as well.
 -->
 <#assign groupBottom = 0>
-<#macro canadianGroup lines y marked=false>
+<#macro canadianGroup lines y>
 	<#assign groupBottom = y>
 	<#list lines as line>
 	<#if (line.indentLevel() lte 1) && (line?index gt 0)>
 	<@rule y=groupBottom height=CA_HAIRLINE/>
 	<#assign groupBottom = groupBottom + CA_HAIRLINE>
 	</#if>
-	<@nutrientRow line=line y=groupBottom boldPercent=false mark=(marked && line.supplemental())?then(SUPPLEMENT_MARK, "")/>
+	<@nutrientRow line=line y=groupBottom boldPercent=false/>
 	<#assign groupBottom = groupBottom + NUTRIENT_ROW_H>
 	</#list>
 </#macro>
@@ -669,7 +672,7 @@
 	<@rule y=cursorY height=CA_RULE_THICK/>
 	<#assign cursorY = cursorY + CA_RULE_THICK + 1>
 
-	<text x="${PAD}" y="${baseline(cursorY + 2, NUTRIENT_SIZE)}" font-size="${NUTRIENT_SIZE}" font-weight="${HEAVY_WEIGHT}">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}${SUPPLEMENT_MARK}</text>
+	<text x="${PAD}" y="${baseline(cursorY + 2, NUTRIENT_SIZE)}" font-size="${NUTRIENT_SIZE}" font-weight="${HEAVY_WEIGHT}">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}<@supplementMark size=NUTRIENT_SIZE/></text>
 	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
 
 	<#list data.supplementalIngredients() as line>
@@ -689,9 +692,12 @@
   on the mark of the declarations it explains, so that the reader ties the two together.
 -->
 <#macro supplementalNote data y>
+	<#local markSize = CA_FOOTNOTE_SIZE * SUPERSCRIPT_RATIO>
+	<#local markWidth = markSize * DIGIT_WIDTH_RATIO>
 	<#assign cursorY = y>
 	<#list panelWordings(data, "supplementedNote") as note>
-	<@footNote text=SUPPLEMENT_MARK + note y=cursorY size=CA_FOOTNOTE_SIZE/>
+	<text x="${PAD}" y="${baseline(cursorY, CA_FOOTNOTE_SIZE) - CA_FOOTNOTE_SIZE * SUPERSCRIPT_RISE}" font-size="${markSize}">${SUPPLEMENT_MARK}</text>
+	<@footNote text=note y=cursorY x=PAD + markWidth width=contentWidth() - markWidth size=CA_FOOTNOTE_SIZE/>
 	</#list>
 </#macro>
 

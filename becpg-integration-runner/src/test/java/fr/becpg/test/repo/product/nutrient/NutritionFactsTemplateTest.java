@@ -640,8 +640,7 @@ public class NutritionFactsTemplateTest {
 		Assert.assertNotNull("Its added ingredients are declared under their own caption", findText(panel, "Supplémenté en"));
 		Assert.assertNotNull(findText(panel, "Caféine"));
 		Assert.assertNotNull(findText(panel, "Vitamine B6"));
-		Assert.assertNotNull("And the block closes on the note stating what the amounts cover",
-				findText(panel, SUPPLEMENT_MARK + "Comprend les quantités"));
+		Assert.assertNotNull("And the block closes on the note stating what the amounts cover", findText(panel, "Comprend les quantités"));
 	}
 
 	@Test
@@ -672,15 +671,32 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
-	public void testSupplementedNutrientKeptInTheTableCarriesTheMark() throws Exception {
+	public void testSupplementedCaptionCarriesItsMarkAsASuperscript() throws Exception {
+		Element mark = (Element) findText(parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel())), "Supplémenté en")
+				.getElementsByTagName("tspan").item(0);
+
+		Assert.assertEquals(SUPPLEMENT_MARK, mark.getTextContent());
+		Assert.assertTrue("Figure 1.1 raises the mark above the baseline", Double.parseDouble(mark.getAttribute("dy")) < 0d);
+		Assert.assertTrue("and sets it smaller than the caption", Double.parseDouble(mark.getAttribute("font-size")) < 8d);
+		Assert.assertEquals("in the regular weight", "normal", mark.getAttribute("font-weight"));
+	}
+
+	@Test
+	public void testSupplementedNoteOpensOnARaisedMark() throws Exception {
 		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
 
-		Assert.assertEquals("A supplemented nutrient the regulation keeps on its line states what its amount covers",
-				"Potassium 235 mg" + SUPPLEMENT_MARK, findText(panel, "Potassium").getTextContent());
-		Assert.assertEquals("A nutrient the food was not supplemented with carries nothing", "Calcium 260 mg",
-				findText(panel, "Calcium").getTextContent());
-		Assert.assertNotNull("And the note is tied to the marks by the same reference",
-				findText(panel, SUPPLEMENT_MARK + "Comprend les quantités"));
+		Element mark = findText(panel, SUPPLEMENT_MARK);
+		Element note = findText(panel, "Comprend les quantités");
+		Assert.assertTrue("The mark stands above the baseline of the note it opens", y(mark) < y(note));
+		Assert.assertTrue("and the note starts after it", Double.parseDouble(note.getAttribute("x")) > Double.parseDouble(mark.getAttribute("x")));
+	}
+
+	@Test
+	public void testSupplementedTableMarksNoLineOfTheTable() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
+
+		Assert.assertEquals("A nutrient of the table carries no mark, a supplemented one being declared in the block only",
+				"Potassium 235 mg", findText(panel, "Potassium").getTextContent());
 	}
 
 	@Test
@@ -856,15 +872,12 @@ public class NutritionFactsTemplateTest {
 				labels, secondary);
 	}
 
-	/**
-	 * The same panel, of a food supplemented with caffeine, vitamin B6 and potassium. The potassium
-	 * is what the regulation keeps on its own line although the food was supplemented with it.
-	 */
+	/** The same panel, of a food supplemented with caffeine and vitamin B6. */
 	private NutritionFactsData supplementedCanadianPanel() {
 		Map<String, String> labels = canadianLabels(false);
 		NutritionFactsData panel = canadianPanel();
 		return new NutritionFactsData("canadaSupplemented", "CA", panel.serving(), panel.calories(), panel.nutrients(),
-				List.of(line("K", "Potassium", "235 mg", "5%", 1, false, false, true), line("CA", "Calcium", "260 mg", "20%", 1, false)),
+				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)),
 				List.of(line("CAFFN", "Caféine", "100 mg", null, 1, false), line("VITB6-", "Vitamine B6", "1,3 mg", "76%", 1, false)),
 				panel.footNote(), "", labels, NutritionFactsTranslation.none());
 	}

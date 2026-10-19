@@ -55,6 +55,9 @@ public final class NutritionFactsPanelFormats {
 	 */
 	private static final String CANADIAN_LINEAR_FORMAT = "canadaLinear";
 
+	/** Format of the supplemented food facts table, the only one declaring supplemental ingredients. */
+	private static final String CANADIAN_SUPPLEMENTED_FORMAT = "canadaSupplemented";
+
 	private NutritionFactsPanelFormats() {
 		// Do nothing
 	}
@@ -79,6 +82,17 @@ public final class NutritionFactsPanelFormats {
 	 */
 	public static boolean statesEachLanguageApart(String format) {
 		return (format != null) && templateName(format).equals(templateName(CANADIAN_LINEAR_FORMAT));
+	}
+
+	/**
+	 * <p>Tells whether a format declares the ingredients a food was supplemented with. Every other
+	 * format ignores the marking of a nutrient line as a supplemental ingredient.</p>
+	 *
+	 * @param format the panel format code, may be null
+	 * @return a boolean
+	 */
+	public static boolean declaresSupplementalIngredients(String format) {
+		return (format != null) && templateName(format).equals(templateName(CANADIAN_SUPPLEMENTED_FORMAT));
 	}
 
 	/**
