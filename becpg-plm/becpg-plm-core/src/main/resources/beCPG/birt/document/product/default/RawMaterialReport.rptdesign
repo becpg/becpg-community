@@ -1290,6 +1290,42 @@
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">countRegulatoryThreshold</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["allergenRegulatoryThreshold"] != null &amp;&amp; row["allergenRegulatoryThreshold"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countVolSources</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["allergenListVolSources"] != null &amp;&amp; row["allergenListVolSources"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countInVolSources</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["allergenListInVolSources"] != null &amp;&amp; row["allergenListInVolSources"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countOnLine</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["allergenListOnLine"] == true</expression>
+                </structure>
+                <structure>
+                    <property name="name">countOnSite</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["allergenListOnSite"] == true</expression>
+                </structure>
+                <structure>
+                    <property name="name">countIsCleaned</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["allergenListIsCleaned"] == true</expression>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1349,6 +1385,12 @@
                     <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListIsCleaned</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">allergenRegulatoryThreshold</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">allergenRegulatoryThreshold</text-property>
+                </structure>
             </list-property>
             <list-property name="filter"/>
             <list-property name="parameters"/>
@@ -1406,7 +1448,42 @@
                     </structure>
                     <structure>
                         <property name="position">11</property>
+                        <property name="name">allergenRegulatoryThreshold</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
                         <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">countRegulatoryThreshold</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">countVolSources</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">countInVolSources</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">countOnLine</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">countOnSite</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">countIsCleaned</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -1483,8 +1560,15 @@
                     <property name="dataType">boolean</property>
                     <property name="nativeDataType">16</property>
                 </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">allergenRegulatoryThreshold</property>
+                    <property name="nativeName">allergenRegulatoryThreshold</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists/allergenList]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenListDecisionTree;STRING;/@allergenListDecisionTree},{allergenListQtyPerc;STRING;/@allergenListQtyPerc},{allergenListOnLine;BOOLEAN;/@allergenListOnLine},{allergenListOnSite;BOOLEAN;/@allergenListOnSite},{allergenListIsCleaned;BOOLEAN;/@allergenListIsCleaned}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists/allergenList]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenListDecisionTree;STRING;/@allergenListDecisionTree},{allergenListQtyPerc;STRING;/@allergenListQtyPerc},{allergenListOnLine;BOOLEAN;/@allergenListOnLine},{allergenListOnSite;BOOLEAN;/@allergenListOnSite},{allergenListIsCleaned;BOOLEAN;/@allergenListIsCleaned},{allergenRegulatoryThreshold;STRING;/@allergenRegulatoryThreshold}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4711,6 +4795,78 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">countChemicalCodes</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["casNumber"] != null &amp;&amp; row["casNumber"] != "") || (row["ceNumber"] != null &amp;&amp; row["ceNumber"] != "") || (row["ecNumber"] != null &amp;&amp; row["ecNumber"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countFunctionality</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListFunctionality"] != null &amp;&amp; row["ingListFunctionality"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countFlags</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListFlagsTranslation"] != null &amp;&amp; row["ingListFlagsTranslation"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countHazardClassifications</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["sdsHazardClassifications"] != null &amp;&amp; row["sdsHazardClassifications"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countGMO</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["ingListIsGMO"] == "true"</expression>
+                </structure>
+                <structure>
+                    <property name="name">countIonized</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["ingListIsIonized"] == "true"</expression>
+                </structure>
+                <structure>
+                    <property name="name">countProcessingAid</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["ingListIsProcessingAid"] == "true"</expression>
+                </structure>
+                <structure>
+                    <property name="name">countSupport</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["ingListIsSupport"] == "true"</expression>
+                </structure>
+                <structure>
+                    <property name="name">countGeoOrigin</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListGeoOrigin"] != null &amp;&amp; row["ingListGeoOrigin"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countGeoTransfo</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListGeoTransfo"] != null &amp;&amp; row["ingListGeoTransfo"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countBioOrigin</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListBioOrigin"] != null &amp;&amp; row["ingListBioOrigin"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countClaims</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["ingListClaims"] != null &amp;&amp; row["ingListClaims"] != "")</expression>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -4789,6 +4945,36 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="analysis">dimension</property>
                     <text-property name="heading">ingListClaims</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">casNumber</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">casNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ceNumber</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ceNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ecNumber</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ecNumber</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ingListFlagsTranslation</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">ingListFlagsTranslation</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">sdsHazardClassifications</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">sdsHazardClassifications</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -4860,7 +5046,92 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     </structure>
                     <structure>
                         <property name="position">14</property>
+                        <property name="name">casNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">ceNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">ecNumber</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">ingListFlagsTranslation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">sdsHazardClassifications</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
                         <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">countChemicalCodes</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">countFunctionality</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">countFlags</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">countHazardClassifications</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">countGMO</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">countIonized</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">countProcessingAid</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">countSupport</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">countGeoOrigin</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">countGeoTransfo</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">countBioOrigin</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">countClaims</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -4958,8 +5229,43 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">casNumber</property>
+                    <property name="nativeName">casNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">ceNumber</property>
+                    <property name="nativeName">ceNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">ecNumber</property>
+                    <property name="nativeName">ecNumber</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">ingListFlagsTranslation</property>
+                    <property name="nativeName">ingListFlagsTranslation</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">sdsHazardClassifications</property>
+                    <property name="nativeName">sdsHazardClassifications</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListQtyMaxi;STRING;/@ingListQtyMaxi},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListIsProcessingAid;STRING;/@ingListIsProcessingAid},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsSupport;STRING;/@ingListIsSupport},{ingListQtyMini;STRING;/@ingListQtyMini},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListQtyMaxi;STRING;/@ingListQtyMaxi},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListIsProcessingAid;STRING;/@ingListIsProcessingAid},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsSupport;STRING;/@ingListIsSupport},{ingListQtyMini;STRING;/@ingListQtyMini},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims},{casNumber;STRING;/@casNumber},{ceNumber;STRING;/@ceNumber},{ecNumber;STRING;/@ecNumber},{ingListFlagsTranslation;STRING;/@ingListFlagsTranslation},{sdsHazardClassifications;STRING;/@sdsHazardClassifications}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -8700,6 +9006,221 @@ row["slChoices"].replace(', ','\n- ')&#13;
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingRegulatoryList" id="14010">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">runningCount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
+                <structure>
+                    <property name="name">countCitation</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["irlCitation"] != null &amp;&amp; row["irlCitation"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countRestrictionLevels</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["irlRestrictionLevels"] != null &amp;&amp; row["irlRestrictionLevels"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countPrecautions</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["irlPrecautions"] != null &amp;&amp; row["irlPrecautions"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countUsages</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["irlUsages"] != null &amp;&amp; row["irlUsages"] != "") || (row["regulatoryUsageRef"] != null &amp;&amp; row["regulatoryUsageRef"] != "")</expression>
+                </structure>
+                <structure>
+                    <property name="name">countCountries</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">(row["regulatoryCountries"] != null &amp;&amp; row["regulatoryCountries"] != "")</expression>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">irlIng</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">irlIng</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">irlCitation</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">irlCitation</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">irlRestrictionLevels</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">irlRestrictionLevels</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">irlPrecautions</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">irlPrecautions</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">irlUsages</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">irlUsages</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">regulatoryUsageRef</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">regulatoryUsageRef</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">regulatoryCountries</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">regulatoryCountries</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">irlIng</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">irlCitation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">irlRestrictionLevels</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">irlPrecautions</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">irlUsages</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">regulatoryUsageRef</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">regulatoryCountries</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">runningCount</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">countCitation</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">countRestrictionLevels</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">countPrecautions</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">countUsages</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">countCountries</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">irlIng</property>
+                    <property name="nativeName">irlIng</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">irlCitation</property>
+                    <property name="nativeName">irlCitation</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">irlRestrictionLevels</property>
+                    <property name="nativeName">irlRestrictionLevels</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">irlPrecautions</property>
+                    <property name="nativeName">irlPrecautions</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">irlUsages</property>
+                    <property name="nativeName">irlUsages</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">regulatoryUsageRef</property>
+                    <property name="nativeName">regulatoryUsageRef</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">regulatoryCountries</property>
+                    <property name="nativeName">regulatoryCountries</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingRegulatoryLists/ingRegulatoryList]#:#{irlIng;STRING;/@irlIng},{irlCitation;STRING;/@irlCitation},{irlRestrictionLevels;STRING;/@irlRestrictionLevels},{irlPrecautions;STRING;/@irlPrecautions},{irlUsages;STRING;/@irlUsages},{regulatoryUsageRef;STRING;/@regulatoryUsageRef},{regulatoryCountries;STRING;/@regulatoryCountries}]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -9651,6 +10172,21 @@ adress;</expression>
             <row id="3752">
                 <cell id="3753">
                     <grid id="6180">
+                        <property name="dataSet">Entity</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">bestBeforeDate</property>
+                                <text-property name="displayName">bestBeforeDate</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["bestBeforeDate"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">preparationTips</property>
+                                <text-property name="displayName">preparationTips</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["preparationTips"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
                         <column id="6181">
                             <property name="style">becpg-col-header</property>
                             <property name="width">40%</property>
@@ -9720,6 +10256,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="6192">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["bestBeforeDate"] == null || row["bestBeforeDate"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="6193">
                                 <label id="6222">
                                     <text-property name="text" key="bestBeforeDate"></text-property>
@@ -9826,6 +10368,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="6207">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["preparationTips"] == null || row["preparationTips"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="6208">
                                 <label id="6227">
                                     <text-property name="text" key="preparationTips"></text-property>
@@ -9898,6 +10446,51 @@ adress;</expression>
                         </row>
                     </grid>
                     <grid id="12946">
+                        <property name="dataSet">chemicalCode</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">(row["casNumber"] == null || row["casNumber"] == "") &amp;&amp; (row["ceNumber"] == null || row["ceNumber"] == "") &amp;&amp; (row["ecNumber"] == null || row["ecNumber"] == "") &amp;&amp; (row["fdaNumber"] == null || row["fdaNumber"] == "") &amp;&amp; (row["femaNumber"] == null || row["femaNumber"] == "") &amp;&amp; (row["flNumber"] == null || row["flNumber"] == "")</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">casNumber</property>
+                                <text-property name="displayName">casNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ceNumber</property>
+                                <text-property name="displayName">ceNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ecNumber</property>
+                                <text-property name="displayName">ecNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ecNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">fdaNumber</property>
+                                <text-property name="displayName">fdaNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["fdaNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">femaNumber</property>
+                                <text-property name="displayName">femaNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["femaNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">flNumber</property>
+                                <text-property name="displayName">flNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["flNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
                         <column id="12947"/>
                         <row id="12948">
                             <cell id="12949">
@@ -9965,6 +10558,12 @@ adress;</expression>
                             <property name="width">4.583333333333333in</property>
                         </column>
                         <row id="12959">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["casNumber"] == null || row["casNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12960">
                                 <label id="12961">
                                     <text-property name="text" key="numberCAS">CAS</text-property>
@@ -9977,6 +10576,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="12976">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["ceNumber"] == null || row["ceNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12977">
                                 <label id="12979">
                                     <text-property name="text" key="einecsNumber">EINECS</text-property>
@@ -9989,6 +10594,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="12973">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["ecNumber"] == null || row["ecNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12974">
                                 <label id="12980">
                                     <text-property name="text" key="ecNumber">No. EC</text-property>
@@ -10001,6 +10612,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="12970">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["fdaNumber"] == null || row["fdaNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12971">
                                 <label id="12981">
                                     <text-property name="text" key="fdaCat">FDA Cat.</text-property>
@@ -10013,6 +10630,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="12967">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["femaNumber"] == null || row["femaNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12968">
                                 <label id="12982">
                                     <text-property name="text" key="femaNumber">No. FEMA</text-property>
@@ -10025,6 +10648,12 @@ adress;</expression>
                             </cell>
                         </row>
                         <row id="12964">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["flNumber"] == null || row["flNumber"] == "")</expression>
+                                </structure>
+                            </list-property>
                             <cell id="12965">
                                 <label id="12983">
                                     <text-property name="text" key="flNumber">No. FL</text-property>
@@ -11780,34 +12409,240 @@ adress;</expression>
                                 <expression name="expression" type="javascript">dataSetRow["ingListClaims"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">casNumber</property>
+                                <text-property name="displayName">casNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["casNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ceNumber</property>
+                                <text-property name="displayName">ceNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ceNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ecNumber</property>
+                                <text-property name="displayName">ecNumber</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ecNumber"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ingListFlagsTranslation</property>
+                                <text-property name="displayName">ingListFlagsTranslation</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ingListFlagsTranslation"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">sdsHazardClassifications</property>
+                                <text-property name="displayName">sdsHazardClassifications</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["sdsHazardClassifications"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">chemicalCodes</property>
+                                <text-property name="displayName">chemicalCodes</text-property>
+                                <expression name="expression" type="javascript">var chemicalCodes = [];
+if (dataSetRow["casNumber"] != null &amp;&amp; dataSetRow["casNumber"] != "") {
+    chemicalCodes.push("CAS " + dataSetRow["casNumber"]);
+}
+if (dataSetRow["ceNumber"] != null &amp;&amp; dataSetRow["ceNumber"] != "") {
+    chemicalCodes.push("EINECS " + dataSetRow["ceNumber"]);
+}
+if (dataSetRow["ecNumber"] != null &amp;&amp; dataSetRow["ecNumber"] != "") {
+    chemicalCodes.push("EC " + dataSetRow["ecNumber"]);
+}
+chemicalCodes.join("\n")</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">hazardClassifications</property>
+                                <text-property name="displayName">hazardClassifications</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["sdsHazardClassifications"] != null ? String(dataSetRow["sdsHazardClassifications"]).replace(/\s*,\s*/g, "\n") : null</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countChemicalCodes</property>
+                                <text-property name="displayName">countChemicalCodes</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countChemicalCodes"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countFunctionality</property>
+                                <text-property name="displayName">countFunctionality</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countFunctionality"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countFlags</property>
+                                <text-property name="displayName">countFlags</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countFlags"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countHazardClassifications</property>
+                                <text-property name="displayName">countHazardClassifications</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countHazardClassifications"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countGMO</property>
+                                <text-property name="displayName">countGMO</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countGMO"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countIonized</property>
+                                <text-property name="displayName">countIonized</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countIonized"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countProcessingAid</property>
+                                <text-property name="displayName">countProcessingAid</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countProcessingAid"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countSupport</property>
+                                <text-property name="displayName">countSupport</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countSupport"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countGeoOrigin</property>
+                                <text-property name="displayName">countGeoOrigin</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countGeoOrigin"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countGeoTransfo</property>
+                                <text-property name="displayName">countGeoTransfo</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countGeoTransfo"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countBioOrigin</property>
+                                <text-property name="displayName">countBioOrigin</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countBioOrigin"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countClaims</property>
+                                <text-property name="displayName">countClaims</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countClaims"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <column id="7048">
-                            <property name="width">0.9479166666666666in</property>
+                            <property name="width">1.3in</property>
                         </column>
                         <column id="7049"/>
                         <column id="7050">
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">true</expression>
+                                    <expression name="valueExpr" type="javascript">(row["countFunctionality"] == null || row["countFunctionality"] == 0)</expression>
                                 </structure>
                             </list-property>
                         </column>
-                        <column id="7051"/>
-                        <column id="7052"/>
-                        <column id="7053"/>
-                        <column id="7054"/>
-                        <column id="7055"/>
-                        <column id="7056"/>
-                        <column id="7057"/>
+                        <column id="14011">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countChemicalCodes"] == null || row["countChemicalCodes"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1.15in</property>
+                        </column>
+                        <column id="14012">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countFlags"] == null || row["countFlags"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">0.9in</property>
+                        </column>
+                        <column id="14013">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countHazardClassifications"] == null || row["countHazardClassifications"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1.1in</property>
+                        </column>
+                        <column id="7051">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countGMO"] == null || row["countGMO"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7052">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countIonized"] == null || row["countIonized"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7053">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countProcessingAid"] == null || row["countProcessingAid"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7054">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countSupport"] == null || row["countSupport"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7055">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countGeoOrigin"] == null || row["countGeoOrigin"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7056">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countGeoTransfo"] == null || row["countGeoTransfo"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="7057">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countBioOrigin"] == null || row["countBioOrigin"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
                         <column id="12687">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countClaims"] == null || row["countClaims"] == 0)</expression>
+                                </structure>
+                            </list-property>
                             <property name="width">0.6458333333333334in</property>
                         </column>
                         <header>
                             <row id="7058">
                                 <property name="style">becpg-chapter-header</property>
                                 <cell id="7059">
-                                    <property name="colSpan">11</property>
+                                    <property name="colSpan">14</property>
                                     <property name="rowSpan">1</property>
                                     <label id="7069">
                                         <text-property name="text" key="ingredientsList">LISTE D'INGREDIENTS</text-property>
@@ -11822,6 +12657,9 @@ adress;</expression>
                                 </cell>
                                 <cell id="7072"/>
                                 <cell id="7073"/>
+                                <cell id="14014"/>
+                                <cell id="14015"/>
+                                <cell id="14016"/>
                                 <cell id="7074"/>
                                 <cell id="7075"/>
                                 <cell id="7076"/>
@@ -11850,6 +12688,24 @@ adress;</expression>
                                     <property name="style">becpg-cell-header</property>
                                     <label id="7090">
                                         <text-property name="text" key="functionality"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14017">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14018">
+                                        <text-property name="text" key="becpg.report.rawmaterial.ingredients.chemicalcodes"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14019">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14020">
+                                        <text-property name="text" key="becpg.report.rawmaterial.ingredients.flags"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14021">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14022">
+                                        <text-property name="text" key="becpg.report.rawmaterial.ingredients.hazardclassification"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="7019">
@@ -12110,6 +12966,60 @@ adress;</expression>
                                         <property name="canShrink">false</property>
                                         <property name="overflow">hidden</property>
                                         <property name="resultSetColumn">ingListFunctionality</property>
+                                    </data>
+                                </cell>
+                                <cell id="14023">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14024">
+                                        <property name="resultSetColumn">chemicalCodes</property>
+                                    </data>
+                                </cell>
+                                <cell id="14025">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14026">
+                                        <property name="resultSetColumn">ingListFlagsTranslation</property>
+                                    </data>
+                                </cell>
+                                <cell id="14027">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14028">
+                                        <property name="resultSetColumn">hazardClassifications</property>
                                     </data>
                                 </cell>
                                 <cell id="7030">
@@ -13322,11 +14232,61 @@ decisionTree
                                 <expression name="expression" type="javascript">dataSetRow["allergenListIsCleaned"]</expression>
                                 <property name="dataType">boolean</property>
                             </structure>
+                            <structure>
+                                <property name="name">allergenRegulatoryThreshold</property>
+                                <text-property name="displayName">allergenRegulatoryThreshold</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["allergenRegulatoryThreshold"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countRegulatoryThreshold</property>
+                                <text-property name="displayName">countRegulatoryThreshold</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countRegulatoryThreshold"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countVolSources</property>
+                                <text-property name="displayName">countVolSources</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countVolSources"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countInVolSources</property>
+                                <text-property name="displayName">countInVolSources</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countInVolSources"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countOnLine</property>
+                                <text-property name="displayName">countOnLine</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countOnLine"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countOnSite</property>
+                                <text-property name="displayName">countOnSite</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countOnSite"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countIsCleaned</property>
+                                <text-property name="displayName">countIsCleaned</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countIsCleaned"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <column id="6716">
                             <property name="width">1.6in</property>
                         </column>
                         <column id="6717"/>
+                        <column id="14029">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countRegulatoryThreshold"] == null || row["countRegulatoryThreshold"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
                         <column id="6718"/>
                         <column id="6719"/>
                         <column id="6720">
@@ -13337,15 +14297,50 @@ decisionTree
                                 </structure>
                             </list-property>
                         </column>
-                        <column id="6721"/>
-                        <column id="6722"/>
-                        <column id="12702"/>
-                        <column id="12708"/>
-                        <column id="12696"/>
+                        <column id="6721">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countVolSources"] == null || row["countVolSources"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="6722">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countInVolSources"] == null || row["countInVolSources"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="12702">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countOnLine"] == null || row["countOnLine"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="12708">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countOnSite"] == null || row["countOnSite"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
+                        <column id="12696">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countIsCleaned"] == null || row["countIsCleaned"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                        </column>
                         <header>
                             <row id="6724">
                                 <cell id="6725">
-                                    <property name="colSpan">10</property>
+                                    <property name="colSpan">11</property>
                                     <property name="rowSpan">1</property>
                                     <property name="style">becpg-chapter-header</property>
                                     <property name="borderBottomStyle">none</property>
@@ -13367,6 +14362,7 @@ decisionTree
                                     <label id="6990"/>
                                 </cell>
                                 <cell id="6947"/>
+                                <cell id="14030"/>
                                 <cell id="6948"/>
                                 <cell id="6949"/>
                                 <cell id="6950"/>
@@ -13377,13 +14373,15 @@ decisionTree
                                 <cell id="12692"/>
                             </row>
                             <row id="6735">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">true</expression>
+                                    </structure>
+                                </list-property>
                                 <cell id="6736">
-                                    <property name="colSpan">10</property>
+                                    <property name="colSpan">11</property>
                                     <property name="rowSpan">1</property>
-                                    <label id="6745">
-                                        <property name="textAlign">left</property>
-                                        <text-property name="text" key="reglementAllergenes"></text-property>
-                                    </label>
                                     <label id="6746">
                                         <property name="textAlign">left</property>
                                         <list-property name="visibility">
@@ -13409,6 +14407,12 @@ decisionTree
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6776">
                                         <text-property name="text" key="qtyPerc"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14031">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14032">
+                                        <text-property name="text" key="becpg.report.rawmaterial.allergens.regulatorythreshold"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="6689">
@@ -13596,6 +14600,24 @@ decisionTree
                                         <property name="canShrink">false</property>
                                         <property name="overflow">hidden</property>
                                         <property name="resultSetColumn">allergenListQtyPerc</property>
+                                    </data>
+                                </cell>
+                                <cell id="14033">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14034">
+                                        <property name="resultSetColumn">allergenRegulatoryThreshold</property>
                                     </data>
                                 </cell>
                                 <cell id="6699">
@@ -13907,6 +14929,337 @@ decisionTree
                         </detail>
                     </table>
                     <label id="8532">
+                        <property name="fontSize">6pt</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">pdf</property>
+                                <expression name="valueExpr" type="javascript">true</expression>
+                            </structure>
+                        </list-property>
+                        <text-property name="text"> </text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="14035">
+                <cell id="14036">
+                    <table id="14037">
+                        <property name="marginTop">8pt</property>
+                        <property name="marginBottom">8pt</property>
+                        <property name="width">7.208333333333333in</property>
+                        <property name="dataSet">ingRegulatoryList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">( row["runningCount"] == null || row["runningCount"] == 0 )</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">irlIng</property>
+                                <text-property name="displayName">irlIng</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["irlIng"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">irlCitation</property>
+                                <text-property name="displayName">irlCitation</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["irlCitation"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">irlRestrictionLevels</property>
+                                <text-property name="displayName">irlRestrictionLevels</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["irlRestrictionLevels"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">irlPrecautions</property>
+                                <text-property name="displayName">irlPrecautions</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["irlPrecautions"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">regulatoryCountries</property>
+                                <text-property name="displayName">regulatoryCountries</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["regulatoryCountries"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">usages</property>
+                                <text-property name="displayName">usages</text-property>
+                                <expression name="expression" type="javascript">(dataSetRow["irlUsages"] != null &amp;&amp; dataSetRow["irlUsages"] != "") ? dataSetRow["irlUsages"] : dataSetRow["regulatoryUsageRef"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countCitation</property>
+                                <text-property name="displayName">countCitation</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countCitation"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countRestrictionLevels</property>
+                                <text-property name="displayName">countRestrictionLevels</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countRestrictionLevels"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countPrecautions</property>
+                                <text-property name="displayName">countPrecautions</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countPrecautions"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countUsages</property>
+                                <text-property name="displayName">countUsages</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countUsages"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">countCountries</property>
+                                <text-property name="displayName">countCountries</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["countCountries"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <column id="14038"/>
+                        <column id="14039">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countCitation"] == null || row["countCitation"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1.2in</property>
+                        </column>
+                        <column id="14040">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countRestrictionLevels"] == null || row["countRestrictionLevels"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1.3in</property>
+                        </column>
+                        <column id="14041">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countPrecautions"] == null || row["countPrecautions"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1.5in</property>
+                        </column>
+                        <column id="14042">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countUsages"] == null || row["countUsages"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">1in</property>
+                        </column>
+                        <column id="14043">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">(row["countCountries"] == null || row["countCountries"] == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <property name="width">0.9in</property>
+                        </column>
+                        <header>
+                            <row id="14044">
+                                <cell id="14045">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="style">becpg-chapter-header</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <label id="14046">
+                                        <property name="style">becpg-chapter-header</property>
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.title"></text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="14047">
+                                <cell id="14048"/>
+                                <cell id="14049"/>
+                                <cell id="14050"/>
+                                <cell id="14051"/>
+                                <cell id="14052"/>
+                                <cell id="14053"/>
+                            </row>
+                            <row id="14054">
+                                <property name="style">becpg-row-header</property>
+                                <property name="fontSize">9pt</property>
+                                <cell id="14055">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14056">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.ingredient"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14057">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14058">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.citation"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14059">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14060">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.restrictions"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14061">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14062">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.precautions"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14063">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14064">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.usages"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="14065">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="14066">
+                                        <text-property name="text" key="becpg.report.rawmaterial.regulatory.countries"></text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="14067">
+                                <property name="verticalAlign">middle</property>
+                                <cell id="14068">
+                                    <method name="onRender"><![CDATA[indent_docx (0, 1, this);]]></method>
+                                    <property name="style">becpg-cell-dynamic-header-left</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingLeft">2pt</property>
+                                    <data id="14069">
+                                        <property name="textAlign">left</property>
+                                        <property name="resultSetColumn">irlIng</property>
+                                    </data>
+                                </cell>
+                                <cell id="14070">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14071">
+                                        <property name="resultSetColumn">irlCitation</property>
+                                    </data>
+                                </cell>
+                                <cell id="14072">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14073">
+                                        <property name="resultSetColumn">irlRestrictionLevels</property>
+                                    </data>
+                                </cell>
+                                <cell id="14074">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14075">
+                                        <property name="resultSetColumn">irlPrecautions</property>
+                                    </data>
+                                </cell>
+                                <cell id="14076">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14077">
+                                        <property name="resultSetColumn">usages</property>
+                                    </data>
+                                </cell>
+                                <cell id="14078">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="14079">
+                                        <property name="resultSetColumn">regulatoryCountries</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <label id="14080">
                         <property name="fontSize">6pt</property>
                         <list-property name="visibility">
                             <structure>

@@ -34,6 +34,7 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
 import fr.becpg.repo.sample.ProductInformationFileTestProduct;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
@@ -143,6 +144,23 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 					nodeService.getTargetAssocs(fragrance, ASSOC_SDS_PERSONAL_PROTECTIONS).isEmpty());
 			Assert.assertNotNull("The fragrance should hold safety instructions", nodeService.getProperty(fragrance, PROP_SDS_SAFETY_INSTRUCTIONS));
 			Assert.assertFalse("The flammable fragrance should hold its UN number", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_ONU_CODE).isEmpty());
+			return null;
+		});
+	}
+
+	@Test
+	public void testProductInformationFileFragranceHoldsItsRegulatoryRestrictions() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData fragrance = (ProductData) alfrescoRepository.findOne(findRawMaterial(productNodeRef, ProductInformationFileTestProduct.FRAGRANCE));
+			Assert.assertNotNull("The fragrance should hold regulatory restrictions", fragrance.getIngRegulatoryList());
+			Assert.assertFalse("The fragrance should hold regulatory restrictions", fragrance.getIngRegulatoryList().isEmpty());
+			for (IngRegulatoryListDataItem restriction : fragrance.getIngRegulatoryList()) {
+				Assert.assertNotNull("Each restriction should cite its regulation", restriction.getCitation());
+				Assert.assertNotNull("Each restriction should hold its restriction level", restriction.getRestrictionLevels());
+			}
 			return null;
 		});
 	}

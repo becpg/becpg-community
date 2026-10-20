@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -351,6 +352,26 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final List<AllergenShare> FRAGRANCE_ALLERGENS = List.of(new AllergenShare("Linalool", 1.5),
 			new AllergenShare("Limonene", 1d), new AllergenShare("Geraniol", 0.5), new AllergenShare("Citronellol", 0.5));
 
+	/** A restriction of Regulation (EC) No 1223/2009 on an ingredient: annex entry, restriction and conditions of use. */
+	private record RegulatoryRestrictionSpec(String inciName, String citation, String restrictionLevels, String precautions) {
+	}
+
+	private static final String ALL_COSMETIC_PRODUCTS = "All cosmetic products";
+	private static final String FRAGRANCE_ALLERGEN_LABELLING = "Leave-on products: 0.001%. Rinse-off products: 0.01%.";
+	private static final String FRAGRANCE_ALLERGEN_PRECAUTION = "Must be indicated in the list of ingredients when its concentration "
+			+ "exceeds 0.001% in leave-on products and 0.01% in rinse-off products.";
+
+	/** Restrictions of Annex III of Regulation (EC) No 1223/2009 on the fragrance allergens of the fragrance raw material. */
+	private static final List<RegulatoryRestrictionSpec> FRAGRANCE_RESTRICTIONS = List.of(
+			new RegulatoryRestrictionSpec("LINALOOL", "Regulation (EC) No 1223/2009, Annex III/84", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION),
+			new RegulatoryRestrictionSpec("D-LIMONENE", "Regulation (EC) No 1223/2009, Annex III/88", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION + " Peroxide value below 20 mmol/L."),
+			new RegulatoryRestrictionSpec("GERANIOL", "Regulation (EC) No 1223/2009, Annex III/78", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION),
+			new RegulatoryRestrictionSpec("CITRONELLOL", "Regulation (EC) No 1223/2009, Annex III/86", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION));
+
 	private static final List<PhysicoChemSpec> FINISHED_PRODUCT_SPECIFICATIONS = List.of(new PhysicoChemSpec("pH", "pH", 5.5, 5d, 6d),
 			new PhysicoChemSpec("Viscosity (Brookfield, 20 °C)", "mPa.s", 8000d, 6000d, 10000d),
 			new PhysicoChemSpec("Density (20 °C)", "g/mL", 0.98, 0.96, 1d));
@@ -504,8 +525,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates a raw material with its INCI ingredients, supplier, supplier plant, origin, impurity specification and
-	 * safety data sheet reference.
+	 * Creates a raw material with its INCI ingredients, supplier, supplier plant, origin, impurity specification, safety
+	 * data sheet reference and, for the fragrance, its allergens and the regulatory restrictions of its ingredients.
 	 *
 	 * @param spec the raw material description
 	 * @return the created raw material
@@ -521,6 +542,9 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		addPhysicoChem(rawMaterial, new PhysicoChemSpec(HEAVY_METALS, PPM, 2d, null, 10d));
 		if (isWithAllergens && FRAGRANCE.equals(spec.name())) {
 			rawMaterial.setAllergenList(createAllergenList());
+		}
+		if (isWithRegulatory && FRAGRANCE.equals(spec.name())) {
+			rawMaterial.setIngRegulatoryList(createRegulatoryRestrictions(FRAGRANCE_RESTRICTIONS));
 		}
 
 		rawMaterial.setDensity(RAW_MATERIAL_SHEETS.get(spec.name()).density());
@@ -593,6 +617,29 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			sum += (i % 2 == 0) ? digit : digit * 3;
 		}
 		return twelveDigits + ((10 - (sum % 10)) % 10);
+	}
+
+	/**
+	 * Creates the regulatory restrictions a supplier declares on the ingredients of a raw material, applying to every
+	 * cosmetic product of the European Union.
+	 *
+	 * @param restrictions the restrictions of each ingredient
+	 * @return the ingredient regulatory list
+	 */
+	private List<IngRegulatoryListDataItem> createRegulatoryRestrictions(List<RegulatoryRestrictionSpec> restrictions) {
+		List<NodeRef> europeanUnion = List.of(getOrCreateCountryRef(EU_CODE, EUROPEAN_UNION));
+		List<IngRegulatoryListDataItem> ingRegulatoryList = new ArrayList<>();
+		for (RegulatoryRestrictionSpec restriction : restrictions) {
+			IngRegulatoryListDataItem item = new IngRegulatoryListDataItem();
+			item.setIng(CharactTestHelper.getOrCreateIng(nodeService, restriction.inciName()));
+			item.setCitation(new MLText(restriction.citation()));
+			item.setRestrictionLevels(new MLText(restriction.restrictionLevels()));
+			item.setPrecautions(new MLText(restriction.precautions()));
+			item.setUsages(new MLText(ALL_COSMETIC_PRODUCTS));
+			item.setRegulatoryCountries(europeanUnion);
+			ingRegulatoryList.add(item);
+		}
+		return ingRegulatoryList;
 	}
 
 	/**

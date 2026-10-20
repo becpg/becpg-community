@@ -13,17 +13,18 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
  * <p>Writes the identity of an ingredient on its ingredient line of the report data source: the identification codes
- * (CEE, CAS, EINECS and EC numbers) and the function the ingredient holds in the formula, as a product information
- * file lists them for each ingredient.</p>
+ * (CEE, CAS, EINECS and EC numbers), the CLP hazard classification and the function the ingredient holds in the
+ * formula, as a product information file and a raw material sheet list them for each ingredient.</p>
  *
  * <pre>
  * &lt;ingList ingListIng="CITRIC ACID" ingCEECode="E330" casNumber="77-92-9" ceNumber="201-069-1" ecNumber="201-069-1"
- *          ingListFunctionality="pH adjusters" .../&gt;
+ *          sdsHazardClassifications="Eye Irrit. 2:H319" ingListFunctionality="pH adjusters" .../&gt;
  * </pre>
  *
  * <p>A code or a function the ingredient does not hold writes no attribute.</p>
@@ -34,8 +35,8 @@ public class IngredientIdentityReportWriter {
 	/** Attribute read by the quali-quanti composition report for the function of the ingredient. */
 	private static final String ATTR_FUNCTION = "ingListFunctionality";
 
-	private static final List<QName> IDENTIFICATION_CODES = List.of(PLMModel.PROP_ING_CEECODE, PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER,
-			PLMModel.PROP_EC_NUMBER);
+	private static final List<QName> IDENTITY_PROPERTIES = List.of(PLMModel.PROP_ING_CEECODE, PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER,
+			PLMModel.PROP_EC_NUMBER, GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS);
 
 	private final NodeService nodeService;
 
@@ -53,14 +54,15 @@ public class IngredientIdentityReportWriter {
 	}
 
 	/**
-	 * Writes the identification codes and the function of an ingredient on its ingredient line.
+	 * Writes the identification codes, the hazard classification and the function of an ingredient on its ingredient
+	 * line.
 	 *
 	 * @param ingNodeRef the ingredient
 	 * @param ingListElt the ingredient line element of the report data source
 	 */
 	public void write(NodeRef ingNodeRef, Element ingListElt) {
-		for (QName identificationCode : IDENTIFICATION_CODES) {
-			writeAttribute(ingListElt, identificationCode.getLocalName(), nodeService.getProperty(ingNodeRef, identificationCode));
+		for (QName identityProperty : IDENTITY_PROPERTIES) {
+			writeAttribute(ingListElt, identityProperty.getLocalName(), nodeService.getProperty(ingNodeRef, identityProperty));
 		}
 		if (nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TYPE_V2) instanceof NodeRef ingTypeNodeRef) {
 			writeAttribute(ingListElt, ATTR_FUNCTION, attributeExtractorService.extractPropName(ingTypeNodeRef));
