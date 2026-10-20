@@ -98,11 +98,10 @@ public class LcaScoreEngine {
 			return context;
 		}
 
-		Double value = scale(total, definition);
-		context.setValue(value);
+		context.setValue(total);
 
 		if ((definition.getRange() != null) && !definition.getRange().isBlank()) {
-			context.setScoreClass(new ScoreRangeConverter(definition.getRange()).getScoreLetter(value));
+			context.setScoreClass(new ScoreRangeConverter(definition.getRange()).getScoreLetter(total));
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -152,7 +151,8 @@ public class LcaScoreEngine {
 			return Optional.empty();
 		}
 
-		double contribution = (line.getValue() / normalization) * weight;
+		// scaled here rather than on the total, so the details read in the unit of the score
+		double contribution = (line.getValue() / normalization) * weight * scaleFactor(definition);
 
 		return Optional.of(new ScorePart(code(line.getLca())).withValue(line.getValue(), line.getUnit())
 				.withCoefficients(normalization, weight).withContribution(contribution));
@@ -198,16 +198,15 @@ public class LcaScoreEngine {
 	}
 
 	/**
-	 * <p>Applies the scale factor of the definition, the PEF publishing its single score
-	 * in millipoints where Ecobalyse publishes points.</p>
+	 * <p>Scale factor of the definition, the PEF publishing its single score with a factor
+	 * of ten where Ecobalyse publishes micropoints.</p>
 	 *
-	 * @param total the weighted sum
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
-	 * @return a {@link java.lang.Double} object
+	 * @return the factor, 1 when the definition declares none
 	 */
-	private Double scale(double total, ScoreDefinitionItem definition) {
+	private double scaleFactor(ScoreDefinitionItem definition) {
 		Double factor = definition.getScaleFactor();
-		return (factor == null) || (factor == 0d) ? total : total * factor;
+		return (factor == null) || (factor == 0d) ? 1d : factor;
 	}
 
 	/**
