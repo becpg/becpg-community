@@ -1036,10 +1036,67 @@ span.packagingList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
-span.resourceParam,
-span.resourceParamList,
 span.processList {
     background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.resourceParam,
+span.resourceParamList {
+    background-image: url("../../components/images/filetypes/generic-resourceParam-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.priceList {
+    background-image: url("../../components/images/filetypes/generic-price-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.tradeItemPriceList {
+    background-image: url("../../components/images/filetypes/generic-tradeItemPrice-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.dutyFeeTaxList {
+    background-image: url("../../components/images/filetypes/generic-dutyFeeTax-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.pubChannelList {
+    background-image: url("../../components/images/filetypes/generic-pubChannel-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.fishReportingInformationList {
+    background-image: url("../../components/images/filetypes/generic-fishReportingInformation-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.regulatoryList {
+    background-image: url("../../components/images/filetypes/generic-regulatory-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.View-regulatory {
+    background-image: url("../../components/images/filetypes/generic-regulatoryView-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.toxList {
+    background-image: url("../../components/images/filetypes/generic-tox-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.svhcList {
+    background-image: url("../../components/images/filetypes/generic-svhc-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+/** Core **/
+
+span.activityList {
+    background-image: url("../../components/images/filetypes/generic-activity-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -1054,9 +1111,18 @@ span.project,
 }
 
 span.deliverableList,
-span.scoreList,
 span.invoiceList {
     background-image: url("../../components/images/generic-file-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.scoreList {
+    background-image: url("../../components/images/filetypes/generic-score-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.surveyList {
+    background-image: url("../../components/images/filetypes/generic-survey-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -1119,6 +1185,16 @@ span.productMicrobioCriteria,
 .entity.productMicrobioCriteria
  {
     background-image: url("../../components/images/filetypes/generic-productMicrobioCriteria-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.controlDefList {
+    background-image: url("../../components/images/filetypes/generic-controlDef-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.stockList {
+    background-image: url("../../components/images/filetypes/generic-stock-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }

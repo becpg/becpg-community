@@ -101,6 +101,51 @@
 							showCreate : false
 						},
 						
+						/**
+						 * Id of the page layout that holds the lists panel and the content
+						 */
+						LAYOUT_ID : "alfresco-data-lists",
+
+						/**
+						 * Id of the lists panel, shared with the versions
+						 */
+						FILTERS_ID : "alf-filters",
+
+						/**
+						 * Class put on the layout when the panel is collapsed to the list icons
+						 */
+						COLLAPSED_CLASS : "datalists-collapsed",
+
+						/**
+						 * Browser storage key of the collapse choice
+						 */
+						COLLAPSED_STORAGE_KEY : "becpg.entityDataLists.collapsed",
+
+						/**
+						 * Name prefix of the where-used lists
+						 */
+						WUSED_LIST_PREFIX : "WUsed",
+
+						/**
+						 * State of a validated list
+						 */
+						VALID_STATE : "Valid",
+
+						/**
+						 * Part of the visible lists kept on screen when scrolling by one page, in pixels
+						 */
+						SCROLL_PAGE_OVERLAP : 40,
+
+						/**
+						 * Tolerance under which a list cut by the panel edge counts as visible, in pixels
+						 */
+						SCROLL_HINT_TOLERANCE : 4,
+
+						/**
+						 * Distance between a collapsed icon and its tooltip, in pixels
+						 */
+						TOOLTIP_GAP : 8,
+
 						views : {
 							"compoList" : "formulation-view",
 							"processList": "formulation-view",
@@ -138,6 +183,10 @@
     								disabled : true
     							});
 							}
+							this.initRailTooltip();
+							this.initScrollHints();
+							this.initCollapse();
+
 							// Retrieve the lists from the specified Site &
 							// Container
 							this.populateDataLists({
@@ -543,11 +592,13 @@
 											}
 
 											elText = document.createTextNode(list.title);
+											this.setRailTooltip(el, list);
 
 											// Build the DOM structure with the
 											// new
 											// elements
-											elLink.appendChild(elState);																						
+											elLink.appendChild(this.createListIcon(list));
+											elLink.appendChild(elState);
 											elLink.appendChild(elText);
 											el.appendChild(elLink);
 											container.appendChild(el);
@@ -573,6 +624,347 @@
 								listsContainer.innerHTML = '<span class="error">' + this.msg("message.error-unknown") + '</span>';
 							}
 
+							this.refreshScrollHints();
+						},
+
+						/**
+						 * Creates the icon displayed in front of a list when the panel is collapsed. The icon
+						 * class is the list type, so the type icons of beCPG.css apply.
+						 *
+						 * @method createListIcon
+						 * @param list
+						 *            {Object} The data list
+						 * @return {HTMLElement} The icon element
+						 */
+						createListIcon : function DataLists_createListIcon(list) {
+							var icon = document.createElement("span");
+							icon.className = "list-icon " + this.getListIconClass(list);
+							return icon;
+						},
+
+						/**
+						 * Returns the icon class of a list: the local name of its type, or its name for the
+						 * views and the where-used lists, which have no type.
+						 *
+						 * @method getListIconClass
+						 * @param list
+						 *            {Object} The data list
+						 * @return {string} The icon class
+						 */
+						getListIconClass : function DataLists_getListIconClass(list) {
+							if (list.name.indexOf(this.WUSED_LIST_PREFIX) > -1) {
+								return this.WUSED_LIST_PREFIX;
+							}
+							if (list.itemType) {
+								return list.itemType.split(":")[1];
+							}
+							return list.name.split("@")[0];
+						},
+
+						/**
+						 * Stores on a list item what its tooltip shows when the panel is collapsed: the list
+						 * title and its validation state.
+						 *
+						 * @method setRailTooltip
+						 * @param el
+						 *            {HTMLElement} The list item
+						 * @param list
+						 *            {Object} The data list
+						 */
+						setRailTooltip : function DataLists_setRailTooltip(el, list) {
+							el.setAttribute("data-rail-tip", list.title);
+							if (list.name.indexOf(this.WUSED_LIST_PREFIX) < 0) {
+								var valid = list.state === this.VALID_STATE;
+								el.setAttribute("data-rail-tip-detail", this.msg(valid ? "label.list-state.valid" : "label.list-state.to-validate"));
+								el.setAttribute("data-rail-tip-tone", valid ? "valid" : "pending");
+							}
+						},
+
+						/**
+						 * Collapses the panel to the list icons when the user chose so last time.
+						 *
+						 * @method initCollapse
+						 */
+						initCollapse : function DataLists_initCollapse() {
+							var toggle = Dom.get(this.id + "-collapseToggle");
+							this.layoutEl = Dom.get(this.LAYOUT_ID);
+							if (!toggle || !this.layoutEl) {
+								return;
+							}
+							Event.addListener(toggle, "click", this.onCollapseToggleClick, this, true);
+							var entity = Dom.getElementsByClassName("entity", "span", this.id + "-headerBar")[0];
+							if (entity) {
+								entity.setAttribute("data-rail-tip", entity.textContent);
+								entity.setAttribute("data-rail-tip-detail", this.msg("label.expand-lists"));
+								Event.addListener(entity, "click", this.onEntityIconClick, this, true);
+							}
+							if (this.readCollapsedChoice()) {
+								this.setCollapsed(true);
+							}
+						},
+
+						/**
+						 * Fired when the user clicks on the collapse button of the header
+						 *
+						 * @method onCollapseToggleClick
+						 * @param event
+						 *            {Object} The click event
+						 */
+						onCollapseToggleClick : function DataLists_onCollapseToggleClick(event) {
+							Event.preventDefault(event);
+							this.setCollapsed(true);
+							this.saveCollapsedChoice(true);
+						},
+
+						/**
+						 * Fired when the user clicks on the entity icon, which expands the collapsed panel
+						 *
+						 * @method onEntityIconClick
+						 */
+						onEntityIconClick : function DataLists_onEntityIconClick() {
+							if (this.isCollapsed()) {
+								this.setCollapsed(false);
+								this.saveCollapsedChoice(false);
+							}
+						},
+
+						/**
+						 * Tells whether the panel is collapsed to the list icons
+						 *
+						 * @method isCollapsed
+						 * @return {boolean} true if collapsed
+						 */
+						isCollapsed : function DataLists_isCollapsed() {
+							return !!this.layoutEl && Dom.hasClass(this.layoutEl, this.COLLAPSED_CLASS);
+						},
+
+						/**
+						 * Collapses or expands the panel, then lets the page lay itself out again
+						 *
+						 * @method setCollapsed
+						 * @param collapsed
+						 *            {boolean} true to collapse
+						 */
+						setCollapsed : function DataLists_setCollapsed(collapsed) {
+							if (collapsed) {
+								Dom.addClass(this.layoutEl, this.COLLAPSED_CLASS);
+							} else {
+								Dom.removeClass(this.layoutEl, this.COLLAPSED_CLASS);
+							}
+							this.hideRailTooltip();
+							this.refreshScrollHints();
+							this.notifyLayoutChange();
+						},
+
+						/**
+						 * Tells the components laid out by the resizer that the panel width changed
+						 *
+						 * @method notifyLayoutChange
+						 */
+						notifyLayoutChange : function DataLists_notifyLayoutChange() {
+							Bubbling.fire("resizerChanged", {
+								width : Dom.get(this.FILTERS_ID).offsetWidth
+							});
+							var resizeEvent = document.createEvent("HTMLEvents");
+							resizeEvent.initEvent("resize", true, false);
+							window.dispatchEvent(resizeEvent);
+						},
+
+						/**
+						 * Reads the collapse choice, kept in the browser like a layout preference
+						 *
+						 * @method readCollapsedChoice
+						 * @return {boolean} true if the user collapsed the panel last time
+						 */
+						readCollapsedChoice : function DataLists_readCollapsedChoice() {
+							try {
+								return window.localStorage.getItem(this.COLLAPSED_STORAGE_KEY) === "true";
+							} catch (e) {
+								return false;
+							}
+						},
+
+						/**
+						 * Keeps the collapse choice for the next pages
+						 *
+						 * @method saveCollapsedChoice
+						 * @param collapsed
+						 *            {boolean} true if collapsed
+						 */
+						saveCollapsedChoice : function DataLists_saveCollapsedChoice(collapsed) {
+							try {
+								window.localStorage.setItem(this.COLLAPSED_STORAGE_KEY, String(collapsed));
+							} catch (e) {
+								// Storage refused (private window): the choice only lasts for this page
+							}
+						},
+
+						/**
+						 * Wires the arrows that show there are more lists above or below the visible ones
+						 *
+						 * @method initScrollHints
+						 */
+						initScrollHints : function DataLists_initScrollHints() {
+							Event.addListener(this.id + "-lists", "scroll", this.refreshScrollHints, this, true);
+							Event.addListener(this.id + "-listsUp", "click", this.onScrollHintClick, -1, this);
+							Event.addListener(this.id + "-listsDown", "click", this.onScrollHintClick, 1, this);
+							Event.addListener(window, "resize", this.refreshScrollHints, this, true);
+						},
+
+						/**
+						 * Scrolls the lists by one page in the arrow direction
+						 *
+						 * @method onScrollHintClick
+						 * @param event
+						 *            {Object} The click event
+						 * @param direction
+						 *            {int} -1 to scroll up, 1 to scroll down
+						 */
+						onScrollHintClick : function DataLists_onScrollHintClick(event, direction) {
+							var lists = Dom.get(this.id + "-lists"), delta = direction * (lists.clientHeight - this.SCROLL_PAGE_OVERLAP);
+							if (typeof lists.scrollBy === "function") {
+								lists.scrollBy({
+									top : delta,
+									behavior : "smooth"
+								});
+							} else {
+								lists.scrollTop += delta;
+							}
+						},
+
+						/**
+						 * Shows the up and down arrows when lists are hidden on that side
+						 *
+						 * @method refreshScrollHints
+						 */
+						refreshScrollHints : function DataLists_refreshScrollHints() {
+							var lists = Dom.get(this.id + "-lists"), up = Dom.get(this.id + "-listsUp"), down = Dom.get(this.id + "-listsDown");
+							if (!lists || !up || !down) {
+								return;
+							}
+							var hidden = this.countHiddenLists(lists);
+							this.toggleScrollHint(up, hidden.above);
+							this.toggleScrollHint(down, hidden.below);
+						},
+
+						/**
+						 * Displays an arrow and its tooltip when some lists are hidden on its side
+						 *
+						 * @method toggleScrollHint
+						 * @param hint
+						 *            {HTMLElement} The arrow
+						 * @param hiddenCount
+						 *            {int} Number of lists hidden on its side
+						 */
+						toggleScrollHint : function DataLists_toggleScrollHint(hint, hiddenCount) {
+							if (hiddenCount > 0) {
+								Dom.addClass(hint, "visible");
+								hint.title = this.msg(hiddenCount > 1 ? "label.more-lists" : "label.more-list", hiddenCount);
+							} else {
+								Dom.removeClass(hint, "visible");
+							}
+						},
+
+						/**
+						 * Counts the lists hidden above and below the visible part of the panel
+						 *
+						 * @method countHiddenLists
+						 * @param lists
+						 *            {HTMLElement} The scrollable lists container
+						 * @return {Object} The counts, as {above, below}
+						 */
+						countHiddenLists : function DataLists_countHiddenLists(lists) {
+							var items = lists.getElementsByTagName("li"), box = lists.getBoundingClientRect(), hidden = {
+								above : 0,
+								below : 0
+							};
+							for (var i = 0; i < items.length; i++) {
+								var item = items[i].getBoundingClientRect();
+								if (item.top < box.top - this.SCROLL_HINT_TOLERANCE) {
+									hidden.above++;
+								} else if (item.bottom > box.top + lists.clientHeight + this.SCROLL_HINT_TOLERANCE) {
+									hidden.below++;
+								}
+							}
+							return hidden;
+						},
+
+						/**
+						 * Creates the tooltip that names the lists and the branches when the panel is collapsed
+						 *
+						 * @method initRailTooltip
+						 */
+						initRailTooltip : function DataLists_initRailTooltip() {
+							this.widgets.railTooltip = document.createElement("div");
+							this.widgets.railTooltip.className = "datalists-rail-tooltip";
+							document.body.appendChild(this.widgets.railTooltip);
+							Event.addListener(this.FILTERS_ID, "mouseover", this.onRailMouseOver, this, true);
+							Event.addListener(this.FILTERS_ID, "mouseout", this.hideRailTooltip, this, true);
+						},
+
+						/**
+						 * Shows the tooltip of the hovered list or branch
+						 *
+						 * @method onRailMouseOver
+						 * @param event
+						 *            {Object} The mouseover event
+						 */
+						onRailMouseOver : function DataLists_onRailMouseOver(event) {
+							var target = this.isCollapsed() ? this.findRailTooltipTarget(Event.getTarget(event)) : null;
+							if (target) {
+								this.showRailTooltip(target);
+							} else {
+								this.hideRailTooltip();
+							}
+						},
+
+						/**
+						 * Returns the closest ancestor carrying a tooltip, within the panel
+						 *
+						 * @method findRailTooltipTarget
+						 * @param el
+						 *            {HTMLElement} The hovered element
+						 * @return {HTMLElement} The element carrying the tooltip, or null
+						 */
+						findRailTooltipTarget : function DataLists_findRailTooltipTarget(el) {
+							while (el && el.id !== this.FILTERS_ID) {
+								if (el.getAttribute && el.getAttribute("data-rail-tip")) {
+									return el;
+								}
+								el = el.parentNode;
+							}
+							return null;
+						},
+
+						/**
+						 * Fills the tooltip from the target attributes and puts it on the right of the target
+						 *
+						 * @method showRailTooltip
+						 * @param target
+						 *            {HTMLElement} The element carrying the tooltip
+						 */
+						showRailTooltip : function DataLists_showRailTooltip(target) {
+							var tooltip = this.widgets.railTooltip, detail = target.getAttribute("data-rail-tip-detail"),
+								html = $html(target.getAttribute("data-rail-tip"));
+							if (detail) {
+								html += '<em class="' + $html(target.getAttribute("data-rail-tip-tone") || "") + '">' + $html(detail) + '</em>';
+							}
+							tooltip.innerHTML = html;
+							tooltip.style.display = "block";
+							var box = target.getBoundingClientRect();
+							tooltip.style.left = (box.right + this.TOOLTIP_GAP) + "px";
+							tooltip.style.top = (box.top + (box.height - tooltip.offsetHeight) / 2) + "px";
+						},
+
+						/**
+						 * Hides the tooltip
+						 *
+						 * @method hideRailTooltip
+						 */
+						hideRailTooltip : function DataLists_hideRailTooltip() {
+							if (this.widgets.railTooltip) {
+								this.widgets.railTooltip.style.display = "none";
+							}
 						},
 
 

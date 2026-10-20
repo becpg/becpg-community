@@ -28,44 +28,44 @@
    -ms-overflow-style: none;
 }
 
-@-moz-document url-prefix() {
-   .datalists div.filter {
-      scrollbar-width: none;
-      overflow-y: auto;
-   }
-   
-   .datalists div.filter:hover {
-      scrollbar-width: thin !important;
-      scrollbar-color: #999 #f5f5f5;
-   }
+/* The scrollbar keeps its width and only gets coloured on hover, so the lists never shift. */
+.datalists div.filter {
+   scrollbar-width: thin;
+   scrollbar-color: transparent transparent;
+}
+
+.datalists div.filter:hover {
+   scrollbar-color: #ccc transparent;
 }
 
 .datalists div.filter::-webkit-scrollbar {
-   width: 0;
+   width: 6px;
    background: transparent;
-   display: none;
 }
 
-.datalists div.filter:hover::-webkit-scrollbar {
-   width: 6px;
-   display: block;
+.datalists div.filter::-webkit-scrollbar-track {
+   background: transparent;
+   border-radius: 3px;
+}
+
+.datalists div.filter::-webkit-scrollbar-thumb {
+   background: transparent;
+   border-radius: 3px;
 }
 
 .datalists div.filter:hover::-webkit-scrollbar-track {
    background: #f8f8f8;
-   border-radius: 3px;
 }
 
 .datalists div.filter:hover::-webkit-scrollbar-thumb {
    background: #ccc;
-   border-radius: 3px;
 }
 
 .datalists div.filter:hover::-webkit-scrollbar-thumb:hover {
    background: #aaa;
 }
 
-.datalists div.filter:hover + .horiz-rule {
+.datalists .lists-scroll:hover + .horiz-rule {
    opacity: 0;
 }
 
@@ -129,7 +129,7 @@
 
 .datalists li a span.state.WUsed
 {
-    background-image: url("../images/wused-14.png");
+    background-image: url("../images/filetypes/generic-wused-16.png");
     background-repeat: no-repeat;
 }
 
@@ -233,3 +233,304 @@
 
 
 
+
+/* Header: one row as tall as the datagrid toolbar, so both bottom lines align */
+.datalists .header-bar {
+   display: flex;
+   align-items: center;
+}
+
+.datalists .header-bar .left {
+   float: none;
+   flex: 1;
+   min-width: 0;
+}
+
+.datalists .header-bar .entity {
+   width: auto;
+   margin-top: 0;
+   margin-bottom: 0;
+}
+
+.datalists a.lists-collapse-toggle {
+   flex: none;
+   width: 24px;
+   height: 24px;
+   border-radius: 3px;
+   background: url(../preview/images/sidebar-show-flat-16.png) no-repeat center;
+   opacity: 0.85;
+}
+
+.datalists a.lists-collapse-toggle:hover {
+   background-color: #eee;
+   opacity: 1;
+}
+
+/* Arrows showing that more lists are hidden above or below; they stop short of the resize handle */
+.datalists .lists-scroll {
+   position: relative;
+}
+
+.datalists .lists-more {
+   display: none;
+   position: absolute;
+   left: 0;
+   right: 10px;
+   height: 34px;
+   z-index: 1;
+   cursor: pointer;
+   -webkit-user-select: none;
+   user-select: none;
+}
+
+.datalists .lists-more.visible {
+   display: block;
+}
+
+.datalists .lists-more-up {
+   top: 0;
+   background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92) 55%, #fff);
+}
+
+.datalists .lists-more-down {
+   bottom: 0;
+   background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92) 55%, #fff);
+}
+
+.datalists .lists-more span {
+   position: absolute;
+   left: 50%;
+   width: 22px;
+   height: 22px;
+   margin-left: -11px;
+   border: 1px solid #ccc;
+   border-radius: 11px;
+   background: #fff;
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.datalists .lists-more-up span {
+   top: 3px;
+}
+
+.datalists .lists-more-down span {
+   bottom: 3px;
+}
+
+.datalists .lists-more span:after {
+   content: "";
+   position: absolute;
+   left: 7px;
+   width: 6px;
+   height: 6px;
+   border: solid #777;
+   border-width: 0 2px 2px 0;
+}
+
+.datalists .lists-more-up span:after {
+   top: 9px;
+   transform: rotate(-135deg);
+}
+
+.datalists .lists-more-down span:after {
+   top: 5px;
+   transform: rotate(45deg);
+}
+
+.datalists .lists-more:hover span {
+   border-color: var(--becpg-orange, #ff642d);
+}
+
+/* List icons, only shown when the panel is collapsed; the type icons come from beCPG.css */
+.datalists li a span.list-icon,
+.datalists li a:hover span.list-icon {
+   display: none;
+}
+
+.datalists span.list-icon {
+   background-image: url(../images/list-16.png);
+}
+
+.datalists span.list-icon.WUsed {
+   background-image: url(../images/filetypes/generic-wused-16.png);
+}
+
+.datalists span.list-icon.View-properties {
+   background-image: url(../documentlibrary/actions/document-edit-metadata-16.png);
+}
+
+.datalists span.list-icon.View-reports {
+   background-image: url(../documentlibrary/actions/entity-view-documents-16.png);
+}
+
+.datalists span.list-icon.View-documents {
+   background-image: url(../documentlibrary/actions/folder-copy-to-16.png);
+}
+
+/* Collapsed panel: one icon per list, the header keeps the entity icon that expands it */
+.datalists-collapsed #alf-filters {
+   width: 60px !important;
+}
+
+.datalists-collapsed #alf-content {
+   margin-left: 68px !important;
+}
+
+.datalists-collapsed #alf-filters .yui-resize-handle {
+   pointer-events: none;
+   cursor: default;
+}
+
+.datalists-collapsed #alf-filters .yui-resize-handle-inner-r {
+   visibility: hidden;
+}
+
+.datalists-collapsed .datalists .header-bar {
+   justify-content: center;
+   margin-left: 0;
+   padding-left: 0;
+   padding-right: 0;
+}
+
+.datalists-collapsed .datalists .header-bar .left {
+   flex: none;
+}
+
+.datalists-collapsed .datalists .header-bar .entity {
+   width: 24px;
+   height: 24px;
+   margin: 0;
+   padding: 0;
+   font-size: 0;
+   border-radius: 3px;
+   background-position: center;
+   cursor: pointer;
+}
+
+.datalists-collapsed .datalists .header-bar .entity:hover {
+   background-color: #eee;
+}
+
+.datalists-collapsed .datalists a.lists-collapse-toggle {
+   display: none;
+}
+
+.datalists-collapsed .datalists div.filter {
+   padding-top: 2px;
+}
+
+.datalists-collapsed .datalists .lists-more {
+   right: 4px;
+}
+
+.datalists-collapsed .datalists .horiz-rule {
+   margin-left: 0;
+}
+
+.datalists-collapsed .datalists li a {
+   position: relative;
+   height: 36px;
+   padding: 0 !important;
+   font-size: 0;
+}
+
+.datalists-collapsed .datalists li a:hover {
+   background: #f3f3f3;
+}
+
+.datalists-collapsed .datalists li.selected a {
+   box-shadow: inset 3px 0 0 var(--becpg-orange, #ff642d);
+}
+
+.datalists-collapsed .datalists li a span.edit,
+.datalists-collapsed .datalists li a span.delete {
+   display: none !important;
+}
+
+.datalists-collapsed .datalists li a span.list-icon,
+.datalists-collapsed .datalists li a:hover span.list-icon {
+   display: block;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   width: 16px;
+   height: 16px;
+   margin: -8px 0 0 -8px;
+   padding: 0;
+   float: none;
+   background-repeat: no-repeat;
+   background-position: center;
+}
+
+/* Validation state as a badge on the icon: a green check when validated, a grey ring otherwise */
+.datalists-collapsed .datalists li a span.state {
+   position: absolute !important;
+   left: 50% !important;
+   top: 19px;
+   width: 11px !important;
+   height: 11px !important;
+   margin: 0 0 0 3px !important;
+   padding: 0 !important;
+   float: none;
+   border-radius: 6px;
+   background: #fff !important;
+   box-shadow: inset 0 0 0 1.5px #b0bec5;
+   z-index: 1;
+}
+
+.datalists-collapsed .datalists li a span.state.Valid {
+   background: #2bb673 !important;
+   box-shadow: 0 0 0 1.5px #fff;
+}
+
+.datalists-collapsed .datalists li a span.state.Valid:after {
+   content: "";
+   position: absolute;
+   left: 3.5px;
+   top: 1.5px;
+   width: 2.5px;
+   height: 5px;
+   border: solid #fff;
+   border-width: 0 1.5px 1.5px 0;
+   transform: rotate(45deg);
+}
+
+.datalists-collapsed .datalists li a span.state.WUsed {
+   display: none !important;
+}
+
+.datalists-rail-tooltip {
+   display: none;
+   position: fixed;
+   z-index: 10000;
+   padding: 5px 9px;
+   border-radius: 4px;
+   background: #263238;
+   color: #fff;
+   font-size: 12px;
+   white-space: nowrap;
+   pointer-events: none;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.datalists-rail-tooltip:before {
+   content: "";
+   position: absolute;
+   left: -5px;
+   top: 50%;
+   margin-top: -5px;
+   border: 5px solid transparent;
+   border-left: 0;
+   border-right-color: #263238;
+}
+
+.datalists-rail-tooltip em {
+   margin-left: 6px;
+   font-size: 11px;
+   font-style: normal;
+   color: #b0bec5;
+}
+
+.datalists-rail-tooltip em.valid {
+   color: #7fd9a8;
+}

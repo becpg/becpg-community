@@ -35,9 +35,16 @@
 					<span class="entity ${itemType?split(":")[1]!""}">${msg("type."+itemType?replace(":","_"))}</span>
             	</#if>
 		      </div>
+		      <#if !(showCreate?? && showCreate == true) && itemType??>
+		         <a href="#" id="${el}-collapseToggle" class="lists-collapse-toggle" title="${msg('label.collapse-lists')?html}"></a>
+		      </#if>
 		   </div>
-		   
-		   <div id="${el}-lists" class="filter "></div>
+
+		   <div class="lists-scroll">
+		      <div id="${el}-listsUp" class="lists-more lists-more-up"><span></span></div>
+		      <div id="${el}-lists" class="filter "></div>
+		      <div id="${el}-listsDown" class="lists-more lists-more-down"><span></span></div>
+		   </div>
 		
 		   <div class="horiz-rule">&nbsp;</div>
 		</div>
