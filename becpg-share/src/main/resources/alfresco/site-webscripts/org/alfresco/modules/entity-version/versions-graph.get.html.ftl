@@ -10,9 +10,8 @@
             <input id="versions-graph-filter-name" type="text" placeholder="${msg("label.filter-by-name")}" />
          </div>
          <div class="filter-item">
-            <select id="versions-graph-filter-system-state">
-               <option value="">${msg("label.all-states")}</option>
-            </select>
+            <label for="${el}-stateFilter-button">${msg("label.filter-by-state")}</label>
+            <button id="${el}-stateFilter-button" type="button">${msg("label.all-states")}</button>
          </div>
          <div id="versions-graph-simpleDetailed" class="simple-detailed yui-buttongroup inline">
             <span id="versions-graph-filter-view-simple" class="yui-button yui-radio-button simple-view">
