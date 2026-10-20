@@ -62,7 +62,8 @@
 }
 
 .versions-graph-filter .filter-item {
-   display: inline-block;
+   display: inline-flex;
+   align-items: center;
 }
 
 .versions-graph-filter input[type="text"] {
@@ -94,6 +95,8 @@
 .yuimenu.versions-graph-state-menu .form-field label {
    cursor: default;
    pointer-events: none;
+   height: 15px;
+   line-height: 15px;
 }
 
 /* Simple/Detailed View Buttons */
