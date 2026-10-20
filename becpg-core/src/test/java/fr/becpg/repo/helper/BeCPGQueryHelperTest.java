@@ -2,16 +2,19 @@ package fr.becpg.repo.helper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Test;
 
 /**
  * Unit tests for {@link BeCPGQueryHelper#isQueryMatch(String, String)}, on the task descriptions of the acceptance
- * test of ticket #25578 ("project code - project name - task name").
+ * test of ticket #25578 ("project code - project name - task name"), and for
+ * {@link BeCPGQueryHelper#sortByRelevance(String, List, Function)}, on the ingredient suggestions of ticket #37670.
  */
 public class BeCPGQueryHelperTest {
 
@@ -30,6 +33,15 @@ public class BeCPGQueryHelperTest {
 
 	private static final List<String> TASKS = List.of(BRIEF_MARKETING, SQL_INJECTION, MIXED_CASE_NAME, BRIE, SCRIPT,
 			AMPERSAND_BETWEEN_WORDS, OPERATOR_WORDS, RIEF, R_AND_D, LIGATURE, STOP_WORD, ACCENT);
+
+	private static final String WATER = "Eau";
+	private static final String TAP_WATER = "Eau du r\u00e9seau";
+	private static final String FILTERED_WATER = "eau filtr\u00e9e";
+	private static final String WATER_CHESTNUT = "Ch\u00e2taigne d'eau";
+	private static final String EGG_AND_WATER = "\u0152uf + eau";
+	private static final String CAKE = "G\u00e2teau";
+	private static final String EGG = "\u0152uf";
+	private static final String EGG_WHITE = "Blanc d'\u0153uf";
 
 	@Test
 	public void blankOrStarQueryMatchesEverything() {
@@ -157,5 +169,67 @@ public class BeCPGQueryHelperTest {
 			}
 		}
 		return matches;
+	}
+
+	@Test
+	public void exactLabelComesFirstThenPrefixThenWordPrefix() {
+		List<String> engineOrder = List.of(EGG_AND_WATER, FILTERED_WATER, WATER_CHESTNUT, TAP_WATER, WATER);
+
+		assertEquals(List.of(WATER, FILTERED_WATER, TAP_WATER, EGG_AND_WATER, WATER_CHESTNUT), sortByRelevance("eau", engineOrder));
+	}
+
+	@Test
+	public void sameRankKeepsTheSearchEngineOrder() {
+		assertEquals(List.of(TAP_WATER, FILTERED_WATER), sortByRelevance("eau", List.of(TAP_WATER, FILTERED_WATER)));
+		assertEquals(List.of(FILTERED_WATER, TAP_WATER), sortByRelevance("eau", List.of(FILTERED_WATER, TAP_WATER)));
+	}
+
+	@Test
+	public void rankingIgnoresCaseAccentsAndLigatures() {
+		assertEquals(List.of(EGG, EGG_WHITE), sortByRelevance("OEUF", List.of(EGG_WHITE, EGG)));
+		assertEquals(List.of(CAKE, WATER), sortByRelevance("gateau", List.of(WATER, CAKE)));
+	}
+
+	@Test
+	public void textInsideAWordIsNotAWordPrefix() {
+		assertEquals(List.of(WATER_CHESTNUT, CAKE), sortByRelevance("eau", List.of(CAKE, WATER_CHESTNUT)));
+	}
+
+	@Test
+	public void trailingWildcardAndQuotesAreIgnored() {
+		assertEquals(List.of(WATER, TAP_WATER), sortByRelevance("eau*", List.of(TAP_WATER, WATER)));
+		assertEquals(List.of(WATER, TAP_WATER), sortByRelevance("\"eau\" ", List.of(TAP_WATER, WATER)));
+	}
+
+	@Test
+	public void missingLabelGoesLast() {
+		List<String> engineOrder = new ArrayList<>();
+		engineOrder.add(null);
+		engineOrder.add(WATER);
+
+		assertEquals(List.of(WATER), sortByRelevance("eau", engineOrder).subList(0, 1));
+	}
+
+	@Test
+	public void nothingToRankReturnsTheSameList() {
+		List<String> engineOrder = List.of(TAP_WATER, WATER);
+
+		assertSame(engineOrder, sortByRelevance("*", engineOrder));
+		assertSame(engineOrder, sortByRelevance("  ", engineOrder));
+		assertSame(engineOrder, sortByRelevance(null, engineOrder));
+		assertSame(engineOrder, sortByRelevance("**", engineOrder));
+	}
+
+	@Test
+	public void inputListIsLeftUntouched() {
+		List<String> engineOrder = new ArrayList<>(List.of(TAP_WATER, WATER));
+
+		sortByRelevance("eau", engineOrder);
+
+		assertEquals(List.of(TAP_WATER, WATER), engineOrder);
+	}
+
+	private static List<String> sortByRelevance(String query, List<String> labels) {
+		return BeCPGQueryHelper.sortByRelevance(query, labels, Function.identity());
 	}
 }

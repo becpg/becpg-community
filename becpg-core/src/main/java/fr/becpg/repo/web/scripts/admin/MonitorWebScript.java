@@ -24,7 +24,6 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -41,8 +40,8 @@ import com.google.common.net.HttpHeaders;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.license.BeCPGLicenseManager;
+import fr.becpg.repo.license.UserLicense;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -244,13 +243,6 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	 */
 	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean includeTenantUsers) {
 		
-		long concurrentReadUsers = 0;
-		long concurrentSupplierUsers = 0;
-		long concurrentWriteUsers = 0;
-		long namedReadUsers = 0;
-		long namedWriteUsers = 0;
-		long withoutLicenseUsers = 0;
-	
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
@@ -263,26 +255,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			}
 		}
 	
-		for (String user : users) {
-			if (!licenseManager.isSpecialLicenseUser(user)) {
-				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
-				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
-						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
-					concurrentSupplierUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
-					concurrentWriteUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
-					concurrentReadUsers++;
-				} else if (userAuthorities.stream().noneMatch(a -> a.contains(PermissionService.GROUP_PREFIX + "License"))) {
-					withoutLicenseUsers++;
-				}
-			}
-		}
-		
-		namedReadUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed).stream()
-				.filter(u -> !licenseManager.isSpecialLicenseUser(u)).count();		
-		namedWriteUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed).stream()
-				.filter(u -> !licenseManager.isSpecialLicenseUser(u)).count();		
+		Map<UserLicense, Long> usersByLicense = licenseManager.countUsersByLicense(users);
 	
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 	
@@ -295,18 +268,18 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put("maxMemory", runtime.maxMemory() / BYTES_TO_MEGA_BYTES);
 		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / BYTES_TO_MEGA_BYTES);
 		ret.put("connectedUsers", users.size());
-		ret.put("concurrentReadUsers", concurrentReadUsers);
-		ret.put("concurrentWriteUsers", concurrentWriteUsers);
-		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);
-		ret.put("namedReadUsers", namedReadUsers);
-		ret.put("namedWriteUsers", namedWriteUsers);
+		ret.put("concurrentReadUsers", usersByLicense.getOrDefault(UserLicense.READ_CONCURRENT, 0L));
+		ret.put("concurrentWriteUsers", usersByLicense.getOrDefault(UserLicense.WRITE_CONCURRENT, 0L));
+		ret.put("concurrentSupplierUsers", usersByLicense.getOrDefault(UserLicense.SUPPLIER_CONCURRENT, 0L));
+		ret.put("namedReadUsers", licenseManager.countLicensedMembers(SystemGroup.LicenseReadNamed));
+		ret.put("namedWriteUsers", licenseManager.countLicensedMembers(SystemGroup.LicenseWriteNamed));
 		ret.put("allowedConcurrentRead", licenseManager.getAllowedConcurrentRead());
 		ret.put("allowedConcurrentWrite", licenseManager.getAllowedConcurrentWrite());
 		ret.put("allowedConcurrentSupplier", licenseManager.getAllowedConcurrentSupplier());
 		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
 		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
 		ret.put("licenseName", licenseManager.getLicenseName());
-		ret.put("withoutLicenseUsers", withoutLicenseUsers);
+		ret.put("withoutLicenseUsers", usersByLicense.getOrDefault(UserLicense.NO_LICENSE, 0L));
 		ret.put("becpgSchema", becpgSchema.replace("-SNAPSHOT",""));
 		
 		BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();

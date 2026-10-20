@@ -137,12 +137,12 @@ div.entity-versions div.nav h6
 	flex-shrink: 0;
 }
 
-.entity-versions a.branch-filter-toggle svg.eye-closed,
-.entity-versions a.branch-filter-toggle.active svg.eye-open {
+.entity-versions a.branch-filter-toggle svg.eye-open,
+.entity-versions a.branch-filter-toggle.active svg.eye-closed {
 	display: none;
 }
 
-.entity-versions a.branch-filter-toggle.active svg.eye-closed {
+.entity-versions a.branch-filter-toggle.active svg.eye-open {
 	display: inline;
 }
 

@@ -48,9 +48,6 @@ public class EcobalyseComplementsCalculator {
 	/** Farming practices are read from the life cycle list, their codes share this prefix */
 	private static final String PRACTICE_PREFIX = "AP_";
 
-	/** Constant <code>LAND_OCCUPATION="AP_LAND_OCCUPATION"</code> */
-	private static final String LAND_OCCUPATION = "AP_LAND_OCCUPATION";
-
 	/** Constant <code>HEDGES="AP_HEDGES"</code> */
 	private static final String HEDGES = "AP_HEDGES";
 
@@ -164,9 +161,9 @@ public class EcobalyseComplementsCalculator {
 			return null;
 		}
 
-		Optional<EcobalyseIngredient> ingredient = findIngredient(compoItem.getProduct());
+		Optional<Double> services = servicesPerKg(compoItem.getProduct());
 
-		if (ingredient.isEmpty()) {
+		if (services.isEmpty()) {
 			return null;
 		}
 
@@ -176,62 +173,72 @@ public class EcobalyseComplementsCalculator {
 			return null;
 		}
 
-		return (ingredient.get().totalEcosystemicServices() * quantity) / netWeight;
+		return (services.get() * quantity) / netWeight;
 	}
 
 	/**
-	 * A component is mapped either by its Ecobalyse code, or by the farming practices
-	 * entered on it when the customer documents its own supply rather than a reference one.
+	 * Ecosystemic services of a component per kilogram, from its Ecobalyse code first, then
+	 * from its LCA list when the customer documents its own supply rather than a reference one.
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link java.util.Optional} object
+	 * @return a {@link java.util.Optional} object, empty when the component is not mapped
 	 */
-	private Optional<EcobalyseIngredient> findIngredient(NodeRef productNodeRef) {
+	private Optional<Double> servicesPerKg(NodeRef productNodeRef) {
 		String code = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_ECOBALYSE_CODE);
 
 		Optional<EcobalyseIngredient> ingredient = ecobalyseIngredientService.findByCode(code);
 
-		return ingredient.isPresent() ? ingredient : fromAgriculturalPractices(productNodeRef);
+		return ingredient.isPresent() ? Optional.of(ingredient.get().totalEcosystemicServices()) : lifeCycleServices(productNodeRef);
 	}
 
 	/**
-	 * <p>fromAgriculturalPractices.</p>
+	 * <p>Ecosystemic services read from the LCA list of a component.</p>
+	 *
+	 * <p>A component that already carries complements, a semi-finished product formulated
+	 * from its own components, is taken as such: its practices only cover the components
+	 * documented by practices and would drop the ones mapped by a code. Otherwise the
+	 * practices themselves switch the complements on, no qualifier has to be entered beside
+	 * them.</p>
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link java.util.Optional} object
+	 * @return a {@link java.util.Optional} object, empty when the component carries neither
 	 */
-	private Optional<EcobalyseIngredient> fromAgriculturalPractices(NodeRef productNodeRef) {
-		if (!nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_AGRICULTURAL_PRACTICE)) {
+	private Optional<Double> lifeCycleServices(NodeRef productNodeRef) {
+		Map<String, Double> indicators = complementIndicators(productNodeRef);
+
+		if (indicators.containsKey(COMPLEMENTS_LCA_CODE)) {
+			return Optional.of(-indicators.get(COMPLEMENTS_LCA_CODE));
+		}
+
+		if (indicators.isEmpty()) {
 			return Optional.empty();
 		}
 
-		// the scenario and the crop group qualify the supply and stay properties, the
-		// practices themselves are measured values read from the life cycle list
-		Map<String, Double> practices = practices(productNodeRef);
-
-		EcobalyseIngredient ingredient = EcobalyseIngredient.builder()
-				.withIdentity(productNodeRef.getId(), null, (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_CHARACT_NAME))
-				.withOrigin((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_CROP_GROUP),
-						(String) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_SCENARIO), null)
-				.withLandOccupation(practices.get(LAND_OCCUPATION))
-				.withEcosystemicServices(practices.get(CROP_DIVERSITY), practices.get(HEDGES), practices.get(PERMANENT_PASTURE),
-						practices.get(PLOT_SIZE))
-				.build();
-
-		return Optional.of(ingredient);
+		return Optional.of(sum(indicators.get(CROP_DIVERSITY)) + sum(indicators.get(HEDGES)) + sum(indicators.get(PERMANENT_PASTURE))
+				+ sum(indicators.get(PLOT_SIZE)));
 	}
 
 	/**
-	 * <p>Farming practices of a component, read from the life cycle indicators it carries.</p>
+	 * <p>sum.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return the value, 0 when missing
+	 */
+	private double sum(Double value) {
+		return value != null ? value : 0d;
+	}
+
+	/**
+	 * <p>Farming practices and complements of a component, read from its LCA list.</p>
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link java.util.Map} object, never null
+	 * @return the values by indicator code, never null
 	 */
-	private Map<String, Double> practices(NodeRef productNodeRef) {
+	private Map<String, Double> complementIndicators(NodeRef productNodeRef) {
 		Map<String, Double> values = new HashMap<>();
 
 		ProductData component = (ProductData) alfrescoRepository.findOne(productNodeRef);
-		if (component.getLcaList() == null) {
+		if ((component == null) || (component.getLcaList() == null)) {
 			return values;
 		}
 
@@ -241,7 +248,7 @@ public class EcobalyseComplementsCalculator {
 			}
 
 			String code = (String) nodeService.getProperty(line.getLca(), PLMModel.PROP_LCA_CODE);
-			if ((code != null) && code.startsWith(PRACTICE_PREFIX)) {
+			if ((code != null) && (code.startsWith(PRACTICE_PREFIX) || COMPLEMENTS_LCA_CODE.equals(code))) {
 				values.put(code, line.getValue());
 			}
 		}
