@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
@@ -40,6 +39,7 @@ import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.UserPreferenceWriter;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
@@ -87,6 +87,17 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	PreferenceService preferenceService;
 
 	SecurityService securityService;
+
+	UserPreferenceWriter userPreferenceWriter;
+
+	/**
+	 * <p>Setter for the field <code>userPreferenceWriter</code>.</p>
+	 *
+	 * @param userPreferenceWriter the writer saving the depth outside the request transaction
+	 */
+	public void setUserPreferenceWriter(UserPreferenceWriter userPreferenceWriter) {
+		this.userPreferenceWriter = userPreferenceWriter;
+	}
 
 	/**
 	 * <p>Setter for the field <code>securityService</code>.</p>
@@ -336,20 +347,16 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	private void updateDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
-		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
+		String depthPreference = PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName();
 
-		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
+		Integer depth = (Integer) preferenceService.getPreference(username, depthPreference);
 		if ((depth == null) || !depth.equals(dataListFilter.getMaxDepth())) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Update (" + PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName() + "):" + dataListFilter.getMaxDepth()
-						+ "  for " + username);
+				logger.debug("Update (" + depthPreference + "):" + dataListFilter.getMaxDepth() + "  for " + username);
 			}
-			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
-			try {
-				preferenceService.setPreferences(username, prefs);
-			} catch (ConcurrencyFailureException e) {
-				logger.warn("Depth preference save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
-			}
+			Map<String, Serializable> updates = HashMap.newHashMap(1);
+			updates.put(depthPreference, dataListFilter.getMaxDepth());
+			userPreferenceWriter.savePreferencesUnlessLocked(username, updates);
 		}
 	}
 

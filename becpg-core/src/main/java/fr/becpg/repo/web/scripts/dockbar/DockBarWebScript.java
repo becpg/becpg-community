@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -46,6 +45,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.UserPreferenceWriter;
 import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
@@ -69,6 +69,8 @@ public class DockBarWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_ENTITY_LIST="list"</code> */
 	private static final String PARAM_ENTITY_LIST = "list";
 	
+	private static final String PARAM_CLEAR = "clear";
+
 	/** Constant <code>DELIMITER="#"</code> */
 	private static final String DELIMITER = "#";
 
@@ -83,6 +85,8 @@ public class DockBarWebScript extends AbstractWebScript {
 	private PreferenceService preferenceService;
 
 	private ServiceRegistry serviceRegistry;
+
+	private UserPreferenceWriter userPreferenceWriter;
 	
 
 	/**
@@ -112,6 +116,15 @@ public class DockBarWebScript extends AbstractWebScript {
 		this.preferenceService = preferenceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>userPreferenceWriter</code>.</p>
+	 *
+	 * @param userPreferenceWriter the writer saving the history outside the request transaction
+	 */
+	public void setUserPreferenceWriter(UserPreferenceWriter userPreferenceWriter) {
+		this.userPreferenceWriter = userPreferenceWriter;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
@@ -133,11 +146,11 @@ public class DockBarWebScript extends AbstractWebScript {
 
 		try {
 
-			if (req.getParameter("clear") != null) {
-				preferenceService.clearPreferences(AuthenticationUtil.getFullyAuthenticatedUser());
-			}
-
 			String username = AuthenticationUtil.getFullyAuthenticatedUser();
+
+			if (req.getParameter(PARAM_CLEAR) != null) {
+				preferenceService.clearPreferences(username, PREF_DOCKBAR_HISTORY);
+			}
 
 			String nodeRefs = (String) preferenceService.getPreference(username, PREF_DOCKBAR_HISTORY);
 			String originalNodeRefs = nodeRefs;
@@ -209,11 +222,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 						Map<String, java.io.Serializable> updates = HashMap.newHashMap(1);
 						updates.put(PREF_DOCKBAR_HISTORY, nodeRefs);
-						try {
-							preferenceService.setPreferences(username, updates);
-						} catch (ConcurrencyFailureException e) {
-							logger.warn("DockBar history save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
-						}
+						userPreferenceWriter.savePreferencesUnlessLocked(username, updates);
 					}
 				}
 			} 

@@ -411,6 +411,7 @@
 		<property name="preferenceService" ref="PreferenceService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="userPreferenceWriter" ref="userPreferenceWriter" />
 	</bean>
     
 	<!-- Retrieves all active and closed process instances that the given node is part of. -->
