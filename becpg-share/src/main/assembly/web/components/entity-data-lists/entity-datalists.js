@@ -127,6 +127,11 @@
 						WUSED_LIST_PREFIX : "WUsed",
 
 						/**
+						 * Name prefix of the views
+						 */
+						VIEW_LIST_PREFIX : "View-",
+
+						/**
 						 * State of a validated list
 						 */
 						VALID_STATE : "Valid",
@@ -644,7 +649,7 @@
 
 						/**
 						 * Returns the icon class of a list: the local name of its type, or its name for the
-						 * views and the where-used lists, which have no type.
+						 * views, which all share the same generic type, and for the where-used lists.
 						 *
 						 * @method getListIconClass
 						 * @param list
@@ -655,7 +660,7 @@
 							if (list.name.indexOf(this.WUSED_LIST_PREFIX) > -1) {
 								return this.WUSED_LIST_PREFIX;
 							}
-							if (list.itemType) {
+							if (list.itemType && list.name.indexOf(this.VIEW_LIST_PREFIX) !== 0) {
 								return list.itemType.split(":")[1];
 							}
 							return list.name.split("@")[0];
