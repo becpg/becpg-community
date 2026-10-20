@@ -1,11 +1,15 @@
 package fr.becpg.test.repo.license;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.transaction.TransactionService;
@@ -19,6 +23,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.license.BeCPGLicense;
 import fr.becpg.repo.license.BeCPGLicenseManager;
+import fr.becpg.repo.license.UserLicense;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -201,6 +206,54 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 		} finally {
 			invalidateTicket(firstUserTicket);
 			invalidateTicket(secondUserTicket);
+		}
+	}
+
+	@Test
+	public void namedLicenseUserShouldNotConsumeConcurrentToken() {
+		String businessGroup = PermissionService.GROUP_PREFIX + "LicenseTestBusinessGroup";
+		String namedUser = "licenseNamedAndConcurrentUser";
+		String concurrentUser = "licenseConcurrentOnlyUser";
+		String namedUserTicket = null;
+		String concurrentUserTicket = null;
+
+		inWriteTx(() -> {
+			BeCPGTestHelper.createUser(namedUser);
+			BeCPGTestHelper.createUser(concurrentUser);
+			if (!authorityService.authorityExists(businessGroup)) {
+				authorityService.createAuthority(AuthorityType.GROUP, "LicenseTestBusinessGroup");
+				authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent, businessGroup);
+			}
+			addToGroup(businessGroup, namedUser);
+			addToGroup(businessGroup, concurrentUser);
+			addToGroup(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed, namedUser);
+			installLicense("beCPG Named And Concurrent License", 1, 0, 0, 1, 0);
+			return null;
+		});
+
+		try {
+			namedUserTicket = authenticate(namedUser);
+			concurrentUserTicket = authenticate(concurrentUser);
+
+			assertTrue(isConcurrentUserAllowed(namedUser));
+			assertTrue("The named user must leave the only floating read token free", isConcurrentUserAllowed(concurrentUser));
+
+			inReadTx(() -> {
+				assertEquals(UserLicense.WRITE_NAMED, licenseManager.getUserLicense(namedUser));
+				Map<UserLicense, Long> counts = licenseManager.countUsersByLicense(Set.of(namedUser, concurrentUser));
+				assertEquals(Long.valueOf(1), counts.get(UserLicense.READ_CONCURRENT));
+				assertEquals(Long.valueOf(1), counts.get(UserLicense.WRITE_NAMED));
+				return null;
+			});
+		} finally {
+			invalidateTicket(namedUserTicket);
+			invalidateTicket(concurrentUserTicket);
+		}
+	}
+
+	private void addToGroup(String group, String userName) {
+		if (!authorityService.getAuthoritiesForUser(userName).contains(group)) {
+			authorityService.addAuthority(group, userName);
 		}
 	}
 

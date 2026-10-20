@@ -1,5 +1,7 @@
 package fr.becpg.repo.license;
 
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +13,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,6 +60,9 @@ public class BeCPGLicenseManager {
 
 	@Autowired
 	private AbstractAuthenticationService authenticationService;
+
+	@Autowired
+	private AuthorityService authorityService;
 	
 	@Value("${beCPG.licence.showWarning:true}")
 	private boolean showLicenseWarning;
@@ -196,19 +202,34 @@ public class BeCPGLicenseManager {
 	 * @return a boolean
 	 */
 	private boolean namedLicenseExceeded() {
-		Set<String> namedReadList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed.toString());
-		namedReadList.removeIf(this::isSpecialLicenseUser);
-		int namedRead = namedReadList.size();
-		if (namedRead > getLicense().allowedNamedRead) {
-			return true;
+		return (countLicensedMembers(SystemGroup.LicenseReadNamed) > getLicense().allowedNamedRead)
+				|| (countLicensedMembers(SystemGroup.LicenseWriteNamed) > getLicense().allowedNamedWrite);
+	}
+
+	/**
+	 * Counts the members of a license group, sub-groups included, that consume a license.
+	 *
+	 * @param licenseGroup the license group to count
+	 * @return the number of members, special license users excluded
+	 */
+	public long countLicensedMembers(SystemGroup licenseGroup) {
+		Set<String> members = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + licenseGroup);
+		members.removeIf(this::isSpecialLicenseUser);
+		return members.size();
+	}
+
+	/**
+	 * Counts the given users by the single license each of them consumes.
+	 *
+	 * @param userNames the users to count, typically the connected ones
+	 * @return the number of users per license, licenses without any user omitted
+	 */
+	public Map<UserLicense, Long> countUsersByLicense(Collection<String> userNames) {
+		Map<UserLicense, Long> counts = new EnumMap<>(UserLicense.class);
+		for (String userName : userNames) {
+			counts.merge(getUserLicense(userName), 1L, Long::sum);
 		}
-		Set<String> namedWriteList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed.toString());
-		namedWriteList.removeIf(this::isSpecialLicenseUser);
-		int namedWrite = namedWriteList.size();
-		if (namedWrite > getLicense().allowedNamedWrite) {
-			return true;
-		}
-		return false;
+		return counts;
 	}
 
 	/**
@@ -283,71 +304,46 @@ public class BeCPGLicenseManager {
 
 	}
 	
-	private final Map<SystemGroup, Set<String>> concurrentUsersAllowedMap = new ConcurrentHashMap<>();
+	private final Map<UserLicense, Set<String>> concurrentUsersAllowedMap = new ConcurrentHashMap<>();
 	
 	/**
-	 * <p>isConcurrentUserAllowed.</p>
+	 * Tells whether the current user may connect, consuming a floating token when their license is a concurrent one.
+	 * A user that also holds a named license never consumes a floating token.
 	 *
-	 * @return a boolean
+	 * @return false when all the floating tokens of the user's license are taken
 	 */
 	public boolean isConcurrentUserAllowed() {
-		if (isSpecialLicenceUser()) {
-			return true;
-		}
-		
 		String currentUser = AuthenticationUtil.getRunAsUser();
-		
-		Set<String> allowedReadUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseReadConcurrent, k -> ConcurrentHashMap.newKeySet());
-		if (allowedReadUsers.contains(currentUser)) {
+		UserLicense userLicense = getUserLicense(currentUser);
+		if (!userLicense.isConcurrent()) {
 			return true;
 		}
-		Set<String> allowedWriteUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseWriteConcurrent, k -> ConcurrentHashMap.newKeySet());
-		if (allowedWriteUsers.contains(currentUser)) {
-			return true;
-		}
-		Set<String> allowedSupplierUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseSupplierConcurrent, k -> ConcurrentHashMap.newKeySet());
-		if (allowedSupplierUsers.contains(currentUser)) {
-			return true;
-		}
-		
-		Set<String> connectedUsers = authenticationService.getUsersWithTickets(true);
-		
-		synchronized (allowedReadUsers) {
-			allowedReadUsers.removeIf(u -> !connectedUsers.contains(u));
-			Set<String> readUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString());
-			if (readUsers.contains(currentUser)) {
-				if (allowedReadUsers.size() >= getLicense().allowedConcurrentRead) {
-					return false;
-				}
-				allowedReadUsers.add(currentUser);
-				return true;
-			}
-		}
-		
-		synchronized (allowedWriteUsers) {
-			allowedWriteUsers.removeIf(u -> !connectedUsers.contains(u));
-			Set<String> writeUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent.toString());
-			if (writeUsers.contains(currentUser)) {
-				if (allowedWriteUsers.size() >= getLicense().allowedConcurrentWrite) {
-					return false;
-				}
-				allowedWriteUsers.add(currentUser);
-				return true;
-			}
-		}
+		return acquireConcurrentToken(currentUser, userLicense);
+	}
 
-		synchronized (allowedSupplierUsers) {
-			allowedSupplierUsers.removeIf(u -> !connectedUsers.contains(u));
-			Set<String> supplierUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString());
-			if (supplierUsers.contains(currentUser)) {
-				if (allowedSupplierUsers.size() >= getLicense().allowedConcurrentSupplier) {
-					return false;
-				}
-				allowedSupplierUsers.add(currentUser);
-				return true;
-			}
+	private boolean acquireConcurrentToken(String userName, UserLicense userLicense) {
+		Set<String> tokenHolders = concurrentUsersAllowedMap.computeIfAbsent(userLicense, k -> ConcurrentHashMap.newKeySet());
+		if (tokenHolders.contains(userName)) {
 			return true;
 		}
+		Set<String> connectedUsers = authenticationService.getUsersWithTickets(true);
+		synchronized (tokenHolders) {
+			tokenHolders.removeIf(u -> !connectedUsers.contains(u));
+			if (tokenHolders.size() >= getAllowedConcurrent(userLicense)) {
+				return false;
+			}
+			tokenHolders.add(userName);
+			return true;
+		}
+	}
+
+	private long getAllowedConcurrent(UserLicense userLicense) {
+		return switch (userLicense) {
+		case READ_CONCURRENT -> getAllowedConcurrentRead();
+		case WRITE_CONCURRENT -> getAllowedConcurrentWrite();
+		case SUPPLIER_CONCURRENT -> getAllowedConcurrentSupplier();
+		default -> throw new IllegalArgumentException("Not a concurrent license: " + userLicense);
+		};
 	}
 
 	/**
@@ -385,28 +381,23 @@ public class BeCPGLicenseManager {
 	 * @return a {@link java.lang.String} containing the license group key identifier
 	 */
 	public String getUserLicenseGroup(String username) {
+		return getUserLicense(username).getKey();
+	}
+
+	/**
+	 * Returns the single license a user consumes, the named licenses taking priority over the concurrent ones.
+	 *
+	 * @param username the user name, may be null
+	 * @return the license of the user, {@link UserLicense#SPECIAL_USER} for admins and beCPG accounts
+	 */
+	public UserLicense getUserLicense(String username) {
 		if (username == null) {
-			return "nolicense";
+			return UserLicense.NO_LICENSE;
 		}
 		if (isSpecialLicenseUser(username)) {
-			return "specialuser";
+			return UserLicense.SPECIAL_USER;
 		}
-		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseWriteNamed.toString())) {
-			return "licensewritenamed";
-		}
-		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseWriteConcurrent.toString())) {
-			return "licensewriteconcurrent";
-		}
-		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseReadNamed.toString())) {
-			return "licensereadnamed";
-		}
-		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseReadConcurrent.toString())) {
-			return "licensereadconcurrent";
-		}
-		if (AuthorityHelper.hasGroupAuthority(username, SystemGroup.LicenseSupplierConcurrent.toString())) {
-			return "licensesupplierconcurrent";
-		}
-		return "nolicense";
+		return UserLicense.resolve(authorityService.getAuthoritiesForUser(username));
 	}
 	
 	/**
