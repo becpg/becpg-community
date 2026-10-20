@@ -231,7 +231,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/** Constant <code>PRODUCT_REPORT_RAWMATERIAL_PATH="beCPG/birt/document/product/default/Raw"{trunked}</code> */
 	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
-	private static final String PRODUCT_REPORT_COSMETIC_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport_Cosmetic.rptdesign";
 
 	/** Constant <code>reportKindCodes</code> */
 	private static final Map<String, String> reportKindCodes = new HashMap<>();
@@ -247,7 +246,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PACKAGING_PATH, "PackagingSheet");
 		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH, "CompoQualiQuanti");
-		reportKindCodes.put(PRODUCT_REPORT_COSMETIC_RAWMATERIAL_PATH, PlmRepoConsts.REPORT_KIND_COSMETIC_SUPPLIER_SHEET);
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -1911,36 +1909,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
-	 * Creates the cosmetic raw material sheet, the raw material sheet a product information file embeds. It is neither a
-	 * system nor a default template: it is only generated for the raw materials it is associated with, so that food raw
-	 * materials keep their own sheet only.
-	 *
-	 * @param folderNodeRef the report template folder of raw materials
-	 * @param resources the resources of the product report templates
-	 * @param reportKindProperties the report kind of the template
-	 */
-	private void createCosmeticRawMaterialTemplate(NodeRef folderNodeRef, List<NodeRef> resources, Map<QName, Serializable> reportKindProperties) {
-		ReportTplInformation tplInfo = new ReportTplInformation();
-		tplInfo.setReportType(ReportType.Document);
-		tplInfo.setReportFormat(ReportFormat.PDF);
-		tplInfo.setNodeType(PLMModel.TYPE_RAWMATERIAL);
-		tplInfo.setDefaultTpl(false);
-		tplInfo.setSystemTpl(false);
-		tplInfo.setReportKindAspectProperties(reportKindProperties);
-		tplInfo.setResources(resources);
-		tplInfo.setSupportedLocale(getReportTemplateLocales(PRODUCT_REPORT_COSMETIC_RAWMATERIAL_PATH));
-		try {
-			NodeRef tplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORT_COSMETIC_RAWMATERIAL), PRODUCT_REPORT_COSMETIC_RAWMATERIAL_PATH,
-					tplInfo, false);
-			nodeService.setProperty(tplNodeRef, ContentModel.PROP_TITLE,
-					TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PRODUCT_REPORT_COSMETIC_RAWMATERIAL));
-		} catch (IOException e) {
-			logger.error("Failed to create the cosmetic raw material report template", e);
-		}
-	}
-
-	/**
 	 * <p>visitReportKindList.</p>
 	 *
 	 * @param reportKindListDefaultValues a {@link java.util.Map} object
@@ -2234,10 +2202,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					} catch (Exception e) {
 						logger.error("Failed to create PIF aggregate report template", e);
 					}
-				}
-
-				if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
-					createCosmeticRawMaterialTemplate(folderNodeRef, resources, reportKindTplAssoc.get(PRODUCT_REPORT_COSMETIC_RAWMATERIAL_PATH));
 				}
 
 				i++;

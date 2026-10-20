@@ -44,7 +44,7 @@
       "mimeTypes": ["application/pdf"]
     },
     {
-      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=CosmeticSupplierSheet",
+      "annexIdResolver": "rep:reportTplAssoc|rep:reportKinds=SupplierSheet",
       "title": "becpg.report.pif.annex.rawmaterials.title",
       "scope": "COMPO_CHILDREN",
       "recurse": true,

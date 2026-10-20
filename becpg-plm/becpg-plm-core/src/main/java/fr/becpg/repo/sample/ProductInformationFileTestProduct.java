@@ -429,7 +429,6 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 			requestIngredientToxicityComputation();
 		}
 		attachReportTemplates(bodyMilk.getNodeRef());
-		attachCosmeticRawMaterialSheet(bodyMilk);
 
 		return bodyMilk;
 	}
@@ -994,8 +993,7 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		List<NodeRef> templates = new ArrayList<>();
 		for (NodeRef template : BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL).inDB()
 				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list()) {
-			if (isEnabledTemplateOf(template, PLMModel.TYPE_FINISHEDPRODUCT)
-					&& (holdsReportKind(template, REPORT_KIND_COMPO_QUALI_QUANTI) || isPifTemplate(template))) {
+			if (isFinishedProductTemplate(template) && (isCompoQualiQuantiTemplate(template) || isPifTemplate(template))) {
 				templates.add(template);
 			}
 		}
@@ -1007,66 +1005,25 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Associates each raw material of the composition with the cosmetic raw material sheet, which the raw material
-	 * annex of the PIF embeds. The sheet is not a system template, so a raw material only gets it when associated.
-	 *
-	 * @param bodyMilk the created finished product
-	 */
-	private void attachCosmeticRawMaterialSheet(FinishedProductData bodyMilk) {
-		if (bodyMilk.getCompoList() == null) {
-			return;
-		}
-		List<NodeRef> sheets = findEnabledTemplates(PLMModel.TYPE_RAWMATERIAL, PlmRepoConsts.REPORT_KIND_COSMETIC_SUPPLIER_SHEET);
-		if (sheets.isEmpty()) {
-			logger.warn("No cosmetic raw material sheet found: the raw material annex of the PIF stays empty");
-			return;
-		}
-		for (CompoListDataItem compoItem : bodyMilk.getCompoList()) {
-			nodeService.addAspect(compoItem.getProduct(), ReportModel.ASPECT_REPORT_TEMPLATES, new HashMap<>());
-			nodeService.setAssociations(compoItem.getProduct(), ReportModel.ASSOC_REPORT_TEMPLATES, sheets);
-		}
-	}
-
-	/**
-	 * Finds the enabled report templates of a type holding a report kind.
-	 *
-	 * @param type the type the templates apply to
-	 * @param reportKind the report kind
-	 * @return the templates
-	 */
-	private List<NodeRef> findEnabledTemplates(QName type, String reportKind) {
-		List<NodeRef> templates = new ArrayList<>();
-		for (NodeRef template : BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL).inDB()
-				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list()) {
-			if (isEnabledTemplateOf(template, type) && holdsReportKind(template, reportKind)) {
-				templates.add(template);
-			}
-		}
-		return templates;
-	}
-
-	/**
-	 * Tells whether a report template applies to a type and is enabled.
+	 * Tells whether a report template applies to finished products and is enabled.
 	 *
 	 * @param template the report template
-	 * @param type the product type
-	 * @return true if the template is an enabled template of the type
+	 * @return true if the template is an enabled finished product template
 	 */
-	private boolean isEnabledTemplateOf(NodeRef template, QName type) {
-		return type.equals(nodeService.getProperty(template, ReportModel.PROP_REPORT_TPL_CLASS_NAME))
+	private boolean isFinishedProductTemplate(NodeRef template) {
+		return PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getProperty(template, ReportModel.PROP_REPORT_TPL_CLASS_NAME))
 				&& !Boolean.TRUE.equals(nodeService.getProperty(template, ReportModel.PROP_REPORT_TPL_IS_DISABLED));
 	}
 
 	/**
-	 * Tells whether a report template holds a report kind.
+	 * Tells whether a report template is the quali-quanti composition, recognised by its report kind.
 	 *
 	 * @param template the report template
-	 * @param reportKind the report kind
-	 * @return true if the template holds the report kind
+	 * @return true if the template holds the quali-quanti composition report kind
 	 */
-	private boolean holdsReportKind(NodeRef template, String reportKind) {
+	private boolean isCompoQualiQuantiTemplate(NodeRef template) {
 		Serializable reportKinds = nodeService.getProperty(template, ReportModel.PROP_REPORT_KINDS);
-		return reportKinds instanceof List<?> kinds && kinds.contains(reportKind);
+		return reportKinds instanceof List<?> kinds && kinds.contains(REPORT_KIND_COMPO_QUALI_QUANTI);
 	}
 
 	/**
