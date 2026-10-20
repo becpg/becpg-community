@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -47,6 +48,24 @@ public class BeCPGQueryHelper {
 
 	/** French ligatures, which Unicode decomposition does not split. */
 	private static final Map<String, String> LIGATURES = Map.of("\u0153", "oe", "\u0152", "OE", "\u00e6", "ae", "\u00c6", "AE");
+
+	/** Quotes around a typed query and its closing wildcard, which are search syntax, not part of the searched label. */
+	private static final Pattern SURROUNDING_QUERY_SYNTAX = Pattern.compile("^[\"' ]+|[*\"' ]+$");
+
+	/** Relevance ranks of a suggestion label, best first. */
+	private static final int RANK_EXACT = 0;
+	private static final int RANK_PREFIX = 1;
+	private static final int RANK_WORD_PREFIX = 2;
+	private static final int RANK_OTHER = 3;
+
+	/**
+	 * A suggestion with its relevance rank, computed once before sorting.
+	 *
+	 * @param item the suggestion
+	 * @param rank its relevance rank
+	 */
+	private record RankedItem<T>(T item, int rank) {
+	}
 	
 	/**
 	 * <p>Constructor for BeCPGQueryHelper.</p>
@@ -222,6 +241,89 @@ public class BeCPGQueryHelper {
 	 */
 	public static boolean isAllQuery(String query) {
 		return (query != null) && query.trim().equals(BeCPGQueryHelper.SUFFIX_ALL);
+	}
+
+	/**
+	 * Sorts suggestions by relevance to the typed query: the label equal to the query first, then the labels starting
+	 * with it, then the labels having a word starting with it, then the others. Case, accents and ligatures are
+	 * ignored. The sort is stable, so suggestions of the same rank keep the order of the search engine.
+	 *
+	 * @param <T> the suggestion type
+	 * @param query the text typed by the user
+	 * @param items the suggestions, in the order of the search engine; left untouched
+	 * @param labelOf reads the label of a suggestion, may return null
+	 * @return the sorted suggestions, or <code>items</code> when there is nothing to sort
+	 */
+	public static <T> List<T> sortByRelevance(String query, List<T> items, Function<T, String> labelOf) {
+		String foldedQuery = foldQuery(query);
+		if (foldedQuery.isEmpty() || (items.size() < 2)) {
+			return items;
+		}
+
+		List<RankedItem<T>> rankedItems = new ArrayList<>(items.size());
+		for (T item : items) {
+			rankedItems.add(new RankedItem<>(item, rankLabel(foldedQuery, labelOf.apply(item))));
+		}
+		rankedItems.sort(Comparator.comparingInt(RankedItem::rank));
+
+		List<T> sortedItems = new ArrayList<>(items.size());
+		for (RankedItem<T> rankedItem : rankedItems) {
+			sortedItems.add(rankedItem.item());
+		}
+		return sortedItems;
+	}
+
+	/**
+	 * Folds a typed query for a label comparison, without its surrounding quotes nor its closing wildcard.
+	 *
+	 * @param query the typed query, may be null
+	 * @return the folded query, empty when nothing is left to compare
+	 */
+	private static String foldQuery(String query) {
+		if ((query == null) || isAllQuery(query)) {
+			return "";
+		}
+		return foldText(SURROUNDING_QUERY_SYNTAX.matcher(query.trim()).replaceAll(""));
+	}
+
+	/**
+	 * Ranks a label against a folded query.
+	 *
+	 * @param foldedQuery the folded query, not empty
+	 * @param label the label, may be null
+	 * @return the relevance rank, lower is better
+	 */
+	private static int rankLabel(String foldedQuery, String label) {
+		if (label == null) {
+			return RANK_OTHER;
+		}
+		String foldedLabel = foldText(label.trim());
+		if (foldedLabel.equals(foldedQuery)) {
+			return RANK_EXACT;
+		}
+		if (foldedLabel.startsWith(foldedQuery)) {
+			return RANK_PREFIX;
+		}
+		return hasWordStartingWith(foldedLabel, foldedQuery) ? RANK_WORD_PREFIX : RANK_OTHER;
+	}
+
+	/**
+	 * Tells whether the query starts a word of the label other than the first one, a word starting after any
+	 * character that is neither a letter nor a digit.
+	 *
+	 * @param foldedLabel the folded label
+	 * @param foldedQuery the folded query
+	 * @return true when a word of the label starts with the query
+	 */
+	private static boolean hasWordStartingWith(String foldedLabel, String foldedQuery) {
+		int index = foldedLabel.indexOf(foldedQuery, 1);
+		while (index > 0) {
+			if (!Character.isLetterOrDigit(foldedLabel.charAt(index - 1))) {
+				return true;
+			}
+			index = foldedLabel.indexOf(foldedQuery, index + 1);
+		}
+		return false;
 	}
 
 }
