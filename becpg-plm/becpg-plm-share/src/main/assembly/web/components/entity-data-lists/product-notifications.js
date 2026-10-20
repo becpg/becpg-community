@@ -438,10 +438,11 @@
                                             var value = types[dataTypeName][type];
                                             if(dataTypeName == "RegulatoryCodes"){
                                                 var regulatoryLabel = (scores.regulatoryCodeLabels && scores.regulatoryCodeLabels[type]) ? scores.regulatoryCodeLabels[type] : type;
+                                                var regulatoryTag = Alfresco.util.encodeHTML(regulatoryLabel + ' (' + value + ')');
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(/ /gi,"@").replace(/-/gi,"$")
                                                 + '" ><a class="req-filter tag '
-                                                + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span>' + Alfresco.util.encodeHTML(regulatoryLabel) +
-                                                ' ('+ value + ')</span></a></li>';
+                                                + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span title="' + regulatoryTag + '">' + regulatoryTag
+                                                + '</span></a></li>';
                                             } else {
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
                                                         + '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
