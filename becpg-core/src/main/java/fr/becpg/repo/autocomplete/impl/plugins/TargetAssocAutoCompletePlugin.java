@@ -29,6 +29,7 @@ import org.alfresco.repo.dictionary.IndexTokenisationMode;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceException;
@@ -193,6 +194,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	protected static final String DEFAULT_SEARCH_TEMPLATE = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
 	/** Constant <code>mixedSearchTemplate="%(cm:name bcpg:erpCode bcpg:code bcpg:c"{trunked}</code> */
 	protected static final String MIXED_SEARCH_TEMPLATE = "%(cm:name bcpg:erpCode bcpg:code bcpg:charactName bcpg:legalName bcpg:lvValue)";
+	/** Properties holding the label of a suggestion of any type, read in this order until one is set. */
+	private static final List<QName> LABEL_PROPERTIES = List.of(BeCPGModel.PROP_CHARACT_NAME, BeCPGModel.PROP_LV_VALUE, ContentModel.PROP_NAME);
 	/** Constant <code>charactSearchTemplate="%(bcpg:charactName bcpg:legalName)"</code> */
 	protected static final String CHARACT_SEARCH_TEMPLATE = "%(bcpg:charactName bcpg:erpCode bcpg:legalName)";
 	/** Constant <code>listValueSearchTemplate="%(bcpg:lvValue bcpg:legalName)"</code> */
@@ -338,17 +341,117 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 		queryBuilder.ofType(type).excludeDefaults().inSearchTemplate(template).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
-		if (!isAllQuery(query)) {
+		List<NodeRef> suggestions;
+		if (isAllQuery(query)) {
+			suggestions = filter(queryBuilder, path, arrClassNames, pageSize, props);
+		} else {
 			StringBuilder ftsQuery = new StringBuilder();
 			if (query.length() > 2) {
 				ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
 			}
 			ftsQuery.append("(" + query + ")");
 			queryBuilder.andFTSQuery(ftsQuery.toString());
+			suggestions = suggestByRelevance(queryBuilder, query, type, path, arrClassNames, pageSize, props);
 		}
-		
-		return new AutoCompletePage(filter(queryBuilder, path, arrClassNames, pageSize, props), pageNum, pageSize, getTargetAssocValueExtractor(), extras != null ? extras.get(PROP_CHARAC_NAME_FORMAT) : null);
 
+		return new AutoCompletePage(suggestions, pageNum, pageSize, getTargetAssocValueExtractor(), extras != null ? extras.get(PROP_CHARAC_NAME_FORMAT) : null);
+
+	}
+
+	/**
+	 * Runs the suggestion query and puts the suggestions whose label best matches the query first, keeping the search
+	 * engine order between equally relevant ones. People are left in the search engine order, their label being made of
+	 * several properties, and so are suggestions filtered by association, whose unbounded query is not bulk fetched.
+	 *
+	 * @param queryBuilder the suggestion query
+	 * @param query the text typed by the user
+	 * @param type the type of the suggested items
+	 * @param path the path filter
+	 * @param arrClassNames the class filter
+	 * @param pageSize the page size
+	 * @param props the autocomplete parameters
+	 * @return the suggestions sorted by relevance
+	 */
+	private List<NodeRef> suggestByRelevance(BeCPGQueryBuilder queryBuilder, String query, QName type, String path, String[] arrClassNames,
+			Integer pageSize, Map<String, Serializable> props) {
+		List<QName> labelProperties = resolveLabelProperties(type);
+		if (labelProperties.isEmpty() || isFilteredByAssoc(props)) {
+			return filter(queryBuilder, path, arrClassNames, pageSize, props);
+		}
+		// Bulk fetch loads the missing nodes in a few batched queries, as ranking reads the label of every suggestion
+		queryBuilder.bulkFetchEnabled(true);
+		return sortByRelevance(query, labelProperties, filter(queryBuilder, path, arrClassNames, pageSize, props));
+	}
+
+	/**
+	 * Tells whether the suggestions are filtered by the targets of an association.
+	 *
+	 * @param props the autocomplete parameters, may be null
+	 * @return true when a filter by association is requested
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean isFilteredByAssoc(Map<String, Serializable> props) {
+		if (props == null) {
+			return false;
+		}
+		Map<String, String> extras = (Map<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
+		if (extras == null) {
+			return false;
+		}
+		String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
+		return (filterByAssoc != null) && !filterByAssoc.isBlank();
+	}
+
+	/**
+	 * Returns the properties a suggestion of the given type is labelled with, read in this order until one is set.
+	 *
+	 * @param type the type of the suggested items
+	 * @return the label properties, empty when the suggestions are not ranked
+	 */
+	List<QName> resolveLabelProperties(QName type) {
+		if (entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
+			return List.of();
+		}
+		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
+			return List.of(BeCPGModel.PROP_CHARACT_NAME);
+		}
+		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
+			return List.of(BeCPGModel.PROP_LV_VALUE);
+		}
+		return LABEL_PROPERTIES;
+	}
+
+	/**
+	 * Puts the suggestions whose label best matches the query first, keeping the search engine order between equally
+	 * relevant ones.
+	 *
+	 * @param query the text typed by the user
+	 * @param labelProperties the properties holding the label, read in this order until one is set
+	 * @param suggestions the suggestions, in the search engine order
+	 * @return the suggestions sorted by relevance
+	 */
+	List<NodeRef> sortByRelevance(String query, List<QName> labelProperties, List<NodeRef> suggestions) {
+		return BeCPGQueryHelper.sortByRelevance(query, suggestions, nodeRef -> readLabel(nodeRef, labelProperties));
+	}
+
+	/**
+	 * Reads the label a suggestion is searched and shown on.
+	 *
+	 * @param nodeRef the suggested node
+	 * @param labelProperties the properties holding the label, read in this order until one is set
+	 * @return the label, empty when the node has none
+	 */
+	private String readLabel(NodeRef nodeRef, List<QName> labelProperties) {
+		for (QName labelProperty : labelProperties) {
+			Serializable label = nodeService.getProperty(nodeRef, labelProperty);
+			if (label instanceof String text) {
+				return text;
+			}
+			if (label instanceof MLText mlText) {
+				return mlText.getClosestValue(I18NUtil.getContentLocale());
+			}
+		}
+		return "";
 	}
 
 	/**
