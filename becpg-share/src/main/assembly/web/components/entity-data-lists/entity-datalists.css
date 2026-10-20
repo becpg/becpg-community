@@ -302,7 +302,7 @@
    left: 50%;
    width: 22px;
    height: 22px;
-   margin-left: -11px;
+   margin-left: -12px;
    border: 1px solid #ccc;
    border-radius: 11px;
    background: #fff;
@@ -415,12 +415,18 @@
    display: none;
 }
 
+/* No scrollbar when collapsed: the arrows scroll, and the icons stay centred under the entity icon */
 .datalists-collapsed .datalists div.filter {
    padding-top: 2px;
+   scrollbar-width: none;
+}
+
+.datalists-collapsed .datalists div.filter::-webkit-scrollbar {
+   width: 0;
 }
 
 .datalists-collapsed .datalists .lists-more {
-   right: 4px;
+   right: 0;
 }
 
 .datalists-collapsed .datalists .horiz-rule {
