@@ -183,10 +183,6 @@
                 };
 
                 fetchAndAddReports(dataType);
-
-                if (dataType && (dataType.indexOf("Product") > 0 || dataType.indexOf("Material") > 0)) {
-                    fetchAndAddReports("bcpg:product");
-                }
             },
 
 
