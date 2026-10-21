@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,8 @@ public class ImportContext {
 	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
 	/** Constant <code>MSG_INFO_IMPORT_LINE="import_service.info.import_line"</code> */
 	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
+	/** Constant <code>MSG_ERROR_BATCH_NOT_SAVED="import_service.error.err_batch_not_saved"</code> */
+	private static final String MSG_ERROR_BATCH_NOT_SAVED = "import_service.error.err_batch_not_saved";
 
 	private NodeRef nodeRef;
 	
@@ -484,6 +487,9 @@ public class ImportContext {
 
 	private int importIndex = 0;
 
+	/** Successful lines of the current batch, with the number of columns of their section. */
+	private final Map<Integer, Integer> currentBatchSuccessLines = new LinkedHashMap<>();
+
 	/**
 	 * <p>Getter for the field <code>importIndex</code>.</p>
 	 *
@@ -494,12 +500,14 @@ public class ImportContext {
 	}
 
 	/**
-	 * <p>Setter for the field <code>importIndex</code>.</p>
+	 * Starts a new batch of lines: positions the reader on its first line and forgets the lines
+	 * reported as successful by the previous batch.
 	 *
-	 * @param importIndex a int.
+	 * @param firstLineIndex the index of the first line of the batch
 	 */
-	public void setImportIndex(int importIndex) {
-		this.importIndex = importIndex;
+	public void startBatch(int firstLineIndex) {
+		this.importIndex = firstLineIndex;
+		currentBatchSuccessLines.clear();
 	}
 
 	/**
@@ -571,8 +579,48 @@ public class ImportContext {
 	 */
 	public String markCurrLineSuccess() {
 		importFileReader.reportSuccess(importIndex - 1, columns.size());
+		currentBatchSuccessLines.put(importIndex - 1, columns.size());
 
 		return I18NUtil.getMessage(MSG_INFO_IMPORT_LINE, importIndex);
+	}
+
+	/**
+	 * Reports as errors the lines of the current batch already reported as successful, once the
+	 * transaction of the batch has been rolled back and none of them has actually been saved.
+	 * Lines already in error keep their own message, and lines of previous batches, already saved,
+	 * are left untouched even when the batch could not even start.
+	 *
+	 * @param firstLineIndex the index of the first line of the batch rolled back
+	 * @param cause the exception that rolled the batch back
+	 */
+	public void markBatchNotSaved(int firstLineIndex, Exception cause) {
+		String reason = I18NUtil.getMessage(MSG_ERROR_BATCH_NOT_SAVED, describeFailure(cause));
+		Date failureDate = new Date();
+
+		for (Map.Entry<Integer, Integer> successLine : currentBatchSuccessLines.entrySet()) {
+			int lineIndex = successLine.getKey();
+			if (lineIndex >= firstLineIndex) {
+				getLog().add(I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importFileName, lineIndex + 1, failureDate, reason));
+				importFileReader.reportError(lineIndex, reason, successLine.getValue());
+			}
+		}
+
+		currentBatchSuccessLines.clear();
+	}
+
+	/**
+	 * Describes a failure for the import report: its first message found along its causes, or the
+	 * type of its root cause when none of them has a message.
+	 *
+	 * @param failure the failure to describe
+	 * @return a non-null description of the failure
+	 */
+	private static String describeFailure(Throwable failure) {
+		Throwable current = failure;
+		while ((current.getMessage() == null) && (current.getCause() != null)) {
+			current = current.getCause();
+		}
+		return current.getMessage() != null ? current.getMessage() : current.getClass().getSimpleName();
 	}
 
 }

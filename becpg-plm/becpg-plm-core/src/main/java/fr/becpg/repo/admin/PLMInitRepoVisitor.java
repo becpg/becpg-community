@@ -148,6 +148,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>supportedLocale</code> */
 	private static List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
+	/** Language the client technical sheet is also generated in, laid out right to left */
+	private static final String ARABIC_LOCALE = "ar";
+
+	/** Language the technical sheets are also generated in */
+	private static final String POLISH_LOCALE = "pl";
+
 	/** Constant <code>SIMULATION_SITE_ID="simulation"</code> */
 	private static final String SIMULATION_SITE_ID = "simulation";
 	/** Constant <code>VALID_SITE_ID="valid"</code> */
@@ -176,6 +182,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuantiForPIF.rptdesign";
 	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF_NAME = PlmRepoConsts.PATH_PRODUCT_REPORT_COMPO_QUALI_QUANTI_FOR_PIF;
+	/**
+	 * Extraction preferences of the PIF: the process steps are extracted with their description and the subsidiary,
+	 * standing for the responsible person, with its address. They only apply to the extraction of the PIF.
+	 */
+	private static final String PIF_REPORT_PARAMETERS = "{\"prefs\":{\"assocsToExtract\":\"mpm:plStep,bcpg:subsidiaryRef\"}}";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -324,6 +335,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RU_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ru.properties";
 	/** Constant <code>PRODUCT_REPORT_SV_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SV_RESOURCE = "beCPG/birt/document/product/default/ProductReport_sv.properties";
+	/** Constant <code>PRODUCT_REPORT_AR_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
+	private static final String PRODUCT_REPORT_AR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ar.properties";
+	/** Constant <code>PRODUCT_REPORT_PL_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
+	private static final String PRODUCT_REPORT_PL_RESOURCE = "beCPG/birt/document/product/default/ProductReport_pl.properties";
 
 	/** Constant <code>PRODUCT_REPORT_SETTINGS_RESOURCE="beCPG/birt/document/product/default/set"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
@@ -1943,6 +1958,25 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(templatesNodeRef, SCORE_MARKING_TEMPLATES_RESOURCES);
 	}
 
+	/**
+	 * Returns the languages a technical sheet template is generated in.
+	 *
+	 * Every technical sheet is also translated in Polish, and the client technical sheet in Arabic.
+	 * The shared list stays without them, because it also seeds the list values, which have no
+	 * translation in these languages.
+	 *
+	 * @param reportPath the classpath of the report design
+	 * @return the locales supported by the template
+	 */
+	static List<String> getReportTemplateLocales(String reportPath) {
+		List<String> locales = new ArrayList<>(supportedLocale);
+		locales.add(POLISH_LOCALE);
+		if (PRODUCT_REPORT_CLIENT_PATH.equals(reportPath)) {
+			locales.add(ARABIC_LOCALE);
+		}
+		return locales;
+	}
+
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
 			// reports folder
@@ -1962,18 +1996,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			List<NodeRef> commonResources = new ArrayList<>();
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
-					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER, PLMModel.TYPE_LOGISTICUNIT };
+					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER, PLMModel.TYPE_LOGISTICUNIT, QualityModel.TYPE_BATCH };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH, PRODUCT_REPORT_CLIENT_PATH };
+					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH, PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_PRODUCTION_PATH };
 			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
-					productReportPackagingName, productReportSupplierName, productReportClientName };
+					productReportPackagingName, productReportSupplierName, productReportClientName, productReportProductionName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null, { productReportProductionName, productReportCostName } };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH }, null };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null, { productReportProductionName, productReportCostName }, null };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
-					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE };
+					PRODUCT_REPORT_NL_RESOURCE, PRODUCT_REPORT_PT_RESOURCE, PRODUCT_REPORT_RU_RESOURCE, PRODUCT_REPORT_SV_RESOURCE,
+					PRODUCT_REPORT_AR_RESOURCE, PRODUCT_REPORT_PL_RESOURCE };
 
 			String[] commonReportResource = { PRODUCT_REPORT_LOGO_RESOURCE, PRODUCT_REPORT_SETTINGS_RESOURCE, PRODUCT_REPORT_CSS_RESOURCE };
 
@@ -2036,7 +2071,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					reportTplInformation.setSystemTpl(true);
 					reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(defaultReport[i]));
 					reportTplInformation.setResources(resources);
-					reportTplInformation.setSupportedLocale(supportedLocale);
+					reportTplInformation.setSupportedLocale(getReportTemplateLocales(defaultReport[i]));
 					if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
 						reportTplInformation.setTextParameter("{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }");
 					}
@@ -2057,7 +2092,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						reportTplInformation.setSystemTpl(true);
 						reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(otherReport[i][b]));
 						reportTplInformation.setResources(resources);
-						reportTplInformation.setSupportedLocale(supportedLocale);
+						reportTplInformation.setSupportedLocale(getReportTemplateLocales(otherReport[i][b]));
 
 						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i][b], otherReport[i][b], reportTplInformation, false);
 
@@ -2148,6 +2183,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						pifTplInfo.setSystemTpl(false);
 						pifTplInfo.setResources(pifResources);
 						pifTplInfo.setSupportedLocale(supportedLocale);
+						pifTplInfo.setTextParameter(PIF_REPORT_PARAMETERS);
 
 						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
 						if (pifReportName == null || pifReportName.isEmpty()) {

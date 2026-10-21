@@ -40,6 +40,39 @@ public class TargetAssocAutoCompletePluginIT extends AbstractAutoCompletePluginT
 	private AssociationService associationService;
 
 	/**
+	 * The supplier named exactly as typed comes first, ahead of a supplier created before it whose name only starts
+	 * with the query (#37670).
+	 */
+	@Test
+	public void testExactNameSuggestedFirst() {
+		final String supplierName = "Supplier-" + UUID.randomUUID().toString();
+		createSupplier(supplierName + " du r\u00e9seau");
+		final NodeRef exactSupplierNodeRef = createSupplier(supplierName);
+
+		waitForSolr();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			String[] arrClassNames = { "bcpg:supplier" };
+			List<AutoCompleteEntry> suggestions = targetAssocAutoCompletePlugin
+					.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, supplierName, 0, 10, arrClassNames, null).getResults();
+
+			assertEquals("2 suggestions", 2, suggestions.size());
+			assertEquals("exact name first", exactSupplierNodeRef.toString(), suggestions.get(0).getValue());
+			return null;
+		}, false, true);
+	}
+
+	private NodeRef createSupplier(String supplierName) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			authenticationComponent.setSystemUserAsCurrentUser();
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, supplierName);
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, supplierName), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+		}, false, true);
+	}
+
+	/**
 	 * Test suggest supplier.
 	 */
 	@Test

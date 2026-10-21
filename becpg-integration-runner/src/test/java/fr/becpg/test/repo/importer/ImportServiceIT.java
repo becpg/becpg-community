@@ -3,25 +3,38 @@
  */
 package fr.becpg.test.repo.importer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +48,19 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
@@ -57,6 +73,26 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final String PATH_TEMP = "Temp";
 	private static final String PATH_PRODUCTS = "Products";
 	private static final String PATH_SITE_FOLDER = "./st:sites/cm:folder";
+	private static final String BATCH_COSTS_FOLDER = "ImportBatchCosts";
+	private static final String PATH_BATCH_COSTS = "/" + PATH_TEMP + "/" + BATCH_COSTS_FOLDER;
+	private static final String READ_ONLY_COSTS_FOLDER = "ImportReadOnlyCosts";
+	private static final String PATH_READ_ONLY_COSTS = "/" + PATH_TEMP + "/" + READ_ONLY_COSTS_FOLDER;
+	private static final String IMPORT_FILES_FOLDER = "ImportFiles";
+	private static final String IMPORT_USER = "importBatchUser";
+	private static final String XLSX_PROBE_FILE_NAME = "probe.xlsx";
+	private static final long MIMETYPE_POLL_INTERVAL_MS = 500;
+	private static final long MIMETYPE_TIMEOUT_MS = 120_000;
+	private static final String PATH_IMPORT_MAPPING = "/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping";
+	private static final String TEST_MAPPING = "TestMapping";
+	private static final String COST_TYPE = "bcpg:cost";
+	private static final String CHARACT_NAME_COLUMN = "bcpg:charactName";
+	private static final String COST_CURRENCY_COLUMN = "bcpg:costCurrency";
+	private static final String VALID_CURRENCY = "€";
+	private static final String INVALID_CURRENCY = "XXX";
+	/** The import header takes rows 0 to 4, the import is processed by batches of 10 rows. */
+	private static final int FIRST_BATCH_FIRST_VALUES_ROW = 5;
+	private static final int SECOND_BATCH_FIRST_ROW = 10;
+	private static final int THIRD_BATCH_FIRST_ROW = 20;
 
 	private static final Log logger = LogFactory.getLog(ImportServiceIT.class);
 
@@ -806,6 +842,281 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			return null;
 
 		}, false, true);
+	}
+
+	/**
+	 * A batch rolled back when it is committed must not leave its lines reported as successful:
+	 * all of them are reported in error and none is saved, while the other batches are imported.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testRolledBackBatchLinesReportedInError() throws Exception {
+		List<String[]> rows = importCostHeader(false);
+		addCosts(rows, "Rollback cost A", 5);
+		addCosts(rows, "Rollback cost B", 2);
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "Rollback cost B3", INVALID_CURRENCY });
+		addCosts(rows, "Rollback cost B4-", 7);
+		addCosts(rows, "Rollback cost C", 2);
+
+		NodeRef importFileNodeRef = importXlsx("import-rolled-back-batch.xlsx", rows);
+
+		List<String> importedCosts = findImportedCostNames();
+		assertTrue(importedCosts.containsAll(List.of("Rollback cost A1", "Rollback cost A5", "Rollback cost C1", "Rollback cost C2")));
+		assertTrue(importedCosts.stream().noneMatch(name -> name.startsWith("Rollback cost B")));
+
+		assertRowsColor(importFileNodeRef, FIRST_BATCH_FIRST_VALUES_ROW, SECOND_BATCH_FIRST_ROW, ExcelHelper.createGreenColor());
+		assertRowsColor(importFileNodeRef, SECOND_BATCH_FIRST_ROW, THIRD_BATCH_FIRST_ROW, ExcelHelper.createRedColor());
+		assertRowsColor(importFileNodeRef, THIRD_BATCH_FIRST_ROW, THIRD_BATCH_FIRST_ROW + 2, ExcelHelper.createGreenColor());
+	}
+
+	/**
+	 * Non-regression guard: when the import stops on the first error, the lines of the batch imported
+	 * before the line in error are still saved, and the following lines and batches are not imported.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testStopOnFirstErrorKeepsPreviousLinesOfBatch() throws Exception {
+		List<String[]> rows = importCostHeader(true);
+		addCosts(rows, "Stop cost A", 3);
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "", "" });
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "Stop cost A5", VALID_CURRENCY });
+		addCosts(rows, "Stop cost B", 2);
+
+		importXlsx("import-stop-on-first-error.xlsx", rows);
+
+		List<String> importedCosts = findImportedCostNames();
+		assertTrue(importedCosts.containsAll(List.of("Stop cost A1", "Stop cost A2", "Stop cost A3")));
+		assertFalse(importedCosts.contains("Stop cost A5"));
+		assertTrue(importedCosts.stream().noneMatch(name -> name.startsWith("Stop cost B")));
+	}
+
+	/**
+	 * Non-regression guard: when the import goes on after an error, a line in error does not roll its
+	 * batch back: only that line is reported in error, the other lines of the batch are saved.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testLineErrorDoesNotRollBackBatch() throws Exception {
+		List<String[]> rows = importCostHeader(false);
+		addCosts(rows, "Line error cost A", 2);
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "", "" });
+		addCosts(rows, "Line error cost B", 2);
+
+		NodeRef importFileNodeRef = importXlsx("import-line-error.xlsx", rows);
+
+		assertTrue(findImportedCostNames().containsAll(
+				List.of("Line error cost A1", "Line error cost A2", "Line error cost B1", "Line error cost B2")));
+
+		int lineInErrorRow = FIRST_BATCH_FIRST_VALUES_ROW + 2;
+		assertRowsColor(importFileNodeRef, FIRST_BATCH_FIRST_VALUES_ROW, lineInErrorRow, ExcelHelper.createGreenColor());
+		assertRowsColor(importFileNodeRef, lineInErrorRow, lineInErrorRow + 1, ExcelHelper.createRedColor());
+		assertRowsColor(importFileNodeRef, lineInErrorRow + 1, lineInErrorRow + 3, ExcelHelper.createGreenColor());
+	}
+
+	/**
+	 * A line failing inside a repository service, here the creation of a cost in a folder the user may
+	 * only read, marks the transaction of its batch for rollback: the other lines of the batch are not
+	 * saved either, so they must be reported in error instead of staying green.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testLineFailingInRepositoryReportsBatchNotSaved() throws Exception {
+		NodeRef importFileNodeRef = importWithLineDeniedByRepository(false, "import-repository-error.xlsx");
+
+		List<String> importedCosts = findImportedCostNames();
+		assertEquals("Imported costs: " + importedCosts, List.of("Repository error cost B1"), importedCosts);
+
+		int deniedLineRow = FIRST_BATCH_FIRST_VALUES_ROW + 3;
+		assertRowsColor(importFileNodeRef, FIRST_BATCH_FIRST_VALUES_ROW, FIRST_BATCH_FIRST_VALUES_ROW + 2, ExcelHelper.createRedColor());
+		assertRowsColor(importFileNodeRef, deniedLineRow, deniedLineRow + 1, ExcelHelper.createRedColor());
+		assertRowsColor(importFileNodeRef, SECOND_BATCH_FIRST_ROW, SECOND_BATCH_FIRST_ROW + 1, ExcelHelper.createGreenColor());
+	}
+
+	/**
+	 * When the import stops on the first error, the error of the line that cancelled the whole batch
+	 * is kept in the import log, the only place where it is reported.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testStopOnFirstErrorKeepsLineErrorOfRolledBackBatchInLog() throws Exception {
+		NodeRef importFileNodeRef = importWithLineDeniedByRepository(true, "import-repository-error-stop.xlsx");
+
+		String importLog = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> (String) nodeService.getProperty(importFileNodeRef, ContentModel.PROP_TITLE), true, true);
+		assertTrue("Import log: " + importLog, importLog.contains(AccessDeniedException.class.getSimpleName()));
+	}
+
+	/**
+	 * Imports, as a user who may only read one of the folders, two costs then a cost created in that
+	 * folder, refused inside NodeService, then a cost in the next batch.
+	 */
+	private NodeRef importWithLineDeniedByRepository(boolean stopOnFirstError, String fileName) throws InterruptedException {
+		NodeRef importFilesFolderNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(this::createImportUserFolders, false, true);
+
+		List<String[]> rows = importCostHeader(stopOnFirstError);
+		addCosts(rows, "Repository error cost A", 2);
+		rows.add(new String[] { ImportHelper.PFX_PATH, PATH_READ_ONLY_COSTS });
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "Repository error cost denied", VALID_CURRENCY });
+		rows.add(new String[] { ImportHelper.PFX_PATH, PATH_BATCH_COSTS });
+		addCosts(rows, "Repository error cost B", 1);
+
+		NodeRef mappingFolderNodeRef = findImportMappingFolder();
+		setMappingReadPermission(mappingFolderNodeRef, true);
+		try {
+			return AuthenticationUtil.runAs(() -> importXlsx(importFilesFolderNodeRef, fileName, rows), IMPORT_USER);
+		} finally {
+			setMappingReadPermission(mappingFolderNodeRef, false);
+		}
+	}
+
+	private NodeRef findImportMappingFolder() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(
+				() -> BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), PATH_IMPORT_MAPPING), true, true);
+	}
+
+	private void setMappingReadPermission(NodeRef mappingFolderNodeRef, boolean granted) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			if (granted) {
+				permissionService.setPermission(mappingFolderNodeRef, IMPORT_USER, PermissionService.CONSUMER, true);
+			} else {
+				permissionService.deletePermission(mappingFolderNodeRef, IMPORT_USER, PermissionService.CONSUMER);
+			}
+			return null;
+		}, false, true);
+	}
+
+	private NodeRef createImportUserFolders() {
+		BeCPGTestHelper.createUser(IMPORT_USER);
+		NodeRef tempFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), List.of(PATH_TEMP));
+		permissionService.setPermission(tempFolderNodeRef, IMPORT_USER, PermissionService.CONSUMER, true);
+
+		NodeRef batchCostsFolderNodeRef = repoService.getOrCreateFolderByPaths(tempFolderNodeRef, List.of(BATCH_COSTS_FOLDER));
+		permissionService.setPermission(batchCostsFolderNodeRef, IMPORT_USER, PermissionService.COORDINATOR, true);
+
+		repoService.getOrCreateFolderByPaths(tempFolderNodeRef, List.of(READ_ONLY_COSTS_FOLDER));
+
+		NodeRef importFilesFolderNodeRef = repoService.getOrCreateFolderByPaths(tempFolderNodeRef, List.of(IMPORT_FILES_FOLDER));
+		permissionService.setPermission(importFilesFolderNodeRef, IMPORT_USER, PermissionService.COORDINATOR, true);
+		return importFilesFolderNodeRef;
+	}
+
+	private List<String[]> importCostHeader(boolean stopOnFirstError) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { ImportHelper.PFX_MAPPING, TEST_MAPPING });
+		rows.add(new String[] { ImportHelper.PFX_STOP_ON_FIRST_ERROR, String.valueOf(stopOnFirstError) });
+		rows.add(new String[] { ImportHelper.PFX_PATH, PATH_BATCH_COSTS });
+		rows.add(new String[] { ImportHelper.PFX_TYPE, COST_TYPE });
+		rows.add(new String[] { ImportHelper.PFX_COLUMS, CHARACT_NAME_COLUMN, COST_CURRENCY_COLUMN });
+		return rows;
+	}
+
+	private void addCosts(List<String[]> rows, String namePrefix, int count) {
+		for (int i = 1; i <= count; i++) {
+			rows.add(new String[] { ImportHelper.PFX_VALUES, namePrefix + i, VALID_CURRENCY });
+		}
+	}
+
+	private NodeRef importXlsx(String fileName, List<String[]> rows) throws InterruptedException {
+		return importXlsx(repositoryHelper.getCompanyHome(), fileName, rows);
+	}
+
+	private NodeRef importXlsx(NodeRef parentNodeRef, String fileName, List<String[]> rows) throws InterruptedException {
+		waitForSpreadsheetMimetype();
+
+		NodeRef importFileNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> createXlsxImportFile(parentNodeRef, fileName, rows), false, true);
+
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> importService.importText(importFileNodeRef, true, false, null), false, true);
+		waitForBatchEnd(batchInfo);
+
+		return importFileNodeRef;
+	}
+
+	/**
+	 * The import picks its reader from the mimetype guessed from the file name, and the mimetype
+	 * configuration is loaded asynchronously after a restart: until then a spreadsheet would be read
+	 * as a CSV file.
+	 *
+	 * @throws InterruptedException if interrupted while waiting
+	 */
+	private void waitForSpreadsheetMimetype() throws InterruptedException {
+		long waited = 0;
+		while (!MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimetypeService.guessMimetype(XLSX_PROBE_FILE_NAME))) {
+			if (waited >= MIMETYPE_TIMEOUT_MS) {
+				fail("The spreadsheet mimetype is still unknown after " + MIMETYPE_TIMEOUT_MS + " ms");
+			}
+			Thread.sleep(MIMETYPE_POLL_INTERVAL_MS);
+			waited += MIMETYPE_POLL_INTERVAL_MS;
+		}
+	}
+
+	private NodeRef createXlsxImportFile(NodeRef parentNodeRef, String fileName, List<String[]> rows) throws IOException {
+		NodeRef existingNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
+		if (existingNodeRef != null) {
+			nodeService.deleteNode(existingNodeRef);
+		}
+
+		NodeRef fileNodeRef = fileFolderService.create(parentNodeRef, fileName, ContentModel.TYPE_CONTENT).getNodeRef();
+		ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+		writer.setMimetype(MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET);
+		writer.putContent(new ByteArrayInputStream(writeWorkbook(rows)));
+		return fileNodeRef;
+	}
+
+	private byte[] writeWorkbook(List<String[]> rows) throws IOException {
+		try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			XSSFSheet sheet = workbook.createSheet();
+			for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+				XSSFRow row = sheet.createRow(rowIndex);
+				String[] cells = rows.get(rowIndex);
+				for (int cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+					row.createCell(cellIndex).setCellValue(cells[cellIndex]);
+				}
+			}
+			workbook.write(out);
+			return out.toByteArray();
+		}
+	}
+
+	private List<String> findImportedCostNames() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<String> names = new ArrayList<>();
+			NodeRef tempFolderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			NodeRef folderNodeRef = tempFolderNodeRef == null ? null
+					: nodeService.getChildByName(tempFolderNodeRef, ContentModel.ASSOC_CONTAINS, BATCH_COSTS_FOLDER);
+			if (folderNodeRef != null) {
+				for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(folderNodeRef)) {
+					names.add((String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_CHARACT_NAME));
+				}
+			}
+			return names;
+		}, true, true);
+	}
+
+	private void assertRowsColor(NodeRef importFileNodeRef, int firstRow, int endRow, XSSFColor expectedColor) throws IOException {
+		try (XSSFWorkbook workbook = readWorkbook(importFileNodeRef)) {
+			XSSFSheet sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
+			for (int rowIndex = firstRow; rowIndex < endRow; rowIndex++) {
+				XSSFColor rowColor = sheet.getRow(rowIndex).getCell(0).getCellStyle().getFillForegroundXSSFColor();
+				assertNotNull("Row " + rowIndex + " should be colored", rowColor);
+				assertTrue("Unexpected color of row " + rowIndex, Arrays.equals(expectedColor.getRGB(), rowColor.getRGB()));
+			}
+		}
+	}
+
+	private XSSFWorkbook readWorkbook(NodeRef importFileNodeRef) throws IOException {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			try (InputStream in = contentService.getReader(importFileNodeRef, ContentModel.PROP_CONTENT).getContentInputStream()) {
+				return new XSSFWorkbook(in);
+			}
+		}, true, true);
 	}
 
 }

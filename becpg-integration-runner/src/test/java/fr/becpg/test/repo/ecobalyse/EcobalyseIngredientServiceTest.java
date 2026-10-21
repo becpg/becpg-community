@@ -3,10 +3,12 @@ package fr.becpg.test.repo.ecobalyse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
 
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.product.formulation.ecobalyse.EcobalyseIngredient;
 import fr.becpg.repo.product.formulation.ecobalyse.EcobalyseIngredientService;
 
@@ -18,6 +20,8 @@ import fr.becpg.repo.product.formulation.ecobalyse.EcobalyseIngredientService;
 public class EcobalyseIngredientServiceTest {
 
 	private static final double PRECISION = 0.0001d;
+
+	private static final int PAGE_SIZE = 100;
 
 	private final EcobalyseIngredientService service = new EcobalyseIngredientService();
 
@@ -66,6 +70,25 @@ public class EcobalyseIngredientServiceTest {
 		assertTrue(service.findByCode("does-not-exist").isEmpty());
 		assertTrue(service.findByCode(null).isEmpty());
 		assertTrue(service.findByCode("  ").isEmpty());
+	}
+
+	@Test
+	public void testSuggestionsMatchTheAlias() {
+		assertTrue("Typing the English alias should find barley", suggestedValues("barley").contains("barley-whole-fr"));
+	}
+
+	@Test
+	public void testSuggestionsMatchTheFrenchName() {
+		assertTrue("Typing the French name should find barley", suggestedValues("orge").contains("barley-whole-fr"));
+	}
+
+	@Test
+	public void testSuggestionsMatchAliasAndNameTogether() {
+		assertEquals(List.of("barley-whole-fr"), suggestedValues("barley-whole-fr entière"));
+	}
+
+	private List<String> suggestedValues(String query) {
+		return service.suggest(query, 1, PAGE_SIZE).getResults().stream().map(AutoCompleteEntry::getValue).toList();
 	}
 
 }

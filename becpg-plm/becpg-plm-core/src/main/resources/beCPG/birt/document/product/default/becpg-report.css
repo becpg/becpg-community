@@ -43,6 +43,8 @@
 }
 
 /* ---- BODY ----- */
+/* Helvetica has no glyph for the letters outside Latin-1, such as the Polish ones: arial, which the report
+   server maps to Arial Unicode MS, draws them while the Latin-1 letters keep Helvetica */
 .becpg-chapter-header
 {
 	background-color: #004254;
@@ -50,7 +52,7 @@
 	font-weight: bold;
 	color: #FFFFFF;
 	text-align: center;
-	font-family:sans-serif;
+	font-family:sans-serif, arial;
 }
 
 /* table & grid*/

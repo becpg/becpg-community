@@ -3,6 +3,7 @@ package fr.becpg.repo.sample;
 import java.io.Serializable;
 import java.util.*;
 
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -11,16 +12,22 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>StandardBodyMilkTestProduct class.</p>
+ * <p>
+ * The body milk is a raw material holding its ingredients directly: it has no composition, so the composition option of
+ * the builder is not used. Its regulatory list is enabled by default.
  *
  * @author matthieu
  */
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	private static final Map<String, String> ISO_COUNTRY_NAMES = new HashMap<>();
+	private static final String ING_TYPE_ITEM_PATH = "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:ingTypeItem";
 	public static final String SKIN_CONDITIONING_EMOLLIENT = "SKIN CONDITIONING - EMOLLIENT";
 	public static final String FRAGRANCE = "FRAGRANCE"; //  Ex-MASKING - The closest fit - "Imparting an odour or taste. Creating a perceivable pleasant smell and/or masking a bad smell."
 	public static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
@@ -69,6 +76,10 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ISO_COUNTRY_NAMES.put("MX", "Mexico");
 	}
 
+	/** Fragrance allergens of the body milk, in percent of the product. */
+	private static final List<AllergenShare> BODY_MILK_ALLERGENS = List.of(new AllergenShare("Linalool", 0.015),
+			new AllergenShare("Limonene", 0.01));
+
 	protected List<String> regulatoryCountries = new ArrayList<>();
 
 
@@ -79,17 +90,19 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 */
 	protected StandardBodyMilkTestProduct(Builder builder) {
 		super(builder);
-		isWithCompo = false;
-		isWithScore = false;
-		isWithPhysico = true;
-		isWithSpecification = false;
-		isWithToxicology = false;
 		this.regulatoryCountries = builder.regulatoryCountries;
 	}
 
 	// Static inner Builder class
 	public static class Builder extends StandardSoapTestProduct.Builder {
 		private List<String> regulatoryCountries = new ArrayList<>();
+
+		/**
+		 * Creates a builder whose product holds its regulatory list unless disabled.
+		 */
+		public Builder() {
+			withRegulatory(true);
+		}
 
 		public Builder withRegulatoryCountries(List<String> regulatoryCountries) {
 			this.regulatoryCountries = regulatoryCountries;
@@ -115,15 +128,14 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 	/** {@inheritDoc} */
 	@Override
-	public RawMaterialData createTestProduct() {
+	public ProductData createTestProduct() {
 
 		// Create the body milk raw material product
 		RawMaterialData bodyMilkProduct = RawMaterialData.build()
 				.withName(uniqueName("🧴 Body Milk 💧"))
 				.withUnit(ProductUnit.kg)
 				.withQty(100d)
-				.withIngList(createBodyMilkIngredients())
-				.withRegulatoryList(createRegulatoryList());
+				.withIngList(createBodyMilkIngredients());
 
 		// Add physico-chemical properties if enabled
 		if (isWithPhysico) {
@@ -141,6 +153,12 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 			addLCAProperty(bodyMilkProduct, CLIMATE_CHANGE, "CLIMATE_CHANGE", 50.5d);
 		}
 
+		if (isWithAllergens) {
+			bodyMilkProduct.setAllergenList(createAllergenList());
+		}
+
+		addOptionalLists(bodyMilkProduct);
+
 		alfrescoRepository.create(destFolder, bodyMilkProduct);
 
 		// Save associations if specifications are enabled
@@ -153,12 +171,23 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	}
 
 	/**
-	 * <p>createRegulatoryList.</p>
+	 * Creates the fragrance allergens of the body milk, which holds its fragrance directly.
 	 *
-	 * @return a {@link java.util.List} object
+	 * @return the allergen list
 	 */
-	private List<RegulatoryListDataItem> createRegulatoryList() {
-		List<RegulatoryListDataItem> regulatoryList = new ArrayList<>();
+	@Override
+	protected List<AllergenListDataItem> createAllergenList() {
+		return buildAllergenList(BODY_MILK_ALLERGENS);
+	}
+
+	/**
+	 * Creates the market of the body milk: the regulatory countries of the builder, all the known ones by default, for
+	 * soap and body lotion usages.
+	 *
+	 * @return the regulatory list
+	 */
+	@Override
+	protected List<RegulatoryListDataItem> createMarketList() {
 		Collection<String> countries;
 		if (regulatoryCountries != null && !regulatoryCountries.isEmpty()) {
 			countries = regulatoryCountries;
@@ -172,61 +201,33 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 			countryRefs.add(getOrCreateCountryRef(country, name));
 		}
 
-		RegulatoryListDataItem item = new RegulatoryListDataItem();
-		item.setRegulatoryCountriesRef(countryRefs);
-		item.setRegulatoryUsagesRef(List.of(
+		return buildMarketList(countryRefs, List.of(
 				getOrCreateUsageRef("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap"),
 				getOrCreateUsageRef("Hand soap", "COSMETIC_HAND_SOAP,DECERNIS_Hand Soap"),
 				getOrCreateUsageRef("Body Cream/Lotion", "COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion")
 		));
-
-		regulatoryList.add(item);
-		return regulatoryList;
 	}
 
 	/**
-	 * <p>getOrCreateUsageRef.</p>
+	 * Gets the ingredient type holding this code, or creates it. The lookup is made on the code, which must be unique
+	 * in the list, so that a value created with another name is reused instead of being duplicated.
 	 *
-	 * @param name           the usage charact name
-	 * @param regulatoryCode the regulatory code ({@code <beCPGcode>,DECERNIS_<phrase>})
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 */
-	private NodeRef getOrCreateUsageRef(String name, String regulatoryCode) {
-		HashMap<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
-		properties.put(PLMModel.PROP_REGULATORY_CODE, regulatoryCode);
-		properties.put(PLMModel.PROP_REGULATORY_MODULE, "COSMETICS");
-		return CharactTestHelper.getOrCreateNode(nodeService,
-				"/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:RegulatoryUsages", name, PLMModel.TYPE_REGULATORY_USAGE, properties);
-	}
-
-	/**
-	 * <p>getOrCreateUsageRef.</p>
-	 *
-	 * @param ingTypeStr serves both as identifier and a regultory code
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param ingTypeStr serves both as identifier and a regulatory code
+	 * @return the ingredient type
 	 */
 	private NodeRef getOrCreateIngredientType(String ingTypeStr) {
+		NodeRef ingTypeList = BeCPGQueryBuilder.createQuery().selectNodeByPath(ING_TYPE_ITEM_PATH);
+		List<ChildAssociationRef> sameCodeValues = nodeService.getChildAssocsByPropertyValue(ingTypeList, BeCPGModel.PROP_LV_CODE, ingTypeStr);
+		if (!sameCodeValues.isEmpty()) {
+			return sameCodeValues.get(0).getChildRef();
+		}
+
 		HashMap<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_LV_CODE, ingTypeStr);
 		properties.put(BeCPGModel.PROP_LV_VALUE, ingTypeStr);
 		properties.put(BeCPGModel.PROP_LEGAL_NAME, ingTypeStr.toLowerCase(Locale.ROOT));
 		properties.put(PLMModel.PROP_REGULATORY_CODE, ingTypeStr);
-		return CharactTestHelper.getOrCreateNode(nodeService,
-				"/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:ingTypeItem", ingTypeStr, PLMModel.TYPE_ING_TYPE_ITEM, properties);
-	}
-
-	/**
-	 * <p>getOrCreateCountryRef.</p>
-	 *
-	 * @param code a {@link java.lang.String} object
-	 * @param name a {@link java.lang.String} object
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 */
-	private NodeRef getOrCreateCountryRef(String code, String name) {
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(PLMModel.PROP_REGULATORY_CODE, name); // so decernis still works
-		return CharactTestHelper.getOrCreateGeo(nodeService, code, name, properties);
+		return CharactTestHelper.getOrCreateNode(nodeService, ING_TYPE_ITEM_PATH, ingTypeStr, PLMModel.TYPE_ING_TYPE_ITEM, properties);
 	}
 
 	/**
@@ -248,7 +249,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 *
 	 * @return a {@link java.util.List} object
 	 */
-	private List<IngListDataItem> createBodyMilkIngredients() {
+	protected List<IngListDataItem> createBodyMilkIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Create ingredients with their types and all parameters (CAS numbers, hazard classes, toxicities)

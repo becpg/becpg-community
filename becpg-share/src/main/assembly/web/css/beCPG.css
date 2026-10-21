@@ -973,16 +973,9 @@ span.geo {
     background-repeat: no-repeat;
 }
 
-span.geoOrigin-ASSEMBLY,
-span.geoOrigin-BIRTH,
-span.geoOrigin-BOTTLING,
-span.geoOrigin-CATCH_ZONE,
-span.geoOrigin-FARMING,
-span.geoOrigin-IMPORTATION,
-span.geoOrigin-LAST_PROCESSING,
-span.geoOrigin-MILKING,
-span.geoOrigin-REARING,
-span.geoOrigin-SLAUGHTER {
+/* Any GS1 place of activity type (geoOrigin-BIRTH, geoOrigin-CUTTER...), first class or not */
+span[class^="geoOrigin-"],
+span[class*=" geoOrigin-"] {
    background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat;
@@ -1267,4 +1260,10 @@ div.yui-dialog {
 .people-finder h3.itemname,
 .people-finder .detail {
 	overflow-wrap: anywhere;
+}
+
+/** Align a value written from right to left (Arabic, Hebrew...) to the right, Share dialogs inherit text-align: left **/
+
+[dir="rtl"] {
+	text-align: right;
 }

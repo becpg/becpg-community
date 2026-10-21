@@ -21,6 +21,7 @@
   <url>/becpg/stats/{type}?sortBy={sortBy}&amp;asc={asc}&amp;filter={filter}&amp;maxResults={maxResults}&amp;dbAsc={dbAsc}&amp;startAfterId={startAfterId}&amp;fromDate={fromDate}&amp;toDate={toDate}</url>
   <format default="json" />
   <authentication>user</authentication>
+  <family>AdminConsoleHelper</family>
   <transaction>required</transaction>
   <lifecycle>internal</lifecycle>
 </webscript>

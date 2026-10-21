@@ -56,48 +56,36 @@
 	</#list>
 </#macro>
 
-<#assign body>
-	<#assign top = nf.BORDER + 2>
-	<#assign y = top>
-
-	<#list [COL1_X, COL2_X] as colX>
-	<text x="${colX + nf.CELL_INSET}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.label("amountPerServingShort")}</text>
-	<text x="${colX + COL_W - nf.CELL_INSET}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end">${nf_data.label("dailyValue")}</text>
-	</#list>
-	<#assign y = y + nf.CAPTION_ROW_H>
-
-	<@columnsRule y=y height=nf.RULE_MEDIUM/>
-	<#assign y = y + nf.RULE_MEDIUM>
-
-	<#list 0..(rows - 1) as index>
-	<#if (index gt 0)>
-	<@rowRules y=y index=index/>
-	<#assign y = y + nf.HAIRLINE>
-	</#if>
-	<#if (column1?size gt index)>
-	<@nf.tabularRow line=column1[index] y=y labelX=COL1_X + nf.CELL_INSET percentX=COL1_X + COL_W - nf.CELL_INSET/>
-	</#if>
-	<#if (column2?size gt index)>
-	<@nf.tabularRow line=column2[index] y=y labelX=COL2_X + nf.CELL_INSET percentX=COL2_X + COL_W - nf.CELL_INSET/>
-	</#if>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#list>
-
-	<#if nf_data.micronutrients()?has_content>
-	<@nf.bandRule x=COL1_X + nf.CELL_INSET y=y width=2 * (COL_W - nf.CELL_INSET) height=nf.RULE_MEDIUM/>
-	<#assign y = y + nf.RULE_MEDIUM + 1>
+<#-- Vitamin line, wrapped over both columns, each declaration kept whole. -->
+<#assign microLines = []>
+<#if nf_data.micronutrients()?has_content>
 	<#assign micro = []>
 	<#list nf_data.micronutrients() as line>
 		<#assign declaration = line.label() + (line.printsValue())?then(" " + line.value(), "") + (line.hasDailyValue())?then(" " + line.dailyValuePercent(), "")>
 		<#assign micro = micro + [nf.unbreakable(declaration)]>
 	</#list>
-	<#list nf.wrap(micro?join("  •  "), nf.charsPerWidth(2 * (COL_W - nf.CELL_INSET), nf.NUTRIENT_SIZE, nf.FIGURE_GLYPH_RATIO)) as microLine>
-	<text x="${COL1_X + nf.CELL_INSET}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${microLine}</text>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#list>
-	</#if>
-	<#assign columnsBottom = y>
+	<#assign microLines = nf.wrap(micro?join("  •  "), nf.charsPerWidth(2 * (COL_W - nf.CELL_INSET), nf.NUTRIENT_SIZE, nf.FIGURE_GLYPH_RATIO))>
+</#if>
 
+<#-- Height the columns take at the regular row height, from their headers to the last vitamin line. -->
+<#function columnsHeight>
+	<#local height = nf.CAPTION_ROW_H + nf.RULE_MEDIUM + rows * nf.NUTRIENT_ROW_H + (rows - 1) * nf.HAIRLINE>
+	<#if microLines?has_content>
+	<#local height = height + nf.RULE_MEDIUM + 1 + microLines?size * nf.NUTRIENT_ROW_H>
+	</#if>
+	<#return height>
+</#function>
+
+<#assign CALORIES_H = nf.lineHeight(CALORIES_LABEL) + nf.NUTRIENT_ROW_H>
+
+<#assign body>
+	<#assign top = nf.BORDER + 2>
+
+	<#--
+	  The left band is drawn first, down to its serving size: its height decides the height of the
+	  rows, which are spread so that the columns end on the same line as the calories rather than
+	  leaving air under the vitamins.
+	-->
 	<#assign y = top>
 	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${TITLE_LINE}">Nutrition</text>
 	<#assign y = y + TITLE_LINE>
@@ -118,14 +106,52 @@
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.serving().servingSize()}</text>
 	<#assign y = y + nf.NUTRIENT_ROW_H>
 	</#if>
+	<#assign servingBottom = y>
+	<#assign leftHeight = servingBottom - top + (nf_data.calories()??)?then(2 + CALORIES_H, 0)>
+	<#assign rowH = nf.NUTRIENT_ROW_H + [leftHeight - columnsHeight(), 0]?max / [rows, 1]?max>
+	<#assign rowShift = (rowH - nf.NUTRIENT_ROW_H) / 2>
 
+	<#assign y = top>
+	<#list [COL1_X, COL2_X] as colX>
+	<text x="${colX + nf.CELL_INSET}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}">${nf_data.label("amountPerServingShort")}</text>
+	<text x="${colX + COL_W - nf.CELL_INSET}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end">${nf_data.label("dailyValue")}</text>
+	</#list>
+	<#assign y = y + nf.CAPTION_ROW_H>
+
+	<@columnsRule y=y height=nf.RULE_MEDIUM/>
+	<#assign y = y + nf.RULE_MEDIUM>
+
+	<#list 0..(rows - 1) as index>
+	<#if (index gt 0)>
+	<@rowRules y=y index=index/>
+	<#assign y = y + nf.HAIRLINE>
+	</#if>
+	<#if (column1?size gt index)>
+	<@nf.tabularRow line=column1[index] y=y + rowShift labelX=COL1_X + nf.CELL_INSET percentX=COL1_X + COL_W - nf.CELL_INSET rowHeight=rowH/>
+	</#if>
+	<#if (column2?size gt index)>
+	<@nf.tabularRow line=column2[index] y=y + rowShift labelX=COL2_X + nf.CELL_INSET percentX=COL2_X + COL_W - nf.CELL_INSET rowHeight=rowH/>
+	</#if>
+	<#assign y = y + rowH>
+	</#list>
+
+	<#if microLines?has_content>
+	<@nf.bandRule x=COL1_X + nf.CELL_INSET y=y width=2 * (COL_W - nf.CELL_INSET) height=nf.RULE_MEDIUM/>
+	<#assign y = y + nf.RULE_MEDIUM + 1>
+	<#list microLines as microLine>
+	<text x="${COL1_X + nf.CELL_INSET}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${microLine}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#list>
+	</#if>
+	<#assign columnsBottom = y>
+
+	<#assign y = servingBottom>
 	<#if nf_data.calories()??>
 	<#--
 	  The calories close the left band on the same line as the vitamins close the columns. Their
 	  value stands centred against the two lines "Calories" and "Per serving" it answers.
 	-->
-	<#assign caloriesH = nf.lineHeight(CALORIES_LABEL) + nf.NUTRIENT_ROW_H>
-	<#assign y = [y + 2, columnsBottom - caloriesH]?max>
+	<#assign y = [y + 2, columnsBottom - CALORIES_H]?max>
 	<@nf.bandRule x=0 y=y - 3 width=LEFT_W/>
 	<#assign caloriesTop = y>
 	<text x="${nf.PAD}" y="${nf.baseline(y, CALORIES_LABEL)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_LABEL}">${nf_data.calories().label()}</text>
@@ -140,8 +166,13 @@
 	</#if>
 	<#assign leftBottom = y>
 
-	<@nf.footNote text=nf_data.footNote() y=top + 1 x=FOOT_X + FOOT_W / 2 width=FOOT_W - 10 anchor="middle" size=nf.CAPTION_SIZE/>
+	<#-- The footnote stands centred against the height of the bands, in its own narrow column. -->
+	<#assign footW = FOOT_W - 10>
+	<#assign footH = nf.wrap(nf_data.footNote(), nf.charsPerWidth(footW, nf.CAPTION_SIZE))?size * nf.lineHeight(nf.CAPTION_SIZE)>
+	<#assign bodyBottom = [leftBottom, columnsBottom]?max>
+	<#assign footTop = [top + 1, top + (bodyBottom - top - footH) / 2]?max>
+	<@nf.footNote text=nf_data.footNote() y=footTop x=FOOT_X + FOOT_W / 2 width=footW anchor="middle" size=nf.CAPTION_SIZE/>
 
-	<#assign panelH = [leftBottom, columnsBottom, nf.cursorY]?max + nf.BORDER + 2>
+	<#assign panelH = [bodyBottom, nf.cursorY]?max + nf.BORDER + 2>
 </#assign>
 <@nf.panel height=panelH>${body}</@nf.panel>

@@ -68,14 +68,15 @@ public class PALRegulatoryFrameworkAutoCompletePlugin extends TargetAssocAutoCom
 	}
 
 	/**
-	 * <p>matches.</p>
+	 * <p>Tells whether a framework code answers the query. The dropdown toggle of the
+	 * picker sends the wildcard query, which must list every framework.</p>
 	 *
 	 * @param frameworkCode the candidate framework code
 	 * @param query the text typed by the user, may be {@code null}
 	 * @return true when the code should be suggested
 	 */
 	private boolean matches(String frameworkCode, String query) {
-		return (query == null) || query.isBlank() || frameworkCode.toLowerCase().contains(query.toLowerCase());
+		return (query == null) || query.isBlank() || isAllQuery(query) || frameworkCode.toLowerCase().contains(query.toLowerCase());
 	}
 
 }

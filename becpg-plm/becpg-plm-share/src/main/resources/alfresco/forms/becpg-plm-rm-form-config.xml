@@ -18,8 +18,6 @@
 					<show force="true" id="bcpg:erpCode" />
 					<!-- Ecobalyse -->
 					<show force="true" id="bcpg:ecobalyseCode" />
-					<show force="true" id="bcpg:apScenario" />
-					<show force="true" id="bcpg:apCropGroup" />
 					<show force="false" id="bcpg:casNumber" />
 					<show force="false" id="bcpg:ecNumber" />
 					<show force="false" id="bcpg:ceNumber" />
@@ -397,8 +395,6 @@
 							<control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
 						</control>
 					</field>
-					<field id="bcpg:apScenario" set="ecobalyse" />
-					<field id="bcpg:apCropGroup" set="ecobalyse" />
 					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:regulatoryCountries" set="regulatory">
 						<control

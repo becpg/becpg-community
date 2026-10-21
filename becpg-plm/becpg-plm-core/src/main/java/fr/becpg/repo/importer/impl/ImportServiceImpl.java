@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
@@ -48,7 +49,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -96,6 +99,10 @@ public class ImportServiceImpl implements ImportService {
 
 	/** Constant <code>MSG_INFO_IMPORT_BATCH="import_service.info.import_batch"</code> */
 	private static final String MSG_INFO_IMPORT_BATCH = "import_service.info.import_batch";
+	/** Constant <code>MSG_ERROR_BATCH_MARKED_FOR_ROLLBACK="import_service.error.err_batch_marked_for_rollback"</code> */
+	private static final String MSG_ERROR_BATCH_MARKED_FOR_ROLLBACK = "import_service.error.err_batch_marked_for_rollback";
+	/** Constant <code>MSG_ERROR_LINE_MARKED_BATCH_FOR_ROLLBACK="import_service.error.err_line_marked_batch_for_rollback"</code> */
+	private static final String MSG_ERROR_LINE_MARKED_BATCH_FOR_ROLLBACK = "import_service.error.err_line_marked_batch_for_rollback";
 
 	/** Constant <code>MSG_ERROR_UNSUPPORTED_PREFIX="import_service.error.err_unsupported_pr"{trunked}</code> */
 	private static final String MSG_ERROR_UNSUPPORTED_PREFIX = "import_service.error.err_unsupported_prefix";
@@ -234,6 +241,8 @@ public class ImportServiceImpl implements ImportService {
 		};
 		
 		batchStep.setBatchStepListener(batchStepAdapter);
+		// each batch of lines opens its own transaction, to catch the failure of its commit
+		batchStep.setTransactional(false);
 		
 		batchStep.setProcessWorker(new BatchProcessWorkerAdaptor<Integer>() {
 
@@ -246,37 +255,41 @@ public class ImportServiceImpl implements ImportService {
 					return;
 				}
 				
-				importContext.setImportIndex(index * BATCH_SIZE);
+				final int firstLineIndex = index * BATCH_SIZE;
 				int tempIndex = (index + 1) * BATCH_SIZE;
 				final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
-				final ImportContext finalImportContext = importContext;
 
 				// add info message in log and file import
 				if (logger.isInfoEnabled()) {
 
 					logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, (index + 1), nbBatches, importContext.getImportFileName(),
-							(importContext.getImportIndex() + 1), (finalLastIndex + 1)));
+							(firstLineIndex + 1), (finalLastIndex + 1)));
 
 				}
 				try {
-					importInBatch(finalImportContext, finalLastIndex);
-				} catch (Exception e) {
-					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					    throw e;
-	                }
-					if (importContext.isStopOnFirstError()) {
-						hasToStop = true;
+					Optional<Exception> importFailure = importBatchInOwnTransaction(importContext, firstLineIndex, finalLastIndex);
+					if (importFailure.isPresent()) {
+						reportBatchFailure(importFailure.get());
 					}
-					
-					logger.error("Failed to import file text", e);
+				} catch (Exception e) {
+					importContext.markBatchNotSaved(firstLineIndex, e);
+					reportBatchFailure(e);
+				}
+			}
 
-					// set printStackTrance in description
-					try (StringWriter sw = new StringWriter()) {
-						try (PrintWriter pw = new PrintWriter(sw)) {
-							e.printStackTrace(pw);
-							String stackTrace = sw.toString();
-							finalImportContext.setErrorLogs(finalImportContext.getErrorLogs() + LOG_ERROR + stackTrace);
-						}
+			private void reportBatchFailure(Exception e) throws IOException {
+				if (importContext.isStopOnFirstError()) {
+					hasToStop = true;
+				}
+
+				logger.error("Failed to import file text", e);
+
+				// set printStackTrance in description
+				try (StringWriter sw = new StringWriter()) {
+					try (PrintWriter pw = new PrintWriter(sw)) {
+						e.printStackTrace(pw);
+						String stackTrace = sw.toString();
+						importContext.setErrorLogs(importContext.getErrorLogs() + LOG_ERROR + stackTrace);
 					}
 				}
 			}
@@ -502,6 +515,91 @@ public class ImportServiceImpl implements ImportService {
 			return pathValue.substring(1);
 		}
 		return pathValue;
+	}
+
+	/**
+	 * Imports a batch of lines in a transaction of its own, so that a failure when committing it -
+	 * typically a rule or a formulation run before commit - is caught by the caller, which knows the
+	 * lines of the batch. The transaction is retried from the first line of the batch on concurrency
+	 * failures.
+	 *
+	 * An import error raised by a line does not roll the batch back: the lines imported before it
+	 * are committed, and the error is returned so that the caller reports it and stops the import
+	 * when required. Unless the error was raised inside a transactional repository service, which
+	 * marks the whole transaction for rollback: the batch then fails, keeping the error of the line.
+	 *
+	 * @param importContext the import context
+	 * @param firstLineIndex the index of the first line of the batch
+	 * @param lastIndex the index following the last line of the batch
+	 * @return the import error raised by a line, or an empty optional when the batch was imported
+	 * @throws BeCPGException if a line error marked the transaction for rollback
+	 */
+	private Optional<Exception> importBatchInOwnTransaction(ImportContext importContext, int firstLineIndex, int lastIndex) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			importContext.startBatch(firstLineIndex);
+			Optional<Exception> lineFailure = importLinesOfBatch(importContext, lastIndex);
+			if (isMarkedForRollback()) {
+				throw lineFailure.map(failure -> lineMarkedBatchForRollback(importContext, failure))
+						.orElseGet(ImportServiceImpl::batchMarkedForRollback);
+			}
+			return lineFailure;
+		}, false, true);
+	}
+
+	/**
+	 * Imports the lines of a batch in the current transaction.
+	 *
+	 * @param importContext the import context
+	 * @param lastIndex the index following the last line of the batch
+	 * @return the import error that stopped the batch, or an empty optional when all its lines were
+	 *         read
+	 * @throws Exception a concurrency failure, rethrown so that the transaction is retried
+	 */
+	private Optional<Exception> importLinesOfBatch(ImportContext importContext, int lastIndex) throws Exception {
+		try {
+			importInBatch(importContext, lastIndex);
+			return Optional.empty();
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
+			}
+			return Optional.of(e);
+		}
+	}
+
+	/**
+	 * A line error raised inside a transactional repository service marks the whole transaction for
+	 * rollback, although the import caught it: the transaction would then be rolled back silently on
+	 * commit.
+	 *
+	 * @return true if the current transaction is marked for rollback
+	 */
+	private static boolean isMarkedForRollback() {
+		return TransactionAspectSupport.currentTransactionStatus().isRollbackOnly();
+	}
+
+	/**
+	 * Builds the failure of a batch marked for rollback by a line whose error was already reported on
+	 * that line, so that the caller reports the other lines of the batch as not saved.
+	 *
+	 * @return the failure of the batch
+	 */
+	private static BeCPGException batchMarkedForRollback() {
+		return new BeCPGException(I18NUtil.getMessage(MSG_ERROR_BATCH_MARKED_FOR_ROLLBACK));
+	}
+
+	/**
+	 * Builds the failure of a batch marked for rollback by the line the import stopped on. That error
+	 * is reported nowhere else: its line and its message are kept in the message, the part of the
+	 * import log that is never cut, and the error itself is kept as cause.
+	 *
+	 * @param importContext the import context, positioned after the line in error
+	 * @param lineFailure the error of the line
+	 * @return the failure of the batch
+	 */
+	private static BeCPGException lineMarkedBatchForRollback(ImportContext importContext, Exception lineFailure) {
+		String lineNumber = String.valueOf(importContext.getImportIndex());
+		return new BeCPGException(I18NUtil.getMessage(MSG_ERROR_LINE_MARKED_BATCH_FOR_ROLLBACK, lineNumber, lineFailure), lineFailure);
 	}
 
 	/**

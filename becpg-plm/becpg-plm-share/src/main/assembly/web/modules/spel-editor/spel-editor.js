@@ -119,6 +119,52 @@
       'renderTemplate($templateName,$model)' ];
 
    /**
+    * Preference rules suggested when a labeling rule is edited, each with the example value of the
+    * labeling rules documentation. They are properties of the labeling context, not of the
+    * product the item browser below the editor lists, so nothing else suggests them.
+    */
+   var LABELING_PREFERENCE_HINTS = [
+      'useVolume = true',
+      'showIngCEECode = true',
+      'defaultSeparator = "; "',
+      'groupDefaultSeparator = ", "',
+      'ingTypeDefaultSeparator = ", "',
+      'subIngsSeparator = ", "',
+      'allergensSeparator = "; "',
+      'geoOriginsSeparator = "; "',
+      'bioOriginsSeparator = "; "',
+      'atEndSeparator = ","',
+      'footNotesLabelSeparator = " <br/>"',
+      'groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}"',
+      'groupListDefaultFormat = "<b>{0}{1,number,0.#%}</b>"',
+      'ingDefaultFormat = "{0} [{3}]"',
+      'ingTypeDefaultFormat = "{0}: ({2})[{3}]"',
+      'ingTypeSingleValueFormat = "{0} : {2} [{3}]"',
+      'detailsDefaultFormat = "{0} ({2}) [{3}]"',
+      'subIngsDefaultFormat = "{0} ({2}) [{3}]"',
+      'ingTypeDecThresholdFormat = "{0} [{3}]"',
+      'allergenReplacementPattern = "<b>$1</b>"',
+      'allergenDetailsFormat = "{0} ({2})"',
+      'disableAllergensForLocales = "ru,ja_JP,zh_CN"',
+      'disableAllergensForLocales = "*"',
+      'defaultRoundingMode = T(java.math.RoundingMode).HALF_UP',
+      'htmlTableHeaderFormat = $format',
+      'htmlTableRowFormat = $format',
+      'htmlTableFooterFormat = $format',
+      'ingsLabelingWithYield = true',
+      'useSecondaryYield = true',
+      'doNotPropagateYield = true',
+      'qtyPrecisionThreshold = 0.001d',
+      'maxPrecision = 4',
+      'force100Perc = true',
+      'shouldBreakIngType = true',
+      'labelingByLanguage = true',
+      'uncapitalizeLegalName = true',
+      'computePercByParent = true',
+      'forceKeepOrder = true',
+      'sortWithSpecificLocale = "fr"' ];
+
+   /**
     * Name of the property the labeling rules carry their formula in. The field name is the only
     * signal always available to the control, the datalist being unknown when the rule is edited
     * from the labeling view.
@@ -392,7 +438,8 @@
 
                   /**
                    * Builds the suggestions this editor offers on Ctrl-Space. A labeling rule gets the
-                   * rendering methods of the labeling context first, the common suggestions keeping
+                   * rendering methods of the labeling context first, then its preference rules, the
+                   * common suggestions keeping
                    * their place below, so that the list a user actually needs opens on top.
                    * 
                    * @method _buildHints
@@ -401,7 +448,7 @@
                   _buildHints : function SpelEditor__buildHints() {
                      var field = this.options.field;
                      if (field && field.indexOf(LABELING_FORMULA_FIELD) !== -1) {
-                        return LABELING_HINTS.concat(COMMON_HINTS);
+                        return LABELING_HINTS.concat(LABELING_PREFERENCE_HINTS, COMMON_HINTS);
                      }
                      return COMMON_HINTS;
                   },

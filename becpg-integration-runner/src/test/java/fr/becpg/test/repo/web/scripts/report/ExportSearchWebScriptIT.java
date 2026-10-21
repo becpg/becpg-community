@@ -93,6 +93,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	private NodeRef localSF2NodeRef;
 	private NodeRef rawMaterial3NodeRef;
 	private NodeRef rawMaterial4NodeRef;
+	private static final String PACKAGING_KIT_TYPE = "bcpg:packagingKit";
+
 	private NodeRef exportProductReportTpl;
 
 	/**
@@ -521,7 +523,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 	 * Test get export search tpls.
 	 */
 	@Test
-	public void testGetExportSearchTpls() {
+	public void testGetExportSearchTpls() throws IOException {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -559,6 +561,11 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 		}
+
+		Response packagingKitResponse = TestWebscriptExecuters
+				.sendRequest(new GetRequest("/becpg/report/exportsearch/templates/" + PACKAGING_KIT_TYPE), 200, "admin");
+		assertTrue("A packaging kit is exported with the product templates",
+				packagingKitResponse.getContentAsString().contains(exportProductReportTpl.toString()));
 
 	}
 

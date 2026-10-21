@@ -11,6 +11,7 @@
    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, KeyListener = YAHOO.util.KeyListener;
 
    var DOWNLOAD_EVENTCLASS = Alfresco.util.generateDomId(null, "download");
+   var ALL_STATES = "allStates", MAX_LISTED_STATES = 2;
    var REVERT_EVENTCLASS = Alfresco.util.generateDomId(null, "revert");
    
    /**
@@ -18,7 +19,7 @@
     */
    var PREFERENCES_VERSIONS_GRAPH = "org.alfresco.share.versions.graph",
        PREFERENCES_VERSIONS_GRAPH_VIEW = PREFERENCES_VERSIONS_GRAPH + ".simpleView",
-       PREFERENCES_VERSIONS_GRAPH_STATE = PREFERENCES_VERSIONS_GRAPH + ".stateFilter";
+       PREFERENCES_VERSIONS_GRAPH_HIDDEN_STATES = PREFERENCES_VERSIONS_GRAPH + ".hiddenStates";
    
    /**
     * Alfresco Slingshot aliases
@@ -38,12 +39,14 @@
       Alfresco.util.ComponentManager.register(this);
 
       // Load YUI Components
-      Alfresco.util.YUILoaderHelper.require([ "datasource", "datatable", "button", "container" ],
+      Alfresco.util.YUILoaderHelper.require([ "datasource", "datatable", "button", "container", "menu" ],
             this.onComponentsLoaded, this);
 
       // Initialise preferences service
       this.services = this.services || {};
       this.services.preferences = new Alfresco.service.Preferences();
+
+      this.hiddenStates = [];
 
       return this;
 
@@ -93,6 +96,15 @@
       },
 
       graphData : [],
+
+      /**
+       * States unchecked in the state filter. Hidden states are stored rather than displayed ones so that a
+       * newly configured state is displayed by default.
+       * 
+       * @property hiddenStates
+       * @type array
+       */
+      hiddenStates : [],
 
       colors : [ [ 1.0, 0.0, 0.0 ], [ 1.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 1.0 ], [ 0.0, 0.0, 1.0 ],
             [ 1.0, 0.0, 1.0 ], [ 1.0, 1.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ],
@@ -191,10 +203,16 @@
 
          // Initialize filter controls
          this.widgets.filterName = Dom.get("versions-graph-filter-name");
-         this.widgets.filterState = Dom.get("versions-graph-filter-system-state");
+         this.widgets.stateFilter = Alfresco.util.createYUIButton(this, "stateFilter-button", this.onStateFilterClick, {
+            type : "menu",
+            menu : [],
+            lazyloadmenu : false
+         });
+         Dom.addClass(this.widgets.stateFilter.getMenu().element, "versions-graph-state-menu");
+         this._keepStateFilterOpen();
 
          // Populate state filter based on entity type
-         this._populateStateFilter(this.widgets.filterState);
+         this._populateStateFilter();
 
          // Detailed/Simple List button group
          this.widgets.simpleDetailed = new YAHOO.widget.ButtonGroup("versions-graph-simpleDetailed");
@@ -224,20 +242,21 @@
                      }
                      
                      // Apply state filter preference
-                     if (graphPrefs.stateFilter) {
-                        me.widgets.filterState.value = graphPrefs.stateFilter;
+                     if (graphPrefs.hiddenStates) {
+                        me.hiddenStates = graphPrefs.hiddenStates.split(",");
+                        me._populateStateFilter();
                      }
                   }
                   
                   // Initial update with preferences applied
-                  me.update(me.widgets.filterName.value, me.widgets.filterState.value, !me.simpleView);
+                  me.update();
                },
                scope: this
             },
             failureCallback: {
                fn: function() {
                   // Default update if preferences fail
-                  me.update(me.widgets.filterName.value, me.widgets.filterState.value, !me.simpleView);
+                  me.update();
                },
                scope: this
             }
@@ -249,16 +268,13 @@
          Event.on(this.widgets.filterName, "keyup", function() {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(function() {
-               me.update(me.widgets.filterName.value, me.widgets.filterState.value, !me.simpleView);
+               me.update();
             }, doneTypingInterval);
          });
 
          Event.on(this.widgets.filterName, "keydown", function() {
             clearTimeout(typingTimer);
          });
-
-         // State filter change
-         Event.on(this.widgets.filterState, "change", this.onStateFilterChange, this, true);
 
           YAHOO.Bubbling.addDefaultAction(DOWNLOAD_EVENTCLASS, function (layer, args) {
           	
@@ -336,13 +352,10 @@
        * Fired by YUI when parent element is available for scripting
        * 
        * @method onReady
-       * @param name {string} Optional name filter
-       * @param systemState {string} Optional system state filter
-       * @param fullView {boolean} Optional full view mode
        */
-      update : function VersionsGraph_update(name, systemState, fullView) {
+      update : function VersionsGraph_update() {
 
-         var instance = this;
+         var instance = this, name = this.widgets.filterName.value, hiddenStates = this.hiddenStates;
 
          this.widgets.alfrescoDataTable = new Alfresco.util.DataTable(
                {
@@ -355,16 +368,18 @@
                            var newItemType = oFullResponse[0].itemType;
                            if (instance.options.itemType !== newItemType) {
                               instance.options.itemType = newItemType;
-                              instance._repopulateStateFilter();
+                              instance._populateStateFilter();
                            }
                         }
 
                         // Filter by name and entity state
                         var filteredResponse = oFullResponse.filter(function(entity) {
                            var nameMatch = (name || "") === "" || entity.name.toLowerCase().indexOf(name.toLowerCase()) !== -1;
-                           var stateMatch = (systemState || "") === "" || entity.entityState === systemState;
+                           var stateMatch = hiddenStates.indexOf(entity.entityState) === -1;
                            return nameMatch && stateMatch;
                         });
+
+                        instance._linkToDisplayedAncestors(oFullResponse, filteredResponse);
 
                         instance.graphData = filteredResponse;
 
@@ -532,7 +547,7 @@
          
          var nbCols = 0, columnsPos = {}, shouldBranch = false, columns = {};
          for ( var i in this.graphData) {
-            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].entityFromBranch;
+            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].displayedBranchFrom;
             
             var test = columnsPos[entityNodeRef];
             if (!test && test != 0) {
@@ -556,26 +571,20 @@
          var box_size = Math.min(18, Math.floor((canvasWidth - edge_pad * 2) / (nbCols)));
          var base_x = canvasWidth - edge_pad - 10;
 
-         var prec = {}, extra = 15;
+         var prec = {};
          nbCols = 0;
          
          var idx = this.graphData.length - 1;
 
 
-         var yOffset = Dom.getY(this.id + "-graphNodes") - extra;
+         var yOffset = Dom.getY(this.id + "-graphNodes");
 
          for ( var i in this.graphData) {
-            var rowElement = Dom.get("graph-version-row-" + idx);
-            var nextRowElement = Dom.get("graph-version-row-" + (idx - 1));
-            
-            // Calculate Y position at the vertical center of the row
-            var rowHeight = rowElement ? rowElement.offsetHeight : 20;
-            var nextRowHeight = nextRowElement ? nextRowElement.offsetHeight : 20;
-            
-            var nextY = nextRowElement ? (Dom.getY(nextRowElement) - yOffset + nextRowHeight / 2) : 0;
-            var rowY = rowElement ? (Dom.getY(rowElement) - yOffset + rowHeight / 2) : 0;
+            var rowY = this._getRowAnchorY(idx, yOffset, 0);
+            // The newest version has no next row: the line stops on its dot
+            var nextY = this._getRowAnchorY(idx - 1, yOffset, rowY);
 
-            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].entityFromBranch;
+            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].displayedBranchFrom;
 
             var test = columns[entityNodeRef];
             if (!test && test != 0) {
@@ -595,9 +604,7 @@
                this.ctx.beginPath();
 
                if (start != end) {
-                  var prevRowElement = Dom.get("graph-version-row-" + prec[precNodeRef]);
-                  var prevRowHeight = prevRowElement ? prevRowElement.offsetHeight : 20;
-                  var prevY = prevRowElement ? (Dom.getY(prevRowElement) - yOffset + prevRowHeight / 2 - this.dot_radius) : 0;
+                  var prevY = this._getRowAnchorY(prec[precNodeRef], yOffset, this.dot_radius) - this.dot_radius;
                   this.ctx.moveTo(x, prevY);
                   var x2 = base_x - box_size * end;
                   var ymid = (rowY + prevY) / 2;
@@ -631,76 +638,200 @@
       },
 
       /**
-       * Repopulates the state filter dropdown when entity type changes.
+       * Returns the canvas ordinate of a version row, at the vertical center of its version badge
+       * so that the dot lines up with the version number rather than with the whole row.
        * 
-       * @method _repopulateStateFilter
+       * @method _getRowAnchorY
+       * @param rowIndex {int} Index of the row in the datatable
+       * @param canvasY {int} Page ordinate of the top of the canvas
+       * @param defaultY {int} Ordinate returned when the row does not exist
+       * @return {int} The ordinate of the row in the canvas
        * @private
        */
-      _repopulateStateFilter : function VersionsGraph__repopulateStateFilter() {
-         var selectElement = this.widgets.filterState;
-         if (!selectElement) {
-            return;
+      _getRowAnchorY : function VersionsGraph__getRowAnchorY(rowIndex, canvasY, defaultY) {
+         var rowElement = Dom.get("graph-version-row-" + rowIndex);
+         if (!rowElement) {
+            return defaultY;
          }
-         
-         // Clear existing options except the first one (All states)
-         while (selectElement.options.length > 1) {
-            selectElement.remove(1);
-         }
-         
-         // Repopulate with new states
-         this._populateStateFilter(selectElement);
+         var anchor = Dom.getElementsByClassName("document-version", "span", rowElement)[0] || rowElement;
+         return Dom.getY(anchor) - canvasY + anchor.offsetHeight / 2;
       },
 
       /**
-       * Populates the state filter dropdown based on entity type configuration.
+       * Keeps the state filter menu open when an item is clicked, so that several states can be checked in a row.
+       * The menu "keepopen" option is not enough: the menu button hides its menu on every item click.
        * 
-       * @method _populateStateFilter
-       * @param selectElement {HTMLElement} The select element to populate
+       * @method _keepStateFilterOpen
        * @private
        */
-      _populateStateFilter : function VersionsGraph__populateStateFilter(selectElement) {
-         var itemType = this.options.itemType;
-         var types = this.options.types || [];
-         var states = this.options.states || [];
-         var allowedStates = [];
-         
-         // Find the type configuration for this entity type
+      _keepStateFilterOpen : function VersionsGraph__keepStateFilterOpen() {
+         var button = this.widgets.stateFilter, menu = button.getMenu();
+         menu.cfg.setProperty("keepopen", true);
+         menu.unsubscribe("click", button._onMenuClick, button);
+      },
+
+      /**
+       * Fills the state filter menu with the states allowed for the entity type: an "all" item, then one
+       * checkable item per state, checked unless the state is hidden.
+       * 
+       * @method _populateStateFilter
+       * @private
+       */
+      _populateStateFilter : function VersionsGraph__populateStateFilter() {
+         var menu = this.widgets.stateFilter.getMenu(), allowedStates = this._getAllowedStates(), stateItems = [];
+         for (var i = 0; i < allowedStates.length; i++) {
+            stateItems.push({
+               text : this._renderStateItemText(this._getStateLabel(allowedStates[i]),
+                     this.hiddenStates.indexOf(allowedStates[i]) === -1),
+               value : allowedStates[i]
+            });
+         }
+         menu.clearContent();
+         menu.addItems([ {
+            text : this._renderStateItemText(Alfresco.util.message("label.all-states", this.name), false),
+            value : ALL_STATES
+         } ], 0);
+         menu.addItems(stateItems, 1);
+         menu.render();
+         this._refreshStateFilter();
+      },
+
+      /**
+       * Renders the text of a state menu item: a checkbox followed by the label, with the form field markup so that
+       * the theme draws the checkbox as in forms. The checkbox only shows the state, the click is handled by the
+       * menu item.
+       * 
+       * @method _renderStateItemText
+       * @param label {string} The item label
+       * @param checked {boolean} Whether the checkbox is checked
+       * @return {string} The item text as HTML
+       * @private
+       */
+      _renderStateItemText : function VersionsGraph__renderStateItemText(label, checked) {
+         return '<span class="form-field"><input type="checkbox" tabindex="-1"' + (checked ? ' checked="checked"' : '')
+               + ' /><label>' + $html(label) + '</label></span>';
+      },
+
+      /**
+       * Returns the checkbox of a state menu item.
+       * 
+       * @method _getItemCheckbox
+       * @param menuItem {YAHOO.widget.MenuItem} The menu item
+       * @return {HTMLElement} The checkbox
+       * @private
+       */
+      _getItemCheckbox : function VersionsGraph__getItemCheckbox(menuItem) {
+         return menuItem.element.getElementsByTagName("input")[0];
+      },
+
+      /**
+       * Returns the states configured for the entity type, or the default ones when the type is not configured.
+       * 
+       * @method _getAllowedStates
+       * @return {array} The state values
+       * @private
+       */
+      _getAllowedStates : function VersionsGraph__getAllowedStates() {
+         var types = this.options.types || [], typeStates = {};
          for (var i = 0; i < types.length; i++) {
-            var typeConfig = types[i];
-            if (itemType && itemType === typeConfig.name) {
-               allowedStates = typeConfig.states ? typeConfig.states.split(",") : [];
-               break;
+            typeStates[types[i].name] = types[i].states;
+         }
+         var states = typeStates[this.options.itemType] || typeStates["default"] || "", allowedStates = [];
+         var values = states.split(",");
+         for (var j = 0; j < values.length; j++) {
+            if (values[j].trim().length > 0) {
+               allowedStates.push(values[j].trim());
             }
          }
-         
-         // If no specific type found, use default states
-         if (allowedStates.length === 0) {
-            for (var j = 0; j < types.length; j++) {
-               if (types[j].name === "default") {
-                  allowedStates = types[j].states ? types[j].states.split(",") : [];
-                  break;
-               }
+         return allowedStates;
+      },
+
+      /**
+       * Returns the translated label of a state.
+       * 
+       * @method _getStateLabel
+       * @param stateValue {string} The state value
+       * @return {string} The label configured for the state, or the state value itself
+       * @private
+       */
+      _getStateLabel : function VersionsGraph__getStateLabel(stateValue) {
+         var states = this.options.states || [];
+         for (var i = 0; i < states.length; i++) {
+            if (states[i].value === stateValue) {
+               return Alfresco.util.message(states[i].label, this.name) || stateValue;
             }
          }
-         
-         // Populate the select with allowed states
-         for (var k = 0; k < allowedStates.length; k++) {
-            var stateValue = allowedStates[k].trim();
-            var stateLabel = stateValue;
-            
-            // Find the label for this state
-            for (var l = 0; l < states.length; l++) {
-               if (states[l].value === stateValue) {
-                  stateLabel = Alfresco.util.message(states[l].label, this.name) || stateValue;
-                  break;
-               }
+         return stateValue;
+      },
+
+      /**
+       * Checks the "all" item when every state is displayed, and sets the state filter button label: "all", the
+       * displayed states when there are few of them, otherwise their count.
+       * 
+       * @method _refreshStateFilter
+       * @private
+       */
+      _refreshStateFilter : function VersionsGraph__refreshStateFilter() {
+         var itemGroups = this.widgets.stateFilter.getMenu().getItemGroups(), stateItems = itemGroups[1] || [],
+               displayedLabels = [], label;
+         for (var i = 0; i < stateItems.length; i++) {
+            if (this._getItemCheckbox(stateItems[i]).checked) {
+               displayedLabels.push(this._getStateLabel(stateItems[i].value));
             }
-            
-            var option = document.createElement("option");
-            option.value = stateValue;
-            option.text = stateLabel;
-            selectElement.appendChild(option);
          }
+         this._getItemCheckbox(itemGroups[0][0]).checked = displayedLabels.length === stateItems.length;
+         if (displayedLabels.length === stateItems.length) {
+            label = Alfresco.util.message("label.all-states", this.name);
+         } else if (displayedLabels.length > MAX_LISTED_STATES) {
+            label = Alfresco.util.message("label.displayed-states", this.name, displayedLabels.length);
+         } else {
+            label = displayedLabels.length > 0 ? displayedLabels.join(", ") : Alfresco.util.message("label.no-state", this.name);
+         }
+         this.widgets.stateFilter.set("label", $html(label) + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+      },
+
+      /**
+       * Sets on each displayed version the closest displayed entity it branches from, so that a branch whose
+       * parent is filtered out stays attached to the graph instead of being drawn without dot nor line.
+       * 
+       * @method _linkToDisplayedAncestors
+       * @param allVersions {array} All the versions returned by the server
+       * @param displayedVersions {array} The versions kept by the filters
+       * @private
+       */
+      _linkToDisplayedAncestors : function VersionsGraph__linkToDisplayedAncestors(allVersions, displayedVersions) {
+         var branchParents = {}, displayedEntities = {}, i;
+         for (i = 0; i < allVersions.length; i++) {
+            if (allVersions[i].entityFromBranch && allVersions[i].entityFromBranch !== allVersions[i].entityNodeRef) {
+               branchParents[allVersions[i].entityNodeRef] = allVersions[i].entityFromBranch;
+            }
+         }
+         for (i = 0; i < displayedVersions.length; i++) {
+            displayedEntities[displayedVersions[i].entityNodeRef] = true;
+         }
+         for (i = 0; i < displayedVersions.length; i++) {
+            displayedVersions[i].displayedBranchFrom = this._findDisplayedAncestor(displayedVersions[i].entityFromBranch,
+                  branchParents, displayedEntities);
+         }
+      },
+
+      /**
+       * Walks up the branch hierarchy from an entity until an entity kept by the filters is found.
+       * 
+       * @method _findDisplayedAncestor
+       * @param entityNodeRef {string} The entity to start from
+       * @param branchParents {object} The entity each entity branches from, by entity nodeRef
+       * @param displayedEntities {object} The entities kept by the filters, by entity nodeRef
+       * @return {string} The closest displayed ancestor, or null when every ancestor is filtered out
+       * @private
+       */
+      _findDisplayedAncestor : function VersionsGraph__findDisplayedAncestor(entityNodeRef, branchParents, displayedEntities) {
+         var visited = {};
+         while (entityNodeRef && !displayedEntities[entityNodeRef] && !visited[entityNodeRef]) {
+            visited[entityNodeRef] = true;
+            entityNodeRef = branchParents[entityNodeRef];
+         }
+         return entityNodeRef && displayedEntities[entityNodeRef] ? entityNodeRef : null;
       },
 
       /**
@@ -716,18 +847,72 @@
          if (e) {
             Event.preventDefault(e);
          }
-         this.update(this.widgets.filterName.value, this.widgets.filterState.value, !this.simpleView);
+         this.update();
       },
 
       /**
-       * State filter change handler
+       * State filter menu click handler: shows or hides the clicked state, or every state for the "all" item.
        * 
-       * @method onStateFilterChange
-       * @param e {object} DomEvent
+       * @method onStateFilterClick
+       * @param p_sType {string} The event type
+       * @param p_aArgs {array} The event arguments, the clicked menu item at index 1
        */
-      onStateFilterChange : function VersionsGraph_onStateFilterChange(e) {
-         this.services.preferences.set(PREFERENCES_VERSIONS_GRAPH_STATE, this.widgets.filterState.value);
-         this.update(this.widgets.filterName.value, this.widgets.filterState.value, !this.simpleView);
+      onStateFilterClick : function VersionsGraph_onStateFilterClick(p_sType, p_aArgs) {
+         var menuItem = p_aArgs[1];
+         if (!menuItem) {
+            return;
+         }
+         var displayed = !this._getItemCheckbox(menuItem).checked;
+         if (menuItem.value === ALL_STATES) {
+            this._setAllStatesDisplayed(displayed);
+         } else {
+            this._setStateDisplayed(menuItem, displayed);
+         }
+         this._refreshStateFilter();
+         this._saveHiddenStates();
+      },
+
+      /**
+       * Checks or unchecks every state menu item.
+       * 
+       * @method _setAllStatesDisplayed
+       * @param displayed {boolean} Whether every state is displayed or hidden
+       * @private
+       */
+      _setAllStatesDisplayed : function VersionsGraph__setAllStatesDisplayed(displayed) {
+         var stateItems = this.widgets.stateFilter.getMenu().getItemGroups()[1] || [];
+         for (var i = 0; i < stateItems.length; i++) {
+            this._setStateDisplayed(stateItems[i], displayed);
+         }
+      },
+
+      /**
+       * Checks or unchecks a state menu item and updates the hidden states accordingly.
+       * 
+       * @method _setStateDisplayed
+       * @param menuItem {YAHOO.widget.MenuItem} The state menu item
+       * @param displayed {boolean} Whether the state is displayed or hidden
+       * @private
+       */
+      _setStateDisplayed : function VersionsGraph__setStateDisplayed(menuItem, displayed) {
+         var index = this.hiddenStates.indexOf(menuItem.value);
+         this._getItemCheckbox(menuItem).checked = displayed;
+         if (displayed && index !== -1) {
+            this.hiddenStates.splice(index, 1);
+         } else if (!displayed && index === -1) {
+            this.hiddenStates.push(menuItem.value);
+         }
+      },
+
+      /**
+       * Stores the hidden states in the user preferences and refreshes the graph.
+       * 
+       * @method _saveHiddenStates
+       * @private
+       */
+      _saveHiddenStates : function VersionsGraph__saveHiddenStates() {
+         this.services.preferences.set(PREFERENCES_VERSIONS_GRAPH_HIDDEN_STATES, this.hiddenStates.join(","));
+         this.update();
       },
 
       /**

@@ -75,7 +75,7 @@
 	
 	
 	<Dimension  name="tagsDimension" caption="${msg("jsolap.tags.title")}" >
-		<Hierarchy name="tags" hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entityNodeRef">		
+		<Hierarchy name="tags" caption="${msg("jsolap.tags.title")}" hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}" primaryKey="entityNodeRef">		
 				<View name="tags" alias="tags">
 					<SQL dialect="generic">
 						select  
@@ -93,7 +93,7 @@
 		
 	
 		<Dimension name="clientsDimension" caption="${msg("jsolap.client.title")}">
-			<Hierarchy name="clients" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entityNodeRef">
+			<Hierarchy name="clients" caption="${msg("jsolap.client.title")}" hasAll="true" allMemberCaption="${msg("jsolap.client.caption")}" primaryKey="entityNodeRef">
 				<View name="clients" alias="clients">
 								<SQL dialect="generic">
 									select  
@@ -175,7 +175,7 @@
 		
 		
 		<Dimension  name="productsDimension" caption="${msg("jsolap.products.title")}">
-			<Hierarchy name="products" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">		
+			<Hierarchy name="products" caption="${msg("jsolap.products.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">		
 				<View name="products_dim" alias="products_dim">
 					<SQL dialect="generic">
 						select
@@ -841,7 +841,7 @@
 		</Dimension>
 		
 		<Dimension name="project" caption="${msg("jsolap.project.title")}">
-			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
+			<Hierarchy name="project_dim" caption="${msg("jsolap.project.title")}" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
 				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
 				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
 				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
@@ -990,7 +990,7 @@
 		</Dimension>
 		
 		<Dimension name="entity" caption="${msg("jsolap.entity.title")}">
-			<Hierarchy name="entity_dim" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
+			<Hierarchy name="entity_dim" caption="${msg("jsolap.entity.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
 				<Level name="entity_noderef" caption="${msg("jsolap.entity.title")}" column="entityNodeRef" nameColumn="entityName" type="String" highCardinality="true"  />
 				</Hierarchy>
 			<Hierarchy name="entityFamily" caption="${msg("jsolap.entityFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
@@ -1266,7 +1266,7 @@
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
 		
 		<Dimension name="currentTasksDimension" caption="${msg("jsolap.currentTasks.title")}" foreignKey="nodeRef">
-			<Hierarchy name="currentTasks" hasAll="true" allMemberCaption="${msg("jsolap.currentTasks.caption")}" primaryKey="entityNodeRef">
+			<Hierarchy name="currentTasks" caption="${msg("jsolap.currentTasks.title")}" hasAll="true" allMemberCaption="${msg("jsolap.currentTasks.caption")}" primaryKey="entityNodeRef">
 				<View name="currentTasks" alias="currentTasks">
 								<SQL dialect="generic">
 									select  
@@ -1532,7 +1532,7 @@
 		</Dimension>
 
 		<Dimension name="designation" caption="${msg("jsolap.designation.title")}">
-			<Hierarchy name="productPerFamily" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState" type="String" />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productNodeRef" nameColumn="productName" type="String" highCardinality="true" />
 			</Hierarchy>
@@ -1573,14 +1573,29 @@
 		<Measure name="allergenQtyPerc" caption="${msg("jsolap.allergenQtyPerc.title")}" column="allergenQtyPerc" datatype="Numeric" aggregator="avg" visible="true" />
 	</Cube>
 
-	<#-- Catalogue completeness (#24931). bcpg:entityScore is a d:text holding the JSON the catalog
-	     formulation produces: one entry per catalog, with its score and the fields still missing.
-	     JSON_TABLE unnests it so the completeness becomes a cube like any other.
+	<#-- Catalogue completeness (#24931). bcpg:entityScore holds the JSON the catalog formulation
+	     produces: one entry per catalog, with its score and the fields still missing. JSON_TABLE
+	     unnests it so the completeness becomes a cube like any other. The remote API serves it as a
+	     JSON object, which the OLAP connector (1.0.19 and later) copies whole into the document.
 
-	     CAST(NULLIF(...,'') AS JSON) on a product carrying no score yields NULL, and JSON_TABLE on
-	     NULL returns no row rather than failing - which matters, because a view that errors takes
-	     the whole schema down with it, not just its own cube. A product is scored only once it has
-	     been formulated, so an instance that never formulates simply gets an empty cube. -->
+	     JSON_TABLE reads the object in place. Extracting it as text first and casting it back to
+	     JSON re-parsed some 14 kB per product on every query Mondrian sends: 5 s for each of the
+	     several SQL queries behind one MDX query, against 0.2 s in place. A product carrying no
+	     score yields no row rather than failing - which matters, because a view that errors takes
+	     the whole schema down with it, not just its own cube.
+
+	     The formulation also writes one entry per report locale next to the main one, carrying a
+	     locale and its own score: only the main entry is kept, otherwise every catalog is counted
+	     once per language and its missing fields with it.
+
+	     The label is resolved once per catalog id: a product may carry another label, or none, for
+	     the same catalog, and Mondrian then reads one row per (id, label) pair and lists the same
+	     member once per row.
+
+	     The global score is the one the PLM wheel shows, a blend of the catalogs, the specifications
+	     and the components validation. It belongs to the product, not to a catalog, so it is carried
+	     by the first catalog row of each product only: averaged over the rows, it would otherwise
+	     weigh each product by its number of catalogs. -->
 	<Cube name="catalogCompleteness" caption="${msg("jsolap.catalogCompleteness.title")}" cache="true" enabled="true" defaultMeasure="catalogScore">
 
 		<View name="catalogCompletenessView" alias="catalogCompletenessView">
@@ -1595,29 +1610,37 @@
 					p.doc->>"$.metadata_siteId" as siteId,
 					p.doc->>"$.metadata_siteName" as siteName,
 					c.catalogId,
-					c.catalogName,
+					COALESCE(MAX(c.catalogName) OVER (PARTITION BY c.catalogId), c.catalogId) as catalogName,
 					c.catalogScore,
-					JSON_LENGTH(c.missingFields) as missingFieldCount
+					JSON_LENGTH(c.missingFields) as missingFieldCount,
+					CASE WHEN ROW_NUMBER() OVER (PARTITION BY p.nodeRef ORDER BY c.catalogIndex) = 1
+						THEN CAST(p.doc->>"$.bcpg_entityScore.global" AS DECIMAL(20,6)) END as globalScore
 				from
 					bcpg_product p,
-					JSON_TABLE(CAST(NULLIF(p.doc->>"$.bcpg_entityScore", '') AS JSON), '$.catalogs[*]'
+					JSON_TABLE(p.doc, '$.bcpg_entityScore.catalogs[*]'
 						COLUMNS (
+							catalogIndex FOR ORDINALITY,
 							catalogId VARCHAR(255) PATH '$.id',
-							catalogName VARCHAR(255) PATH '$.displayName',
+							catalogName VARCHAR(255) PATH '$.label',
 							catalogScore DECIMAL(20,6) PATH '$.score',
-							missingFields JSON PATH '$.missingFields'
+							missingFields JSON PATH '$.missingFields',
+							catalogLocale VARCHAR(20) PATH '$.locale'
 						)) c
+				where c.catalogLocale is null
 			</SQL>
 		</View>
 
 		<Dimension name="catalog" caption="${msg("jsolap.catalog.title")}">
-			<Hierarchy name="catalog" hasAll="true" allMemberCaption="${msg("jsolap.catalog.caption")}">
-				<Level name="catalogName" caption="${msg("jsolap.catalog.title")}" column="catalogId" nameColumn="catalogName" type="String" />
+			<Hierarchy name="catalog" caption="${msg("jsolap.catalog.title")}" hasAll="true" allMemberCaption="${msg("jsolap.catalog.caption")}">
+				<#-- Named by the catalog id and only captioned with its label: two catalogs may share a
+				     label (the INCO finished product and raw material catalogs do), and a name column would
+				     merge them into one member showing the same figures twice. -->
+				<Level name="catalogName" caption="${msg("jsolap.catalog.title")}" column="catalogId" captionColumn="catalogName" type="String" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="designation" caption="${msg("jsolap.designation.title")}">
-			<Hierarchy name="productPerFamily" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
+			<Hierarchy name="productPerFamily" caption="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}">
 				<Level approxRowCount="5" name="productState" caption="${msg("jsolap.productState.title")}" column="productState" type="String" />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productNodeRef" nameColumn="productName" type="String" highCardinality="true" />
 			</Hierarchy>
@@ -1641,6 +1664,7 @@
 
 		<Measure name="catalogScore" caption="${msg("jsolap.catalogScore.title")}" column="catalogScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="missingFieldCount" caption="${msg("jsolap.missingFieldCount.title")}" column="missingFieldCount" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="globalScore" caption="${msg("jsolap.globalScore.title")}" column="globalScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="scoredProducts" caption="${msg("jsolap.scoredProducts.title")}" column="productNodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 	</Cube>
 
@@ -2342,7 +2366,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2364,7 +2388,7 @@
 		</Dimension>
 
 		<Dimension name="cost" caption="${msg("jsolap.cost.title")}">
-			<Hierarchy name="cost" hasAll="true" allMemberCaption="${msg("jsolap.cost.caption")}">
+			<Hierarchy name="cost" caption="${msg("jsolap.cost.title")}" hasAll="true" allMemberCaption="${msg("jsolap.cost.caption")}">
 				<!-- beCPG #24931: the charact node is duplicated per entity (18 labels for 604 nodeRefs),
 				     so the label is the level users group by; the node stays available below it. -->
 				<Level name="costName" caption="${msg("jsolap.cost.title")}" column="costName" type="String" uniqueMembers="true" />
@@ -2373,7 +2397,7 @@
 		</Dimension>
 
 		<Dimension name="costUnit" caption="${msg("jsolap.costUnit.title")}">
-			<Hierarchy name="costUnit" hasAll="true" allMemberCaption="${msg("jsolap.costUnit.title")}">
+			<Hierarchy name="costUnit" caption="${msg("jsolap.costUnit.title")}" hasAll="true" allMemberCaption="${msg("jsolap.costUnit.title")}">
 				<Level name="costUnit" caption="${msg("jsolap.costUnit.title")}" column="costUnit" type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -2452,7 +2476,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2474,20 +2498,20 @@
 		</Dimension>
 
 		<Dimension name="packagingComponent" caption="${msg("jsolap.packagingComponent.title")}">
-			<Hierarchy name="packagingComponent" hasAll="true" allMemberCaption="${msg("jsolap.packagingComponent.caption")}">
+			<Hierarchy name="packagingComponent" caption="${msg("jsolap.packagingComponent.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingComponent.caption")}">
 				<Level name="componentFamily" caption="${msg("jsolap.packagingComponentFamily.title")}" column="componentFamily" type="String" uniqueMembers="true" />
 				<Level name="componentName" caption="${msg("jsolap.packagingComponent.title")}" column="componentName" type="String" highCardinality="true" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="packagingLevel" caption="${msg("jsolap.packagingLevel.title")}">
-			<Hierarchy name="packagingLevel" hasAll="true" allMemberCaption="${msg("jsolap.packagingLevel.title")}">
+			<Hierarchy name="packagingLevel" caption="${msg("jsolap.packagingLevel.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingLevel.title")}">
 				<Level name="packagingLevel" caption="${msg("jsolap.packagingLevel.title")}" column="packagingLevel" type="String" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="packagingRecycling" caption="${msg("jsolap.packagingRecycling.title")}">
-			<Hierarchy name="packagingRecycling" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecycling.title")}">
+			<Hierarchy name="packagingRecycling" caption="${msg("jsolap.packagingRecycling.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecycling.title")}">
 				<Level name="packagingIsRecycle" caption="${msg("jsolap.packagingRecycling.title")}" column="packagingIsRecycle" type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -2561,7 +2585,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2583,7 +2607,7 @@
 		</Dimension>
 
 		<Dimension name="packagingMaterial" caption="${msg("jsolap.packagingMaterial.title")}">
-			<Hierarchy name="packagingMaterial" hasAll="true" allMemberCaption="${msg("jsolap.packagingMaterial.caption")}">
+			<Hierarchy name="packagingMaterial" caption="${msg("jsolap.packagingMaterial.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingMaterial.caption")}">
 				<Level name="materialName" caption="${msg("jsolap.packagingMaterial.title")}" column="materialName" type="String" uniqueMembers="true" />
 				<Level name="materialNodeRef" caption="${msg("jsolap.packagingMaterialItem.title")}" column="materialNodeRef" nameColumn="materialName" type="String" highCardinality="true" />
 			</Hierarchy>
@@ -2615,7 +2639,7 @@
 		</Dimension>
 
 		<Dimension name="packagingRecyclability" caption="${msg("jsolap.packagingRecyclability.title")}">
-			<Hierarchy name="packagingRecyclability" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecyclability.title")}">
+			<Hierarchy name="packagingRecyclability" caption="${msg("jsolap.packagingRecyclability.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingRecyclability.title")}">
 				<#-- The column holds the raw boolean of bcpg:isNotRecyclable, and its meaning is
 				     inverted: true means NOT recyclable. Without a formatter the axis reads
 				     "true / false / null", which says nothing to a reader and reads backwards. -->
@@ -2637,7 +2661,7 @@
 		</Dimension>
 
 		<Dimension name="packagingMaterialLevel" caption="${msg("jsolap.packagingLevel.title")}">
-			<Hierarchy name="packagingMaterialLevel" hasAll="true" allMemberCaption="${msg("jsolap.packagingLevel.title")}">
+			<Hierarchy name="packagingMaterialLevel" caption="${msg("jsolap.packagingLevel.title")}" hasAll="true" allMemberCaption="${msg("jsolap.packagingLevel.title")}">
 				<Level name="materialLevel" caption="${msg("jsolap.packagingLevel.title")}" column="materialLevel" type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -2715,7 +2739,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2738,14 +2762,14 @@
 
 
 		<Dimension name="component" caption="${msg("jsolap.component.title")}">
-			<Hierarchy name="component" hasAll="true" allMemberCaption="${msg("jsolap.component.caption")}">
+			<Hierarchy name="component" caption="${msg("jsolap.component.title")}" hasAll="true" allMemberCaption="${msg("jsolap.component.caption")}">
 				<Level name="componentFamily" caption="${msg("jsolap.componentFamily.title")}" column="componentFamily" type="String" uniqueMembers="true" />
 				<Level name="componentName" caption="${msg("jsolap.component.title")}" column="componentName" type="String" highCardinality="true" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="compoDeclType" caption="${msg("jsolap.compoDeclType.title")}">
-			<Hierarchy name="compoDeclType" hasAll="true" allMemberCaption="${msg("jsolap.compoDeclType.title")}">
+			<Hierarchy name="compoDeclType" caption="${msg("jsolap.compoDeclType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.compoDeclType.title")}">
 				<Level name="compoDeclType" caption="${msg("jsolap.compoDeclType.title")}" column="compoDeclType" type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -2759,6 +2783,8 @@
 
 	<Cube name="regulatoryScores" caption="${msg("jsolap.regulatoryScores.title")}" cache="true" enabled="true">
 
+		<#-- A numeric class is stored either as an integer or as a decimal ("1" or "1.0") depending on
+		     the score engine, which made every whole class appear twice: the trailing zeros are dropped. -->
 		<View name="regulatoryScoreListView" alias="regulatoryScoreListView">
 					<SQL dialect="generic">
 						select
@@ -2766,8 +2792,8 @@
 							a.entityNodeRef,
 							a.doc->>"$.bcpg_rslScoreDef[0]" as scoreDefName,
 							a.doc->>"$.bcpg_rslScoreDef_bcpg_nodeRef[0]" as scoreDefNodeRef,
-							a.doc->>"$.bcpg_rslClass" as rslClass,
-							a.doc->>"$.bcpg_rslPreviousClass" as rslPreviousClass,
+							REGEXP_REPLACE(a.doc->>"$.bcpg_rslClass", '\\.0+$', '') as rslClass,
+							REGEXP_REPLACE(a.doc->>"$.bcpg_rslPreviousClass", '\\.0+$', '') as rslPreviousClass,
 							a.doc->>"$.bcpg_rslCategory" as rslCategory,
 							a.doc->>"$.bcpg_rslVersion" as rslVersion,
 							CAST(NULLIF(a.doc->>"$.bcpg_rslValue", 'null') AS DECIMAL(20,6)) as rslValue,
@@ -2820,7 +2846,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2843,19 +2869,19 @@
 
 
 		<Dimension name="scoreDefinition" caption="${msg("jsolap.scoreDefinition.title")}">
-			<Hierarchy name="scoreDefinition" hasAll="true" allMemberCaption="${msg("jsolap.scoreDefinition.caption")}">
+			<Hierarchy name="scoreDefinition" caption="${msg("jsolap.scoreDefinition.title")}" hasAll="true" allMemberCaption="${msg("jsolap.scoreDefinition.caption")}">
 				<Level name="scoreDefNodeRef" caption="${msg("jsolap.scoreDefinition.title")}" column="scoreDefNodeRef" nameColumn="scoreDefName" type="String" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="regulatoryClass" caption="${msg("jsolap.regulatoryClass.title")}">
-			<Hierarchy name="regulatoryClass" hasAll="true" allMemberCaption="${msg("jsolap.regulatoryClass.title")}">
+			<Hierarchy name="regulatoryClass" caption="${msg("jsolap.regulatoryClass.title")}" hasAll="true" allMemberCaption="${msg("jsolap.regulatoryClass.title")}">
 				<Level name="rslClass" caption="${msg("jsolap.regulatoryClass.title")}" column="rslClass" type="String" uniqueMembers="true" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="regulatoryCategory" caption="${msg("jsolap.regulatoryCategory.title")}">
-			<Hierarchy name="regulatoryCategory" hasAll="true" allMemberCaption="${msg("jsolap.regulatoryCategory.title")}">
+			<Hierarchy name="regulatoryCategory" caption="${msg("jsolap.regulatoryCategory.title")}" hasAll="true" allMemberCaption="${msg("jsolap.regulatoryCategory.title")}">
 				<Level name="rslCategory" caption="${msg("jsolap.regulatoryCategory.title")}" column="rslCategory" type="String" uniqueMembers="true" />
 			</Hierarchy>
 		</Dimension>
@@ -2875,8 +2901,6 @@
 							a.doc->>"$.bcpg_toxListTox[0]" as toxName,
 							a.doc->>"$.bcpg_toxListTox_bcpg_nodeRef[0]" as toxNodeRef,
 							CAST(NULLIF(a.doc->>"$.bcpg_toxListValue", 'null') AS DECIMAL(20,6)) as toxValue,
-							CAST(NULLIF(a.doc->>"$.bcpg_toxListMini", 'null') AS DECIMAL(20,6)) as toxMini,
-							CAST(NULLIF(a.doc->>"$.bcpg_toxListMaxi", 'null') AS DECIMAL(20,6)) as toxMaxi,
 							b.nodeRef as productNodeRef,
 							b.doc->>"$.cm_name" as productName,
 							b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
@@ -2925,7 +2949,7 @@
 		</Dimension>
 
 		<Dimension name="productType" caption="${msg("jsolap.productType.title")}">
-			<Hierarchy name="productType" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
+			<Hierarchy name="productType" caption="${msg("jsolap.productType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.productType.title")}">
 				<Level approxRowCount="10" name="entity_type" caption="${msg("jsolap.productType.title")}" column="productType" nameColumn="productType" type="String">
 					<MemberFormatter>
 						<Script language="JavaScript">
@@ -2948,15 +2972,18 @@
 
 
 		<Dimension name="toxicologicalAgent" caption="${msg("jsolap.toxicologicalAgent.title")}">
-			<Hierarchy name="toxicologicalAgent" hasAll="true" allMemberCaption="${msg("jsolap.toxicologicalAgent.caption")}">
+			<Hierarchy name="toxicologicalAgent" caption="${msg("jsolap.toxicologicalAgent.title")}" hasAll="true" allMemberCaption="${msg("jsolap.toxicologicalAgent.caption")}">
 				<Level name="toxName" caption="${msg("jsolap.toxicologicalAgent.title")}" column="toxName" type="String" uniqueMembers="true" />
 				<Level name="toxNodeRef" caption="${msg("jsolap.toxicologicalItem.title")}" column="toxNodeRef" nameColumn="toxName" type="String" highCardinality="true" />
 			</Hierarchy>
 		</Dimension>
 
 		<Measure name="toxValue" caption="${msg("jsolap.toxValue.title")}" column="toxValue" datatype="Numeric" aggregator="avg" visible="true" />
-		<Measure name="toxMini" caption="${msg("jsolap.toxMini.title")}" column="toxMini" datatype="Numeric" aggregator="avg" visible="true" />
-		<Measure name="toxMaxi" caption="${msg("jsolap.toxMaxi.title")}" column="toxMaxi" datatype="Numeric" aggregator="avg" visible="true" />
+		<#-- bcpg:toxListMini and bcpg:toxListMaxi are specification thresholds, only entered on a product
+		     specification, which the OLAP channel does not export: on a product they are unset. The
+		     minimum and maximum therefore range over the formulated value itself. -->
+		<Measure name="toxMini" caption="${msg("jsolap.toxMini.title")}" column="toxValue" datatype="Numeric" aggregator="min" visible="true" />
+		<Measure name="toxMaxi" caption="${msg("jsolap.toxMaxi.title")}" column="toxValue" datatype="Numeric" aggregator="max" visible="true" />
 		<Measure name="toxCount" caption="${msg("jsolap.toxCount.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 	</Cube>
 
@@ -2984,14 +3011,14 @@
 
 
 		<Dimension name="plant" caption="${msg("jsolap.plant.title")}">
-			<Hierarchy name="plant" hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}">
+			<Hierarchy name="plant" caption="${msg("jsolap.plant.title")}" hasAll="true" allMemberCaption="${msg("jsolap.plant.caption")}">
 				<Level name="plantName" caption="${msg("jsolap.plant.title")}" column="plantName" type="String" uniqueMembers="true" />
 				<Level name="plantNodeRef" caption="${msg("jsolap.plantItem.title")}" column="plantNodeRef" nameColumn="plantName" type="String" highCardinality="true" />
 			</Hierarchy>
 		</Dimension>
 
 		<Dimension name="certification" caption="${msg("jsolap.certification.title")}">
-			<Hierarchy name="certification" hasAll="true" allMemberCaption="${msg("jsolap.certification.caption")}">
+			<Hierarchy name="certification" caption="${msg("jsolap.certification.title")}" hasAll="true" allMemberCaption="${msg("jsolap.certification.caption")}">
 				<Level name="certificationNodeRef" caption="${msg("jsolap.certification.title")}" column="certificationNodeRef" nameColumn="certificationName" type="String" />
 			</Hierarchy>
 			<Hierarchy name="certificationAgency" caption="${msg("jsolap.certificationAgency.title")}" hasAll="true" allMemberCaption="${msg("jsolap.certification.caption")}">

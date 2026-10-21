@@ -65,6 +65,8 @@ public class NutritionFactsDataBuilder {
 	/** Serving size shown without trailing zeros: "55g" and not "55.0g". */
 	private static final String SERVING_SIZE_PATTERN = "#.##";
 
+	private static final String PERCENT_SIGN = "%";
+
 	/** What joins the two languages of a bilingual line: "Fat / Lipides". */
 	private static final String LANGUAGE_SEPARATOR = " / ";
 
@@ -118,14 +120,30 @@ public class NutritionFactsDataBuilder {
 		List<Locale> languages = options.languages(locale);
 		Locale panelLocale = languages.get(0);
 		Map<String, String> labels = NutritionFactsLabelResolver.panelLabels(options.regulationKey(), panelLocale);
-		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options);
+		RegulatedNutrients regulated = collectNutrients(product, panelLocale, options, permittedSupplementalIngredients(format, options));
 
-		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, languages, labels),
+		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, languages, labels, options),
 				buildCalories(regulated, languages, options), buildLines(regulated, languages, options, Block.NUTRIENTS),
 				buildLines(regulated, languages, options, Block.MICRONUTRIENTS), buildLines(regulated, languages, options, Block.SUPPLEMENTAL),
 				NutritionFactsLabelResolver.footNote(options.regulationKey(), panelLocale),
 				NutritionFactsLabelResolver.notSignificantSource(options.regulationKey(), panelLocale), labels,
-				buildTranslation(product, languages, options));
+				buildTranslation(product, languages, options), buildLanguagePanels(product, languages, format, options));
+	}
+
+	/**
+	 * The same panel written in each of its languages alone, for a bilingual panel whose format
+	 * draws them apart only: the Canadian linear format states its two languages as two complete
+	 * texts set side by side, and not nutrient by nutrient as the tables do, which need none.
+	 */
+	private List<NutritionFactsData> buildLanguagePanels(ProductData product, List<Locale> languages, String format, NutritionFactsOptions options) {
+		if ((languages.size() < 2) || !NutritionFactsPanelFormats.statesEachLanguageApart(format)) {
+			return List.of();
+		}
+		List<NutritionFactsData> panels = new ArrayList<>(languages.size());
+		for (Locale language : languages) {
+			panels.add(build(product, language, format, options.withSingleLanguage()));
+		}
+		return panels;
 	}
 
 	/**
@@ -138,23 +156,35 @@ public class NutritionFactsDataBuilder {
 		}
 		Locale secondary = languages.get(1);
 		return new NutritionFactsTranslation(NutritionFactsLabelResolver.panelLabels(options.regulationKey(), secondary),
-				secondaryServingSize(product, languages), NutritionFactsLabelResolver.footNote(options.regulationKey(), secondary));
+				secondaryServingSize(product, languages, options.figureSeparator()), NutritionFactsLabelResolver.footNote(options.regulationKey(), secondary));
 	}
 
-	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options) {
+	/**
+	 * Ingredients a line marked as supplemental is declared as. Only a supplemented food facts table
+	 * declares any: every other format ignores the marking, a core nutrient keeping its line there.
+	 */
+	private PermittedSupplementalIngredients permittedSupplementalIngredients(String format, NutritionFactsOptions options) {
+		return NutritionFactsPanelFormats.declaresSupplementalIngredients(format)
+				? PermittedSupplementalIngredients.forRegulation(options.regulationKey())
+				: PermittedSupplementalIngredients.none();
+	}
 
-		List<RegulatedNutrient> nutrients = new ArrayList<>();
-		Characteristics characteristics = new Characteristics(new HashMap<>(), new HashMap<>());
-		Set<String> supplementalNutCodes = new HashSet<>();
+	private RegulatedNutrients collectNutrients(ProductData product, Locale locale, NutritionFactsOptions options,
+			PermittedSupplementalIngredients permitted) {
+
+		CollectedNutrients collected = new CollectedNutrients(new ArrayList<>(), new Characteristics(new HashMap<>(), new HashMap<>()),
+				new HashSet<>());
 
 		if (product.getNutList() != null) {
 			for (NutListDataItem nutListItem : product.getNutList()) {
-				addNutrient(nutListItem, nutrients, characteristics, supplementalNutCodes, locale, options);
+				addNutrient(nutListItem, collected, locale, options, permitted);
 			}
 		}
 
+		List<RegulatedNutrient> nutrients = collected.nutrients();
 		nutrients.sort(Comparator.comparing(nutrient -> nutrient.displayRule().sort(), Comparator.nullsLast(Comparator.naturalOrder())));
-		return new RegulatedNutrients(nutrients, characteristics, shareDailyValues(nutrients, options), supplementalNutCodes);
+		return new RegulatedNutrients(nutrients, collected.characteristics(), shareDailyValues(nutrients, options), permitted,
+				collected.supplementalNutCodes());
 	}
 
 	/**
@@ -219,8 +249,8 @@ public class NutritionFactsDataBuilder {
 		return contentLocale;
 	}
 
-	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Characteristics characteristics,
-			Set<String> supplementalNutCodes, Locale locale, NutritionFactsOptions options) {
+	private void addNutrient(NutListDataItem nutListItem, CollectedNutrients collected, Locale locale, NutritionFactsOptions options,
+			PermittedSupplementalIngredients permitted) {
 
 		if (nutListItem.getNut() == null) {
 			return;
@@ -229,14 +259,14 @@ public class NutritionFactsDataBuilder {
 		NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListItem.getNut());
 		RegulatedNutrient regulated = RegulationFormulationHelper.extractRegulatedNutrient(nutListItem, nut.getNutCode(),
 				numberLocale(options.regulationKey(), locale), options.regulationKey());
-		boolean isSupplemental = isSupplementalIngredient(nutListItem);
+		boolean isSupplemental = permitted.isPermitted(regulated.nutCode()) && isSupplementalIngredient(nutListItem);
 
 		if (isDeclared(regulated, options) || (isSupplemental && regulated.displayRule().isDefined())) {
-			nutrients.add(regulated);
-			characteristics.names().put(regulated.nutCode(), charactName(nut, locale));
-			characteristics.units().put(regulated.nutCode(), charactUnit(nut));
+			collected.nutrients().add(regulated);
+			collected.characteristics().names().put(regulated.nutCode(), charactName(nut, locale));
+			collected.characteristics().units().put(regulated.nutCode(), charactUnit(nut));
 			if (isSupplemental) {
-				supplementalNutCodes.add(regulated.nutCode());
+				collected.supplementalNutCodes().add(regulated.nutCode());
 			}
 		}
 	}
@@ -244,7 +274,8 @@ public class NutritionFactsDataBuilder {
 	/**
 	 * Tells whether the formulator marked that line as an ingredient added to the product, which a
 	 * supplemented food declares in a block of its own. The marking is a report kind carried by the
-	 * line, so that it is done in the nutrition list rather than in a screen of its own.
+	 * line, so that it is done in the nutrition list rather than in a screen of its own. It only
+	 * counts for an ingredient the regulation permits, which the caller checks.
 	 */
 	private boolean isSupplementalIngredient(NutListDataItem nutListItem) {
 		if ((nutListItem.getNodeRef() == null) || !mlNodeService.exists(nutListItem.getNodeRef())) {
@@ -309,21 +340,36 @@ public class NutritionFactsDataBuilder {
 	private List<NutritionFactsLine> buildLines(RegulatedNutrients regulated, List<Locale> languages, NutritionFactsOptions options, Block block) {
 
 		List<NutritionFactsLine> lines = new ArrayList<>();
-		for (RegulatedNutrient nutrient : regulated.nutrients()) {
-			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (blockOf(nutrient, regulated, options) == block)) {
-				lines.add(toLine(nutrient, regulated, languages, options));
-			}
+		for (RegulatedNutrient nutrient : nutrientsOf(regulated, options, block)) {
+			lines.add(toLine(nutrient, regulated, languages, options));
 		}
 		return lines;
 	}
 
 	/**
+	 * Nutrients drawn in a block, calories left out. The supplemental ingredients are declared in the
+	 * order of the list that permits them, the other blocks in the order of the regulation.
+	 */
+	private List<RegulatedNutrient> nutrientsOf(RegulatedNutrients regulated, NutritionFactsOptions options, Block block) {
+		List<RegulatedNutrient> nutrients = new ArrayList<>();
+		for (RegulatedNutrient nutrient : regulated.nutrients()) {
+			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (blockOf(nutrient, regulated, options) == block)) {
+				nutrients.add(nutrient);
+			}
+		}
+		if (block == Block.SUPPLEMENTAL) {
+			nutrients.sort(Comparator.comparing(RegulatedNutrient::nutCode, regulated.permitted().listOrder()));
+		}
+		return nutrients;
+	}
+
+	/**
 	 * Block a nutrient is drawn in. A nutrient marked as added is declared as a supplemental
-	 * ingredient, unless the regulation requires its line anyway: a mandatory declaration stays
-	 * where the regulation puts it.
+	 * ingredient only, even a core nutrient such as calcium or potassium: the guidelines on
+	 * supplemented foods (4.3.1.1 b) forbid stating its amount or its daily value in the table too.
 	 */
 	private Block blockOf(RegulatedNutrient nutrient, RegulatedNutrients regulated, NutritionFactsOptions options) {
-		if (regulated.supplementalNutCodes().contains(nutrient.nutCode()) && !nutrient.isMandatory()) {
+		if (regulated.supplementalNutCodes().contains(nutrient.nutCode())) {
 			return Block.SUPPLEMENTAL;
 		}
 		return isMicronutrient(nutrient, options) ? Block.MICRONUTRIENTS : Block.NUTRIENTS;
@@ -342,7 +388,8 @@ public class NutritionFactsDataBuilder {
 			NutritionFactsOptions options) {
 
 		String unit = carriesUnit(regulated) ? unitOf(regulated, regulatedNutrients) : null;
-		String value = withUnit(regulated.displayValuePerServing(), unit);
+		String separator = options.figureSeparator();
+		String value = withUnit(regulated.displayValuePerServing(), unit, separator);
 
 		Locale panelLocale = languages.get(0);
 		Wordings wordings = Wordings.of(nutrientLabel(regulated, regulatedNutrients, languages, options),
@@ -351,8 +398,9 @@ public class NutritionFactsDataBuilder {
 		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
 
 		return new NutritionFactsLine(regulated.nutCode(), wordings.label(), wordings.abbreviation(), wordings.plainLabel(),
-				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit), toPercent(shared.percentOf(regulated)),
-				toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
+				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit, separator),
+				toPercent(shared.percentOf(regulated), separator), toPercent(regulated.gdaPercPerContainer(), separator),
+				regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
 				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel(),
 				shared.isShared(regulated.nutCode()), regulatedNutrients.supplementalNutCodes().contains(regulated.nutCode()));
 	}
@@ -436,22 +484,25 @@ public class NutritionFactsDataBuilder {
 
 	/**
 	 * The regulation formats the figure, never its unit, which the report design used to append
-	 * itself. A panel needs the two as a single token, "8g" and not "8" next to "g".
+	 * itself. A panel needs the two as a single token, "8g" for the FDA and "8 g" for Canada, the
+	 * separator being a no-break space so that the token is never split.
 	 */
-	private String withUnit(String displayValue, String unit) {
+	private String withUnit(String displayValue, String unit, String separator) {
 		if ((displayValue == null) || (unit == null) || unit.isBlank()) {
 			return displayValue;
 		}
-		return displayValue + unit;
+		return displayValue + separator + unit;
 	}
 
-	private String toPercent(Double gdaPerc) {
-		return gdaPerc != null ? Math.round(gdaPerc) + "%" : null;
+	private String toPercent(Double gdaPerc, String separator) {
+		return gdaPerc != null ? Math.round(gdaPerc) + separator + PERCENT_SIGN : null;
 	}
 
-	private NutritionFactsServing buildServing(ProductData product, List<Locale> languages, Map<String, String> labels) {
+	private NutritionFactsServing buildServing(ProductData product, List<Locale> languages, Map<String, String> labels,
+			NutritionFactsOptions options) {
 		Locale panelLocale = languages.get(0);
-		return new NutritionFactsServing(servingsPerContainer(product, panelLocale, labels), servingSize(product, panelLocale));
+		return new NutritionFactsServing(servingsPerContainer(product, panelLocale, labels),
+				servingSize(product, panelLocale, options.figureSeparator()));
 	}
 
 	/**
@@ -466,9 +517,9 @@ public class NutritionFactsDataBuilder {
 	}
 
 	/** Serving wording of the second language, left out when it reads the same as the first. */
-	private String secondaryServingSize(ProductData product, List<Locale> languages) {
-		String panelServingSize = servingSize(product, languages.get(0));
-		String secondary = servingSize(product, languages.get(1));
+	private String secondaryServingSize(ProductData product, List<Locale> languages, String separator) {
+		String panelServingSize = servingSize(product, languages.get(0), separator);
+		String secondary = servingSize(product, languages.get(1), separator);
 		return Objects.equals(panelServingSize, secondary) ? null : secondary;
 	}
 
@@ -477,38 +528,38 @@ public class NutritionFactsDataBuilder {
 	 * wording, and falling back on the serving size itself so that the line is never printed empty
 	 * on a product that only carries a quantity.
 	 */
-	private String servingSize(ProductData product, Locale locale) {
+	private String servingSize(ProductData product, Locale locale, String separator) {
 		String servingSizeText = closestValue(product, PLMModel.PROP_PRODUCT_SERVING_SIZE_TEXT, locale);
 		if ((servingSizeText != null) && !servingSizeText.isBlank()) {
-			return withWeight(servingSizeText, product);
+			return withWeight(servingSizeText, product, separator);
 		}
 
 		String byCountry = MLTextHelper.getClosestValue(product.getServingSizeByCountry(), locale);
 		if ((byCountry != null) && !byCountry.isBlank()) {
-			return withWeight(byCountry, product);
+			return withWeight(byCountry, product, separator);
 		}
 
-		return formatServingSize(product);
+		return formatServingSize(product, separator);
 	}
 
 	/**
 	 * The regulation states the household measure and its metric weight together, "2/3 cup (55g)",
 	 * so the weight is appended to a wording that does not carry it already.
 	 */
-	private String withWeight(String wording, ProductData product) {
-		String weight = formatServingSize(product);
+	private String withWeight(String wording, ProductData product, String separator) {
+		String weight = formatServingSize(product, separator);
 		if ((weight == null) || wording.contains(weight) || wording.contains("(")) {
 			return wording;
 		}
 		return wording + " (" + weight + ")";
 	}
 
-	private String formatServingSize(ProductData product) {
+	private String formatServingSize(ProductData product, String separator) {
 		if (product.getServingSize() == null) {
 			return null;
 		}
-		String unit = product.getServingSizeUnit() != null ? product.getServingSizeUnit().toString() : "";
-		return new DecimalFormat(SERVING_SIZE_PATTERN, DecimalFormatSymbols.getInstance(Locale.US)).format(product.getServingSize()) + unit;
+		String figure = new DecimalFormat(SERVING_SIZE_PATTERN, DecimalFormatSymbols.getInstance(Locale.US)).format(product.getServingSize());
+		return product.getServingSizeUnit() != null ? figure + separator + product.getServingSizeUnit() : figure;
 	}
 
 	private String closestValue(ProductData product, QName property, Locale locale) {
@@ -562,7 +613,11 @@ public class NutritionFactsDataBuilder {
 
 	/** Regulated nutrients of a product, with what the referential says of the characteristics themselves. */
 	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Characteristics characteristics, SharedDailyValues sharedDailyValues,
-			Set<String> supplementalNutCodes) {
+			PermittedSupplementalIngredients permitted, Set<String> supplementalNutCodes) {
+	}
+
+	/** What the reading of the nutrition list gathers, line after line, before the nutrients are ordered. */
+	private record CollectedNutrients(List<RegulatedNutrient> nutrients, Characteristics characteristics, Set<String> supplementalNutCodes) {
 	}
 
 	/**

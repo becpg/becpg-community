@@ -73,6 +73,16 @@ public class EntityVersion extends VersionImpl {
 	}
 
 	/**
+	 * Tells whether this version stands for an entity that has no version history yet. Its frozen state is then the
+	 * entity itself, and its description is the entity description rather than a version comment.
+	 *
+	 * @return <code>true</code> when the entity has never been versioned
+	 */
+	public boolean isUnversionedEntity() {
+		return entityNodeRef != null && entityNodeRef.equals(getFrozenStateNodeRef());
+	}
+
+	/**
 	 * <p>Setter for the field <code>createdDate</code>.</p>
 	 *
 	 * @param createdDate a {@link java.util.Date} object.

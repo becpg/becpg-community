@@ -85,6 +85,9 @@ public class EcobalyseIngredientService {
 	/**
 	 * <p>Suggests the ingredients matching a query, for the autocomplete of the code field.</p>
 	 *
+	 * <p>The query is matched against the label the user reads, alias and name together: the
+	 * reference only publishes French names, the alias is the English entry point.</p>
+	 *
 	 * @param query the typed query
 	 * @param pageNum a {@link java.lang.Integer} object
 	 * @param pageSize a {@link java.lang.Integer} object
@@ -94,7 +97,7 @@ public class EcobalyseIngredientService {
 		List<EcobalyseIngredient> matches = new ArrayList<>();
 
 		for (EcobalyseIngredient ingredient : distinctIngredients()) {
-			if (BeCPGQueryHelper.isQueryMatch(query, ingredient.getName()) && (matches.size() < SUGGESTION_LIMIT)) {
+			if (BeCPGQueryHelper.isQueryMatch(query, ingredient.toString()) && (matches.size() < SUGGESTION_LIMIT)) {
 				matches.add(ingredient);
 			}
 		}

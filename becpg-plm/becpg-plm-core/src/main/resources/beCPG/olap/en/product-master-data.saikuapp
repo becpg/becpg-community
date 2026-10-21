@@ -4,11 +4,7 @@
  "version": 1,
  "theme": {
   "mode": "light",
-  "ground": "#f4f7f8",
-  "surface": "#ffffff",
-  "fg": "#0d2b33",
-  "muted": "#5b7780",
-  "accent": "#009dcc"
+  "preset": "becpg"
  },
  "nav": {
   "position": "rail",
@@ -24,13 +20,14 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Product assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG product master-data analyst",
-  "scope": "Answer only about the cubes products, nutrients et lca.",
+  "scope": "Answers from the Products cube.",
   "greeting": "Ask about the product portfolio, nutrition or costs.",
   "suggestedPrompts": [
    "Breakdown of products per state",
-   "Average profitability per family",
+   "Average profitability per product family",
    "Products per Nutri-Score"
   ],
   "cube": {

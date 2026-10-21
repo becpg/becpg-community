@@ -18,14 +18,25 @@
  ******************************************************************************/
 package fr.becpg.test.repo.sample;
 
+import java.util.List;
+
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GHSModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
+import fr.becpg.repo.sample.ProductInformationFileTestProduct;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardCakeWithLocalSemiFinishedTestProduct;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
@@ -37,6 +48,15 @@ import fr.becpg.test.PLMBaseTestCase;
  * enabled, which is the configuration produced by {@code SampleProductHelper} for scripts.
  */
 public class SampleProductBuilderIT extends PLMBaseTestCase {
+
+	private static final QName ASSOC_SDS_HAZARD_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsHazardStatements");
+	private static final QName ASSOC_SDS_PRECAUTIONARY_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsPrecautionaryStatements");
+	private static final QName ASSOC_SDS_PERSONAL_PROTECTIONS = QName.createQName(GHSModel.GHS_URI, "sdsPersonalProtections");
+	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
+	private static final QName PROP_SUPPLIER_REF_CODE = QName.createQName(BeCPGModel.BECPG_URI, "supplierRefCode");
+	private static final QName PROP_CONTRACT_DATE = QName.createQName(BeCPGModel.BECPG_URI, "contractDate");
+	private static final QName PROP_PACKAGING_DESCRIPTION = QName.createQName(BeCPGModel.BECPG_URI, "packagingDescription");
+	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
 
 	@Autowired
 	protected ProductService productService;
@@ -64,7 +84,8 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testSoapWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 	}
@@ -73,7 +94,8 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testGreenScoreWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
 	}
@@ -82,9 +104,131 @@ public class SampleProductBuilderIT extends PLMBaseTestCase {
 	public void testBodyMilkWithAllLists() {
 		final NodeRef productNodeRef = inWriteTx(() -> new StandardBodyMilkTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withSpecification(true)
-				.withScore(true).withToxicology(true).build().createTestProduct().getNodeRef());
+				.withScore(true).withToxicology(true).withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true)
+				.withAllergens(true).withRegulatory(true).build().createTestProduct().getNodeRef());
 
 		assertFormulates(productNodeRef);
+	}
+
+	@Test
+	public void testProductInformationFileProduct() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).withPhysico(true).withToxicology(true)
+				.withPackaging(true).withProcess(true).withLabeling(true).withClaim(true).withMicrobio(true).withAllergens(true)
+				.withRegulatory(true).build().createTestProduct().getNodeRef());
+
+		assertFormulates(productNodeRef);
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			Assert.assertFalse("Ingredient list should be formulated", product.getIngList().isEmpty());
+			Assert.assertTrue("Primary packaging should be present", product.getPackagingList().stream()
+					.anyMatch(item -> PackagingLevel.Primary.equals(item.getPkgLevel())));
+			Assert.assertFalse("Fragrance allergens should be formulated", product.getAllergenList().isEmpty());
+			Assert.assertEquals(ProductInformationFileTestProduct.EAN_CODE, nodeService.getProperty(productNodeRef, PLMModel.PROP_EAN_CODE));
+			return null;
+		});
+	}
+
+	@Test
+	public void testProductInformationFileHazardousRawMaterialsHoldTheirSafetyData() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			NodeRef fragrance = findRawMaterial(productNodeRef, ProductInformationFileTestProduct.FRAGRANCE);
+			Assert.assertFalse("The fragrance should hold hazard statements", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_HAZARD_STATEMENTS).isEmpty());
+			Assert.assertFalse("The fragrance should hold precautionary statements",
+					nodeService.getTargetAssocs(fragrance, ASSOC_SDS_PRECAUTIONARY_STATEMENTS).isEmpty());
+			Assert.assertFalse("The fragrance should hold personal protections",
+					nodeService.getTargetAssocs(fragrance, ASSOC_SDS_PERSONAL_PROTECTIONS).isEmpty());
+			Assert.assertNotNull("The fragrance should hold safety instructions", nodeService.getProperty(fragrance, PROP_SDS_SAFETY_INSTRUCTIONS));
+			Assert.assertFalse("The flammable fragrance should hold its UN number", nodeService.getTargetAssocs(fragrance, ASSOC_SDS_ONU_CODE).isEmpty());
+			return null;
+		});
+	}
+
+	@Test
+	public void testProductInformationFileFragranceHoldsItsRegulatoryRestrictions() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData fragrance = (ProductData) alfrescoRepository.findOne(findRawMaterial(productNodeRef, ProductInformationFileTestProduct.FRAGRANCE));
+			Assert.assertNotNull("The fragrance should hold regulatory restrictions", fragrance.getIngRegulatoryList());
+			Assert.assertFalse("The fragrance should hold regulatory restrictions", fragrance.getIngRegulatoryList().isEmpty());
+			for (IngRegulatoryListDataItem restriction : fragrance.getIngRegulatoryList()) {
+				Assert.assertNotNull("Each restriction should cite its regulation", restriction.getCitation());
+				Assert.assertNotNull("Each restriction should hold its restriction level", restriction.getRestrictionLevels());
+			}
+			return null;
+		});
+	}
+
+	@Test
+	public void testProductInformationFileRawMaterialsHoldTheirSheetData() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			for (CompoListDataItem compoItem : product.getCompoList()) {
+				assertHoldsSheetData(compoItem.getProduct());
+			}
+			Assert.assertNotNull("A single substance raw material should hold its CAS number",
+					nodeService.getProperty(findRawMaterial(productNodeRef, ProductInformationFileTestProduct.GLYCERIN), PLMModel.PROP_CAS_NUMBER));
+			return null;
+		});
+	}
+
+	/**
+	 * Checks a raw material holds the data its technical sheet prints: codes, commercial data, conditions and shelf life.
+	 *
+	 * @param rawMaterialNodeRef the raw material
+	 */
+	private void assertHoldsSheetData(NodeRef rawMaterialNodeRef) {
+		String name = (String) nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME);
+		for (QName property : List.of(BeCPGModel.PROP_ERP_CODE, PLMModel.PROP_EAN_CODE, PROP_SUPPLIER_REF_CODE, ContentModel.PROP_TITLE,
+				ContentModel.PROP_DESCRIPTION, PLMModel.PROP_PRODUCT_COMMENTS, PLMModel.PROP_PRODUCT_DENSITY, PLMModel.PROP_USE_BY_DATE,
+				PLMModel.PROP_PERIOD_AFTER_OPENING, PROP_CONTRACT_DATE, PROP_PACKAGING_DESCRIPTION, PLMModel.PROP_ING_TYPE_V2)) {
+			Assert.assertNotNull(name + " should hold " + property.getLocalName(), nodeService.getProperty(rawMaterialNodeRef, property));
+		}
+		Assert.assertFalse(name + " should hold storage conditions",
+				nodeService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_STORAGE_CONDITIONS).isEmpty());
+		Assert.assertFalse(name + " should hold precautions of use", nodeService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_PRECAUTION_OF_USE).isEmpty());
+	}
+
+	@Test
+	public void testProductInformationFileRawMaterialsHoldTheirSafetyInstructions() {
+		final NodeRef productNodeRef = inWriteTx(() -> new ProductInformationFileTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true).build().createTestProduct().getNodeRef());
+
+		inReadTx(() -> {
+			ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			Assert.assertFalse("The PIF product should have raw materials", product.getCompoList().isEmpty());
+			for (CompoListDataItem compoItem : product.getCompoList()) {
+				Assert.assertNotNull("Each raw material should hold safety instructions: " + nodeService.getProperty(compoItem.getProduct(), ContentModel.PROP_NAME),
+						nodeService.getProperty(compoItem.getProduct(), PROP_SDS_SAFETY_INSTRUCTIONS));
+			}
+			return null;
+		});
+	}
+
+	/**
+	 * Finds a raw material of the composition by the name its unique node name starts with.
+	 *
+	 * @param productNodeRef the product
+	 * @param name the name of the raw material
+	 * @return the raw material
+	 */
+	private NodeRef findRawMaterial(NodeRef productNodeRef, String name) {
+		ProductData product = (ProductData) alfrescoRepository.findOne(productNodeRef);
+		for (CompoListDataItem compoItem : product.getCompoList()) {
+			if (((String) nodeService.getProperty(compoItem.getProduct(), ContentModel.PROP_NAME)).startsWith(name)) {
+				return compoItem.getProduct();
+			}
+		}
+		throw new AssertionError("The composition should hold " + name);
 	}
 
 	@Test

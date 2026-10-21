@@ -4,11 +4,7 @@
  "version": 1,
  "theme": {
   "mode": "light",
-  "ground": "#f4f7f8",
-  "surface": "#ffffff",
-  "fg": "#0d2b33",
-  "muted": "#5b7780",
-  "accent": "#009dcc"
+  "preset": "becpg"
  },
  "nav": {
   "position": "rail",
@@ -24,14 +20,15 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Compliance assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG compliance and regulatory analyst",
-  "scope": "Answer only about the regulatoryScores, toxicology, requirements and plantCertifications cubes.",
-  "greeting": "Ask about regulatory scores, toxicology or certifications.",
+  "scope": "Answers from the Regulatory scores cube.",
+  "greeting": "Ask about the regulatory scores of products.",
   "suggestedPrompts": [
    "Regulatory score by class",
-   "Certifications by body",
-   "Unmet requirements"
+   "Scored products per regulatory category",
+   "Average regulatory score per product family"
   ],
   "cube": {
    "connectionName": "beCPG",

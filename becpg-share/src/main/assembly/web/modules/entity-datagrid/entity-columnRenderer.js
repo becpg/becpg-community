@@ -145,6 +145,26 @@
 			});
 
 			/**
+			  * Dates follow the date pattern of the user locale, as in the property form: the
+			  * repository formats them with one pattern whatever the locale
+			  */
+			var createDateRenderer = function(dateFormatMsgKey) {
+				return function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+					var date = data.value != null && data.value !== "" ? Alfresco.util.fromISO8601(data.value) : null;
+					var displayValue = date != null ? Alfresco.util.formatDate(date, scope.msg(dateFormatMsgKey)) : data.displayValue;
+
+					if (oColumn != null && oColumn.tooltip) {
+						return beCPG.util.createTextTooltip(displayValue, oColumn.tooltip);
+					}
+					return $html(displayValue);
+				};
+			};
+
+			this.registerRenderer(["date", "datetime_cm:from", "datetime_cm:to"], createDateRenderer("date-format.defaultDateOnly"));
+
+			this.registerRenderer("datetime", createDateRenderer("date-format.default"));
+
+			/**
 			  * Authority container
 			  */
 			this.registerRenderer("cm:authoritycontainer", function(oRecord, data, label, scope) {

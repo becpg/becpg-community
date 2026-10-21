@@ -362,6 +362,7 @@ public class CharactTestHelper {
 	 */
 	public static NodeRef getOrCreateCertification(NodeService nodeService, String name, String description) {
 		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_TITLE, name);
 		properties.put(ContentModel.PROP_DESCRIPTION, description);
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Certifications", name, PLMModel.TYPE_CERTIFICATION,
 				properties);

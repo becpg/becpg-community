@@ -142,7 +142,9 @@ public class AiSuggestionsProxyWebScript extends AbstractWebScript {
 				logger.debug("Proxying " + operation + " to " + uri);
 			}
 
-			ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(uri,
+			// A cold suggestion run reads every document and calls a model, which outlasts the 30 s
+			// default socket timeout: the caller would see aiUnreachable for a run that is only slow.
+			ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(uri,
 					isPost ? HttpMethod.POST : HttpMethod.GET, new HttpEntity<>(body, headers), String.class);
 
 			// A 200 is not proof of an answer: an unauthenticated becpg-ai serves its OAuth login

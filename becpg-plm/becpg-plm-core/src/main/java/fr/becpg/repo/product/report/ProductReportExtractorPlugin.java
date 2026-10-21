@@ -303,6 +303,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private NutritionFactsPanelRenderer nutritionFactsPanelRenderer;
 
+	private IngredientIdentityReportWriter ingredientIdentityReportWriter;
+
 	@Autowired
 	/**
 	 * <p>Constructor for ProductReportExtractorPlugin.</p>
@@ -341,6 +343,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Autowired
 	public void setNutritionFactsPanelRenderer(NutritionFactsPanelRenderer nutritionFactsPanelRenderer) {
 		this.nutritionFactsPanelRenderer = nutritionFactsPanelRenderer;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ingredientIdentityReportWriter</code>, injected by setter so that the
+	 * extractors deriving from this one keep their constructor.</p>
+	 *
+	 * @param ingredientIdentityReportWriter a {@link fr.becpg.repo.product.report.IngredientIdentityReportWriter} object
+	 */
+	@Autowired
+	public void setIngredientIdentityReportWriter(IngredientIdentityReportWriter ingredientIdentityReportWriter) {
+		this.ingredientIdentityReportWriter = ingredientIdentityReportWriter;
 	}
 
 	static {
@@ -1531,6 +1544,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	/**
+	 * Writes the labeling threshold of an allergen on its allergen line, so that a report can tell whether the allergen
+	 * has to be labeled, such as a fragrance allergen above 0.001 % in a leave-on cosmetic product.
+	 *
+	 * @param allergenNodeRef the allergen
+	 * @param allergenListElt the allergen line element
+	 */
+	private void addRegulatoryThreshold(NodeRef allergenNodeRef, Element allergenListElt) {
+		Double threshold = (Double) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+		if (threshold != null) {
+			allergenListElt.addAttribute(PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD.getLocalName(), threshold.toString());
+		}
+	}
+
+	/**
 	 * <p>loadAllergenLists.</p>
 	 *
 	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
@@ -1553,6 +1580,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataListItemAttributes(dataListItem, allergenListElt, context);
 
 					String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+					addRegulatoryThreshold(dataListItem.getAllergen(), allergenListElt);
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
 					String displayMode = "";
 
@@ -1650,10 +1678,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				if (dataListItem.getIng() != null) {
 					Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
-					String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
-					if (ingCEECode != null) {
-						ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
-					}
+					ingredientIdentityReportWriter.write(dataListItem.getIng(), ingListElt);
 					loadDataListItemAttributes(dataListItem, ingListElt, context);
 				}
 			}

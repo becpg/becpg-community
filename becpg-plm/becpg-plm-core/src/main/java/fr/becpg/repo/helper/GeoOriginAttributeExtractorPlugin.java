@@ -28,6 +28,8 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 @Service
 public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
+	private static final String ACTIVITY_TYPE_MESSAGE_PREFIX = "listconstraint.gs1_productActivityTypeCodes.";
+
 	@Autowired
 	private  NamespaceService namespaceService;	
 	
@@ -51,15 +53,25 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 		@SuppressWarnings("unchecked")
 		List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
 		if (placeOfActivityCode != null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0) != null) {
-			ret.append(" (");
-			String message = I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes." + placeOfActivityCode.get(0));
-			if (message != null) {
-				ret.append(message);
-			}
-			ret.append(")");
+			ret.append(" (").append(activityTypeLabel(placeOfActivityCode.get(0))).append(")");
 		}
 		
 		return ret.toString();
+	}
+
+	/**
+	 * Returns the label of a GS1 place of activity type, the code itself when no bundle translates it,
+	 * so that an untranslated code never renders as empty parentheses.
+	 *
+	 * @param activityTypeCode the GS1 code of the place of activity type, eg. SLAUGHTER
+	 * @return the translated label, or the code when it has no translation
+	 */
+	static String activityTypeLabel(String activityTypeCode) {
+		String label = I18NUtil.getMessage(ACTIVITY_TYPE_MESSAGE_PREFIX + activityTypeCode);
+		if ((label == null) || label.isBlank()) {
+			return activityTypeCode;
+		}
+		return label;
 	}
 
 	/** {@inheritDoc} */

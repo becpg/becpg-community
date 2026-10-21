@@ -18,11 +18,16 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.report;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -59,6 +64,8 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 
 	private AssociationService associationService;
 
+	private DictionaryService dictionaryService;
+
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
 	 *
@@ -86,6 +93,15 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
+	 */
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
@@ -110,7 +126,8 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 			datatypeQName = QName.createQName(datatype, namespaceService);
 		}
 
-		List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(type, datatypeQName, null);
+		List<NodeRef> reportTpls = ReportType.ExportSearch.equals(type) ? getExportSearchTemplates(datatypeQName)
+				: reportTplService.getUserReportTemplates(type, datatypeQName, null);
 		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_REPORT_TEMPLATES, reportTpls);
 
@@ -124,5 +141,27 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 		}
 
 		return model;
+	}
+
+	/**
+	 * Returns the export search templates of a type and of its parent types, the most specific
+	 * first: a template declared on <code>bcpg:product</code> also exports its sub types.
+	 *
+	 * @param datatype the searched type, or <code>null</code> for the templates bound to no type
+	 * @return the templates, without duplicates
+	 */
+	List<NodeRef> getExportSearchTemplates(QName datatype) {
+		Set<NodeRef> reportTpls = new LinkedHashSet<>(reportTplService.getUserReportTemplates(ReportType.ExportSearch, datatype, null));
+		QName parentType = getParentType(datatype);
+		while (parentType != null) {
+			reportTpls.addAll(reportTplService.getUserReportTemplates(ReportType.ExportSearch, parentType, null));
+			parentType = getParentType(parentType);
+		}
+		return new ArrayList<>(reportTpls);
+	}
+
+	private QName getParentType(QName type) {
+		ClassDefinition classDefinition = type != null ? dictionaryService.getClass(type) : null;
+		return classDefinition != null ? classDefinition.getParentName() : null;
 	}
 }

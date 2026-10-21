@@ -1079,7 +1079,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (data.value != null) {
 
-                var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                 var jsonData = JSON.parse(data.value);
                 if (jsonData && jsonData.v) {
                     if (jsonData.v[key] != null) {
@@ -1967,7 +1967,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var html = '', displayValue = data.displayValue,
                 htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue",
-                editPermission = oRecord.getData().permissions.userAccess.edit;
+                editPermission = oRecord.getData().permissions.userAccess.edit,
+                dirAttribute = '';
 
             if (data.value != null) {
                 if (data.displayValue == null || data.displayValue == "") {
@@ -1979,8 +1980,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
 
+            if (data.displayValue != null && data.displayValue != "" && beCPG.util.getContentTextDirection() == "rtl") {
+                dirAttribute = ' dir="rtl"';
+            }
 
-            html += '<div class="note rounded"><div id="' + htmlId + suffix + '" > ' + displayValue + '</div>';
+            html += '<div class="note rounded"><div id="' + htmlId + suffix + '"' + dirAttribute + ' > ' + displayValue + '</div>';
 
             var nodeRef = oRecord._oData.nodeRef;
             html += '<div class="labeling-action-container">';
@@ -2580,7 +2584,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                 if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"]
                     && oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value != null) {
-                    var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                    var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                     var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
                     if (jsonData.ul && jsonData.ul[key]) {
                         ul = jsonData.ul[key];

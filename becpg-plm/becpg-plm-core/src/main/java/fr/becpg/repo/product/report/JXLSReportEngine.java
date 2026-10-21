@@ -11,7 +11,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jxls.expression.ExpressionEvaluator;
 import org.jxls.transform.poi.JxlsPoiTemplateFillerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -107,10 +106,10 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 			context.put("IMG_" + cleanName(imageInfo.getName()), entityService.getImage(imageInfo.getImageNodeRef()));
 		}
 
-		ExpressionEvaluator evaluator = new SpelJXLSExpressionEvaluator(formulaService);
-
-		JxlsPoiTemplateFillerBuilder.newInstance().withExpressionEvaluatorFactory(expression -> evaluator).withRecalculateFormulasOnOpening(true)
-				.withRecalculateFormulasBeforeSaving(true).withTemplate(reader.getContentInputStream()).buildAndFill(context, () -> out);
+		JxlsPoiTemplateFillerBuilder.newInstance()
+				.withExpressionEvaluatorFactory(expression -> new SpelJXLSExpressionEvaluator(formulaService, expression))
+				.withRecalculateFormulasOnOpening(true).withRecalculateFormulasBeforeSaving(true).withTemplate(reader.getContentInputStream())
+				.buildAndFill(context, () -> out);
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();

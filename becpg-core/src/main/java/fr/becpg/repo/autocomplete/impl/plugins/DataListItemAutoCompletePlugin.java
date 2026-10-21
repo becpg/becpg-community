@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.QName;
@@ -36,6 +39,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.api.BeCPGPublicApi;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
@@ -247,7 +251,10 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 					}
 				}
 
-				if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
+				PropertyDefinition propertyDef = dictionaryService.getProperty(attributeQNames.iterator().next());
+				if ((attributeQNames.size() == 1) && isListOfValues(propertyDef) && (queryFilter == null || queryFilter.isBlank()) && (parent == null)) {
+					return suggestFromListOfValues(sourceType, dataListNodeRefs, itemId, type, propertyDef, query, pageNum, pageSize);
+				} else if (propertyDef != null) {
 					return suggestFromProp(dataListNodeRefs, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize);
 				} else {
 					return suggestFromAssoc(sourceType, dataListNodeRefs, itemId, type, attributeQNames.iterator().next(), query, pageNum, pageSize, showFullPath);
@@ -325,6 +332,56 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 		}
 		return new AutoCompletePage(ret, pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQNames, nodeService));
+	}
+
+	/**
+	 * <p>Tells whether a property holds the codes of a list of values.</p>
+	 *
+	 * @param propertyDef the property definition, may be <code>null</code>
+	 * @return true when the property is constrained by a list of values
+	 */
+	private boolean isListOfValues(PropertyDefinition propertyDef) {
+		if (propertyDef != null) {
+			for (ConstraintDefinition constraintDef : propertyDef.getConstraints()) {
+				if (constraintDef.getConstraint() instanceof ListOfValuesConstraint) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * <p>Suggests the list items whose list-of-values property label matches the query.</p>
+	 *
+	 * Such a property stores the code of the value, in a non-tokenised field: neither a prefix
+	 * search nor the label the user types can find it in the index. The items of the entity lists are
+	 * few, so they are matched in memory on their translated label, which is also what is displayed.
+	 *
+	 * @param sourceType the autocomplete source type
+	 * @param dataListNodeRefs the lists to read
+	 * @param itemId the item being edited, excluded with its descendants, may be <code>null</code>
+	 * @param datalistType the type of the list items
+	 * @param propertyDef the list-of-values property used to match and display the items
+	 * @param query the text typed by the user
+	 * @param pageNum the page number
+	 * @param pageSize the page size
+	 * @return the matching items, labelled with their translated value
+	 */
+	private AutoCompletePage suggestFromListOfValues(String sourceType, List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType,
+			PropertyDefinition propertyDef, String query, Integer pageNum, Integer pageSize) {
+		PropertyFormats propertyFormats = new PropertyFormats(false);
+		List<AutoCompleteEntry> result = new ArrayList<>();
+		for (NodeRef dataListNodeRef : dataListNodeRefs) {
+			for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
+				String label = attributeExtractorService.getStringValue(propertyDef,
+						nodeService.getProperty(dataListItemNodeRef, propertyDef.getName()), propertyFormats);
+				if ((label != null) && isQueryMatch(query, label) && accepts(dataListItemNodeRef, itemId, sourceType)) {
+					result.add(new AutoCompleteEntry(dataListItemNodeRef.toString(), label, datalistType.getLocalName()));
+				}
+			}
+		}
+		return new AutoCompletePage(result, pageNum, pageSize, null);
 	}
 
 	/**
