@@ -6,7 +6,6 @@ package fr.becpg.repo.product.report;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,7 +72,7 @@ public class SpelJXLSExpressionEvaluatorTest {
 
 		SpelExpressionParser parser = new SpelExpressionParser();
 		formulaService = mock(SpelFormulaService.class);
-		when(formulaService.parseExpression(anyString())).thenAnswer(invocation -> parser.parseExpression(invocation.getArgument(0)));
+		when(formulaService.getSpelParser()).thenReturn(parser);
 		when(formulaService.createEntitySpelContext(product)).thenReturn(new StandardEvaluationContext(product));
 		when(formulaService.createDataListItemSpelContext(product, nutListItem)).thenReturn(new StandardEvaluationContext(nutListItem));
 	}
