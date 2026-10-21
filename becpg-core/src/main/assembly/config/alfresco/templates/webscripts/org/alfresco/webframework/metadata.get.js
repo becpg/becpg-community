@@ -34,7 +34,7 @@ else if (args["user"] != null)
    
    var languageMgrGroup = people.getGroup("GROUP_LanguageMgr");
 
-   var isOlapUser = false, isMemberOfAllowedGroup = false;
+   var isOlapUser = false, isRegulatoryUser = false, isMemberOfAllowedGroup = false;
 
    var isAdmin = false;
    
@@ -63,6 +63,10 @@ else if (args["user"] != null)
        if(groupName == "GROUP_AiUser"){
     	  model.capabilities["isAIUser"] = true;
        }
+       if(groupName == "GROUP_RegulatoryUser"){
+    	  model.capabilities["isRegulatoryUser"] = true;
+    	  isRegulatoryUser = true;
+       }
        if(groupName == "GROUP_ALFRESCO_ADMINISTRATORS"){
     	   isAdmin = true;
        }
@@ -76,6 +80,11 @@ else if (args["user"] != null)
        }
    }
    
+   var regulatorySSOUrl = isRegulatoryUser ? bcpg.getRegulatorySSOUrl() : null;
+   if(regulatorySSOUrl!=null){
+       model.capabilities["regulatorySSOUrl_"+regulatorySSOUrl] = true;
+   }
+
    var olapSSOUrl = bcpg.getOlapSSOUrl();
    if(olapSSOUrl!=null && isOlapUser){
        model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;

@@ -27,6 +27,7 @@ function main() {
     model.beCPGAuthTocken = getBeCPGAuthTocken(user);
     model.userContentLocale = getUserContentLocale(user);
     model.isAIEnable = (user != null && user.capabilities["isAIUser"] != null && user.capabilities["isAIUser"] == true) || false;
+    model.isRegulatoryUser = (user != null && user.capabilities["isRegulatoryUser"] != null && user.capabilities["isRegulatoryUser"] == true) || false;
 }
 
 main();
