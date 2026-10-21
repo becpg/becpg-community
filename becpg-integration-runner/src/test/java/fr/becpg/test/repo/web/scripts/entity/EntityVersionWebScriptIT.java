@@ -40,6 +40,8 @@ public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScriptIT.class);
 
+	private static final String BRANCH_DESCRIPTION = "Raspberry almond tart";
+
 	@Test
 	public void testGetVersionHistory() throws Exception {
 
@@ -85,6 +87,30 @@ public class EntityVersionWebScriptIT extends PLMBaseTestCase {
 
 	}
 	
+	@Test
+	public void testGraphSendsTheDescriptionOfAnUnversionedBranchOnce() throws Exception {
+
+		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP graph description");
+			nodeService.setProperty(rawMaterialNodeRef, ContentModel.PROP_DESCRIPTION, BRANCH_DESCRIPTION);
+			return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
+		}, false, true);
+
+		String url = "/becpg/api/entity-version?mode=graph&nodeRef=" + branchNodeRef;
+		JSONArray versions = new JSONArray(TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin").getContentAsString());
+
+		JSONObject branchVersion = null;
+		for (int i = 0; i < versions.length(); i++) {
+			if (branchNodeRef.toString().equals(versions.getJSONObject(i).getString("nodeRef"))) {
+				branchVersion = versions.getJSONObject(i);
+			}
+		}
+
+		Assert.assertNotNull("The unversioned branch is in the graph", branchVersion);
+		Assert.assertEquals(BRANCH_DESCRIPTION, branchVersion.getString("description"));
+		Assert.assertFalse("The description is not sent again as a version comment", branchVersion.has("versionDescription"));
+	}
+
 	@Test
 	public void testCreateAndMergeBranchProduct() throws Exception {
 
