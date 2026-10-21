@@ -2421,7 +2421,6 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
-                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" force="true" />
                     <show id="bcpg:ingAllergensQtyPerc" force="true" />
@@ -2516,11 +2515,6 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
-                    <field id="bcpg:ecobalyseCode" set="formulation">
-                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
-                        </control>
-                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
@@ -2592,7 +2586,6 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
-                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" />
                     <show id="bcpg:ingAllergensQtyPerc" />
@@ -2682,11 +2675,6 @@
 
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
-                    <field id="bcpg:ecobalyseCode" set="formulation">
-                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
-                        </control>
-                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
@@ -2739,7 +2727,6 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
-                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" />
                     <show id="bcpg:ingAllergensQtyPerc" />
@@ -2824,11 +2811,6 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="formulation" />
-                    <field id="bcpg:ecobalyseCode" set="formulation">
-                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-                            <control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
-                        </control>
-                    </field>
                     <field id="bcpg:evaporatedRate" set="formulation" />
                     <field id="bcpg:isSubstanceOfVeryHighConcern" set="formulation" />
                     <field id="bcpg:svhcReasonsForInclusion" set="formulation" />
@@ -2980,7 +2962,6 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
-                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="gs1:productActivityTypeCode" force="true" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />
