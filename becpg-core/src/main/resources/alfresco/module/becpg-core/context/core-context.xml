@@ -168,6 +168,7 @@
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="securityService" ref="securityService" />
+		<property name="userPreferenceWriter" ref="userPreferenceWriter" />
 		<property name="defaultExtractor" value="false" />
 	</bean>
 
