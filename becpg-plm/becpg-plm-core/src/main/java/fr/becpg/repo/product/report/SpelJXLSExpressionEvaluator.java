@@ -25,16 +25,16 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
-	private SpelFormulaService formulaService;
+	private final SpelFormulaService formulaService;
 
 	private static Log logger = LogFactory.getLog(SpelJXLSExpressionEvaluator.class);
 
-	Expression expression;
+	private final String expression;
 
 	/** {@inheritDoc} */
 	@Override
 	public String getExpression() {
-		return expression.getExpressionString();
+		return expression;
 	}
 
 	/**
@@ -42,27 +42,19 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	 * Constructor for SpelJXLSExpressionEvaluator.
 	 * </p>
 	 *
-	 * @param formulaService
-	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
-	 *            object.
-	 */
-	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService) {
-		super();
-		this.formulaService = formulaService;
-	}
-
-	/**
-	 * <p>
-	 * Constructor for SpelJXLSExpressionEvaluator.
-	 * </p>
+	 * JXLS 3 commands (jx:each items, jx:if condition) ask the factory for an
+	 * evaluator bound to their expression and then call
+	 * {@link #evaluate(Map)}, so the expression must be kept here.
 	 *
 	 * @param formulaService
 	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
 	 *            object.
 	 * @param expression
-	 *            a {@link org.springframework.expression.Expression} object.
+	 *            the expression this evaluator is bound to, null for cell
+	 *            expressions which are passed to
+	 *            {@link #evaluate(String, Map)}
 	 */
-	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService, Expression expression) {
+	public SpelJXLSExpressionEvaluator(SpelFormulaService formulaService, String expression) {
 		super();
 		this.formulaService = formulaService;
 		this.expression = expression;
@@ -121,11 +113,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(Map<String, Object> data) {
-
-		StandardEvaluationContext context = formulaService.createEntitySpelContext((RepositoryEntity) data.get("entity"));
-
-		return expression.getValue(context);
-
+		return evaluate(expression, data);
 	}
 
 }
