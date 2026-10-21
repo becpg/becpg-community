@@ -92,6 +92,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
 		<property name="associationService" ref="associationService" />
+		<property name="dictionaryService" ref="DictionaryService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
