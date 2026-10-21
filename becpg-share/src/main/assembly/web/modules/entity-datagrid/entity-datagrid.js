@@ -448,6 +448,16 @@
                  */
                 computedTotalRefreshPending: false,
 
+                /**
+                 * Incremented every time the active data list changes. Columns and data requests
+                 * carry the token they were fired with, so a response that arrives after the user
+                 * switched to another list is dropped instead of overwriting the displayed list.
+                 *
+                 * @property activeListToken
+                 * @type number
+                 */
+                activeListToken: 0,
+
 
                 /**
                  * Current filter to filter document list.
@@ -915,6 +925,12 @@
                  * </pre>
                  */
                 _onDataListFailure: function EntityDataGrid__onDataListFailure(p_response, p_message) {
+                    if (p_message != null && p_message.listToken !== undefined
+                        && p_message.listToken !== this.activeListToken) {
+                        // the user already switched to another list: nothing to report
+                        return;
+                    }
+
                     Alfresco.util.PopupManager.displayPrompt(
                         {
                             title: p_message.title,
@@ -963,13 +979,20 @@
                     this.renderDataListMeta();
 
                     // Query the visible columns for this list's item
-                    // type
+                    // type. The token pins the response to the list that was
+                    // active when the request was fired.
+                    var listToken = this.activeListToken;
+
                     Alfresco.util.Ajax.jsonGet(
                         {
                             url: this._getColumnUrl(this.options.columnFormId),
                             successCallback:
                             {
                                 fn: this.onDatalistColumns,
+                                obj:
+                                {
+                                    listToken: listToken
+                                },
                                 scope: this
                             },
                             failureCallback:
@@ -978,7 +1001,8 @@
                                 obj:
                                 {
                                     title: this.msg("message.error.columns.title"),
-                                    text: this.msg("message.error.columns.description")
+                                    text: this.msg("message.error.columns.description"),
+                                    listToken: listToken
                                 },
                                 scope: this
                             }
@@ -1146,7 +1170,13 @@
                  * @param response
                  *            {Object} Ajax data structure
                  */
-                onDatalistColumns: function EntityDataGrid_onDatalistColumns(response) {
+                onDatalistColumns: function EntityDataGrid_onDatalistColumns(response, obj) {
+                    if (obj != null && obj.listToken !== this.activeListToken) {
+                        // Late answer for a list the user already left: rebuilding the grid here
+                        // would show the previous list's columns under the current list's rows.
+                        return;
+                    }
+
                     this.datalistColumns = response.json.columns;
                     // Set-up YUI History Managers and Paginator
                     this._setupHistoryManagers();
@@ -2584,6 +2614,9 @@
 
                     if ((obj !== null)) {
 
+                        // invalidates every columns/data request still in flight for the previous list
+                        this.activeListToken++;
+
                         if (obj.dataList) {
                             if (this.datalistMeta != null && this.datalistMeta.name != null) {
                                 Dom.removeClass(this.id + "-body", this.datalistMeta.name);
@@ -3119,6 +3152,8 @@
                  */
                 _updateDataGrid: function EntityDataGrid__updateDataGrid(p_obj) {
                     p_obj = p_obj || {};
+                    // pins this request to the currently active list (see activeListToken)
+                    var listToken = this.activeListToken;
                     var successFilter = YAHOO.lang.merge({}, p_obj.filter !== undefined ? p_obj.filter
                         : this.currentFilter), loadingMessage = null, timerShowLoadingMessage = null, me = this, params =
                         {
@@ -3193,6 +3228,11 @@
                         oPayload) {
                         destroyLoaderMessage();
 
+                        if (listToken !== this.activeListToken) {
+                            // rows of a list the user already left: keep what is displayed
+                            return;
+                        }
+
                         if (p_obj.isStale && p_obj.isStale.call(this)) {
                             // a newer request of the same kind supersedes this response
                             return;
@@ -3230,6 +3270,12 @@
 
                     var failureHandler = function EntityDataGrid__uDG_failureHandler(sRequest, oResponse) {
                         destroyLoaderMessage();
+
+                        if (listToken !== this.activeListToken) {
+                            // failure of a list the user already left: do not report it on the new one
+                            return;
+                        }
+
                         if (p_obj.onResponse && !(p_obj.isStale && p_obj.isStale.call(this))) {
                             p_obj.onResponse.call(this);
                         }
