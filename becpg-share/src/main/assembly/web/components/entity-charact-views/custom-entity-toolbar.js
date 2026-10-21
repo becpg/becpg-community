@@ -310,7 +310,8 @@
 				actionName: "formulate-decernis",
 				hideLabel: true,
 				evaluate: function(asset, entity) {
-					return asset.name != null && (asset.name == "regulatoryList" || asset.name == "ingRegulatoryList") && entity != null && (beCPG.util.contains(entity.aspects,
+					// the regulatory check (beCPG regulatory or Decernis) is reserved to GROUP_RegulatoryUser
+					return beCPG.constants.REGULATORY_USER && asset.name != null && (asset.name == "regulatoryList" || asset.name == "ingRegulatoryList") && entity != null && (beCPG.util.contains(entity.aspects,
 						"bcpg:productAspect")) && entity.userAccess.edit && !entity.aspects.includes("bcpg:archivedEntityAspect");
 				},
 				fn: function(instance) {

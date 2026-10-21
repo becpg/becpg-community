@@ -77,6 +77,8 @@ public class ComplianceResult {
 		FINISHED,
 		NOT_APPLICABLE,
 		UP_TO_DATE,
+		/** The user is not a member of GROUP_RegulatoryUser: the check was not run. */
+		NOT_AUTHORIZED,
 	}
 	
 }
