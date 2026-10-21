@@ -203,8 +203,8 @@ public class BeCPGLicenseManager {
 			return true;
 		}
 		Set<String> namedWriteList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed.toString());
-		int namedWrite = namedWriteList.size();
 		namedWriteList.removeIf(this::isSpecialLicenseUser);
+		int namedWrite = namedWriteList.size();
 		if (namedWrite > getLicense().allowedNamedWrite) {
 			return true;
 		}
