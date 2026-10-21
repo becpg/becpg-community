@@ -92,6 +92,14 @@
                   hiddenBranchCount : 0,
 
                   /**
+                   * Label of the version shown by the menu
+                   * 
+                   * @property displayedVersionLabel
+                   * @type string
+                   */
+                  displayedVersionLabel : "",
+
+                  /**
                    * A local cache of the document version response this is retrieved during set up & updated on each
                    * show
                    * 
@@ -137,6 +145,7 @@
                      var instance = this;
 
                      Event.addListener(this.id + "-branchFilter-toggle", "click", this.onBranchFilterToggleClick, this, true);
+                     Event.addListener(this.id + "-railGraph", "click", this.onRailGraphClick, this, true);
                      
                      this.widgets.alfrescoDataTable = new Alfresco.util.DataTable(
                            {
@@ -222,7 +231,8 @@
                      + this.options.nodeRef.replace(":/", "") + "/compare?entities="+doc.nodeRef + "&noCache=" + new Date().getTime(), html = '', current = ( this.options.nodeRef == doc.nodeRef),
                      url = beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType, null, this.options.list);
                      
-                     html += '<div class="entity-branches' + (current ? " current" : "") + this.getBranchStateClasses(doc, current) + '">';
+                     html += '<div class="entity-branches' + (current ? " current" : "") + this.getBranchStateClasses(doc, current) + '"'
+                           + this.getBranchTooltipAttributes(doc, current) + '>';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
                      html += '   <span class="'+doc.metadata+'" ><a title="'+ $html(doc.description) +'" href="'+url+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
@@ -235,6 +245,21 @@
                      html += '</div>';
 
                      return html;
+                  },
+
+                  /**
+                   * Returns the attributes of the tooltip that names a branch when the lists panel is collapsed
+                   * 
+                   * @method getBranchTooltipAttributes
+                   * @param doc
+                   *            {Object} The branch details
+                   * @param current
+                   *            {boolean} true if the branch is the current entity
+                   * @return {string} The attributes, prefixed with a space
+                   */
+                  getBranchTooltipAttributes : function EntityVersions_getBranchTooltipAttributes(doc, current) {
+                     var detail = "v" + doc.label + (current ? " \u00B7 " + this.msg("label.currentBranch") : "");
+                     return ' data-rail-tip="' + $html(doc.name) + '" data-rail-tip-detail="' + $html(detail) + '"';
                   },
 
                   /**
@@ -593,9 +618,34 @@
 
                      // Set the title.
                      this.widgets.versionMenu.set("label", title);
+                     this.renderRailVersion(label || this.latestVersion.label);
 
                   },
                   
+                  /**
+                   * Displays the version shown by the menu in the collapsed lists panel
+                   * 
+                   * @method renderRailVersion
+                   * @param label
+                   *            {string} The version label
+                   */
+                  renderRailVersion : function EntityVersions_renderRailVersion(label) {
+                     this.displayedVersionLabel = label;
+                     Dom.get(this.id + "-railVersion").innerHTML = $html(label);
+                  },
+
+                  /**
+                   * Fired when the user clicks on the branch button of the collapsed lists panel
+                   * 
+                   * @method onRailGraphClick
+                   * @param event
+                   *            {Object} The click event
+                   */
+                  onRailGraphClick : function EntityVersions_onRailGraphClick(event) {
+                     Event.preventDefault(event);
+                     this.onVersionsGraphClick(this.options.nodeRef + "@" + this.displayedVersionLabel);
+                  },
+
                   /**
                    * Called when a "onViewHistoricPropertiesClick" link has been clicked for a version. Will display the
                    * Properties dialogue for that version.

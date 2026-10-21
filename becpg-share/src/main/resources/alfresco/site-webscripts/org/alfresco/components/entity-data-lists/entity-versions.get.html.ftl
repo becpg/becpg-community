@@ -19,6 +19,10 @@
       <@uniqueIdDiv>
                <#assign el=args.htmlid?html>
                <div id="${el}-body" class="entity-versions filter hidden">
+							<div class="rail-version">
+								<span id="${el}-railVersion" class="document-version"></span>
+								<a href="#" id="${el}-railGraph" class="versions-graph" title="${msg("label.versionsGraph")?html}"></a>
+							</div>
 				         <div class="nav flat-button">
 								<a href="#" rel="previous" class="version-historic-nav prev disabled">previous</a>
 								<a href="#" rel="next" class="version-historic-nav next disabled">next</a>
