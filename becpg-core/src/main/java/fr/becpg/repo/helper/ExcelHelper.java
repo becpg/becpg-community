@@ -2,10 +2,14 @@ package fr.becpg.repo.helper;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -49,18 +53,42 @@ public class ExcelHelper {
 		boolean isAllowed(AttributeExtractorStructure field);
 	}
 	
+	/**
+	 * Cell styles of a workbook, created once per workbook however many times this class is
+	 * instantiated on it.
+	 * <p>
+	 * An export fills its sheets entity by entity and builds a new instance at each call: without
+	 * sharing, every entity added its own copies of the same styles until the workbook reached the
+	 * 64000 styles limit of the xlsx format. Only the style indexes are shared, in a map weakly keyed
+	 * by workbook, so that a workbook stays collectable once the export is over. A workbook must not
+	 * be filled by several threads at once.
+	 */
 	public static class ExcelCellStyles {
 
-	    private XSSFWorkbook workbook;
+	    private enum StyleKind {
+	        TEXT, FULL_DATE, SHORT_DATE, HEADER, HEADER_TEXT
+	    }
 
-	    private CellStyle textCellStyle;
-	    private CellStyle fullDateCellStyle;
-	    private CellStyle shortDateCellStyle;
-	    private CellStyle headerStyle;
-	    private CellStyle headerTextStyle;
+	    private static final Map<XSSFWorkbook, Map<StyleKind, Integer>> STYLE_INDEXES_BY_WORKBOOK = Collections
+	            .synchronizedMap(new WeakHashMap<>());
+
+	    private final XSSFWorkbook workbook;
+
+	    private final Map<StyleKind, Integer> styleIndexes;
 
 	    public ExcelCellStyles(XSSFWorkbook workbook) {
 	        this.workbook = workbook;
+	        this.styleIndexes = STYLE_INDEXES_BY_WORKBOOK.computeIfAbsent(workbook, key -> new EnumMap<>(StyleKind.class));
+	    }
+
+	    private CellStyle getOrCreateStyle(StyleKind kind, Supplier<CellStyle> styleFactory) {
+	        Integer index = styleIndexes.get(kind);
+	        if (index != null) {
+	            return workbook.getCellStyleAt(index);
+	        }
+	        CellStyle style = styleFactory.get();
+	        styleIndexes.put(kind, (int) style.getIndex());
+	        return style;
 	    }
 
 	    private CellStyle createTextStyle() {
@@ -75,47 +103,42 @@ public class ExcelHelper {
 	    	return style;
 	    }
 
+	    private CellStyle createHeaderStyle() {
+	        CellStyle style = workbook.createCellStyle();
+	        style.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
+	        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	        return style;
+	    }
+
+	    private CellStyle createHeaderTextStyle() {
+	        CellStyle style = workbook.createCellStyle();
+	        style.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
+	        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+	        XSSFFont font = workbook.createFont();
+	        font.setColor(IndexedColors.WHITE.getIndex());
+	        style.setFont(font);
+	        return style;
+	    }
+
 	    public CellStyle getTextCellStyle() {
-	        if (textCellStyle == null) {
-	        	textCellStyle = createTextStyle();
-	        }
-	        return textCellStyle;
+	        return getOrCreateStyle(StyleKind.TEXT, this::createTextStyle);
 	    }
 	    
 	    public CellStyle getFullDateCellStyle() {
-	    	if (fullDateCellStyle == null) {
-	    		fullDateCellStyle = createDateStyle(true);
-	    	}
-	    	return fullDateCellStyle;
+	        return getOrCreateStyle(StyleKind.FULL_DATE, () -> createDateStyle(true));
 	    }
 
 	    public CellStyle getShortDateCellStyle() {
-	        if (shortDateCellStyle == null) {
-	            shortDateCellStyle = createDateStyle(false);
-	        }
-	        return shortDateCellStyle;
+	        return getOrCreateStyle(StyleKind.SHORT_DATE, () -> createDateStyle(false));
 	    }
 
 	    public CellStyle getHeaderStyle() {
-	        if (headerStyle == null) {
-	            headerStyle = workbook.createCellStyle();
-	            headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
-	            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	        }
-	        return headerStyle;
+	        return getOrCreateStyle(StyleKind.HEADER, this::createHeaderStyle);
 	    }
 
 	    public CellStyle getHeaderTextStyle() {
-	        if (headerTextStyle == null) {
-	            headerTextStyle = workbook.createCellStyle();
-	            headerTextStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
-	            headerTextStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	        
-	            XSSFFont font = workbook.createFont();
-	            font.setColor(IndexedColors.WHITE.getIndex());
-	            headerTextStyle.setFont(font);
-	        }
-	        return headerTextStyle;
+	        return getOrCreateStyle(StyleKind.HEADER_TEXT, this::createHeaderTextStyle);
 	    }
 	}
 
