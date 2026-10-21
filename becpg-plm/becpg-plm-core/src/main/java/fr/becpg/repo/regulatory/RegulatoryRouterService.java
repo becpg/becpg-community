@@ -33,7 +33,7 @@ public class RegulatoryRouterService {
                                    @Qualifier("becpgRegulatoryService") AbstractRegulatoryService becpgRegulatoryService,
                                    AlfrescoRepository<RepositoryEntity> alfrescoRepository,
                                    @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
-                                   AuthorityService authorityService) {
+                                   @Qualifier("authorityService") AuthorityService authorityService) {
         this.decernisRegulatoryService = decernisRegulatoryService;
         this.becpgRegulatoryService = becpgRegulatoryService;
         this.alfrescoRepository = alfrescoRepository;
