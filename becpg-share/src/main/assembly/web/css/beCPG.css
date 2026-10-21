@@ -416,6 +416,9 @@ img.icon16_11 {
 .dijitIcon.dijitMenuItemIcon.becpg-olap-header {
     background-image: url("../../components/images/header/becpg-olap.png") !important
 }
+.dijitIcon.dijitMenuItemIcon.becpg-regulatory-header {
+    background-image: url("../../components/images/header/becpg-regulatory.png") !important
+}
 .dijitIcon.dijitMenuItemIcon.model-designer-header {
     background-image: url("../../components/images/header/model-designer.png") !important
 }
@@ -423,6 +426,7 @@ img.icon16_11 {
 
 .dijitIcon.dijitMenuItemIcon.becpg-admin-header,
 .dijitIcon.dijitMenuItemIcon.becpg-olap-header,
+.dijitIcon.dijitMenuItemIcon.becpg-regulatory-header,
 .dijitIcon.dijitMenuItemIcon.ecm-record,
 .dijitIcon.dijitMenuItemIcon.model-designer-header,
 .dijitIcon.dijitMenuItemIcon.nc-list-header,
