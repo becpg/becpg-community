@@ -320,6 +320,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			policyBehaviourFilter.disableBehaviour(PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 			for (NodeRef channelListItemNodeRef : pendingNodes) {
 				updateChannelStates(channelListItemNodeRef);
 			}
@@ -327,6 +328,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 			policyBehaviourFilter.enableBehaviour(PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		}
 		return true;
 	}

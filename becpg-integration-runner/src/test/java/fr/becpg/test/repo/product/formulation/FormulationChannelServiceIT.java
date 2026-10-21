@@ -2,8 +2,11 @@ package fr.becpg.test.repo.product.formulation;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -405,6 +408,65 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertIsPublished(rawMaterialNodeRef);
 		assertIsPublished(finishedProductNodeRef);
 		assertNotEquals(whereUsedFormulatedDate, inReadTx(() -> nodeService.getProperty(finishedProductNodeRef, BeCPGModel.PROP_FORMULATED_DATE)));
+	}
+
+	@Test
+	public void testArchivedWhereUsedProductIsLeftUntouched() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM used by archived product test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		NodeRef archivedProductNodeRef = createFinishedProductUsing("FP archived where used test", rawMaterialNodeRef);
+		archiveWithoutConversion(archivedProductNodeRef);
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertBatchQueued("Batch should run", batchInfo);
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+		verify(publicationChannelService, never()).getOrCreateChannelListNodeRef(eq(archivedProductNodeRef), any());
+	}
+
+	@Test
+	public void testChannelListUpdateOnArchivedEntityCommits() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM archived with channel list test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		NodeRef channelListNodeRef = inWriteTx(() -> publicationChannelService.getOrCreateChannelListNodeRef(rawMaterialNodeRef,
+				FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID));
+		archiveWithoutConversion(rawMaterialNodeRef);
+
+		try {
+			inWriteTx(() -> {
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationChannelStatus.COMPLETED.toString());
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
+				return null;
+			});
+		} catch (RuntimeException e) {
+			fail("Updating the channel list of an archived entity should commit: " + e.getMessage());
+		}
+
+		assertIsPublished(rawMaterialNodeRef);
+	}
+
+	/**
+	 * Adds the archived aspect without triggering the archiving batch, so that the entity keeps its
+	 * datalists as nodes, as it does while its archiving is pending or after it failed.
+	 *
+	 * @param entityNodeRef the entity to archive
+	 */
+	private void archiveWithoutConversion(NodeRef entityNodeRef) {
+		inWriteTx(() -> {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+			nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY, null);
+			return null;
+		});
 	}
 
 	/**

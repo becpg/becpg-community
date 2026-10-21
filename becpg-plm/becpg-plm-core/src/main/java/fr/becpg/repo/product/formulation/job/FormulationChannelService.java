@@ -994,6 +994,13 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				return false;
 			}
 
+			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skipping archived product " + entityNodeRef);
+				}
+				return false;
+			}
+
 			QName nodeType = nodeService.getType(entityNodeRef);
 
 			if (PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)) {
