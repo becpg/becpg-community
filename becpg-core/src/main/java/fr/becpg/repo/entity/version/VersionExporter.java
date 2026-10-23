@@ -1,8 +1,11 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.AbstractExporter;
@@ -34,6 +37,7 @@ public class VersionExporter extends AbstractExporter {
 	private NodeRef parentNodeRef = null;
 	private NodeRef originalNodeRef = null;
 	private NodeRef targetNode = null;
+	private final Set<QName> ignoredAssocs = new HashSet<>();
 
 	/**
 	 * <p>Constructor for VersionExporter.</p>
@@ -48,6 +52,17 @@ public class VersionExporter extends AbstractExporter {
 		this.targetNode = targetNode;
 		this.dbNodeService = dbNodeService;
 		this.entityDictionaryService = entityDictionaryService;
+	}
+
+	/**
+	 * Keeps the given target associations of the original node off the target node.
+	 *
+	 * @param assocs the association types not to copy
+	 * @return this exporter
+	 */
+	public VersionExporter ignoreAssocs(QName... assocs) {
+		ignoredAssocs.addAll(Arrays.asList(assocs));
+		return this;
 	}
 
 	/** {@inheritDoc} */
@@ -132,7 +147,7 @@ public class VersionExporter extends AbstractExporter {
         	
         	AssociationRef assoc = new AssociationRef(targetNode, nodeAssocRef.getTypeQName(), nodeAssocRef.getTargetRef());
         	
-        	if (!targetAssocRefs.contains(assoc)) {
+        	if (!ignoredAssocs.contains(nodeAssocRef.getTypeQName()) && !targetAssocRefs.contains(assoc)) {
         		try {
         			dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
         		} catch (AssociationExistsException e) {

@@ -1371,7 +1371,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
 							BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
 					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-					exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService), crawlerParameters, null);
+					exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService).ignoreAssocs(ReportModel.ASSOC_REPORTS), crawlerParameters, null);
 					return null;
 				}, false, true);
 				
@@ -1624,7 +1624,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 
-				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService, entityDictionaryService), crawlerParameters,
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService, entityDictionaryService).ignoreAssocs(ReportModel.ASSOC_REPORTS),
+						crawlerParameters,
 						null);
 				
 				entityFormatService.updateEntityFormat(versionNode, EntityFormat.JSON, jsonData);

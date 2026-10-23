@@ -1095,4 +1095,69 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 	}
 
+	/**
+	 * A frozen version must not reference the reports of the live entity, the initial version included:
+	 * generating the reports of that version would otherwise delete them (#37816).
+	 */
+	@Test
+	public void testVersionDoesNotReferenceLiveReports() {
+		final NodeRef rawMaterialNodeRef = createRawMaterialWithReports("MP test version live reports");
+
+		inWriteTx(() -> createMajorVersion(rawMaterialNodeRef));
+
+		inReadTx(() -> {
+			List<NodeRef> liveReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
+			for (Version version : versionService.getVersionHistory(rawMaterialNodeRef).getAllVersions()) {
+				List<NodeRef> versionReports = associationService.getTargetAssocs(entityVersionService.getEntityVersion(version),
+						ReportModel.ASSOC_REPORTS);
+				assertTrue("Version " + version.getVersionLabel() + " references live reports", Collections.disjoint(liveReports, versionReports));
+			}
+			return null;
+		});
+	}
+
+	/**
+	 * Generating the reports of a frozen version, as the pending report job does, must keep the reports of the
+	 * live entity (#37816).
+	 */
+	@Test
+	public void testVersionReportsKeepLiveReports() {
+		final NodeRef rawMaterialNodeRef = createRawMaterialWithReports("MP test version keeps live reports");
+		final List<NodeRef> liveReports = inReadTx(() -> associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS));
+
+		final NodeRef versionNodeRef = inWriteTx(() -> createMajorVersion(rawMaterialNodeRef));
+		final NodeRef extractedNodeRef = inWriteTx(() -> entityVersionService.extractVersion(versionNodeRef));
+
+		inWriteTx(() -> {
+			entityReportService.generateReports(extractedNodeRef, versionNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			for (NodeRef liveReport : liveReports) {
+				assertTrue("Live report deleted: " + liveReport, nodeService.exists(liveReport));
+			}
+			return null;
+		});
+	}
+
+	private NodeRef createRawMaterialWithReports(String name) {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), name));
+		inWriteTx(() -> {
+			entityReportService.generateReports(rawMaterialNodeRef);
+			return null;
+		});
+		inReadTx(() -> {
+			assertFalse(associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS).isEmpty());
+			return null;
+		});
+		return rawMaterialNodeRef;
+	}
+
+	private NodeRef createMajorVersion(NodeRef entityNodeRef) {
+		Map<String, Serializable> properties = new HashMap<>();
+		properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+		return entityVersionService.createVersion(entityNodeRef, properties);
+	}
+
 }
