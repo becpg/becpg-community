@@ -1465,9 +1465,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
 
+		sp.setMaxPermissionChecks(Integer.MAX_VALUE);
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
-			sp.setMaxPermissionChecks(Integer.MAX_VALUE);
 			sp.setLimit(Integer.MAX_VALUE);
 			sp.setMaxItems(Integer.MAX_VALUE);
 		} else {
