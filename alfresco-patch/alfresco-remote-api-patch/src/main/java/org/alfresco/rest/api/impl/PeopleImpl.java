@@ -992,7 +992,6 @@ public class PeopleImpl implements People
         boolean hasLower = false;
         boolean hasDigit = false;
         boolean hasSpecial = false;
-        String specialChars = "!@#$%^&*()-_=+[]{}.";
         for (int i = 0; i < password.length(); i++)
         {
             char c = password.charAt(i);
@@ -1008,7 +1007,7 @@ public class PeopleImpl implements People
             {
                 hasDigit = true;
             }
-            else if (specialChars.indexOf(c) >= 0)
+            else if (isVisibleAsciiSymbol(c))
             {
                 hasSpecial = true;
             }
@@ -1018,6 +1017,15 @@ public class PeopleImpl implements People
             throw new InvalidArgumentException(
                     "Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).");
         }
+    }
+
+    /**
+     * Any visible ASCII character that is neither a letter nor a digit counts as special. Same rule as
+     * fr.becpg.repo.authentication.PasswordStrengthRule, duplicated because this patch cannot depend on becpg-core.
+     */
+    private static boolean isVisibleAsciiSymbol(char c)
+    {
+        return c >= '!' && c <= '~' && !Character.isLetterOrDigit(c);
     }
 
     private boolean isGuestAuthority(String authorityName)

@@ -832,13 +832,12 @@
                if (!pw) return true;
                if (pw.length < 14) return false;
                var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
-               var specialChars = "!@#$%^&*()-_=+[]{}. ";
                for (var i = 0; i < pw.length; i++) {
                   var c = pw.charAt(i);
                   if (c >= 'A' && c <= 'Z') hasUpper = true;
                   else if (c >= 'a' && c <= 'z') hasLower = true;
                   else if (c >= '0' && c <= '9') hasDigit = true;
-                  else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+                  else if (c >= '!' && c <= '~') hasSpecial = true;
                }
                return hasUpper && hasLower && hasDigit && hasSpecial;
             };
@@ -2488,13 +2487,12 @@
              var isPasswordSecure = function(pw) {
                 if (!pw || pw.length < 14) return false;
                 var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
-                var specialChars = "!@#$%^&*()-_=+[]{}. ";
                 for (var i = 0; i < pw.length; i++) {
                    var c = pw.charAt(i);
                    if (c >= 'A' && c <= 'Z') hasUpper = true;
                    else if (c >= 'a' && c <= 'z') hasLower = true;
                    else if (c >= '0' && c <= '9') hasDigit = true;
-                   else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+                   else if (c >= '!' && c <= '~') hasSpecial = true;
                 }
                 return hasUpper && hasLower && hasDigit && hasSpecial;
              };

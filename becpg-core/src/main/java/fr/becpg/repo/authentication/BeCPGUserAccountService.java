@@ -56,6 +56,8 @@ public class BeCPGUserAccountService {
 	/** Constant <code>PATH_SEPARATOR="\\/"</code> */
 	private static final String PATH_SEPARATOR = "\\/";
 
+	private static final String PASSWORD_POLICY_VIOLATION_MESSAGE = "Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).";
+
 	@Autowired
 	private TenantAdminService tenantAdminService;
 
@@ -580,28 +582,8 @@ public class BeCPGUserAccountService {
 	}
 
 	private void validatePasswordStrength(String password) {
-		if (password == null || password.length() < 14) {
-			throw new IllegalArgumentException("Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).");
-		}
-		boolean hasUpper = false;
-		boolean hasLower = false;
-		boolean hasDigit = false;
-		boolean hasSpecial = false;
-		String specialChars = "!@#$%^&*()-_=+[]{}.";
-		for (int i = 0; i < password.length(); i++) {
-			char c = password.charAt(i);
-			if (Character.isUpperCase(c)) {
-				hasUpper = true;
-			} else if (Character.isLowerCase(c)) {
-				hasLower = true;
-			} else if (Character.isDigit(c)) {
-				hasDigit = true;
-			} else if (specialChars.indexOf(c) >= 0) {
-				hasSpecial = true;
-			}
-		}
-		if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-			throw new IllegalArgumentException("Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).");
+		if (!PasswordStrengthRule.isSatisfiedBy(password)) {
+			throw new IllegalArgumentException(PASSWORD_POLICY_VIOLATION_MESSAGE);
 		}
 	}
 

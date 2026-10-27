@@ -23,14 +23,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.template.TemplateNode;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.TemplateService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -39,6 +45,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jsoup.Jsoup;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -47,11 +54,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.importer.user.UserImporterService;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -61,8 +70,21 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 	private static final String XLSX_MIMETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+	private static final String FREEMARKER_ENGINE = "freemarker";
+
+	private static final String IMPORT_USER_MAIL_TEMPLATE_PREFIX = "importuser-email";
+
+	/** Its only special character, {@code ?}, lies outside the former special character alphabet. */
+	private static final String PASSWORD_WITH_UNLISTED_SPECIAL = "Abcdefghij123?";
+
+	/** Holds {@code &#9}, which an unescaped HTML mail shows as a tab instead of the three characters. */
+	private static final String HTML_SENSITIVE_PASSWORD = "Ab&#9}cdEFgh12";
+
 	@Autowired
 	private UserImporterService userImporterService;
+
+	@Autowired
+	private TemplateService templateService;
 
 	@Autowired
 	private BeCPGUserAccountService beCPGUserAccountService;
@@ -258,6 +280,45 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
+	public void testImportUserShouldAcceptAnyVisibleSpecialCharacterInPassword() {
+		String username = buildUsername("unlisted-special");
+		trackUserForCleanup(username);
+
+		String csvContent = createCsvContent(new String[] { "username", "cm:firstName", "cm:lastName", "cm:email", "password" },
+				new String[] { username, "Unlisted", "Special", "unlisted.special@test.com", PASSWORD_WITH_UNLISTED_SPECIAL });
+		NodeRef csv = inWriteTx(() -> createCsvImport(buildFileName("unlisted-special", ".csv"), csvContent));
+
+		try {
+			inWriteTx(() -> {
+				userImporterService.importUser(csv);
+				return null;
+			});
+		} catch (RuntimeException e) {
+			Throwable rootCause = e.getCause() != null ? e.getCause() : e;
+			fail("Import should accept a password whose special character is '?': " + rootCause.getMessage());
+		}
+
+		assertUserProperties(username, "Unlisted", "Special", "unlisted.special@test.com", false);
+	}
+
+	@Test
+	public void testImportUserMailTemplatesShowPasswordUnaltered() {
+		Map<String, String> shownMailByTemplate = inReadTx(() -> {
+			Map<String, String> shownMails = new HashMap<>();
+			for (FileInfo template : findImportUserMailTemplates()) {
+				shownMails.put(template.getName(), renderImportUserMailAsShown(template.getNodeRef(), HTML_SENSITIVE_PASSWORD));
+			}
+			return shownMails;
+		});
+
+		assertFalse("Import user mail templates should be deployed", shownMailByTemplate.isEmpty());
+		for (Map.Entry<String, String> shownMail : shownMailByTemplate.entrySet()) {
+			assertTrue("Mail template " + shownMail.getKey() + " should show the password unaltered",
+					shownMail.getValue().contains(HTML_SENSITIVE_PASSWORD));
+		}
+	}
+
+	@Test
 	public void testImportUserShouldRenameUserNameToLowerCase() {
 		String originalUsername = QName.createValidLocalName(name.getMethodName() + "-User");
 		String lowerCaseUsername = originalUsername.toLowerCase();
@@ -383,6 +444,33 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 				ReflectionTestUtils.setField(beCPGUserAccountService, "identityServiceAccountProvider", originalProvider);
 			}
 		}
+	}
+
+	private List<FileInfo> findImportUserMailTemplates() {
+		NodeRef defaultTemplate = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+				RepoConsts.EMAIL_NEW_USER_TEMPLATE);
+		NodeRef templatesFolder = nodeService.getPrimaryParent(defaultTemplate).getParentRef();
+		List<FileInfo> templates = new ArrayList<>();
+		for (FileInfo file : fileFolderService.listFiles(templatesFolder)) {
+			if (file.getName().startsWith(IMPORT_USER_MAIL_TEMPLATE_PREFIX)) {
+				templates.add(file);
+			}
+		}
+		return templates;
+	}
+
+	/**
+	 * Renders the mail template, then reads it the way a mail client shows it: entities are decoded
+	 * following the HTML5 rules, even without a trailing semicolon, and whitespace is collapsed.
+	 */
+	private String renderImportUserMailAsShown(NodeRef templateNodeRef, String password) {
+		Map<String, Object> model = new HashMap<>();
+		model.put("person", new TemplateNode(personService.getPerson(AuthenticationUtil.getAdminUserName()), serviceRegistry, null));
+		model.put("username", AuthenticationUtil.getAdminUserName());
+		model.put("password", password);
+		model.put("shareUrl", "");
+		model.put("mailLogoUrl", "");
+		return Jsoup.parse(templateService.processTemplate(FREEMARKER_ENGINE, templateNodeRef.toString(), model)).body().text();
 	}
 
 	private void assertGeneratedPasswordMailSent(BeCPGMailService mockMailService, boolean notify) {

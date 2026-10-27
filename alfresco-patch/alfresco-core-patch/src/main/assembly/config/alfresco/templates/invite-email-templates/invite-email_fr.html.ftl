@@ -115,7 +115,7 @@
                                            <#if args["inviteeGenPassword"]?exists>
                                              <p style="margin-bottom:8px">Un compte a été créé pour vous et vos informations de connexion sont les suivantes :<br />
                                              <br />Nom d'utilisateur : ${args["inviteeUserName"]}
-                                             <br />Mot de passe : ${args["inviteeGenPassword"]}
+                                             <br />Mot de passe : ${args["inviteeGenPassword"]?html}
                                              </p>
                                              <p style="font-size:12px;color:#696969;font-style:italic;margin-bottom:20px">Nous vous conseillons vivement de modifier votre mot de passe lors de votre première connexion.
                                              <br />Pour ce faire, sélectionnez <b>Mon profil</b>, puis <b>Changer de mot de passe</b>.</p>
