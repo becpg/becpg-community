@@ -110,7 +110,7 @@
                                              <a href="${shareUrl}"><button style="margin-bottom:15px">Click this link to login</button></a>
                                              <p style="margin-bottom:8px">Your login details are :<br />
                                              <br />Username : <b>${username}</b>
-                                             <br />Password : <b>${password}</b>
+                                             <br />Password : <b>${password?html}</b>
                                              </p>
                                              
                                              <p style="font-size:12px;color:#696969;font-style:italic"><b>We strongly advise you to change your password when you login for the first time.</b><br />

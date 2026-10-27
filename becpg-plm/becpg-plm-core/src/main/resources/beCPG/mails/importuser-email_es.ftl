@@ -43,7 +43,7 @@
 
                 <!-- Account Info -->
                 <p style="margin: 10px 0;"><b>Cuenta:</b> ${username}</p>
-                <p style="margin: 10px 0;"><b>Contraseña:</b> ${password}</p>
+                <p style="margin: 10px 0;"><b>Contraseña:</b> ${password?html}</p>
 
                 <!-- Browser advice -->
                 <p style="margin: 10px 0;">

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.IntPredicate;
 
+import org.jsoup.Jsoup;
 import org.junit.Test;
 
 /**
@@ -21,9 +22,21 @@ public class SecurePasswordGeneratorTest {
 
     private static final int SAMPLE_SIZE = 500;
 
-    private static final int EXPECTED_LENGTH = 14;
+    private static final int EXPECTED_LENGTH = 15;
 
-    private static final String SPECIAL_CHARS = "!@#$%^&*()-_=+[]{}.";
+    /**
+     * Special characters safe to read in a mail and to type back: no {@code &} nor {@code #}, which start HTML
+     * character references, no dead key such as {@code ^}, nothing that stops a double-click selection.
+     */
+    private static final String SPECIAL_CHARS = "@%*-_=+!";
+
+    /** Characters a user easily confuses when typing the password back from a mail. */
+    private static final String LOOK_ALIKE_CHARS = "Il1O0";
+
+    private static final int LARGE_SAMPLE_SIZE = 100_000;
+
+    /** Markup the mail templates wrap the password in. */
+    private static final String MAIL_PASSWORD_MARKUP = "<b>%s</b>";
 
     @Test
     public void testGeneratedPasswordMatchesPolicyLength() {
@@ -58,8 +71,11 @@ public class SecurePasswordGeneratorTest {
     }
 
     @Test
-    public void testDotBelongsToTheSpecialCharacterAlphabet() {
-        assertTrue("The dot must be drawn as a special character", isDrawnOverSamples('.'));
+    public void testAlphabetHoldsNoLookAlikeCharacter() {
+        for (char lookAlike : LOOK_ALIKE_CHARS.toCharArray()) {
+            assertTrue("Alphabet must not hold the look-alike character '" + lookAlike + "'",
+                    SecurePasswordGenerator.ALL.indexOf(lookAlike) < 0);
+        }
     }
 
     @Test
@@ -74,17 +90,38 @@ public class SecurePasswordGeneratorTest {
     }
 
     /**
-     * The generator draws at random, so a single password proves nothing about the alphabet: a
-     * character present in the alphabet is drawn over the sample with a probability of 1 - 1e-39.
+     * The shortest HTML character references a mail client decodes hold three characters ({@code &lt},
+     * {@code &#9}), so every triplet of the alphabet reveals a character able to start one.
      */
-    private boolean isDrawnOverSamples(char expected) {
-        for (int i = 0; i < SAMPLE_SIZE; i++) {
-            if (SecurePasswordGenerator.generatePassword().indexOf(expected) >= 0) {
-                return true;
+    @Test
+    public void testEveryAlphabetCharacterTripletIsShownUnalteredInHtmlMail() {
+        for (char first : SecurePasswordGenerator.ALL.toCharArray()) {
+            for (char second : SecurePasswordGenerator.ALL.toCharArray()) {
+                for (char third : SecurePasswordGenerator.ALL.toCharArray()) {
+                    String triplet = String.valueOf(new char[] { first, second, third });
+                    assertEquals("Alphabet character triplet must be shown unaltered once rendered as HTML", triplet,
+                            renderAsHtmlMail(triplet));
+                }
             }
         }
+    }
 
-        return false;
+    @Test
+    public void testEveryPasswordOfLargeSampleMatchesPolicy() {
+        for (int i = 0; i < LARGE_SAMPLE_SIZE; i++) {
+            assertTrue("Generated password must match the security policy",
+                    PasswordStrengthRule.isSatisfiedBy(SecurePasswordGenerator.generatePassword()));
+        }
+    }
+
+    @Test
+    public void testNoPasswordOfLargeSampleHoldsWhitespaceOrInvisibleCharacter() {
+        for (int i = 0; i < LARGE_SAMPLE_SIZE; i++) {
+            String password = SecurePasswordGenerator.generatePassword();
+
+            assertTrue("Generated password must not hold a whitespace or invisible character",
+                    password.chars().allMatch(SecurePasswordGeneratorTest::isVisible));
+        }
     }
 
     private boolean holdsChar(String password, IntPredicate predicate) {
@@ -93,6 +130,18 @@ public class SecurePasswordGeneratorTest {
 
     private static boolean isSpecial(int character) {
         return SPECIAL_CHARS.indexOf(character) >= 0;
+    }
+
+    private static boolean isVisible(int character) {
+        return character > ' ' && character < 0x7F;
+    }
+
+    /**
+     * Renders the password the way a mail client shows it: entities are decoded following the HTML5
+     * rules, even without a trailing semicolon, and whitespace is collapsed.
+     */
+    private static String renderAsHtmlMail(String password) {
+        return Jsoup.parse(String.format(MAIL_PASSWORD_MARKUP, password)).body().text();
     }
 
     private static boolean isAllowed(char character) {

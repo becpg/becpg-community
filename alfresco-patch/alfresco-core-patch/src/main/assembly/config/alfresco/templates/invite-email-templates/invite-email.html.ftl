@@ -115,7 +115,7 @@
                                            <#if args["inviteeGenPassword"]?exists>
                                              <p style="margin-bottom:8px">An account has been created for you and your login details are :<br />
                                              <br />Username : ${args["inviteeUserName"]}
-                                             <br />Password : ${args["inviteeGenPassword"]}
+                                             <br />Password : ${args["inviteeGenPassword"]?html}
                                              </p>
                                              <p style="font-size:12px;color:#696969;font-style:italic;margin-bottom:20px">We strongly advise you to change your password when you log in for the first time.
                                              <br />You can do this by going to  <b>My Profile</b>and selecting <b>Change Password</b>.</p>
