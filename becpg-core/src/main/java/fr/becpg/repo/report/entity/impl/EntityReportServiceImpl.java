@@ -20,6 +20,8 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,6 +104,7 @@ import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.XMLDataSourceWriter;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
@@ -887,7 +890,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}
 		CountingOutputStream counter = new CountingOutputStream();
 		try {
-			org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(counter);
+			org.dom4j.io.XMLWriter writer = new XMLDataSourceWriter(counter);
 			writer.write(element);
 			writer.flush();
 		} catch (IOException e) {
@@ -1683,7 +1686,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				
 				filterByReportKind(reportData.getXmlDataSource(), null);
 				
-				return reportData.getXmlDataSource().asXML();
+				StringWriter xml = new StringWriter();
+				org.dom4j.io.XMLWriter xmlWriter = new XMLDataSourceWriter(xml);
+				xmlWriter.write(reportData.getXmlDataSource());
+				xmlWriter.flush();
+				return xml.toString();
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
 			} finally {
 				I18NUtil.setLocale(currentLocal);
 				I18NUtil.setContentLocale(currentContentLocal);
@@ -2409,7 +2418,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		
 		TruncatingWriter writer = new TruncatingWriter();
 		try {
-			org.dom4j.io.XMLWriter xmlWriter = new org.dom4j.io.XMLWriter(writer);
+			org.dom4j.io.XMLWriter xmlWriter = new XMLDataSourceWriter(writer);
 			xmlWriter.write(element);
 			xmlWriter.flush();
 		} catch (IOException e) {

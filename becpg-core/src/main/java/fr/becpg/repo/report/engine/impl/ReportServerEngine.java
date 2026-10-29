@@ -43,6 +43,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.repo.formulation.ReportableError;
 import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.XMLDataSourceWriter;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -271,7 +272,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			try {
 				List<String> errors = generateReport(reportSession, outStream -> {
 					CountingOutputStream counter = new CountingOutputStream(outStream);
-					XMLWriter writer = new XMLWriter(new BufferedOutputStream(counter));
+					XMLWriter writer = new XMLDataSourceWriter(new BufferedOutputStream(counter));
 					writer.write(reportData.getXmlDataSource());
 					writer.flush();
 					datasourceSize.set(counter.getByteCount());
