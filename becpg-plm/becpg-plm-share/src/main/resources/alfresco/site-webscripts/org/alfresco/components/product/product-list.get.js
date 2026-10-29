@@ -10,7 +10,7 @@ function main()
 	var prefs = "org.alfresco.share.product.list."+ (site!= null && site.length > 0 ? site : "home")
 		
 	var preferences = AlfrescoUtil.getPreferences(prefs);
-	var currentType = preferences.type!=null ? preferences.type: "finishedProduct";
+	var currentType = page.url.args.list ? page.url.args.list : (preferences.type!=null ? preferences.type: "finishedProduct");
     var showThumbnails = preferences.showThumbnails !== null ? (preferences.showThumbnails) : false;
     
 	var filterParameters =  getFilterParameters();
