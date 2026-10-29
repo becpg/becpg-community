@@ -83,6 +83,8 @@ public class RegulationFormulationHelper {
 		regulations.put("TT", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
 		regulations.put("DO", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
 		regulations.put("PE", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
+		// NTE INEN 1334-2 takes the rounding rules and daily values of the FDA format in force before 2016
+		regulations.put("EC", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/EcuadorianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
@@ -380,7 +382,7 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
 				|| locale.getCountry().equals("PE") || locale.getCountry().equals("TW") || locale.getCountry().equals("JP")
-				|| locale.getCountry().equals("VN")) {
+				|| locale.getCountry().equals("VN") || locale.getCountry().equals("EC")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -392,7 +394,8 @@ public class RegulationFormulationHelper {
 			return "US";
 		} else if (locale.getCountry().equals("PY")) {
 			return "BR";
-		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")) {
+		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")
+				|| locale.getCountry().equals("HN") || locale.getCountry().equals("NI") || locale.getCountry().equals("CR")) {
 			return "CTA";
 		} else if ((locale.getLanguage().equals("ar") 
 				&& (locale.getCountry() == null || locale.getCountry().isEmpty())) || locale.getCountry().equals("AE")
@@ -403,7 +406,8 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
 				|| locale.getCountry().equals("MW") || locale.getCountry().equals("TZ") || locale.getCountry().equals("ZM")
 				|| locale.getCountry().equals("ZW") || locale.getCountry().equals("KH") || locale.getCountry().equals("MM")
-				|| locale.getCountry().equals("JO") || locale.getCountry().equals("IQ") || locale.getCountry().equals("PS")) {
+				|| locale.getCountry().equals("JO") || locale.getCountry().equals("IQ") || locale.getCountry().equals("PS")
+				|| locale.getCountry().equals("LB") || locale.getCountry().equals("SY") || locale.getCountry().equals("LK")) {
 			return "CODEX";
 		} else if (locale.getCountry().equals("CO")) {
 			return "CO";
@@ -910,8 +914,12 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PE"))) {
 			ret.add("PE");
 		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_EC"))) {
+			ret.add("EC");
+		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_SV"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_HN"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_NI")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_CR"))) {
 			ret.add("CTA");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
@@ -936,7 +944,12 @@ public class RegulationFormulationHelper {
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("my_MM"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_IQ"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_JO"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_PS"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_PS"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_LB"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SY"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("si_LK"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ta_LK"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_LK"))) {
 			ret.add("CODEX");
 		}
 
