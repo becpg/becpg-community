@@ -1980,8 +1980,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
 
+            // The label falls back to another language when it has no value in the content language,
+            // so the browser takes the direction from the text itself rather than from the user locale.
             if (data.displayValue != null && data.displayValue != "" && beCPG.util.getContentTextDirection() == "rtl") {
-                dirAttribute = ' dir="rtl"';
+                dirAttribute = ' dir="auto"';
             }
 
             html += '<div class="note rounded"><div id="' + htmlId + suffix + '"' + dirAttribute + ' > ' + displayValue + '</div>';

@@ -1347,3 +1347,9 @@ div.yui-dialog {
 [dir="rtl"] {
 	text-align: right;
 }
+
+/** A multilingual value whose language is not known in advance takes its direction from its first letter: align it on that side **/
+
+[dir="auto"] {
+	text-align: start;
+}

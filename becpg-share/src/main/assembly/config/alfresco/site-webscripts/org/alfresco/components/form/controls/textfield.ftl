@@ -38,7 +38,7 @@
             </#if>
          </#if>
         
-         <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"><#if fieldValue != "">${fieldValue}</#if></span>
+         <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"<#if field.dataType == "mltext"> dir="auto"</#if>><#if fieldValue != "">${fieldValue}</#if></span>
       </div>
    <#else>
    
@@ -48,6 +48,7 @@
 	   </#if>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field maxLength=field.control.params.maxLength?number/> <#else> <@formLib.renderLocaleImage field=field/></#if></label>
       <input id="${fieldHtmlId}" name="${field.name}" tabindex="0" autocomplete="off"
+             <#if field.dataType == "mltext">dir="auto"</#if>
              <#if field.control.params.password??>type="password"<#else>type="text"</#if>
              <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
              <#if field.control.params.style??>style="${field.control.params.style}"</#if>
