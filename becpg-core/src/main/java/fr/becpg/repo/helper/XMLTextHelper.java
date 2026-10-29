@@ -22,27 +22,50 @@ public class XMLTextHelper {
 	 * @return a {@link java.lang.String} object
 	 */
 	public static String writeCData(String in) {
-		StringBuilder out = new StringBuilder(); // Used to hold the output.
-		char current; // Used to reference the current character.
+		if (in == null || in.isEmpty()) {
+			return "";
+		}
 
-		if (in == null || ("".equals(in))) {
-			return ""; // vacancy test.
+		int firstInvalid = indexOfInvalidChar(in, 0);
+		if (firstInvalid < 0) {
+			return in;
 		}
-		
-		for (int i = 0; i < in.length(); i++) {
-			current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-			if ((current == 0x9) ||
-					(current == 0xA) ||
-					(current == 0xD) ||
-					((current >= 0x20) && (current <= 0xD7FF)) ||
-					((current >= 0xE000) && (current <= 0xFFFD)) ||
-					((current >= 0x10000) && (current <= 0x10FFFF))) {
-				out.append(current);
+
+		StringBuilder out = new StringBuilder(in.length());
+		int start = 0;
+		while (firstInvalid >= 0) {
+			out.append(in, start, firstInvalid);
+			start = firstInvalid + Character.charCount(in.codePointAt(firstInvalid));
+			firstInvalid = indexOfInvalidChar(in, start);
+		}
+		out.append(in, start, in.length());
+
+		return out.toString();
+	}
+
+	/**
+	 * Tells whether a code point may appear in an XML 1.0 document. Control characters such as the
+	 * optional and non breaking hyphens Word puts in copied text (U+001F, U+001E) may not, even escaped.
+	 *
+	 * @param codePoint the code point to test
+	 * @return true if the code point is allowed
+	 */
+	public static boolean isXmlChar(int codePoint) {
+		return (codePoint == 0x9) || (codePoint == 0xA) || (codePoint == 0xD) || ((codePoint >= 0x20) && (codePoint <= 0xD7FF))
+				|| ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) || ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF));
+	}
+
+	private static int indexOfInvalidChar(String in, int from) {
+		int i = from;
+		while (i < in.length()) {
+			int codePoint = in.codePointAt(i);
+			if (!isXmlChar(codePoint)) {
+				return i;
 			}
+			i += Character.charCount(codePoint);
 		}
-		
-	     return out.toString();
-	  }
+		return -1;
+	}
 
 
 	/**
