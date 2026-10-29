@@ -23,6 +23,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.security.SecurityService;
 
 /**
  * <p>RemoteServiceRegistryImpl class.</p>
@@ -87,6 +88,9 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 
 	@Autowired
 	private LockService lockService;
+
+	@Autowired
+	private SecurityService securityService;
 
 
 	/** {@inheritDoc} */
@@ -206,6 +210,10 @@ public class RemoteServiceRegistryImpl implements RemoteServiceRegisty{
 		return serviceRegistry.getAuthorityService();
 	}
 
-	
+	/** {@inheritDoc} */
+	@Override
+	public SecurityService securityService() {
+		return securityService;
+	}
 
 }

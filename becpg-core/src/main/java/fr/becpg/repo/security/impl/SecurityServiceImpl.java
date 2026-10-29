@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -230,6 +231,19 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 
 		return false;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Set<String> getFieldsWithRules(NodeRef nodeRef, QName nodeType) {
+		String propKeyPrefix = computeNodeTypeKey(nodeType) + "_";
+		Set<String> fieldNames = new HashSet<>();
+		for (String propKey : getPermissionCachedMap(computeCacheKey(nodeRef)).keySet()) {
+			if (propKey.startsWith(propKeyPrefix)) {
+				fieldNames.add(propKey.substring(propKeyPrefix.length()));
+			}
+		}
+		return fieldNames;
 	}
 
 	/** {@inheritDoc} */

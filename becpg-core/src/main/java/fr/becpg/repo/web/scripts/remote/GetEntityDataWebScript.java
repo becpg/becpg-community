@@ -51,6 +51,7 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 		try {
 			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setEnforceFieldSecurity(true);
 			params.setFilteredFields(extractFields(req), namespaceService);
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");

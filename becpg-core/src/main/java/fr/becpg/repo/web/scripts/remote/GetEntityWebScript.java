@@ -61,6 +61,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			}
 
 			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setEnforceFieldSecurity(true);
 			params.setFilteredFields(extractFields(req), namespaceService);
 			params.setFilteredLists(extractLists(req));
 			params.setJsonParams(extractParams(req));

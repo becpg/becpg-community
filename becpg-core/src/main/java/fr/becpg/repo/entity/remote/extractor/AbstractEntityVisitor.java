@@ -62,6 +62,8 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
+	private final RemoteFieldReadAccess fieldReadAccess;
+
 	/**
 	 * <p>isLight.</p>
 	 *
@@ -109,6 +111,41 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		this.entityDictionaryService = remoteServiceRegisty.entityDictionaryService();
 		this.contentService = remoteServiceRegisty.contentService();
 		this.siteService = remoteServiceRegisty.siteService();
+		this.fieldReadAccess = new RemoteFieldReadAccess(remoteServiceRegisty.securityService(), unsecuredNodeService, namespaceService);
+	}
+
+	/**
+	 * Whether a field of a node is exported, as far as the security rules are concerned.
+	 * <p>
+	 * The rules are applied only when the caller asked for it, see
+	 * {@link fr.becpg.repo.entity.remote.RemoteParams#isEnforceFieldSecurity()}.
+	 *
+	 * @param nodeRef the node holding the field
+	 * @param fieldName the property or association
+	 * @return false when a security rule hides the field from the current user
+	 */
+	protected boolean canReadField(NodeRef nodeRef, QName fieldName) {
+		return !isFieldSecurityEnforced() || fieldReadAccess.canRead(nodeRef, fieldName);
+	}
+
+	/**
+	 * Whether a field of a type is exported under the global security rules, for a serialized node.
+	 *
+	 * @param nodeType the type the field belongs to
+	 * @param fieldName the property or association
+	 * @return false when a security rule hides the field from the current user
+	 */
+	protected boolean canReadField(QName nodeType, QName fieldName) {
+		return !isFieldSecurityEnforced() || (nodeType == null) || fieldReadAccess.canReadOnType(nodeType, fieldName);
+	}
+
+	/**
+	 * Whether the caller asked for the field level security rules to be applied.
+	 *
+	 * @return a boolean
+	 */
+	protected boolean isFieldSecurityEnforced() {
+		return (params != null) && params.isEnforceFieldSecurity();
 	}
 
 	/**
