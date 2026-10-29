@@ -2019,6 +2019,10 @@
                     <show id="bcpg:stlReferenceIntake" />
                     <show id="bcpg:stlRatioNutCode" />
                     <show id="bcpg:stlRatioFactor" />
+                    <show id="bcpg:stlLowerBoundIncluded" />
+                    <show id="bcpg:stlConditionNutCode" />
+                    <show id="bcpg:stlConditionLowerBound" />
+                    <show id="bcpg:stlConditionUpperBound" />
                 </field-visibility>
                 <appearance>
                     <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2035,6 +2039,10 @@
                     <field id="bcpg:stlReferenceIntake" set="2-col" />
                     <field id="bcpg:stlRatioNutCode" set="2-col" />
                     <field id="bcpg:stlRatioFactor" set="2-col" />
+                    <field id="bcpg:stlLowerBoundIncluded" set="2-col" />
+                    <field id="bcpg:stlConditionNutCode" set="2-col" />
+                    <field id="bcpg:stlConditionLowerBound" set="2-col" />
+                    <field id="bcpg:stlConditionUpperBound" set="2-col" />
                 </appearance>
             </form>
             <form id="datagrid">
@@ -9291,6 +9299,10 @@
                     <show id="bcpg:stlReferenceIntake" />
                     <show id="bcpg:stlRatioNutCode" />
                     <show id="bcpg:stlRatioFactor" />
+                    <show id="bcpg:stlLowerBoundIncluded" />
+                    <show id="bcpg:stlConditionNutCode" />
+                    <show id="bcpg:stlConditionLowerBound" />
+                    <show id="bcpg:stlConditionUpperBound" />
                 </field-visibility>
                 <appearance>
                     <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -9307,6 +9319,10 @@
                     <field id="bcpg:stlReferenceIntake" set="2-col" />
                     <field id="bcpg:stlRatioNutCode" set="2-col" />
                     <field id="bcpg:stlRatioFactor" set="2-col" />
+                    <field id="bcpg:stlLowerBoundIncluded" set="2-col" />
+                    <field id="bcpg:stlConditionNutCode" set="2-col" />
+                    <field id="bcpg:stlConditionLowerBound" set="2-col" />
+                    <field id="bcpg:stlConditionUpperBound" set="2-col" />
                 </appearance>
             </form>
         </forms>

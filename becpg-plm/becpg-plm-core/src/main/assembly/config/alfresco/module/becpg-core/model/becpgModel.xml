@@ -2139,6 +2139,23 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:stlLowerBoundIncluded">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionNutCode">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionLowerBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionUpperBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:stlScoreDef">
