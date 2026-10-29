@@ -249,7 +249,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && assocDef.isChild()) {
+					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && assocDef.isChild() && canReadField(nodeRef, assocDef.getName())) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				xmlw.writeStartElement(getXmlName(nodeType));
 				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
@@ -269,7 +269,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild()) {
+					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild() && canReadField(nodeRef, assocDef.getName())) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				xmlw.writeStartElement(getXmlName(nodeType));
 
@@ -312,7 +312,8 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 				QName propQName = entry.getKey();
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
+						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)
+						&& canReadField(nodeRef, propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);

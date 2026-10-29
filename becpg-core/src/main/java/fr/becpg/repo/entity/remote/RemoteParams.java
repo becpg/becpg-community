@@ -84,6 +84,8 @@ public class RemoteParams {
 
 	private boolean appendParent = false;
 
+	private boolean enforceFieldSecurity = false;
+
 	private Set<QName> filteredProperties = new HashSet<>();
 	private Set<QName> ignoredFields = new HashSet<>();
 	private Set<String> filteredLists = new HashSet<>();
@@ -136,6 +138,28 @@ public class RemoteParams {
 	 */
 	public void setAppendParent(boolean appendParent) {
 		this.appendParent = appendParent;
+	}
+
+	/**
+	 * Whether the fields hidden from the current user by a security rule are left out of the export.
+	 * <p>
+	 * Set only by the remote export webscripts, never from the request: the same export also feeds the
+	 * version archive and the backup taken before a deletion, which must keep every field whoever
+	 * triggers them. Defaults to <code>false</code>.
+	 *
+	 * @return a boolean
+	 */
+	public boolean isEnforceFieldSecurity() {
+		return enforceFieldSecurity;
+	}
+
+	/**
+	 * <p>Setter for the field <code>enforceFieldSecurity</code>.</p>
+	 *
+	 * @param enforceFieldSecurity a boolean
+	 */
+	public void setEnforceFieldSecurity(boolean enforceFieldSecurity) {
+		this.enforceFieldSecurity = enforceFieldSecurity;
 	}
 
 	/**

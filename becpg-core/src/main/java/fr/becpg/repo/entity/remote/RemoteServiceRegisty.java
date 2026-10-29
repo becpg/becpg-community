@@ -18,6 +18,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.security.SecurityService;
 
 
 /**
@@ -166,5 +167,12 @@ public interface RemoteServiceRegisty {
 	 * @return a {@link org.alfresco.repo.policy.BehaviourFilter} object
 	 */
 	BehaviourFilter policyBehaviourFilter();
+
+	/**
+	 * <p>securityService.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.security.SecurityService} object
+	 */
+	SecurityService securityService();
 
 }

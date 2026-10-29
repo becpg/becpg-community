@@ -46,6 +46,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
 			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setEnforceFieldSecurity(true);
 
 			Set<String> fields = extractFields(req);
 			Set<String> lists = extractLists(req);

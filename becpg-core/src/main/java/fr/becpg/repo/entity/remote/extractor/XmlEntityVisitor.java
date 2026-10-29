@@ -200,7 +200,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService));
 		// lists filter
-		if (DataListModel.TYPE_DATALIST.equals(nodeType) && !params.shouldExtractList(name)) {
+		if (DataListModel.TYPE_DATALIST.equals(nodeType) && (!params.shouldExtractList(name) || !canReadDataList(nodeRef))) {
 			extractLevel--;
 			return;
 		}
@@ -244,6 +244,26 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
+	 * Whether a data list is exported as far as the security rules are concerned. The rule is set on
+	 * the type of the owning entity, the list being reached through its container.
+	 *
+	 * @param listNodeRef the data list
+	 * @return false when a security rule hides the list from the current user
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if the owning entity cannot be read
+	 */
+	private boolean canReadDataList(NodeRef listNodeRef) throws RemoteException {
+		if (!isFieldSecurityEnforced()) {
+			return true;
+		}
+
+		String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+		NodeRef containerNodeRef = getPrimaryParentRef(listNodeRef);
+		NodeRef entityNodeRef = containerNodeRef != null ? getPrimaryParentRef(containerNodeRef) : null;
+		return (dataListType == null) || dataListType.isEmpty() || (entityNodeRef == null)
+				|| canReadField(entityNodeRef, QName.createQName(dataListType, namespaceService));
+	}
+
+	/**
 	 * <p>writeStdAttributes.</p>
 	 *
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
@@ -276,14 +296,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 
-		if (code != null && !code.isBlank()) {
+		if (code != null && !code.isBlank() && canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
 					XMLTextHelper.writeAttribute(code));
 		}
 
 		// erpCode
 		code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE);
-		if (code != null && !code.isBlank()) {
+		if (code != null && !code.isBlank() && canReadField(nodeRef, BeCPGModel.PROP_ERP_CODE)) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_ERP_CODE : RemoteEntityService.ATTR_ERP_CODE, code);
 		}
 
@@ -370,6 +390,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						continue;
 					}
 
+					if (!canReadField(nodeRef, assocDef.getName())) {
+						continue;
+					}
+
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
@@ -403,6 +427,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					// Assoc properties filter
 					if ((cachedAssocRef != null) && (cachedAssocRef.get(nodeRef) != null) && cachedAssocRef.containsKey(nodeRef)
 							&& !cachedAssocRef.get(nodeRef).contains(nodeType)) {
+						continue;
+					}
+
+					if (!canReadField(nodeRef, assocDef.getName())) {
 						continue;
 					}
 
@@ -451,7 +479,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || params.getFilteredProperties().contains(propName))
-						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
+						&& !propQName.equals(ContentModel.PROP_CONTENT) && canReadField(nodeRef, propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 
