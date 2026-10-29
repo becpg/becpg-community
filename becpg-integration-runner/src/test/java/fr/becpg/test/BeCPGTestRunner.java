@@ -45,16 +45,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -109,7 +106,6 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static final int CONNECT_TIMEOUT_MS = 30000;
 	private static final int SOCKET_TIMEOUT_MS = 600000;
 	private static final int CONNECTION_REQUEST_TIMEOUT_MS = 10000;
-	private static final int MAX_RETRY_ATTEMPTS = 3;
 	private static final int MAX_TOTAL_CONNECTIONS = 10;
 	private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
 	private static final int VALIDATE_AFTER_INACTIVITY_MS = 1000;
@@ -232,39 +228,11 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		// connections closed server-side during long-running tests (NoHttpResponseException)
 		connectionManager.setValidateAfterInactivity(VALIDATE_AFTER_INACTIVITY_MS);
 
-		HttpRequestRetryHandler retryHandler = (exception, executionCount, context) -> {
-			if (executionCount > MAX_RETRY_ATTEMPTS) {
-				return false;
-			}
-			if (exception instanceof NoHttpResponseException) {
-				// Stale keep-alive connection closed server-side: safe to retry idempotent test GET requests
-				logger.warn("Stale connection (no response) on attempt " + executionCount + ", retrying...");
-				return true;
-			}
-			if (exception instanceof java.net.SocketTimeoutException) {
-				logger.warn("Socket timeout on attempt " + executionCount + ", retrying...");
-				return true;
-			}
-			if (exception instanceof ConnectTimeoutException) {
-				logger.warn("Connection timeout on attempt " + executionCount + ", retrying...");
-				return true;
-			}
-			if (exception instanceof java.net.UnknownHostException) {
-				logger.warn("Unknown host on attempt " + executionCount + ", retrying...");
-				return true;
-			}
-			if (exception instanceof java.net.NoRouteToHostException) {
-				logger.warn("No route to host on attempt " + executionCount + ", retrying...");
-				return true;
-			}
-			return false;
-		};
-
 		return HttpClientBuilder.create()
 				.setDefaultCredentialsProvider(provider)
 				.setDefaultRequestConfig(requestConfig)
 				.setConnectionManager(connectionManager)
-				.setRetryHandler(retryHandler)
+				.setRetryHandler(new RemoteTestRetryHandler())
 				.evictIdleConnections(EVICT_IDLE_CONNECTIONS_S, TimeUnit.SECONDS)
 				.build();
 	}
