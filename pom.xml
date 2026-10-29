@@ -6,9 +6,9 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>26.1.0</version>
-	<name>beCPG</name>
+	<name>becpg</name>
 	
-	<description>BeCPG Parent Project</description>
+	<description>beCPG PLM core: Alfresco repository and Share modules for food, beverage and cosmetics product lifecycle management</description>
 	<url>https://github.com/becpg/becpg-community</url>
 	<organization>
 		<name>BeCPG</name>
