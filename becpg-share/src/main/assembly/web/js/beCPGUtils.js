@@ -445,7 +445,7 @@
             || country === "PK" || country === "ZA" || country === "TN"
             || country === "EG" || country === "CL" || country === "UY"
             || country === "BR" || country === "TT" || country === "DO"
-            || country === "PE") {
+            || country === "PE" || country === "EC") {
             return country;
         } else if (language === "zh") {
             return "CN";
@@ -457,7 +457,8 @@
             return "US";
         } else if (country === "PY") {
             return "BR";
-        } else if (country === "GT" || country === "PA" || country === "SV") {
+        } else if (country === "GT" || country === "PA" || country === "SV"
+            || country === "HN" || country === "NI" || country === "CR") {
             return "CTA";
         } else if (country === "AE" || country === "BH" || country === "SA"
             || country === "QA" || country === "OM" || country === "KW") {
@@ -466,7 +467,8 @@
             || country === "CI" || country === "UG" || country === "MZ"
             || country === "MW" || country === "TZ" || country === "ZM"
             || country === "ZW" || country === "KH" || country === "MM"
-            || country === "JO" || country === "IQ" || country === "PS") {
+            || country === "JO" || country === "IQ" || country === "PS"
+            || country === "LB" || country === "SY" || country === "LK") {
             return "CODEX";
         } else if (country === "CO") {
             return "CO";
