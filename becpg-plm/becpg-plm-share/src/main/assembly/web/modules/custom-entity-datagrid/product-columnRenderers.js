@@ -624,6 +624,22 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+    // Category of a score: the value of the product property its definition names, a list key
+    // such as "Beverages", shown in the language of the user when the bundle names it.
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslCategory"],
+        renderer: function(oRecord, data) {
+            var value = data && data.value ? data.value.toString() : "";
+            if (!value) {
+                return "";
+            }
+
+            var key = "score.category." + value;
+            var label = Alfresco.util.message(key);
+            return Alfresco.util.encodeHTML(label !== key ? label : (data.displayValue || value));
+        }
+    });
+
     // Logos of a score: the row carries the image, the class alone would say little.
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:sblClass"],

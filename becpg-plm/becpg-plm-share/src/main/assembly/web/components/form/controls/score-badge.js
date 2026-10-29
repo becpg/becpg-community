@@ -82,7 +82,25 @@
         if (isNaN(num)) {
             return value.toString();
         }
-        return num.toFixed(typeof decimals === "number" ? decimals : 2).replace(/\.?0+$/, "");
+        var digits = typeof decimals === "number" ? decimals : 2;
+        // in the language of the user: a decimal comma in French
+        if (beCPG.util.getJSLocale) {
+            return num.toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: digits });
+        }
+        return digits > 0 ? num.toFixed(digits).replace(/\.?0+$/, "") : num.toFixed(0);
+    }
+
+    /**
+     * Wording of a nutrient on a front of pack mark, in the language of the user: the
+     * label the threshold carries is the English data value, the code is what is translated.
+     */
+    function nutrientName(code, fallback) {
+        var key = "score.part." + code;
+        var translated = Alfresco.util.message(key);
+        if (translated !== key) {
+            return translated;
+        }
+        return fallback || NUTRIENT_LABELS[code] || code;
     }
 
     /**
@@ -580,7 +598,7 @@
      */
     function renderTrafficLight(part) {
         var level = trafficLevel(part);
-        var name = NUTRIENT_LABELS[part.code] || part.code;
+        var name = nutrientName(part.code);
         var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? "g" : part.unit);
         var verdict = part.label ? part.label.toString().toUpperCase() : "";
 
@@ -623,7 +641,7 @@
 
         html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2)
             + '" rx="8" fill="#fff" stroke="#222" stroke-width="1.5" />';
-        html += svgText(width / 2, 20, "Energy", "#222", 11);
+        html += svgText(width / 2, 20, nutrientName(part.code), "#222", 11);
         html += svgText(width / 2, 42, amount, "#222", 14);
 
         if (!isBlank(part.share)) {
@@ -658,7 +676,7 @@
 
         for (var i = 0; i < details.parts.length; i++) {
             var part = details.parts[i];
-            var name = part.label ? part.label : part.code;
+            var name = nutrientName(part.code, part.label);
             var intake = part.unit === "%" ? part.value : part.share;
 
             if (isBlank(intake)) {

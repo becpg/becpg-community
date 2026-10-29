@@ -9418,8 +9418,8 @@
                     <show id="bcpg:rslVersion" />
                     <show id="bcpg:rslCategory" />
                     <show id="bcpg:rslIsManual" />
-                    <show id="bcpg:regulatoryCountries" />
-                    <show id="bcpg:regulatoryUsageRef" />
+                    <show id="bcpg:regulatoryCountries" force="true" />
+                    <show id="bcpg:regulatoryUsageRef" force="true" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:rslScoreDef" read-only="true">
