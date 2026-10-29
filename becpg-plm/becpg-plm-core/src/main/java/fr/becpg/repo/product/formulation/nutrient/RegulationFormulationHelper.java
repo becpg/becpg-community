@@ -1,5 +1,7 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -955,6 +957,40 @@ public class RegulationFormulationHelper {
 
 		ret.add("EU");
 		return ret;
+	}
+
+	/**
+	 * <p>Converts a rounded value back to the unit of the nutrient list.</p>
+	 *
+	 * <p>A regulation stores its rounded values in its own unit, such as grams for the EU
+	 * sodium, whereas the rules reading them, a warning label threshold for instance, reason in
+	 * the unit of the nutrient itself. The conversion is decimal so that a rounded 0.3 g reads
+	 * as exactly 300 mg, which matters to a threshold including its bound.</p>
+	 *
+	 * @param roundedValue the value rounded by the regulation, in the regulation unit
+	 * @param nutCode the nutrient code
+	 * @param nutUnit the unit of the nutrient list, such as mg/100g
+	 * @param key the regulation key, such as EU
+	 * @return the value in the unit of the nutrient list, unchanged when the units match
+	 */
+	public static Double toNutUnit(Double roundedValue, String nutCode, String nutUnit, String key) {
+		if ((roundedValue == null) || (nutUnit == null)) {
+			return roundedValue;
+		}
+
+		NutrientRegulation regulation = getRegulation(key);
+		NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
+		if ((def == null) || (def.getUnit() == null) || def.getUnit().isBlank()) {
+			return roundedValue;
+		}
+
+		Double regulUnitsPerNutUnit = regulation.convertValue(1d, nutUnit, def.getUnit());
+		if ((regulUnitsPerNutUnit == null) || (regulUnitsPerNutUnit == 1d) || (regulUnitsPerNutUnit == 0d)) {
+			return roundedValue;
+		}
+
+		BigDecimal factor = BigDecimal.ONE.divide(BigDecimal.valueOf(regulUnitsPerNutUnit), MathContext.DECIMAL64);
+		return BigDecimal.valueOf(roundedValue).multiply(factor).doubleValue();
 	}
 
 	/**

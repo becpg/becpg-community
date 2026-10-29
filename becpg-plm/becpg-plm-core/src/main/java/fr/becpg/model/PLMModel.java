@@ -542,6 +542,14 @@ public interface PLMModel {
 	QName PROP_STL_RATIO_NUT_CODE = QName.createQName(BeCPGModel.BECPG_URI, "stlRatioNutCode");
 	/** Constant <code>PROP_STL_RATIO_FACTOR</code> */
 	QName PROP_STL_RATIO_FACTOR = QName.createQName(BeCPGModel.BECPG_URI, "stlRatioFactor");
+	/** Constant <code>PROP_STL_LOWER_BOUND_INCLUDED</code> */
+	QName PROP_STL_LOWER_BOUND_INCLUDED = QName.createQName(BeCPGModel.BECPG_URI, "stlLowerBoundIncluded");
+	/** Constant <code>PROP_STL_CONDITION_NUT_CODE</code> */
+	QName PROP_STL_CONDITION_NUT_CODE = QName.createQName(BeCPGModel.BECPG_URI, "stlConditionNutCode");
+	/** Constant <code>PROP_STL_CONDITION_LOWER_BOUND</code> */
+	QName PROP_STL_CONDITION_LOWER_BOUND = QName.createQName(BeCPGModel.BECPG_URI, "stlConditionLowerBound");
+	/** Constant <code>PROP_STL_CONDITION_UPPER_BOUND</code> */
+	QName PROP_STL_CONDITION_UPPER_BOUND = QName.createQName(BeCPGModel.BECPG_URI, "stlConditionUpperBound");
 
 	/** Constant <code>TYPE_SCORE_BADGE_LIST</code> */
 	QName TYPE_SCORE_BADGE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreBadgeList");

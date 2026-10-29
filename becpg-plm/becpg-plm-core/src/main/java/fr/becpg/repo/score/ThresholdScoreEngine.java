@@ -110,7 +110,7 @@ public class ThresholdScoreEngine {
 		Map<String, ScoreThresholdListDataItem> matched = new LinkedHashMap<>();
 
 		for (ScoreThresholdListDataItem threshold : thresholds) {
-			if (!threshold.appliesTo(category) || matched.containsKey(threshold.getNutCode())) {
+			if (!threshold.appliesTo(category) || !threshold.conditionHolds(nutrients) || matched.containsKey(threshold.getNutCode())) {
 				continue;
 			}
 			if (threshold.matches(threshold.comparedValue(nutrients.get(threshold.getNutCode()), nutrients))) {
