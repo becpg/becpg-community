@@ -53,4 +53,11 @@ public class SearchWordTest {
 		assertTrue(SearchWord.of("chaux").isStartedBy(SearchWord.of("chau")));
 		assertFalse(SearchWord.of("organe").isStartedBy(SearchWord.of("organisation")));
 	}
+
+	@Test
+	public void sameWordIsComparedInEitherFormButNotAsPrefix() {
+		assertTrue(SearchWord.of("r").isSameWordAs(SearchWord.of("r")));
+		assertTrue(SearchWord.of("pate").isSameWordAs(SearchWord.of("pates")));
+		assertFalse(SearchWord.of("recette").isSameWordAs(SearchWord.of("r")));
+	}
 }

@@ -49,4 +49,14 @@ record SearchWord(String raw, String stem) {
 	boolean isStartedBy(SearchWord prefix) {
 		return raw.startsWith(prefix.raw) || stem.startsWith(prefix.stem);
 	}
+
+	/**
+	 * Tells whether a typed word is this word, as typed or in its common form.
+	 *
+	 * @param word the typed word
+	 * @return true when both words are the same
+	 */
+	boolean isSameWordAs(SearchWord word) {
+		return raw.equals(word.raw) || stem.equals(word.stem);
+	}
 }

@@ -2,8 +2,8 @@ package fr.becpg.repo.helper;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -46,6 +46,9 @@ public class BeCPGQueryHelper {
 	/** Spaces between the words of a separated text. */
 	private static final Pattern SPACES = Pattern.compile(" +");
 
+	/** Blanks typed between two expressions of a query, the no-break space included. */
+	private static final Pattern BLANKS = Pattern.compile("[\\s\\p{Z}]+");
+
 	/** French ligatures, which Unicode decomposition does not split. */
 	private static final Map<String, String> LIGATURES = Map.of("\u0153", "oe", "\u0152", "OE", "\u00e6", "ae", "\u00c6", "AE");
 
@@ -79,7 +82,9 @@ public class BeCPGQueryHelper {
 	 *
 	 * Every word of the query must start a distinct word of the name, whatever the order, the case, the accents or
 	 * the ligatures. Punctuation separates words, and no word is an operator: "AND", "OR" or "NOT" are searched as
-	 * words. A query made of punctuation only is searched as a plain substring.
+	 * words. Words joined by punctuation without a blank, such as "R&D", "1=1" or "brief:marketing", form an
+	 * expression: they must follow each other in the name, in the same order, the last one being possibly incomplete.
+	 * A query made of punctuation only is searched as a plain substring.
 	 *
 	 * @param query the text typed by the user; blank or "*" matches everything
 	 * @param entityName the name to test
@@ -95,11 +100,29 @@ public class BeCPGQueryHelper {
 			return true;
 		}
 
-		List<SearchWord> queryWords = extractSearchWords(trimmedQuery);
-		if (queryWords.isEmpty()) {
+		List<List<SearchWord>> queryExpressions = extractSearchExpressions(trimmedQuery);
+		if (queryExpressions.isEmpty()) {
 			return foldText(entityName).contains(foldText(trimmedQuery));
 		}
-		return startsDistinctWords(queryWords, extractSearchWords(entityName));
+		return startsDistinctExpressions(queryExpressions, extractSearchWords(entityName));
+	}
+
+	/**
+	 * Splits a query on its blanks into expressions, each expression holding the words its punctuation separates. A
+	 * Han ideograph stays an expression of its own, and an expression made of punctuation only is dropped.
+	 *
+	 * @param query the typed query
+	 * @return the expressions, possibly empty
+	 */
+	private static List<List<SearchWord>> extractSearchExpressions(String query) {
+		List<List<SearchWord>> expressions = new ArrayList<>();
+		for (String blankSeparated : BLANKS.split(separateHanCharacters(foldText(query)).trim())) {
+			List<SearchWord> words = splitFoldedWords(blankSeparated);
+			if (!words.isEmpty()) {
+				expressions.add(words);
+			}
+		}
+		return expressions;
 	}
 
 	/**
@@ -110,8 +133,27 @@ public class BeCPGQueryHelper {
 	 * @return the words, possibly empty
 	 */
 	private static List<SearchWord> extractSearchWords(String text) {
-		String separated = HAN_CHARACTER.matcher(foldText(text)).replaceAll(" $0 ");
-		separated = NON_WORD_CHARACTERS.matcher(separated).replaceAll(SUFFIX_SPACE).trim();
+		return splitFoldedWords(separateHanCharacters(foldText(text)));
+	}
+
+	/**
+	 * Surrounds every Han ideograph with spaces, so that it becomes a word of its own.
+	 *
+	 * @param foldedText the folded text
+	 * @return the text with its ideographs set apart
+	 */
+	private static String separateHanCharacters(String foldedText) {
+		return HAN_CHARACTER.matcher(foldedText).replaceAll(" $0 ");
+	}
+
+	/**
+	 * Cuts a folded text on any character that is neither a letter nor a digit.
+	 *
+	 * @param foldedText the folded text
+	 * @return the words, possibly empty
+	 */
+	private static List<SearchWord> splitFoldedWords(String foldedText) {
+		String separated = NON_WORD_CHARACTERS.matcher(foldedText).replaceAll(SUFFIX_SPACE).trim();
 
 		List<SearchWord> words = new ArrayList<>();
 		if (!separated.isEmpty()) {
@@ -123,42 +165,82 @@ public class BeCPGQueryHelper {
 	}
 
 	/**
-	 * Checks that each query word starts its own name word, so that a word typed twice must be found twice. Longer
-	 * query words pick their name word first, to keep a short prefix from taking the only word a longer one fits.
+	 * Checks that each query expression is found on its own name words, so that a word typed twice must be found
+	 * twice. Longer expressions pick their name words first, to keep a short prefix from taking the only word a longer
+	 * one fits.
 	 *
-	 * @param queryWords the analysed query words
+	 * @param queryExpressions the analysed query expressions
 	 * @param nameWords the analysed name words
-	 * @return true when every query word found a name word
+	 * @return true when every query expression found its name words
 	 */
-	private static boolean startsDistinctWords(List<SearchWord> queryWords, List<SearchWord> nameWords) {
-		List<SearchWord> sortedQueryWords = new ArrayList<>(queryWords);
-		sortedQueryWords.sort(Comparator.comparingInt((SearchWord word) -> word.raw().length()).reversed());
+	private static boolean startsDistinctExpressions(List<List<SearchWord>> queryExpressions, List<SearchWord> nameWords) {
+		List<List<SearchWord>> sortedExpressions = new ArrayList<>(queryExpressions);
+		sortedExpressions.sort(Comparator.comparingInt((List<SearchWord> expression) -> expression.size())
+				.thenComparingInt(BeCPGQueryHelper::countTypedCharacters).reversed());
 
-		List<SearchWord> availableNameWords = new ArrayList<>(nameWords);
-		for (SearchWord queryWord : sortedQueryWords) {
-			if (!removeWordStartingWith(availableNameWords, queryWord)) {
+		boolean[] takenNameWords = new boolean[nameWords.size()];
+		for (List<SearchWord> expression : sortedExpressions) {
+			int start = findExpressionStart(expression, nameWords, takenNameWords);
+			if (start < 0) {
 				return false;
 			}
+			Arrays.fill(takenNameWords, start, start + expression.size(), true);
 		}
 		return true;
 	}
 
 	/**
-	 * Removes the first word started by the given typed word.
+	 * Counts the characters of the words of an expression, as typed.
 	 *
-	 * @param words the words to search, modified in place
-	 * @param prefix the typed word
-	 * @return true when a word was found and removed
+	 * @param expression the expression
+	 * @return its number of characters, punctuation excluded
 	 */
-	private static boolean removeWordStartingWith(List<SearchWord> words, SearchWord prefix) {
-		Iterator<SearchWord> iterator = words.iterator();
-		while (iterator.hasNext()) {
-			if (iterator.next().isStartedBy(prefix)) {
-				iterator.remove();
-				return true;
+	private static int countTypedCharacters(List<SearchWord> expression) {
+		int characters = 0;
+		for (SearchWord word : expression) {
+			characters += word.raw().length();
+		}
+		return characters;
+	}
+
+	/**
+	 * Finds the first run of free name words matching an expression: every word but the last is the same word, the
+	 * last one is started by the typed word.
+	 *
+	 * @param expression the typed expression
+	 * @param nameWords the name words
+	 * @param takenNameWords the name words already matched by another expression
+	 * @return the index of the first name word of the run, or -1 when there is none
+	 */
+	private static int findExpressionStart(List<SearchWord> expression, List<SearchWord> nameWords, boolean[] takenNameWords) {
+		for (int start = 0; start <= nameWords.size() - expression.size(); start++) {
+			if (isExpressionAt(expression, nameWords, takenNameWords, start)) {
+				return start;
 			}
 		}
-		return false;
+		return -1;
+	}
+
+	/**
+	 * Tells whether an expression matches the free name words starting at the given index.
+	 *
+	 * @param expression the typed expression
+	 * @param nameWords the name words
+	 * @param takenNameWords the name words already matched by another expression
+	 * @param start the index of the first name word
+	 * @return true when every word of the expression matches its name word
+	 */
+	private static boolean isExpressionAt(List<SearchWord> expression, List<SearchWord> nameWords, boolean[] takenNameWords, int start) {
+		int lastIndex = expression.size() - 1;
+		for (int index = 0; index <= lastIndex; index++) {
+			SearchWord nameWord = nameWords.get(start + index);
+			SearchWord typedWord = expression.get(index);
+			boolean matches = index == lastIndex ? nameWord.isStartedBy(typedWord) : nameWord.isSameWordAs(typedWord);
+			if (takenNameWords[start + index] || !matches) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

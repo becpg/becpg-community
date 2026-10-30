@@ -13,7 +13,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link BeCPGQueryHelper#isQueryMatch(String, String)}, on the task descriptions of the acceptance
- * test of ticket #25578 ("project code - project name - task name"), and for
+ * tests of ticket #25578 ("project code - project name - task name"), and for
  * {@link BeCPGQueryHelper#sortByRelevance(String, List, Function)}, on the ingredient suggestions of ticket #37670.
  */
 public class BeCPGQueryHelperTest {
@@ -33,6 +33,11 @@ public class BeCPGQueryHelperTest {
 
 	private static final List<String> TASKS = List.of(BRIEF_MARKETING, SQL_INJECTION, MIXED_CASE_NAME, BRIE, SCRIPT,
 			AMPERSAND_BETWEEN_WORDS, OPERATOR_WORDS, RIEF, R_AND_D, LIGATURE, STOP_WORD, ACCENT);
+
+	private static final String R_AND_D_IN_PROGRESS = "PJ4158 - A3 - R&Dev";
+	private static final String R_WORD_THEN_D_WORD = "PJ4146 - A1 - R\u00e9f\u00e9rencement de la gamme";
+	private static final String D_WORD_THEN_R_WORD = "PJ4160 - Dossier - Recette";
+	private static final String ONE_IN_PROJECT_AND_TASK = "PJ4161 - Projet 1 - task 1";
 
 	private static final String WATER = "Eau";
 	private static final String TAP_WATER = "Eau du r\u00e9seau";
@@ -91,6 +96,49 @@ public class BeCPGQueryHelperTest {
 		assertEquals(List.of(BRIEF_MARKETING), search("brief:marketing"));
 		assertEquals(List.of(R_AND_D), search("R&D"));
 		assertEquals(List.of(R_AND_D), search("r&d"));
+	}
+
+	@Test
+	public void wordsJoinedByPunctuationMustFollowEachOther() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("R&D", R_AND_D));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("R&D", R_WORD_THEN_D_WORD));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("r&d", D_WORD_THEN_R_WORD));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("D&R", R_AND_D));
+	}
+
+	@Test
+	public void onlyTheLastJoinedWordMayBeIncomplete() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("R&D", R_AND_D_IN_PROGRESS));
+		assertTrue(BeCPGQueryHelper.isQueryMatch("brief:mark", BRIEF_MARKETING));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("brie:marketing", BRIEF_MARKETING));
+	}
+
+	@Test
+	public void repeatedJoinedWordMustFollowItself() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("1=1", SQL_INJECTION));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("1=1", ONE_IN_PROJECT_AND_TASK));
+		assertTrue(BeCPGQueryHelper.isQueryMatch("1 1", ONE_IN_PROJECT_AND_TASK));
+	}
+
+	@Test
+	public void blanksSeparateExpressionsInAnyOrder() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("marketing brief", BRIEF_MARKETING));
+		assertTrue(BeCPGQueryHelper.isQueryMatch("marketing\u00a0brief", BRIEF_MARKETING));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("marketing:brief", BRIEF_MARKETING));
+		assertTrue(BeCPGQueryHelper.isQueryMatch("d r", R_AND_D));
+	}
+
+	@Test
+	public void shortWordsCountLikeAnyOtherWord() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("de la", R_WORD_THEN_D_WORD));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("de la", ACCENT));
+		assertEquals(List.of(), search("de la"));
+	}
+
+	@Test
+	public void joinedWordsOfAnAutocompleteFollowEachOther() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("d'eau", WATER_CHESTNUT));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("d'eau", TAP_WATER));
 	}
 
 	@Test
