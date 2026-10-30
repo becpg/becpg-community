@@ -85,8 +85,9 @@ public class EcobalyseIngredientService {
 	/**
 	 * <p>Suggests the ingredients matching a query, for the autocomplete of the code field.</p>
 	 *
-	 * <p>The query is matched against the label the user reads, alias and name together: the
-	 * reference only publishes French names, the alias is the English entry point.</p>
+	 * <p>The query is matched against the alias and the name together: the reference only
+	 * publishes French names, the alias is the English entry point. The suggestion only shows
+	 * the name, the alias being the stored value.</p>
 	 *
 	 * @param query the typed query
 	 * @param pageNum a {@link java.lang.Integer} object
@@ -108,7 +109,7 @@ public class EcobalyseIngredientService {
 			List<AutoCompleteEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (EcobalyseIngredient value : values) {
-					suggestions.add(new AutoCompleteEntry(value.getAlias(), value.toString(), "category"));
+					suggestions.add(new AutoCompleteEntry(value.getAlias(), value.getName(), "category"));
 				}
 			}
 			return suggestions;

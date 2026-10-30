@@ -87,6 +87,14 @@ public class EcobalyseIngredientServiceTest {
 		assertEquals(List.of("barley-whole-fr"), suggestedValues("barley-whole-fr entière"));
 	}
 
+	@Test
+	public void testSuggestionShowsTheNameAndStoresTheAlias() {
+		AutoCompleteEntry flour = service.suggest("orge", 1, PAGE_SIZE).getResults().stream()
+				.filter(entry -> "Farine d'orge FR".equals(entry.getName())).findFirst().orElseThrow();
+
+		assertEquals("barley-flour-fr", flour.getValue());
+	}
+
 	private List<String> suggestedValues(String query) {
 		return service.suggest(query, 1, PAGE_SIZE).getResults().stream().map(AutoCompleteEntry::getValue).toList();
 	}
