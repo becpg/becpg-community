@@ -12,7 +12,12 @@
 	<packaging>pom</packaging>
 	<name>Alfresco patches</name>
 	<description>beCPG patches for Alfresco</description>
-	
+
+	<properties>
+		<!-- Copies of upstream Alfresco classes: every rebase would report upstream issues as new code -->
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
 	<modules>
 	      <module>alfresco-repository-patch</module>
 	      <module>alfresco-remote-api-patch</module>
