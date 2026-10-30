@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,6 +41,7 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
+import fr.becpg.repo.authentication.SecurePasswordGenerator;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -466,9 +466,6 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		if (hasAccess) {
 
-			BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-			pwdGen.setPasswordLength(10);
-
 			if ((email == null) || email.isBlank()) {
 				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
 			}
@@ -488,7 +485,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			userAccount.setUserName(email);
 			userAccount.setFirstName(firstName);
 			userAccount.setLastName(lastName);
-			userAccount.setPassword(pwdGen.generatePassword());
+			userAccount.setPassword(SecurePasswordGenerator.generatePassword());
 			userAccount.setNotify(notify);
 			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
 			userAccount.setSynchronizeWithIDS(true);

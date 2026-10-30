@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>Gå till ditt konto</b></button></a>
 															<br /><b>Konto : </b>${username}
-															<br /><b>Lösenord : </b>${password}</p>
+															<br /><b>Lösenord : </b>${password?html}</p>
 															
 															<p>Jag rekommenderar att du använder webbläsaren Firefox eller Chrome.<br />															
 															</p>

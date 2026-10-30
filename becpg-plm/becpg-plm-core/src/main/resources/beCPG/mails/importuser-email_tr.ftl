@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>Hesabınıza erişin</b></button></a>
 															<br /><b>Hesap : </b>${username}
-															<br /><b>Parola : </b>${password}</p>
+															<br /><b>Parola : </b>${password?html}</p>
 															
 															<p>Firefox veya Chrome tarayıcısını kullanmanızı tavsiye ederim.<br />															
 															</p>

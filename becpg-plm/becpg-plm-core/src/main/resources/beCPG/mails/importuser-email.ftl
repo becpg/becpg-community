@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>Access your account</b></button></a>
 															<br /><b>Account : </b>${username}
-															<br /><b>Password : </b>${password}</p>
+															<br /><b>Password : </b>${password?html}</p>
 															
 															<p>I advise you to use the Firefox or Chrome browser.<br />															
 															</p>

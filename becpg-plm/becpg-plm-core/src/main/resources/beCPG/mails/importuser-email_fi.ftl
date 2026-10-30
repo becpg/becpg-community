@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>Käytä tiliäsi</b></button></a>
 															<br /><b>Tili : </b>${username}
-															<br /><b>Salasana : </b>${password}</p>
+															<br /><b>Salasana : </b>${password?html}</p>
 															
 															<p>Kehotan sinua käyttämään Firefox- tai Chrome-selainta.<br />															
 															</p>

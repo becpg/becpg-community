@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>お客様のアカウントへのアクセス</b></button></a>
 															<br /><b>アカウント : </b>${username}
-															<br /><b>パスワード : </b>${password}</p>
+															<br /><b>パスワード : </b>${password?html}</p>
 															
 															<p>FirefoxまたはChromeのブラウザを使用することをお勧めします。<br />															
 															</p>
