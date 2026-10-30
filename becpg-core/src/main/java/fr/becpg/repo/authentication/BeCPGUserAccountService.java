@@ -8,7 +8,6 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.repo.security.person.PersonServiceImpl;
@@ -96,21 +95,21 @@ public class BeCPGUserAccountService {
 
 			if (personService.personExists(userAccount.getUserName())) {
 				personNodeRef = updateUser(userAccount, propMap);
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					generatePassword(userAccount.getUserName(), true);
+				} else if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
+					updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
+				}
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
+				if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
+					userAccount.setPassword(SecurePasswordGenerator.generatePassword());
+				}
 				personNodeRef = createUser(userAccount, propMap);
-			}
-			
-			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-				updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
 			}
 			
 			updateGroups(userAccount);
 
-			if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
-				boolean shouldNotify = !Boolean.FALSE.equals(userAccount.getNotify());
-				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME), shouldNotify);
-			}
 			if (Boolean.TRUE.equals(userAccount.getDisable())) {
 				AuthorityHelper.disableAccount(userAccount.getUserName());
 			} else if (Boolean.FALSE.equals(userAccount.getDisable())) {
@@ -172,9 +171,7 @@ public class BeCPGUserAccountService {
 		if (!personService.personExists(username)) {
 			throw new IllegalStateException("user does not exist: " + username);
 		}
-		BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-		pwdGen.setPasswordLength(10);
-		String newPassword = pwdGen.generatePassword();
+		String newPassword = SecurePasswordGenerator.generatePassword();
 		updatePassword(username, newPassword, notify);
 	}
 
@@ -215,7 +212,7 @@ public class BeCPGUserAccountService {
 		setIdsUser(userAccount, userAccount.getUserName(), personNodeRef, false);
 
 		// notify supplier
-		if (Boolean.TRUE.equals(userAccount.getNotify())) {
+		if (Boolean.TRUE.equals(userAccount.getNotify()) || Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
 			beCPGMailService.sendMailNewUser(personNodeRef, userAccount.getUserName(), userAccount.getPassword());
 		}
 		return personNodeRef;

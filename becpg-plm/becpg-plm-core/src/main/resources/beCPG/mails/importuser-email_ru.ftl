@@ -91,7 +91,7 @@
                                              <p style="margin-top:0px">
 															<br /><a href="${shareUrl}""><button ><b>Войдите в свой аккаунт</b></button></a>
 															<br /><b>Счет : </b>${username}
-															<br /><b>Пароль : </b>${password}</p>
+															<br /><b>Пароль : </b>${password?html}</p>
 															
 															<p>Советую использовать браузер Firefox или Chrome.<br />															
 															</p>
