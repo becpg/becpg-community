@@ -1302,4 +1302,14 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
     </bean>
+
+    <bean id="patch.bcpg.plm.carbohydrateWithFiberFormulaPatch" class="fr.becpg.repo.admin.patch.CarbohydrateWithFiberFormulaPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.plm.carbohydrateWithFiberFormulaPatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.carbohydrateWithFiberFormulaPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="${version.schema}" />
+        <property name="targetSchema" value="100000"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+    </bean>
 </beans>
