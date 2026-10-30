@@ -1999,6 +1999,7 @@
                     <show id="bcpg:scoreDefScale" />
                     <show id="bcpg:scoreDefUnit" />
                     <show id="bcpg:scoreDefCategoryProperty" />
+                    <show id="bcpg:isDeleted" />
                 </field-visibility>
             </form>
         </forms>
