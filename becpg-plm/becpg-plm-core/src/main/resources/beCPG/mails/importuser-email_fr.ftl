@@ -43,7 +43,7 @@
 
                 <!-- Account Info -->
                 <p style="margin: 10px 0;"><b>Compte :</b> ${username}</p>
-                <p style="margin: 10px 0;"><b>Mot de passe :</b> ${password}</p>
+                <p style="margin: 10px 0;"><b>Mot de passe :</b> ${password?html}</p>
 
                 <!-- Browser advice -->
                 <p style="margin: 10px 0;">

@@ -43,7 +43,7 @@
 
                 <!-- Account Info -->
                 <p style="margin: 10px 0;"><b>アカウント：</b> ${username}</p>
-                <p style="margin: 10px 0;"><b>パスワード：</b> ${password}</p>
+                <p style="margin: 10px 0;"><b>パスワード：</b> ${password?html}</p>
 
                 <!-- Browser advice -->
                 <p style="margin: 10px 0;">
