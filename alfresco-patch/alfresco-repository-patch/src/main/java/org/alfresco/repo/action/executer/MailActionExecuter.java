@@ -144,6 +144,9 @@ public class MailActionExecuter extends ActionExecuterAbstractBase
     // beCPG
     private static final String MAIL_LOGO_URL_ATTRIBUTE = "mail.logo.url";
 
+    /** beCPG - Mailjet echoes this header in its webhook events, which tells status.becpg.fr the sending instance. */
+    private static final String MAILJET_CUSTOM_ID_HEADER = "X-MJ-CustomID";
+
     /**
      * The java mail sender
      */
@@ -648,6 +651,12 @@ public class MailActionExecuter extends ActionExecuterAbstractBase
                 if (headerEncoding != null && headerEncoding.length() != 0)
                 {
                     mimeMessage.setHeader("Content-Transfer-Encoding", headerEncoding);
+                }
+
+                // beCPG
+                if (sysAdminParams != null && sysAdminParams.getAlfrescoHost() != null)
+                {
+                    mimeMessage.setHeader(MAILJET_CUSTOM_ID_HEADER, sysAdminParams.getAlfrescoHost());
                 }
 
                 // set recipient
