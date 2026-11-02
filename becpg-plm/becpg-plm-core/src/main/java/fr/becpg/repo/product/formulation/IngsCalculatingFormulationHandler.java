@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -252,7 +251,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			Set<EvaporatedDataItem> evaporatedDataItems = new HashSet<>();
 
-			Set<IngListDataItem> supersededEvaporation = collectSupersededEvaporation(formulatedProduct.getIngList());
+			CompositeIngredientYieldBalancer yieldBalancer = new CompositeIngredientYieldBalancer(formulatedProduct.getIngList(),
+					this::hasEvaporationData);
 
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
@@ -334,7 +334,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					double primaryYieldFactor = formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d;
 					Double qtyPercWithYield = totalQtyIngWithYield / totalQtyUsedWithYield;
 
-					if (hasEvaporationData(ingListDataItem) && !supersededEvaporation.contains(ingListDataItem)) {
+					if (yieldBalancer.isEvaporating(ingListDataItem)) {
 						Double evaporateRate = getEvaporateRate(ingListDataItem);
 						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate, null, null));
 					} else {
@@ -355,7 +355,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				applyEvaporation(formulatedProduct, evaporatedDataItems);
 			}
 
-			initQtyPercWithSecondaryYield(formulatedProduct, evaporatedDataItems, supersededEvaporation);
+			initQtyPercWithSecondaryYield(formulatedProduct, evaporatedDataItems, yieldBalancer);
 
 			if (!formulatedProduct.isGeneric()) {
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
@@ -364,10 +364,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			boolean fixCompositeYield = !formulatedProduct.isGeneric() && !evaporatedDataItems.isEmpty()
 					&& formulatedProduct.getIngList().stream().anyMatch(item -> item.getParent() != null);
 
-			aggregateParentQtyPercWithYield(formulatedProduct.getIngList());
+			yieldBalancer.aggregateParentQtyPercWithYield();
 
 			if (fixCompositeYield) {
-				spreadEvaporationOverSubIngredients(formulatedProduct.getIngList());
+				yieldBalancer.spreadEvaporationOverSubIngredients();
 				normalizeQtyPercWithYield(formulatedProduct.getIngList());
 			}
 
@@ -392,10 +392,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 *
 	 * @param formulatedProduct the product being formulated
 	 * @param evaporatedDataItems the evaporating ingredients, completed with those found here
-	 * @param supersededEvaporation the composite ingredients whose evaporation rate is ignored
+	 * @param yieldBalancer tells which ingredients evaporate
 	 */
 	private void initQtyPercWithSecondaryYield(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems,
-			Set<IngListDataItem> supersededEvaporation) {
+			CompositeIngredientYieldBalancer yieldBalancer) {
 
 		boolean hasSecondaryYield = !formulatedProduct.isGeneric() && (formulatedProduct.getSecondaryYield() != null)
 				&& (formulatedProduct.getSecondaryYield() != 0d);
@@ -407,7 +407,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						: ingListDataItem.getQtyPerc();
 				if (qtyPercWithSecondaryYield != null) {
 					qtyPercWithSecondaryYield = applySecondaryYieldFactor(formulatedProduct, ingListDataItem, qtyPercWithSecondaryYield,
-							evaporatedDataItems, supersededEvaporation);
+							evaporatedDataItems, yieldBalancer);
 				}
 			}
 			ingListDataItem.setQtyPercWithSecondaryYield(qtyPercWithSecondaryYield);
@@ -422,260 +422,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param ingListDataItem the ingredient
 	 * @param qtyPerc the percentage after the product yield
 	 * @param evaporatedDataItems the evaporating ingredients
-	 * @param supersededEvaporation the composite ingredients whose evaporation rate is ignored
+	 * @param yieldBalancer tells which ingredients evaporate
 	 * @return the percentage before the secondary evaporation
 	 */
 	private Double applySecondaryYieldFactor(ProductData formulatedProduct, IngListDataItem ingListDataItem, Double qtyPerc,
-			Set<EvaporatedDataItem> evaporatedDataItems, Set<IngListDataItem> supersededEvaporation) {
-		if (hasEvaporationData(ingListDataItem) && !supersededEvaporation.contains(ingListDataItem)) {
+			Set<EvaporatedDataItem> evaporatedDataItems, CompositeIngredientYieldBalancer yieldBalancer) {
+		if (yieldBalancer.isEvaporating(ingListDataItem)) {
 			evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), getEvaporateRate(ingListDataItem), null, null));
 			return qtyPerc;
 		}
 		return qtyPerc / (formulatedProduct.getSecondaryYield() / 100d);
-	}
-
-	/**
-	 * Collects the composite ingredients whose own evaporation rate is superseded by one of their
-	 * sub-ingredients.
-	 * <p>
-	 * The same ingredient may legitimately be used both as a simple component and as a composite one,
-	 * so an evaporation rate is often set on a parent and on one of its sub-ingredients at the same
-	 * time. Both would then compete for the evaporation budget while the parent quantity already
-	 * includes the child one, counting the same water twice. When a sub-ingredient declares an
-	 * evaporation rate, it describes the evaporation precisely, so the parent rate is ignored (see
-	 * #34702).
-	 *
-	 * @param ingList the formulated product ingredient list
-	 * @return the items whose evaporation rate must not be applied
-	 */
-	private Set<IngListDataItem> collectSupersededEvaporation(List<IngListDataItem> ingList) {
-
-		Set<IngListDataItem> superseded = Collections.newSetFromMap(new IdentityHashMap<>());
-
-		for (IngListDataItem ancestor : collectAncestorsOfEvaporatingSubIngredients(ingList)) {
-			if ((ancestor.getIng() != null) && hasEvaporationData(ancestor)) {
-				superseded.add(ancestor);
-			}
-		}
-
-		if (logger.isDebugEnabled() && !superseded.isEmpty()) {
-			for (IngListDataItem item : superseded) {
-				logger.debug("Ignoring evaporation rate of composite ingredient detailed by an evaporating sub-ingredient: " + item.getName());
-			}
-		}
-
-		return superseded;
-	}
-
-	/**
-	 * Collects every composite ingredient having, at any depth, a sub-ingredient carrying an
-	 * evaporation rate.
-	 *
-	 * @param ingList the formulated product ingredient list
-	 * @return the ancestors of the evaporating sub-ingredients
-	 */
-	private Set<IngListDataItem> collectAncestorsOfEvaporatingSubIngredients(List<IngListDataItem> ingList) {
-
-		Set<IngListDataItem> ancestors = Collections.newSetFromMap(new IdentityHashMap<>());
-
-		for (IngListDataItem item : ingList) {
-			if ((item.getParent() == null) || (item.getIng() == null) || !hasEvaporationData(item)) {
-				continue;
-			}
-			IngListDataItem parent = item.getParent();
-			int depth = 0;
-			while ((parent != null) && (depth < 256)) {
-				ancestors.add(parent);
-				parent = parent.getParent();
-				depth++;
-			}
-		}
-
-		return ancestors;
-	}
-
-	/**
-	 * Shares the water lost by a composite ingredient over all its sub-ingredients, proportionally to
-	 * their declared percentages.
-	 * <p>
-	 * The evaporation budget is consumed by the sub-ingredient carrying the rate, so that
-	 * sub-ingredient alone used to bear the whole loss of its parent: a composite declared 60 % / 40 %
-	 * came out as 50 % / 50 % as soon as the 60 % one evaporated. The breakdown of a composite
-	 * ingredient is a declaration of its make-up, and reads as such on the label, so it must keep its
-	 * declared proportions (see #34702). Only the split inside the composite changes: its own
-	 * percentage - and therefore every total - is left untouched.
-	 * <p>
-	 * The redistribution runs top-down so that multi-level hierarchies stay consistent with the parent
-	 * they detail, and only applies to composites fully declared by their sub-ingredients: a partially
-	 * declared one is not the sum of its children, so spreading its value over them would be wrong.
-	 *
-	 * @param ingList the formulated product ingredient list
-	 */
-	private void spreadEvaporationOverSubIngredients(List<IngListDataItem> ingList) {
-
-		Set<IngListDataItem> evaporatingComposites = collectAncestorsOfEvaporatingSubIngredients(ingList);
-		if (evaporatingComposites.isEmpty()) {
-			return;
-		}
-
-		Map<IngListDataItem, List<IngListDataItem>> childrenByParent = new IdentityHashMap<>();
-		for (IngListDataItem item : ingList) {
-			if ((item.getParent() != null) && evaporatingComposites.contains(item.getParent())) {
-				childrenByParent.computeIfAbsent(item.getParent(), parent -> new ArrayList<>()).add(item);
-			}
-		}
-
-		List<IngListDataItem> parents = new ArrayList<>(childrenByParent.keySet());
-		parents.sort(Comparator.comparingInt(this::getIngDepth));
-
-		for (IngListDataItem parent : parents) {
-			List<IngListDataItem> children = childrenByParent.get(parent);
-			if (!isFullyDeclaredBySubIngredients(parent, children)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Partially declared composite ingredient, not spreading its evaporation: " + parent.getName());
-				}
-				continue;
-			}
-			spreadOverChildren(parent, children, IngListDataItem::getQtyPercWithYield, IngListDataItem::setQtyPercWithYield);
-			spreadOverChildren(parent, children, IngListDataItem::getQtyPercWithSecondaryYield, IngListDataItem::setQtyPercWithSecondaryYield);
-		}
-	}
-
-	/**
-	 * Splits a parent "with yield" percentage over its children, proportionally to their declared
-	 * percentages, leaving them untouched when the column is incomplete.
-	 *
-	 * @param parent the composite ingredient
-	 * @param children its direct sub-ingredients
-	 * @param getter the accessor of the column to spread
-	 * @param setter the mutator of the column to spread
-	 */
-	private void spreadOverChildren(IngListDataItem parent, List<IngListDataItem> children, Function<IngListDataItem, Double> getter,
-			BiConsumer<IngListDataItem, Double> setter) {
-
-		Double parentValue = getter.apply(parent);
-		if (parentValue == null) {
-			return;
-		}
-
-		double totalQtyPerc = 0d;
-		for (IngListDataItem child : children) {
-			if ((child.getQtyPerc() == null) || (getter.apply(child) == null)) {
-				return;
-			}
-			totalQtyPerc += child.getQtyPerc();
-		}
-
-		if (totalQtyPerc <= 0d) {
-			return;
-		}
-
-		for (IngListDataItem child : children) {
-			setter.accept(child, (parentValue * child.getQtyPerc()) / totalQtyPerc);
-		}
-	}
-
-	/**
-	 * Recomputes each parent (composite) ingredient "with yield" percentages as the sum of its
-	 * direct children percentages, when the children fully declare their parent.
-	 * <p>
-	 * A composite ingredient is, by definition, the sum of its sub-ingredients. When an evaporation
-	 * rate is present on a sub-ingredient, the leaf percentages already reflect the lost water,
-	 * whereas the parent percentage was re-concentrated independently by the product yield, producing
-	 * top-level sums above 100 %. Aggregating the children back into the parent restores the invariant
-	 * for both the primary and secondary yield percentages. The computation runs bottom-up so
-	 * multi-level hierarchies are resolved consistently. Items without children are left untouched.
-	 * <p>
-	 * The aggregation only applies when the sub-ingredients cover the whole parent, i.e. their
-	 * {@code qtyPerc} sum matches the parent one (see {@link #isFullyDeclaredBySubIngredients(IngListDataItem, List)}).
-	 * A partially declared composite keeps its own computed percentages: summing incomplete children
-	 * would under-evaluate it, and summing children without percentages at all would empty the column
-	 * (see #34702).
-	 *
-	 * @param ingList the formulated product ingredient list
-	 */
-	private void aggregateParentQtyPercWithYield(List<IngListDataItem> ingList) {
-
-		Map<IngListDataItem, List<IngListDataItem>> childrenByParent = new IdentityHashMap<>();
-		for (IngListDataItem item : ingList) {
-			if (item.getParent() != null) {
-				childrenByParent.computeIfAbsent(item.getParent(), parent -> new ArrayList<>()).add(item);
-			}
-		}
-
-		if (childrenByParent.isEmpty()) {
-			return;
-		}
-
-		List<IngListDataItem> parents = new ArrayList<>(childrenByParent.keySet());
-		parents.sort(Comparator.comparingInt(this::getIngDepth).reversed());
-
-		for (IngListDataItem parent : parents) {
-			List<IngListDataItem> children = childrenByParent.get(parent);
-			if (!isFullyDeclaredBySubIngredients(parent, children)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Partially declared composite ingredient, keeping its own with-yield percentages: " + parent.getName());
-				}
-				continue;
-			}
-			aggregateChildren(parent, children, IngListDataItem::getQtyPercWithYield, IngListDataItem::setQtyPercWithYield);
-			aggregateChildren(parent, children, IngListDataItem::getQtyPercWithSecondaryYield, IngListDataItem::setQtyPercWithSecondaryYield);
-		}
-	}
-
-	/**
-	 * Tells whether the sub-ingredients of a composite ingredient cover its whole quantity.
-	 * <p>
-	 * Only a fully declared composite is equal to the sum of its sub-ingredients. Sub-ingredients are
-	 * frequently declared partially — a few known components of a raw material, or components without
-	 * any percentage — in which case the parent percentages must be kept as computed. A parent without
-	 * percentage, or declared at 0 % (label-only wrapper whose children carry the real percentages),
-	 * can never be covered by its children.
-	 *
-	 * @param parent the composite ingredient
-	 * @param children its direct sub-ingredients
-	 * @return true when the children percentages sum up to the parent percentage
-	 */
-	private boolean isFullyDeclaredBySubIngredients(IngListDataItem parent, List<IngListDataItem> children) {
-
-		Double parentQtyPerc = parent.getQtyPerc();
-		if ((parentQtyPerc == null) || (parentQtyPerc <= 0d)) {
-			return false;
-		}
-
-		double childrenQtyPerc = 0d;
-		for (IngListDataItem child : children) {
-			if (child.getQtyPerc() == null) {
-				return false;
-			}
-			childrenQtyPerc += child.getQtyPerc();
-		}
-
-		return Math.abs(childrenQtyPerc - parentQtyPerc) <= Math.max(0.001d, parentQtyPerc / 100d);
-	}
-
-	/**
-	 * Sets a parent "with yield" percentage to the sum of its children, leaving it untouched when at
-	 * least one child has no value for that column.
-	 *
-	 * @param parent the composite ingredient
-	 * @param children its direct sub-ingredients
-	 * @param getter the accessor of the column to aggregate
-	 * @param setter the mutator of the column to aggregate
-	 */
-	private void aggregateChildren(IngListDataItem parent, List<IngListDataItem> children, Function<IngListDataItem, Double> getter,
-			BiConsumer<IngListDataItem, Double> setter) {
-
-		double sum = 0d;
-		for (IngListDataItem child : children) {
-			Double value = getter.apply(child);
-			if (value == null) {
-				return;
-			}
-			sum += value;
-		}
-
-		setter.accept(parent, sum);
 	}
 
 	/**
@@ -752,26 +508,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				setter.accept(item, value * factor);
 			}
 		}
-	}
-
-	/**
-	 * Returns the depth of an ingredient in the ingredient hierarchy, walking up the parent chain
-	 * when the stored depth level is not available.
-	 *
-	 * @param ingListDataItem the ingredient item
-	 * @return the depth (1 for a top-level ingredient)
-	 */
-	private int getIngDepth(IngListDataItem ingListDataItem) {
-		if (ingListDataItem.getDepthLevel() != null) {
-			return ingListDataItem.getDepthLevel();
-		}
-		int depth = 1;
-		IngListDataItem parent = ingListDataItem.getParent();
-		while ((parent != null) && (depth < 256)) {
-			depth++;
-			parent = parent.getParent();
-		}
-		return depth;
 	}
 
 	/**
