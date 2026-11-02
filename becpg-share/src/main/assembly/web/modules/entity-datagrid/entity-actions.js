@@ -201,7 +201,7 @@
                         mode: "create",
                         submitType: "json",
                         entityNodeRef: this.options.entityNodeRef,
-                        entityType: this.entity != null ? encodeURIComponent(this.entity.type) : "",
+                        entityType: this._getEntityType() != null ? encodeURIComponent(this._getEntityType()) : "",
                         list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
                     });
@@ -362,7 +362,7 @@
                         itemId: item.nodeRef,
                         mode: "edit",
                         submitType: "json",
-                        entityType: this.entity != null ? encodeURIComponent(this.entity.type) : "",
+                        entityType: this._getEntityType() != null ? encodeURIComponent(this._getEntityType()) : "",
                         entityNodeRef: this.options.entityNodeRef,
                         list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
@@ -761,7 +761,7 @@
             Alfresco.util.Ajax.jsonGet({
                 url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true"
                     + (siteId ? "&siteId=" + siteId : "")
-                    + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
+                    + (this._getEntityType() != null ? "&entityType=" + encodeURIComponent(this._getEntityType()) : "")
                     + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
                     + (this.options.list != null ? "&list=" + this.options.list : "")
