@@ -189,9 +189,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private EntityDictionaryService entityDictionaryService;
 	
 	@Autowired
-	private IntegrityChecker integrityChecker;
-	
-	@Autowired
 	private NamespaceService namespaceService;
 
 	/** {@inheritDoc} */
@@ -1360,51 +1357,49 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private void exportEntityToVersion(final NodeRef entityNodeRef, final NodeRef versionNodeRef) {
 
 		StopWatchSupport.build().logger(logger).scopeName("convert entity version").run(() -> {
-			integrityChecker.setEnabled(false);
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				// Scoped to this transaction: IntegrityChecker.setEnabled(false) would switch off the check for the whole server
+				IntegrityChecker.setWarnInTransaction();
+				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+				Location exportFrom = new Location(entityNodeRef);
+				crawlerParameters.setExportFrom(exportFrom);
+				crawlerParameters.setCrawlSelf(true);
+				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
+						BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService).ignoreAssocs(ReportModel.ASSOC_REPORTS), crawlerParameters, null);
+				return null;
+			}, false, true);
 			
-			try {
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-					Location exportFrom = new Location(entityNodeRef);
-					crawlerParameters.setExportFrom(exportFrom);
-					crawlerParameters.setCrawlSelf(true);
-					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
-							BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
-					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-					exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService).ignoreAssocs(ReportModel.ASSOC_REPORTS), crawlerParameters, null);
-					return null;
-				}, false, true);
-				
-				StopWatchSupport.addCheckpoint("export version");
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					String fromName = (String) dbNodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-					dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_NAME, fromName);
-					String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-					dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
-					String generateEntityData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON);
-					entityFormatService.updateEntityFormat(versionNodeRef, EntityFormat.JSON, generateEntityData);
-					return null;
-				}, false, true);
-				
-				StopWatchSupport.addCheckpoint("update format");
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
-					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).filter(Objects::nonNull).toList();
-					associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
-					return null;
-				}, false, true);
-				
-				StopWatchSupport.addCheckpoint("copy reports");
-				
-				deleteNodeRef(entityNodeRef);
-				
-				StopWatchSupport.addCheckpoint("delete node");
-			} finally {
-				integrityChecker.setEnabled(true);
-			}
+			StopWatchSupport.addCheckpoint("export version");
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				IntegrityChecker.setWarnInTransaction();
+				String fromName = (String) dbNodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+				dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_NAME, fromName);
+				String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
+				dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
+				String generateEntityData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON);
+				entityFormatService.updateEntityFormat(versionNodeRef, EntityFormat.JSON, generateEntityData);
+				return null;
+			}, false, true);
+			
+			StopWatchSupport.addCheckpoint("update format");
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				IntegrityChecker.setWarnInTransaction();
+				NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+				List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).filter(Objects::nonNull).toList();
+				associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
+				return null;
+			}, false, true);
+			
+			StopWatchSupport.addCheckpoint("copy reports");
+			
+			deleteNodeRef(entityNodeRef);
+			
+			StopWatchSupport.addCheckpoint("delete node");
 			return null;
 		});
 		

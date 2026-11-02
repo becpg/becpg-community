@@ -52,8 +52,6 @@ public class AssociationIndexerService {
 	@Autowired
 	private RuleService ruleService;
 	@Autowired
-	private IntegrityChecker integrityChecker;
-	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 	@Autowired
 	private NodeDAO nodeDAO;
@@ -86,12 +84,7 @@ public class AssociationIndexerService {
 		} else if (entityDictionaryService.getAspect(sourceName) != null) {
 			logger.info("reindex assoc for: " + sourceName);
 			BatchProcessor<NodeRef> batchProcessor = createBatchAspectProcessor(sourceName);
-			integrityChecker.setEnabled(false);
-			try {
-				batchProcessor.processLong(getPatchWorker(assocQName), true);
-			} finally {
-				integrityChecker.setEnabled(true);
-			}
+			batchProcessor.processLong(getPatchWorker(assocQName), true);
 		} else {
 			throw new IllegalStateException("sourceName does not exist: " + sourceName);
 		}
@@ -106,12 +99,7 @@ public class AssociationIndexerService {
 	private void applyToType(QName toApplyType, QName assocQName) {
 		logger.info("reindex assoc for: " + toApplyType);
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(toApplyType);
-		integrityChecker.setEnabled(false);
-		try {
-			batchProcessor.processLong(getPatchWorker(assocQName), true);
-		} finally {
-			integrityChecker.setEnabled(true);
-		}
+		batchProcessor.processLong(getPatchWorker(assocQName), true);
 	}
 
 	/**
@@ -236,6 +224,8 @@ public class AssociationIndexerService {
 
 			@SuppressWarnings("unchecked")
 			public void process(NodeRef nodeRef) throws Throwable {
+				// Scoped to the batch transaction: IntegrityChecker.setEnabled(false) would switch off the check for the whole server
+				IntegrityChecker.setWarnInTransaction();
 				ruleService.disableRules();
 				if (nodeService.exists(nodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
