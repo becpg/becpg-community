@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -167,18 +168,18 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		xmlw.writeStartElement(name != null ? name : getXmlName(nodeType));
 
-		NodeRef parentRef = getPrimaryParentRef(nodeRef);
+		Optional<Path> parentPath = findReadableParentPath(nodeRef);
+		if (parentPath.isPresent()) {
+			xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, parentPath.get().toPrefixString(namespaceService));
+		}
 
-		Path path = nodeService.getPath(parentRef);
-
-		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME,
 				(String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE) && canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 			xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
 		}
 

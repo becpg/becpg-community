@@ -276,14 +276,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact, boolean appendSite)
 			throws XMLStreamException, RemoteException {
-		Path path = null;
-		NodeRef parentRef = getPrimaryParentRef(nodeRef);
-		if (parentRef != null) {
-			path = nodeService.getPath(parentRef);
+		Path path = findReadableParentPath(nodeRef).orElse(null);
+		if (path != null) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_PATH : RemoteEntityService.ATTR_PATH,
 			path.toPrefixString(namespaceService));
-		} else {
-			logger.warn("Node : " + nodeRef + " has no primary parent");
 		}
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
