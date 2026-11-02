@@ -444,3 +444,9 @@ div.wizard-content {
     display: inline-block !important;
     visibility: visible !important;
 }
+
+/* Share stacks the date picker at z-index 1: on the last fields of a step it opened under the
+   page footer and could not be used. */
+.wizard .form-container .datepicker {
+    z-index: 100;
+}
