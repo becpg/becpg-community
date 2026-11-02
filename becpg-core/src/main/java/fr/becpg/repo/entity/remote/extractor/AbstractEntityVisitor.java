@@ -27,9 +27,12 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -44,6 +47,8 @@ import net.sf.acegisecurity.AccessDeniedException;
  * @version $Id: $Id
  */
 public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
+
+	private static final Log logger = LogFactory.getLog(AbstractEntityVisitor.class);
 
 	protected final NodeService mlNodeService;
 	protected final NodeService nodeService;
@@ -180,6 +185,28 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 					.orElse(null);
 		} catch (final AccessDeniedException | org.alfresco.repo.security.permissions.AccessDeniedException e) {
 			throw new RemoteException(String.format("Cannot read entity %s's primary parent", nodeRef.toString()), e);
+		}
+	}
+
+	/**
+	 * The path of the folder of a node, when the current user may read that folder.
+	 * <p>
+	 * A node may be readable while its folder is not, a client or a supplier shared from a
+	 * restricted site for instance. Its path is then unknown to the user and is left out: failing
+	 * would end a streamed export in the middle of an element, on a response already committed.
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return the path of the primary parent, empty when the node has none or when the user cannot read it
+	 */
+	protected Optional<Path> findReadableParentPath(NodeRef nodeRef) {
+		try {
+			NodeRef parentRef = getPrimaryParentRef(nodeRef);
+			return parentRef != null ? Optional.of(nodeService.getPath(parentRef)) : Optional.empty();
+		} catch (RemoteException | AccessDeniedException | org.alfresco.repo.security.permissions.AccessDeniedException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Folder of " + nodeRef + " not readable by the current user, path left out of the export");
+			}
+			return Optional.empty();
 		}
 	}
 }
