@@ -862,6 +862,98 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	/**
+	 * #37613 : a detailed semi-finished product holding evaporating water, inside a semi-finished product that loses
+	 * weight. The yield of the outer semi-finished product used to be handed down into the bracket : the water there
+	 * absorbed the loss of the level above, the bracket was scaled back up to the detailed product and the prune
+	 * carried the yield twice - "prux 66.7% (water 37%, prune 29.6%)" instead of the 60 / 40 of its recipe.
+	 */
+	@Test
+	public void testRenderDetailedSemiFinishedWithWaterInYieldingSemiFinished() {
+
+		NodeRef waterNodeRef = createSingleIngRawMaterial("ING Water 37613", true);
+		NodeRef pruneNodeRef = createSingleIngRawMaterial("ING Prune 37613", false);
+		NodeRef sugarNodeRef = createSingleIngRawMaterial("ING Sugar 37613", false);
+
+		// 1 kg in, 1 kg out : the detailed product has no yield of its own
+		NodeRef pruxNodeRef = createSemiFinished("prux 37613", 1d, List.of(
+				CompoListDataItem.build().withQtyUsed(0.6d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(waterNodeRef),
+				CompoListDataItem.build().withQtyUsed(0.4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(pruneNodeRef)));
+
+		// 1 kg in, 0.9 kg out : the cream loses 10 %
+		NodeRef creamNodeRef = createSemiFinished("cream 37613", 0.9d, List.of(
+				CompoListDataItem.build().withQtyUsed(0.4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(sugarNodeRef),
+				CompoListDataItem.build().withQtyUsed(0.6d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+						.withProduct(pruxNodeRef)));
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Finished product 37613 " + Calendar.getInstance().getTimeInMillis())
+					.withLegalName("legal Finished product 37613").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+							.withDeclarationType(DeclarationType.Declare).withProduct(creamNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2")
+				.withFormula("detailsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		String rendered = getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, labelingRuleList), Locale.FRENCH);
+		logger.info("Rendered labeling of a detailed semi-finished product in a yielding one: " + rendered);
+
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+		Assert.assertEquals("Expecting the water and the prune between brackets: " + rendered, 2, subPercs.size());
+
+		Assert.assertEquals("The detailed product carries the yield of the cream: " + rendered, 66.667d, extractCompositePerc(rendered), 0.01d);
+		Assert.assertEquals("Water keeps its share of the recipe: " + rendered, 40d, subPercs.get(0), 0.01d);
+		Assert.assertEquals("Prune carries the yield once: " + rendered, 26.667d, subPercs.get(1), 0.01d);
+	}
+
+	private NodeRef createSingleIngRawMaterial(String ingName, boolean evaporating) {
+		return inWriteTx(() -> {
+			NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, ingName);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM " + ingName + " " + Calendar.getInstance().getTimeInMillis());
+			rawMaterial.setDensity(1d);
+			rawMaterial.setIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing).withIsManual(false)));
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+
+			if (evaporating) {
+				nodeService.setProperty(ing, PLMModel.PROP_EVAPORATED_RATE, 100d);
+				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_EVAPORATED_RATE, 100d);
+			}
+			return rawMaterialNodeRef;
+		});
+	}
+
+	/** Creates and formulates a semi-finished product, so that it carries the yield the labeling reads. */
+	private NodeRef createSemiFinished(String name, double netQty, List<CompoListDataItem> compoList) {
+		NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+			SemiFinishedProductData semiFinished = SemiFinishedProductData.build().withName(name + " " + Calendar.getInstance().getTimeInMillis())
+					.withUnit(ProductUnit.kg).withQty(netQty).withDensity(1d).withCompoList(compoList);
+			semiFinished.setLegalName(name);
+			return alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(semiFinishedNodeRef);
+			return null;
+		});
+
+		return semiFinishedNodeRef;
+	}
+
+	/**
 	 * #34702, retour du 19/08 sur « FA - PIZZA PIECE » : l'étiquetage cru gonfle lui aussi le détail.
 	 *
 	 * The first fix was gated on {@code ingsLabelingWithYield}, so a label rendered without the yield
