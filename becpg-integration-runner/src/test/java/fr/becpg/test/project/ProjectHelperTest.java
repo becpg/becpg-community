@@ -9,8 +9,14 @@ import org.junit.Test;
 
 import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.project.impl.WorkingDayProvider;
 
 public class ProjectHelperTest {
+
+	/** Monday 3 January 2022 to Tuesday 27 October 2026: 1257 working days and 502 week-end days. */
+	private static final Date LONG_TASK_START = gmtDate(2022, Calendar.JANUARY, 3);
+	private static final Date LONG_TASK_END = gmtDate(2026, Calendar.OCTOBER, 27);
+	private static final int LONG_TASK_WORKING_DAYS = 1257;
 
 	@Test
 	public void testRemoveTimeTimeZoneIndependent() {
@@ -57,6 +63,52 @@ public class ProjectHelperTest {
 		Assert.assertEquals(endDate, nextDate);
 	}
 
-	
-	
+	@Test
+	public void testCalculateTaskDurationOverMoreThanMaxNonWorkingDays() {
+		int duration = ProjectHelper.calculateTaskDuration(LONG_TASK_START, LONG_TASK_END, new DefaultWorkingDayProvider());
+
+		Assert.assertEquals(LONG_TASK_WORKING_DAYS, duration);
+	}
+
+	@Test
+	public void testCalculateNextDateOverMoreThanMaxNonWorkingDays() {
+		Date nextDate = ProjectHelper.calculateNextDate(LONG_TASK_START, LONG_TASK_WORKING_DAYS, true, new DefaultWorkingDayProvider());
+
+		Assert.assertEquals(LONG_TASK_END, nextDate);
+	}
+
+	@Test
+	public void testCalculateNextDateStopsOnCalendarWithoutWorkingDay() {
+		Date nextDate = ProjectHelper.calculateNextDate(LONG_TASK_START, 2, true, new NoWorkingDayProvider());
+
+		Assert.assertEquals(gmtDate(2023, Calendar.JANUARY, 5), nextDate);
+	}
+
+	@Test
+	public void testCalculateTaskDurationStopsOnCalendarWithoutWorkingDay() {
+		int duration = ProjectHelper.calculateTaskDuration(LONG_TASK_START, LONG_TASK_END, new NoWorkingDayProvider());
+
+		Assert.assertEquals(1, duration);
+	}
+
+	private static Date gmtDate(int year, int month, int day) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		cal.clear();
+		cal.set(year, month, day);
+		return cal.getTime();
+	}
+
+	private static class NoWorkingDayProvider implements WorkingDayProvider {
+
+		@Override
+		public boolean isWorkingDay(Date date) {
+			return false;
+		}
+
+		@Override
+		public Date getNextWorkingDay(Date date) {
+			return date;
+		}
+	}
+
 }

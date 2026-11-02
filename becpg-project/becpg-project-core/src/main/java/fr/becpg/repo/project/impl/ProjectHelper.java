@@ -415,7 +415,9 @@ public class ProjectHelper {
 
 		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
-		int iterations = 0;
+		// Only an unbroken run of non working days means a calendar without working days:
+		// a long duration crosses more than MAX_ITERATIONS week-end days in total.
+		int consecutiveNonWorkingDays = 0;
 
 		int i = 1;
 		while (i < duration) {
@@ -426,12 +428,13 @@ public class ProjectHelper {
 			}
 			if (isWorkingDate(calendar, provider)) {
 				i++;
+				consecutiveNonWorkingDays = 0;
 			} else {
-				iterations++;
+				consecutiveNonWorkingDays++;
 			}
 
-			if (iterations > MAX_ITERATIONS) {
-				logger.warn("Gave up after " + MAX_ITERATIONS + " non working days while looking for " + duration
+			if (consecutiveNonWorkingDays > MAX_ITERATIONS) {
+				logger.warn("Gave up after " + MAX_ITERATIONS + " consecutive non working days while looking for " + duration
 						+ " working days from " + startDate + " using " + provider + " - returning " + calendar.getTime()
 						+ ", which is short of the requested duration");
 				return calendar.getTime();
@@ -481,16 +484,17 @@ public class ProjectHelper {
 
 		Calendar endDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		endDateCal.setTime(endDate);
-		int iterations = 0;
+		int consecutiveNonWorkingDays = 0;
 		while (startDateCal.before(endDateCal)) {
 			if (isWorkingDate(startDateCal, provider)) {
 				duration++;
+				consecutiveNonWorkingDays = 0;
 			} else {
-				iterations++;
+				consecutiveNonWorkingDays++;
 			}
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
-			if (iterations > MAX_ITERATIONS) {
-				logger.warn("Gave up after " + MAX_ITERATIONS + " non working days while counting the working days between "
+			if (consecutiveNonWorkingDays > MAX_ITERATIONS) {
+				logger.warn("Gave up after " + MAX_ITERATIONS + " consecutive non working days while counting the working days between "
 						+ startDate + " and " + endDate + " using " + provider + " - returning a partial duration of "
 						+ duration);
 				return duration;
