@@ -209,6 +209,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				// Adv search already filter by perm
 
 				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<>();
+				// Rows of the list hidden by a collapsed ancestor, as opposed to rows filtered out of the list
+				Set<NodeRef> hiddenNodeRefs = new HashSet<>();
 
 				for (NodeRef childRef : childRefs) {
 					NodeRef currEntityNodeRef = getEntityNodeRef(childRef);
@@ -219,8 +221,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					}
 					int nextDepth = currDepth + depthLevel;
 					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(childRef, BeCPGModel.PROP_PARENT_LEVEL);
-					if (isExpandedNode(useExpandedCache ? parentNodeRef : null, ((maxDepthLevel == 0) && (parentNodeRef != null))
-							|| (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1), resetTree)) {
+					if (!hiddenNodeRefs.contains(parentNodeRef) && isExpandedNode(useExpandedCache ? parentNodeRef : null,
+							((maxDepthLevel == 0) && (parentNodeRef != null)) || (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1),
+							resetTree)) {
 						MultiLevelListData tmp;
 						if (currEntityNodeRef != null) {
 							if (logger.isDebugEnabled()) {
@@ -248,8 +251,10 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 							}
 						}
 
-					} 
-					
+					} else {
+						hiddenNodeRefs.add(childRef);
+					}
+
 					if (parentNodeRef != null && !parentNodeRef.equals(childRef) && currTmp.containsKey(parentNodeRef) && currEntityNodeRef == null) {
 						MultiLevelListData parent = currTmp.get(parentNodeRef);
 						if (currEntityNodeRef == null) {
