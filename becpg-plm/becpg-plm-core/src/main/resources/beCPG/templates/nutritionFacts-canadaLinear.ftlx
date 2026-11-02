@@ -84,10 +84,13 @@
 	</#list>
 </#macro>
 
-<#-- The closing line of one text: the legend pinned to its left margin, the footnote to its right one. -->
+<#--
+  The closing line of one text: the legend pinned to its left margin, its asterisk set the way
+  figure 16.1 sets it, and the footnote pinned to its right one.
+-->
 <#macro footer data x width y>
 	<#if data.label("linearLegend")?has_content>
-	<text x="${x}" y="${nf.baseline(y, FOOTNOTE_SIZE)}" font-size="${FOOTNOTE_SIZE}">${nf.joined(data.label("linearLegend"), data.isBilingual()?then(data.secondaryLabel("linearLegend"), ""))}</text>
+	<text x="${x}" y="${nf.baseline(y, FOOTNOTE_SIZE)}" font-size="${FOOTNOTE_SIZE}"><@nf.asterisked text=nf.joined(data.label("linearLegend"), data.isBilingual()?then(data.secondaryLabel("linearLegend"), ""))/></text>
 	</#if>
 	<@nf.emphasisedFootNote data=data y=y size=FOOTNOTE_SIZE singleLine=true indent=x + width anchor="end"/>
 </#macro>
