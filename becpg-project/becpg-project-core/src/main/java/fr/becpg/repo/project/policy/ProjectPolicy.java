@@ -126,7 +126,12 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			}
 	
 			// change startdate, duedate
-			if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) || isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
+			if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE)) {
+				projectService.updateProjectStartDate(nodeRef, (Date) after.get(ProjectModel.PROP_PROJECT_START_DATE));
+				toReformulates.add(nodeRef);
+			}
+
+			if (isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)) {
 				toReformulates.add(nodeRef);
 			}
 	

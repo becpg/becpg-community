@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.project;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -169,6 +170,16 @@ public interface ProjectService {
       * @return a {@link java.util.Set} object
       */
      Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState);
+
+     /**
+      * Moves the root tasks of a planned project to its new start date. The planning formulation
+      * derives the project start date from its first tasks, so without this the start date entered
+      * by the user would be overwritten by the previous one.
+      *
+      * @param projectNodeRef the project whose start date changed
+      * @param startDate the new project start date
+      */
+     void updateProjectStartDate(NodeRef projectNodeRef, Date startDate);
 
 	/**
 	 * <p>createNewTask.</p>

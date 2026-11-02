@@ -271,6 +271,36 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 	}
 
 	/**
+	 * Verifies that the start date entered on a planned project is kept by the formulation and moves
+	 * its first task, instead of being reverted to the start date of that task. Regression for #38042.
+	 */
+	@Test
+	public void testPlannedProjectKeepsNewStartDate() {
+		DefaultWorkingDayProvider provider = new DefaultWorkingDayProvider();
+		Date initialStartDate = ProjectHelper
+				.removeTime(ProjectHelper.calculateNextStartDate(ProjectHelper.calculateEndDate(new Date(), 20, provider), provider));
+		Date newStartDate = ProjectHelper
+				.removeTime(ProjectHelper.calculateNextStartDate(ProjectHelper.calculateEndDate(initialStartDate, 5, provider), provider));
+
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, initialStartDate, null, PlanningMode.Planning);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, newStartDate);
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			assertEquals(ProjectState.Planned, projectData.getProjectState());
+			assertEquals("Project start date must keep the date entered", newStartDate, ProjectHelper.removeTime(projectData.getStartDate()));
+			assertEquals("First task must start on the new project start date", newStartDate, projectData.getTaskList().get(0).getStart());
+
+			return null;
+		}, false, true);
+	}
+
+	/**
 	 * Verifies that task start dates use the previous task calendar and task end dates use the current task calendar.
 	 *
 	 * @throws ParseException if the test dates cannot be parsed.

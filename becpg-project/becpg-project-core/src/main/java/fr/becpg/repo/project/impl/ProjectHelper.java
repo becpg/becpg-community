@@ -298,14 +298,26 @@ public class ProjectHelper {
 	 * @param startDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState())
-				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
+		if (isStartDateComputed(t)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("setTaskStartDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate + ", is group:"
 						+ t.getIsGroup());
 			}
 			t.setStart(removeTime(startDate));
 		}
+	}
+
+	/**
+	 * Tells whether the start date of a task is computed by the planning, from its predecessors or
+	 * from the project start date, rather than kept as it is.
+	 *
+	 * @param t the task
+	 * @return true when the planning sets the task start date
+	 */
+	public static boolean isStartDateComputed(TaskListDataItem t) {
+		return (Boolean.TRUE.equals(t.getIsGroup()) || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState())
+				|| TaskState.Cancelled.equals(t.getTaskState()) || (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null)))
+				&& !TaskManualDate.Start.equals(t.getManualDate());
 	}
 
 	/**

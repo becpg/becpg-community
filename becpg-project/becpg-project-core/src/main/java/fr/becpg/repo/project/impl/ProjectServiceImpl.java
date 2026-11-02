@@ -59,12 +59,14 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.TaskWrapper;
 import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -229,6 +231,62 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 		}
 
 		return toReformulates;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void updateProjectStartDate(NodeRef projectNodeRef, Date startDate) {
+		if ((startDate == null) || !isPlannedFromStartDate(projectNodeRef)) {
+			return;
+		}
+
+		ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+		Date taskStartDate = ProjectHelper.removeTime(startDate);
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			for (TaskListDataItem task : getRootTasksToMove(projectData, taskStartDate)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Move start of task " + task.getTaskName() + " to new project start date " + taskStartDate);
+				}
+				nodeService.setProperty(task.getNodeRef(), ProjectModel.PROP_TL_START, taskStartDate);
+			}
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+	}
+
+	/**
+	 * Tells whether the project start date drives its planning: a planned project, not a template,
+	 * planned forward from its start date.
+	 *
+	 * @param projectNodeRef the project
+	 * @return true when the start date entered on the project must be kept by the formulation
+	 */
+	private boolean isPlannedFromStartDate(NodeRef projectNodeRef) {
+		String planningMode = (String) nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_PLANNING_MODE);
+		return ((planningMode == null) || PlanningMode.Planning.toString().equals(planningMode))
+				&& ProjectState.Planned.toString().equals(nodeService.getProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE))
+				&& !nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
+	}
+
+	/**
+	 * Lists the root tasks whose start is computed from the project start date and is not already on it.
+	 *
+	 * @param projectData the project
+	 * @param startDate the new start date, without time
+	 * @return the root tasks to move
+	 */
+	private List<TaskListDataItem> getRootTasksToMove(ProjectData projectData, Date startDate) {
+		List<TaskListDataItem> rootTasks = new ArrayList<>();
+		for (TaskWrapper wrapper : TaskWrapper.extract(projectData)) {
+			TaskListDataItem task = wrapper.getTask();
+			if (wrapper.isRoot() && ProjectHelper.isStartDateComputed(task) && !startDate.equals(task.getStart())) {
+				rootTasks.add(task);
+			}
+		}
+		return rootTasks;
 	}
 
 	/** {@inheritDoc} */
