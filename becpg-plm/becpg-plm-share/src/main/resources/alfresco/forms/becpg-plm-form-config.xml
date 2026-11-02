@@ -10941,6 +10941,35 @@
 
                 </appearance>
             </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="create-wizard">
+                <field-visibility>
+                    <show id="bcpg:mblMicrobio" />
+                    <show id="bcpg:mblValue" />
+                    <show id="bcpg:mblUnit" />
+                    <show id="bcpg:mblMaxi" />
+                    <show id="bcpg:mblTextCriteria" />
+                    <show id="bcpg:mblControlStep" />
+                    <show id="bcpg:mblMethod" />
+                </field-visibility>
+
+                <appearance>
+                    <field id="bcpg:mblMicrobio">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/microbio</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:mblTextCriteria">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                    </field>
+                    <field id="bcpg:mblMethod">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+                        </control>
+                    </field>
+
+                </appearance>
+            </form>
 
             <!-- Data Grid view -->
             <form id="datagrid">
@@ -11027,6 +11056,34 @@
                     <show id="bcpg:mblControlStep" />
                     <show id="bcpg:mblMethod" />
                     <show id="rep:reportKinds" />
+                </field-visibility>
+
+                <appearance>
+                    <field id="bcpg:mblMicrobio">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/microbio</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:mblTextCriteria">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                    </field>
+                    <field id="bcpg:mblMethod">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="edit-wizard">
+                <field-visibility>
+                    <show id="bcpg:mblMicrobio" />
+                    <show id="bcpg:mblValue" />
+                    <show id="bcpg:mblUnit" />
+                    <show id="bcpg:mblMaxi" />
+                    <show id="bcpg:mblTextCriteria" />
+                    <show id="bcpg:mblControlStep" />
+                    <show id="bcpg:mblMethod" />
                 </field-visibility>
 
                 <appearance>
@@ -11552,6 +11609,31 @@
 
                 </appearance>
             </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="create-wizard">
+                <field-visibility>
+                    <show id="bcpg:organoListOrgano" />
+                    <show id="bcpg:organoListValue" />
+                    <show id="bcpg:organoListMethod" />
+                </field-visibility>
+
+                <appearance>
+                    <field id="bcpg:organoListOrgano">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:organoListValue">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="rows">2</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:organoListMethod">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+                        </control>
+                    </field>
+
+                </appearance>
+            </form>
 
             <!-- Data Grid view -->
             <form id="datagrid">
@@ -11679,6 +11761,34 @@
                     <show id="bcpg:pclTextCriteria" />
                     <show id="bcpg:pclMethod" />
                     <show id="rep:reportKinds" force="true" />
+                </field-visibility>
+
+                <appearance>
+                    <field id="bcpg:pclPhysicoChem">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pclTextCriteria">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                    </field>
+                    <field id="bcpg:pclMethod">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+                        </control>
+                    </field>
+
+                </appearance>
+            </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="create-wizard">
+                <field-visibility>
+                    <show id="bcpg:pclPhysicoChem" />
+                    <show id="bcpg:pclValue" />
+                    <show id="bcpg:pclMini" />
+                    <show id="bcpg:pclMaxi" />
+                    <show id="bcpg:pclTextCriteria" />
+                    <show id="bcpg:pclMethod" />
                 </field-visibility>
 
                 <appearance>
@@ -11869,6 +11979,33 @@
                     <show id="bcpg:pclTextCriteria" />
                     <show id="bcpg:pclMethod" />
                     <show id="rep:reportKinds" />
+                </field-visibility>
+
+                <appearance>
+                    <field id="bcpg:pclPhysicoChem">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/physicoChem</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pclTextCriteria">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+                    </field>
+                    <field id="bcpg:pclMethod">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="edit-wizard">
+                <field-visibility>
+                    <show id="bcpg:pclPhysicoChem" />
+                    <show id="bcpg:pclValue" />
+                    <show id="bcpg:pclMini" />
+                    <show id="bcpg:pclMaxi" />
+                    <show id="bcpg:pclTextCriteria" />
+                    <show id="bcpg:pclMethod" />
                 </field-visibility>
 
                 <appearance>
@@ -12787,6 +12924,32 @@
                     </field>
                 </appearance>
             </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="create-wizard">
+                <field-visibility>
+                    <show id="bcpg:lclLabelClaim" />
+                    <show id="bcpg:lclClaimValue" />
+                    <show id="bcpg:lclPercentClaim" />
+                    <show id="bcpg:lclPercentApplicable" />
+                    <show id="bcpg:lclCertification" />
+                <!-- <show id="bcpg:certificateDate" force="true" />  -->
+                    <show id="bcpg:lclComments" />
+                    <show id="bcpg:isManualListItem" force="true" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:lclComments">
+                        <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:lclCertification" help-id="becpg.forms.help.lclCertification">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/certification</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
             <form id="create-productSpecification">
                 <field-visibility>
                     <show id="bcpg:regulatoryType" force="true" />
@@ -12962,6 +13125,32 @@
                     <show id="bcpg:isManualListItem" force="true" />
                     <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                     <show id="rep:reportKinds" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:lclComments">
+                        <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                            <control-param name="rows">10</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:lclCertification" help-id="becpg.forms.help.lclCertification">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/certification</control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+            <!-- Wizard dialog: the stock form without the report kinds, which suppliers do not fill in -->
+            <form id="edit-wizard">
+                <field-visibility>
+                    <show id="bcpg:lclLabelClaim" />
+                    <show id="bcpg:lclClaimValue" />
+                    <show id="bcpg:lclPercentClaim" />
+                    <show id="bcpg:lclPercentApplicable" />
+                    <show id="bcpg:lclCertification" />
+                <!-- <show id="bcpg:certificateDate" force="true" />  -->
+                    <show id="bcpg:lclComments" />
+                    <show id="bcpg:isManualListItem" force="true" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:lclComments">

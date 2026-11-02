@@ -280,6 +280,16 @@
                     entityNodeRef: "",
 
                     /**
+                     * Type of the entity holding the list, for a datagrid shown outside of the
+                     * entity page, where no entity is published to it (wizard steps).
+                     * 
+                     * @property entityType
+                     * @type string
+                     * @default ""
+                     */
+                    entityType: "",
+
+                    /**
                      * Allow to provide extraParams to backend
                      */
                     extraParams: null,
@@ -1040,7 +1050,7 @@
                 _getColumnUrl: function(formId) {
 
                     var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this._getItemType()) + "&list=" + encodeURIComponent(this._getDataListName()) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
-                        + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
+                        + (this._getEntityType() != null ? "&entityType=" + encodeURIComponent(this._getEntityType()) : "")
                         + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                         + (this.options.columnPrefsScope != null ? "&prefsScope=" + encodeURIComponent(this.options.columnPrefsScope) : "");
 
@@ -1438,6 +1448,13 @@
                 _getDataListName: function() {
                     return this.datalistMeta.name != null ? this.datalistMeta.name
                         : this.options.list;
+                },
+
+                _getEntityType: function() {
+                    if (this.entity != null) {
+                        return this.entity.type;
+                    }
+                    return this.options.entityType != null && this.options.entityType.length > 0 ? this.options.entityType : null;
                 },
 
                 _getItemType: function() {
