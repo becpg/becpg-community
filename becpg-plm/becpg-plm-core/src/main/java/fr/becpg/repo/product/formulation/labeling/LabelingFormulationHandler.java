@@ -1972,21 +1972,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							if (!isLocalSemiFinished) {
-
-								recurYield = (productData.getYield() != null) && (productData.getYield() != 0d)
-										? BigDecimal.valueOf(productData.getYield())
-										: BigDecimal.valueOf(100d);
-
-								if ((calculatedYield != null) && (calculatedYield != 100d)) {
-									recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION)
-											.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
-								}
-
-								if ((componentYield != null) && (componentYield != 100d)) {
-									recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield), LabelingFormulaContext.PRECISION)
-											.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
-								}
-
+								recurYield = computeSubCompositionYield(productData.getYield(), recurYield, declarationType);
 							}
 
 							if (logger.isTraceEnabled()) {
@@ -2022,6 +2008,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyEvaporation(labelingFormulaContext, parent);
 
 		}
+	}
+
+	/**
+	 * <p>The yield handed to the components of a semi-finished product the labeling recurs into.</p>
+	 *
+	 * Declared components are merged into the level above, so they carry the yield inherited from that level on top
+	 * of the semi-finished product own one. A detailed semi-finished product is rendered as a bracket that breaks down
+	 * its own recipe, while the inherited yield already applies to the semi-finished product itself : handed down as
+	 * well, it made the evaporating water inside the bracket absorb the loss of the levels above, the bracket was then
+	 * scaled back up to its parent and every other component carried that yield twice (#37613). Its components
+	 * therefore only carry its own yield.
+	 *
+	 * @param productYield the yield of the semi-finished product, null when unknown
+	 * @param inheritedYield the yield inherited from the levels above, compo line yield included
+	 * @param declarationType the declaration type of the semi-finished product
+	 * @return the yield to hand to its components
+	 */
+	static BigDecimal computeSubCompositionYield(Double productYield, BigDecimal inheritedYield, DeclarationType declarationType) {
+
+		BigDecimal ownYield = (productYield != null) && (productYield != 0d) ? BigDecimal.valueOf(productYield) : BigDecimal.valueOf(100d);
+
+		if (DeclarationType.Detail.equals(declarationType) || (inheritedYield == null)) {
+			return ownYield;
+		}
+
+		return ownYield.multiply(inheritedYield, LabelingFormulaContext.PRECISION).divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION);
 	}
 
 	/**
