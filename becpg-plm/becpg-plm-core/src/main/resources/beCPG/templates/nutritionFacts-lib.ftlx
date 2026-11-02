@@ -226,22 +226,6 @@
 </#macro>
 
 <#--
-  Title left at its natural width, which is what a panel titling itself in two languages needs:
-  condensing each of them to the width of the panel would set them at two different sizes.
-
-  It is wrapped instead, the wording of a supplemented food being far too long for one line, and
-  leaves the ordinate it ended on in cursorY.
--->
-<#macro heading text y size x=PAD width=-1>
-	<#local available = (width gte 0)?then(width, contentWidth())>
-	<#assign cursorY = y>
-	<#list wrap(text, charsPerWidth(available, size, HEAVY_GLYPH_RATIO)) as headingLine>
-	<text x="${x}" y="${baseline(cursorY, size)}" font-weight="${HEAVY_WEIGHT}" font-size="${size}">${headingLine}</text>
-	<#assign cursorY = cursorY + size + 1>
-	</#list>
-</#macro>
-
-<#--
   A nutrient line: name, value, and the percent daily value pinned to the right margin.
 
   The regulation sets the percentages of the mandatory nutrients in the heavy face and leaves
@@ -251,12 +235,18 @@
   both, which is how the Canadian panel states saturated and trans fat together.
 -->
 <#macro nutrientRow line y boldPercent=true>
-	<#local top = y + 2>
-	<#local base = baseline(top, NUTRIENT_SIZE)>
-	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
+	<@nutrientRowAt line=line base=baseline(y + 2, NUTRIENT_SIZE) boldPercent=boldPercent percentShift=sharedPercentShift(line)/>
+</#macro>
+
+<#--
+  The same line drawn on a given baseline, which is how a format stating its leadings from one
+  baseline to the next places it. The percentage is dropped by percentShift below that baseline.
+-->
+<#macro nutrientRowAt line base boldPercent=true indent=INDENT percentShift=0>
+	<#local x = PAD + (line.indentLevel() - 1) * indent>
 	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${HEAVY_WEIGHT}"</#if>><@wording text=line.label()/><#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
 	<#if line.hasDailyValue()>
-	<text x="${right()}" y="${base + sharedPercentShift(line)}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-weight="${HEAVY_WEIGHT}"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
+	<text x="${right()}" y="${base + percentShift}" font-size="${NUTRIENT_SIZE}"<#if boldPercent> font-weight="${HEAVY_WEIGHT}"</#if> text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>
 </#macro>
 
@@ -419,7 +409,15 @@
 
 <#-- One drawn line of styled runs, keeping the spacing of the sentence it comes from. -->
 <#macro styledLine segments y size=FOOTNOTE_SIZE indent=PAD anchor="start">
-	<text x="${indent}" y="${baseline(y, size)}" font-size="${size}" xml:space="preserve"<#if anchor != "start"> text-anchor="${anchor}"</#if>><#list segments as segment><#if segment.bold><tspan font-weight="${HEAVY_WEIGHT}">${segment.text}</tspan><#else>${segment.text}</#if></#list></text>
+	<@styledLineAt segments=segments base=baseline(y, size) size=size indent=indent anchor=anchor/>
+</#macro>
+
+<#--
+  The same line drawn on a given baseline. A Canadian panel sets the asterisk opening its footnote
+  apart, in the size and the weight the directory states for it, hence asterisks.
+-->
+<#macro styledLineAt segments base size=FOOTNOTE_SIZE indent=PAD anchor="start" asterisks=false>
+	<text x="${indent}" y="${base}" font-size="${size}" xml:space="preserve"<#if anchor != "start"> text-anchor="${anchor}"</#if>><#list segments as segment><#if segment.bold><tspan font-weight="${HEAVY_WEIGHT}">${segment.text}</tspan><#elseif asterisks><@asterisked text=segment.text/><#else>${segment.text}</#if></#list></text>
 </#macro>
 
 <#--
@@ -433,18 +431,25 @@
 -->
 <#macro emphasisedFootNote data y size=FOOTNOTE_SIZE indent=PAD width=-1 singleLine=false anchor="start">
 	<#assign cursorY = y>
+	<#list footNoteLines(data, size, width, singleLine) as segments>
+	<@styledLine segments=segments y=cursorY size=size indent=indent anchor=anchor/>
+	<#assign cursorY = cursorY + lineHeight(size)>
+	</#list>
+</#macro>
+
+<#-- Drawn lines of the footnote, as styled runs, every sentence wrapped to the width it is given. -->
+<#function footNoteLines data size width singleLine>
 	<#local sentences = footNoteSentences(data)>
 	<#if singleLine && (sentences?size gt 1)>
 	<#local sentences = [{"text": sentences[0].text + " / " + sentences[1].text, "emphasis": sentences[0].emphasis + "," + sentences[1].emphasis}]>
 	</#if>
 	<#local charsPerLine = singleLine?then(-1, charsPerWidth((width gte 0)?then(width, contentWidth()), size))>
+	<#local lines = []>
 	<#list sentences as sentence>
-		<#list footNoteWrap(sentence, charsPerLine) as segments>
-		<@styledLine segments=segments y=cursorY size=size indent=indent anchor=anchor/>
-		<#assign cursorY = cursorY + lineHeight(size)>
-		</#list>
+	<#local lines = lines + footNoteWrap(sentence, charsPerLine)>
 	</#list>
-</#macro>
+	<#return lines>
+</#function>
 
 <#--
   Lines of one footnote sentence, as styled runs. A wording set in the heavy face is never broken
@@ -482,15 +487,41 @@
 
 <#--
   Geometry of the Canadian standard table, figures 1.1 and 3.1 of the directory of formats of
-  Health Canada: a 13 point title, calories in 10 point bold, a 6.5 point footnote, hairlines of
-  half a point and rules of two and a half points marking out the parts of the table. The
-  supplemented food facts table is drawn on the same geometry.
+  Health Canada: a 13 point title, a 9 point serving, calories in 10 point bold, a 6.5 point
+  footnote, hairlines of half a point and rules of two and a half points marking out the parts of
+  the table. The supplemented food facts table is drawn on the same geometry.
 -->
 <#assign CA_TITLE_SIZE = 13>
+<#assign CA_SERVING_SIZE = 9>
 <#assign CA_CALORIES_SIZE = 10>
 <#assign CA_FOOTNOTE_SIZE = 6.5>
 <#assign CA_HAIRLINE = 0.5>
 <#assign CA_RULE_THICK = 2.5>
+<#assign CA_INDENT = 6>
+
+<#--
+  Leadings of the directory, each measured from the baseline of a line to the baseline of the next
+  one, the rule between them included: a nutrient sits 9 points under the line above it when no
+  rule parts them, 12 points under a hairline and 14.5 points under a thick rule. The directory
+  centres every rule between the two lines it parts.
+-->
+<#assign CA_SERVING_LEAD = 11>
+<#assign CA_SECOND_SERVING_LEAD = 10>
+<#assign CA_CALORIES_LEAD = 14.5>
+<#assign CA_HEADER_LEAD = 7>
+<#assign CA_ROW_LEAD = 9>
+<#assign CA_HAIRLINE_LEAD = 12>
+<#assign CA_THICK_LEAD = 14.5>
+<#assign CA_FOOTNOTE_LEAD = 13>
+<#assign CA_FOOTNOTE_NEXT_LEAD = 7.5>
+<#assign CA_SUPPLEMENTED_WITH_LEAD = 13.5>
+<#assign CA_SUPPLEMENTAL_NOTE_LEAD = 11.5>
+
+<#-- Air the frame keeps under the last line of text, its descender included. -->
+<#assign CA_FRAME_INSET = 3>
+
+<#-- Depth of the Arial descender, as a ratio of the font size, to tell where a line of text ends. -->
+<#assign DESCENT_RATIO = 0.21>
 
 <#--
   Rule closing the opening block of a Canadian panel. It is lighter than the rules parting the
@@ -498,6 +529,14 @@
   thick rule, and closes the title and the serving on a one point rule.
 -->
 <#assign CA_RULE_OPENING = 1>
+
+<#--
+  Asterisk calling a footnote, which the directory sets apart from the wording it follows: a 9 point
+  asterisk in the regular weight, its baseline lowered by 2 points, whatever the size and the weight
+  of the wording around it.
+-->
+<#assign ASTERISK_SIZE = 9>
+<#assign ASTERISK_DROP = 2>
 
 <#--
   Mark a supplemented food facts table prints on the caption of its supplemental block and at the
@@ -515,10 +554,41 @@
 <tspan font-weight="normal" font-size="${size * SUPERSCRIPT_RATIO}" dy="${-size * SUPERSCRIPT_RISE}">${SUPPLEMENT_MARK}</tspan></#macro>
 
 <#--
-  Ordinate the daily value headers of a Canadian panel end on, left by caloriesBand: in a bilingual
-  table the second header runs below the line of the calories, beside the rule closing them.
+  A wording with every asterisk it holds set the way the directory sets it. The baseline is brought
+  back after the asterisk, so that the wording following it, "% VQ*" after "% DV* / ", stays on its
+  line.
 -->
-<#assign headersBottom = 0>
+<#macro asterisked text>
+<#list text?split("*") as part><#if part?index gt 0><tspan font-size="${ASTERISK_SIZE}" font-weight="normal" dy="${ASTERISK_DROP}">*</tspan><#if part?has_content><tspan dy="${-ASTERISK_DROP}" xml:space="preserve">${part}</tspan></#if><#else>${part}</#if></#list><#t>
+</#macro>
+
+<#--
+  Last baseline a Canadian panel drew on, and the size of the text set on it. Every leading of the
+  directory starts from there, and the rule under a line is placed from the depth of its text.
+-->
+<#assign lastBaseline = 0>
+<#assign lastSize = 0>
+
+<#-- Moves the Canadian cursor down to the next baseline, for a text of that size. -->
+<#macro advance lead size>
+	<#assign lastBaseline = lastBaseline + lead>
+	<#assign lastSize = size>
+</#macro>
+
+<#--
+  Top of a rule centred between the line drawn last and the next one, the space between them
+  running from the descender of the first to the cap height of the second.
+-->
+<#function centredRuleTop nextBaseline nextSize height>
+	<#local gapTop = lastBaseline + lastSize * DESCENT_RATIO>
+	<#local gapBottom = nextBaseline - nextSize * ASCENT_RATIO>
+	<#return (gapTop + gapBottom - height) / 2>
+</#function>
+
+<#-- Ordinate the frame closes on, under the line drawn last. -->
+<#function canadianBottom>
+	<#return lastBaseline + lastSize * DESCENT_RATIO + CA_FRAME_INSET + BORDER>
+</#function>
 
 <#--
   Body of a Canadian panel, B.01.401. It parts from the FDA one on three counts: the daily value
@@ -526,63 +596,63 @@
   groups of nutrients and not every single line, and the percentages stay in the body face.
 
   Three of these rules are drawn thick, the regulation marking out the three parts of the panel:
-  the calories, closed by a rule stopping at the middle so that the daily value header stands
+  the calories, closed by a rule ending with their figures so that the daily value header stands
   free, the core nutrients, and the minerals.
 
   A supplemented food closes on the block of what it was supplemented with, which comes after the
   footnote and not before it: the little/lot rule reads on the table, not on the added ingredients.
+  Its footnote and its note are set in the type and leading the format states, given as a hash of
+  footNoteSize, footNoteLead, noteSize and noteLead.
+
+  Starts under the baseline the heading ended on, and leaves the ordinate of the frame in cursorY.
 -->
-<#macro canadianBody data y withSupplemental=false>
-	<#assign cursorY = y>
+<#macro canadianBody data withSupplemental=false geometry={}>
+	<#local caloriesBaseline = lastBaseline + CA_CALORIES_LEAD>
+	<@rule y=centredRuleTop(caloriesBaseline, CA_CALORIES_SIZE, CA_RULE_OPENING) height=CA_RULE_OPENING/>
+	<@caloriesBand data=data base=caloriesBaseline/>
+	<@advance lead=CA_CALORIES_LEAD size=CA_CALORIES_SIZE/>
 
-	<@rule y=cursorY height=CA_RULE_OPENING/>
-	<#assign cursorY = cursorY + CA_RULE_OPENING + 1>
-
-	<@caloriesBand data=data y=cursorY/>
-	<#assign cursorY = cursorY + lineHeight(CA_CALORIES_SIZE)>
-
-	<@rule y=cursorY height=CA_RULE_THICK toX=PAD + contentWidth() / 2/>
-	<#assign cursorY = [cursorY + CA_RULE_THICK, headersBottom]?max>
-
-	<@canadianGroup lines=data.nutrients() y=cursorY/>
-	<#assign cursorY = groupBottom>
-
-	<#if (data.micronutrients()?size gt 0)>
-	<@rule y=cursorY height=CA_RULE_THICK/>
-	<#assign cursorY = cursorY + CA_RULE_THICK>
-	<@canadianGroup lines=data.micronutrients() y=cursorY/>
-	<#assign cursorY = groupBottom>
-	</#if>
+	<@canadianGroup lines=data.nutrients() ruleToX=caloriesRuleEnd(data)/>
+	<@canadianGroup lines=data.micronutrients()/>
 
 	<#if data.footNote()?has_content>
-	<@rule y=cursorY height=CA_RULE_THICK/>
-	<#assign cursorY = cursorY + CA_RULE_THICK + 1>
-	<@emphasisedFootNote data=data y=cursorY size=CA_FOOTNOTE_SIZE/>
+	<@canadianFootNote data=data size=geometry.footNoteSize!CA_FOOTNOTE_SIZE firstLead=geometry.footNoteLead!CA_FOOTNOTE_LEAD/>
 	</#if>
 
 	<#if withSupplemental && data.hasSupplementalIngredients()>
-	<@supplementalBlock data=data y=cursorY/>
+	<@supplementalBlock data=data noteSize=geometry.noteSize!CA_FOOTNOTE_SIZE noteLead=geometry.noteLead!CA_SUPPLEMENTAL_NOTE_LEAD/>
 	</#if>
 
-	<#assign cursorY = cursorY + BORDER + 1>
+	<#assign cursorY = canadianBottom()>
 </#macro>
 
 <#--
-  One group of nutrient lines, hairlines separating the top level declarations inside it. The
-  ordinate it ended on is left in groupBottom, the group being drawn between two rules the caller
-  places itself.
+  One group of nutrient lines, opening on a thick rule. Inside it a top level declaration sits under
+  a hairline and a nested one, "Saturated", runs on without any rule.
+
+  The rule opening the group spans the panel, unless ruleToX stops it short: the rule closing the
+  calories ends with their figures.
 -->
-<#assign groupBottom = 0>
-<#macro canadianGroup lines y>
-	<#assign groupBottom = y>
+<#macro canadianGroup lines ruleToX=-1>
 	<#list lines as line>
-	<#if (line.indentLevel() lte 1) && (line?index gt 0)>
-	<@rule y=groupBottom height=CA_HAIRLINE/>
-	<#assign groupBottom = groupBottom + CA_HAIRLINE>
+	<#if line?is_first>
+	<@ruledRow line=line lead=CA_THICK_LEAD ruleHeight=CA_RULE_THICK ruleToX=ruleToX/>
+	<#elseif (line.indentLevel() lte 1)>
+	<@ruledRow line=line lead=CA_HAIRLINE_LEAD ruleHeight=CA_HAIRLINE/>
+	<#else>
+	<@ruledRow line=line lead=CA_ROW_LEAD ruleHeight=0/>
 	</#if>
-	<@nutrientRow line=line y=groupBottom boldPercent=false/>
-	<#assign groupBottom = groupBottom + NUTRIENT_ROW_H>
 	</#list>
+</#macro>
+
+<#-- A nutrient line of a Canadian panel, under the rule parting it from the line above, if any. -->
+<#macro ruledRow line lead ruleHeight ruleToX=-1>
+	<#local base = lastBaseline + lead>
+	<#if (ruleHeight gt 0)>
+	<@rule y=centredRuleTop(base, NUTRIENT_SIZE, ruleHeight) height=ruleHeight toX=ruleToX/>
+	</#if>
+	<@nutrientRowAt line=line base=base boldPercent=false indent=CA_INDENT percentShift=line.hasSharedDailyValue()?then(CA_ROW_LEAD / 2, 0)/>
+	<@advance lead=lead size=NUTRIENT_SIZE/>
 </#macro>
 
 <#--
@@ -591,16 +661,30 @@
   one of its second language right under it, beside the rule closing the calories, which is how
   figure 3.1 of the directory of formats sets them.
 -->
-<#macro caloriesBand data y>
-	<#local base = baseline(y, CA_CALORIES_SIZE)>
+<#macro caloriesBand data base>
 	<#if data.calories()??>
-	<text x="${PAD}" y="${base}" font-weight="${HEAVY_WEIGHT}" font-size="${CA_CALORIES_SIZE}">${data.calories().label()}<#if data.calories().value()??> ${data.calories().value()}</#if></text>
+	<text x="${PAD}" y="${base}" font-weight="${HEAVY_WEIGHT}" font-size="${CA_CALORIES_SIZE}">${caloriesText(data)}</text>
 	</#if>
 	<#list dailyValueHeaders(data) as header>
-	<text x="${right()}" y="${base + header?index * lineHeight(CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-weight="${HEAVY_WEIGHT}" text-anchor="end">${header}</text>
-	<#assign headersBottom = base + header?index * lineHeight(CAPTION_SIZE) + CAPTION_LEAD>
+	<text x="${right()}" y="${base + header?index * CA_HEADER_LEAD}" font-size="${CAPTION_SIZE}" font-weight="${HEAVY_WEIGHT}" text-anchor="end"><@asterisked text=header/></text>
 	</#list>
 </#macro>
+
+<#-- "Calories 230", as the calories line of a Canadian panel states it. -->
+<#function caloriesText data>
+	<#return data.calories().label() + (data.calories().value()??)?then(" " + data.calories().value(), "")>
+</#function>
+
+<#--
+  Abscissa the thick rule closing the calories ends on: right after their figures, the directory
+  never running it across the table. A panel without calories closes on a rule to the middle.
+-->
+<#function caloriesRuleEnd data>
+	<#if data.calories()??>
+	<#return PAD + heavyWidth(caloriesText(data), CA_CALORIES_SIZE)>
+	</#if>
+	<#return PAD + contentWidth() / 2>
+</#function>
 
 <#--
   Width a Canadian panel needs, never less than the minimum its format states. The calories and
@@ -609,52 +693,82 @@
   would be printed over the calories at the width the English panel needs.
 -->
 <#function canadianWidth data minimum>
-	<#local caloriesText = (data.calories()??)?then(data.calories().label() + " " + (data.calories().value()!""), "")>
+	<#local caloriesWording = (data.calories()??)?then(caloriesText(data), "")>
 	<#local headerWidth = 0>
 	<#list dailyValueHeaders(data) as header>
 		<#local headerWidth = [headerWidth, header?length * CAPTION_SIZE * HEAVY_GLYPH_RATIO]?max>
 	</#list>
-	<#local needed = 2 * PAD + caloriesText?length * CA_CALORIES_SIZE * HEAVY_GLYPH_RATIO + CAPTION_SIZE + headerWidth>
+	<#local needed = 2 * PAD + caloriesWording?length * CA_CALORIES_SIZE * HEAVY_GLYPH_RATIO + CAPTION_SIZE + headerWidth>
 	<#return [minimum, needed?ceiling]?max>
 </#function>
 
 <#--
   Opening block of a Canadian panel: the title and the serving, each stated once per language.
 
-  The title is set in the largest type of the panel but is not condensed to its width, which is
-  what the directory of formats figures and what keeps the two languages the same size.
+  The title is set in the largest type of the panel, on a single line per language, but is not
+  condensed to its width, which is what the directory of formats figures and what keeps the two
+  languages the same size. Its lines run a point apart more than its size, 14 points for a 13 point
+  title, which is the leading of every figure of the directory.
+
+  The serving sits servingLead under the title and the serving of the second language
+  secondServingLead under the first one. Leaves the last baseline in lastBaseline.
 -->
-<#macro canadianHeading data y titleSize=CA_TITLE_SIZE servingSize=9 x=PAD width=-1 titleKey="title">
-	<#assign cursorY = y>
+<#macro canadianHeading data y titleSize=CA_TITLE_SIZE servingSize=CA_SERVING_SIZE x=PAD titleKey="title"
+		servingLead=CA_SERVING_LEAD secondServingLead=CA_SECOND_SERVING_LEAD>
+	<#assign lastBaseline = baseline(y, titleSize) - titleSize - 1>
+	<#list panelWordings(data, titleKey) as title>
+	<@advance lead=titleSize + 1 size=titleSize/>
+	<text x="${x}" y="${lastBaseline}" font-weight="${HEAVY_WEIGHT}" font-size="${titleSize}">${title}</text>
+	</#list>
 
-	<@heading text=data.label(titleKey) y=cursorY size=titleSize x=x width=width/>
+	<@advance lead=servingLead size=servingSize/>
+	<text x="${x}" y="${lastBaseline}" font-size="${servingSize}">${data.label("servingSize")}<#if data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
 	<#if data.isBilingual()>
-	<@heading text=data.secondaryLabel(titleKey) y=cursorY size=titleSize x=x width=width/>
+	<@advance lead=secondServingLead size=servingSize/>
+	<text x="${x}" y="${lastBaseline}" font-size="${servingSize}">${data.secondaryLabel("servingSize")}<#if data.secondary().hasServingSize()> ${data.secondary().servingSize()}<#elseif data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
 	</#if>
-
-	<text x="${x}" y="${baseline(cursorY, servingSize)}" font-size="${servingSize}">${data.label("servingSize")}<#if data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
-	<#assign cursorY = cursorY + lineHeight(servingSize)>
-	<#if data.isBilingual()>
-	<text x="${x}" y="${baseline(cursorY, servingSize)}" font-size="${servingSize}">${data.secondaryLabel("servingSize")}<#if data.secondary().hasServingSize()> ${data.secondary().servingSize()}<#elseif data.serving().servingSize()??> ${data.serving().servingSize()}</#if></text>
-	<#assign cursorY = cursorY + lineHeight(servingSize)>
-	</#if>
-
-	<#assign cursorY = cursorY + 1>
 </#macro>
 
 <#--
-  Size a title is set at so that it holds on a single line in every language the panel states it
-  in, never above the size the format states. A title that wraps reads as two titles, which the
-  wording of a supplemented food is long enough to provoke.
+  Width a panel needs to set its title on a single line in every language at the size its format
+  states. A title that wraps reads as two titles, which the wording of a supplemented food is long
+  enough to provoke, and a title set smaller than the format states is not the format any more.
 -->
-<#function fittedTitleSize data key maximum width=-1>
-	<#local available = (width gte 0)?then(width, contentWidth())>
-	<#local size = maximum>
-	<#list panelWordings(data, key) as heading>
-	<#local size = [size, (available / ([heading?length, 1]?max * HEAVY_GLYPH_RATIO))?floor]?min>
+<#function titleWidth data key size>
+	<#local widest = 0>
+	<#list panelWordings(data, key) as title>
+	<#local widest = [widest, heavyWidth(title, size)]?max>
 	</#list>
-	<#return size>
+	<#return (2 * PAD + widest)?ceiling>
 </#function>
+
+<#--
+  Footnote of a Canadian panel, under a thick rule: its first line firstLead under the last
+  nutrient, the next ones nextLead apart, each sentence opening on the asterisk the directory sets.
+
+  A panel drawn across the package states both languages on one line, parted by a slash, gives the
+  column the footnote runs under in indent, and closes each of its columns on a rule of its own,
+  given in ruleWidths as hashes of x and width, as thick as its format states in ruleHeight.
+-->
+<#macro canadianFootNote data size firstLead nextLead=CA_FOOTNOTE_NEXT_LEAD indent=PAD width=-1 singleLine=false ruleWidths=[] ruleHeight=CA_RULE_THICK>
+	<#local lead = firstLead>
+	<#list footNoteLines(data, size, width, singleLine) as segments>
+	<#if segments?is_first>
+	<#local base = lastBaseline + lead>
+	<#local ruleTop = centredRuleTop(base, size, ruleHeight)>
+	<#if ruleWidths?has_content>
+	<#list ruleWidths as band>
+	<@bandRule x=band.x y=ruleTop width=band.width height=ruleHeight/>
+	</#list>
+	<#else>
+	<@rule y=ruleTop height=ruleHeight/>
+	</#if>
+	</#if>
+	<@advance lead=lead size=size/>
+	<@styledLineAt segments=segments base=lastBaseline size=size indent=indent asterisks=true/>
+	<#local lead = nextLead>
+	</#list>
+</#macro>
 
 <#--
   Ingredients a supplemented food was supplemented with, SOR/2022-143. They are declared in a
@@ -666,39 +780,53 @@
   the closing note explains: the amount declared for an ingredient is the amount the food holds,
   and not only what was added to it.
 -->
-<#macro supplementalBlock data y>
-	<#assign cursorY = y>
-
-	<@rule y=cursorY height=CA_RULE_THICK/>
-	<#assign cursorY = cursorY + CA_RULE_THICK + 1>
-
-	<text x="${PAD}" y="${baseline(cursorY + 2, NUTRIENT_SIZE)}" font-size="${NUTRIENT_SIZE}" font-weight="${HEAVY_WEIGHT}">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}<@supplementMark size=NUTRIENT_SIZE/></text>
-	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+<#macro supplementalBlock data noteSize=CA_FOOTNOTE_SIZE noteLead=CA_SUPPLEMENTAL_NOTE_LEAD>
+	<#local captionBaseline = lastBaseline + CA_SUPPLEMENTED_WITH_LEAD>
+	<@rule y=centredRuleTop(captionBaseline, NUTRIENT_SIZE, CA_RULE_THICK) height=CA_RULE_THICK/>
+	<@advance lead=CA_SUPPLEMENTED_WITH_LEAD size=NUTRIENT_SIZE/>
+	<text x="${PAD}" y="${lastBaseline}" font-size="${NUTRIENT_SIZE}" font-weight="${HEAVY_WEIGHT}">${joined(data.label("supplementedWith"), data.isBilingual()?then(data.secondaryLabel("supplementedWith"), ""))}<@supplementMark size=NUTRIENT_SIZE/></text>
 
 	<#list data.supplementalIngredients() as line>
-	<@rule y=cursorY height=CA_HAIRLINE/>
-	<#assign cursorY = cursorY + CA_HAIRLINE>
-	<@nutrientRow line=line y=cursorY boldPercent=false/>
-	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	<@ruledRow line=line lead=CA_HAIRLINE_LEAD ruleHeight=CA_HAIRLINE/>
 	</#list>
 
-	<@rule y=cursorY height=CA_HAIRLINE/>
-	<#assign cursorY = cursorY + CA_HAIRLINE + 1>
-	<@supplementalNote data=data y=cursorY/>
+	<@supplementalNote data=data size=noteSize firstLead=noteLead/>
 </#macro>
 
 <#--
-  Note closing the supplemental block, stated once per language the panel is written in and opening
-  on the mark of the declarations it explains, so that the reader ties the two together.
+  Note closing the supplemental block, under a hairline, stated once per language the panel is
+  written in and opening on the mark of the declarations it explains, so that the reader ties the
+  two together.
 -->
-<#macro supplementalNote data y>
-	<#local markSize = CA_FOOTNOTE_SIZE * SUPERSCRIPT_RATIO>
+<#macro supplementalNote data size firstLead>
+	<#local markSize = size * SUPERSCRIPT_RATIO>
 	<#local markWidth = markSize * DIGIT_WIDTH_RATIO>
-	<#assign cursorY = y>
-	<#list panelWordings(data, "supplementedNote") as note>
-	<text x="${PAD}" y="${baseline(cursorY, CA_FOOTNOTE_SIZE) - CA_FOOTNOTE_SIZE * SUPERSCRIPT_RISE}" font-size="${markSize}">${SUPPLEMENT_MARK}</text>
-	<@footNote text=note y=cursorY x=PAD + markWidth width=contentWidth() - markWidth size=CA_FOOTNOTE_SIZE/>
+	<#local notes = panelWordings(data, "supplementedNote")>
+	<#if !notes?has_content>
+	<@closingHairline/>
+	</#if>
+	<#local lead = firstLead>
+	<#list notes as note>
+	<#list wrap(note, charsPerWidth(contentWidth() - markWidth, size)) as noteLine>
+	<#if note?is_first && noteLine?is_first>
+	<@rule y=centredRuleTop(lastBaseline + lead, size, CA_HAIRLINE) height=CA_HAIRLINE/>
+	</#if>
+	<@advance lead=lead size=size/>
+	<#if noteLine?is_first>
+	<text x="${PAD}" y="${lastBaseline - size * SUPERSCRIPT_RISE}" font-size="${markSize}">${SUPPLEMENT_MARK}</text>
+	</#if>
+	<text x="${PAD + markWidth}" y="${lastBaseline}" font-size="${size}">${noteLine}</text>
+	<#local lead = CA_FOOTNOTE_NEXT_LEAD>
 	</#list>
+	</#list>
+</#macro>
+
+<#-- Hairline closing the last ingredient of a block no note follows, the frame closing under it. -->
+<#macro closingHairline>
+	<#local top = lastBaseline + lastSize * DESCENT_RATIO + 1>
+	<@rule y=top height=CA_HAIRLINE/>
+	<#assign lastBaseline = top + CA_HAIRLINE>
+	<#assign lastSize = 0>
 </#macro>
 
 <#-- A fixed wording of the panel in every language it is written in, empty ones left out. -->

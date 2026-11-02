@@ -72,8 +72,30 @@ public class NutritionFactsTemplateTest {
 	/** Thick rules of the Canadian horizontal format, figure 4.1. */
 	private static final double CA_HORIZONTAL_RULE_THICK = 2d;
 
-	/** Where the two columns of nutrients of the Canadian horizontal format start. */
-	private static final double CA_HORIZONTAL_COLUMN_X = 140d;
+	/** Width of the left band of the Canadian horizontal format before it was fitted to its longest line. */
+	private static final double CA_HORIZONTAL_FIXED_BAND = 140d;
+
+	/** Leadings of the Canadian directory of formats, from one baseline to the next. */
+	private static final double CA_ROW_LEAD = 9d;
+
+	private static final double CA_HAIRLINE_LEAD = 12d;
+
+	private static final double CA_THICK_LEAD = 14.5d;
+
+	/** Asterisk calling a Canadian footnote: 9 point regular, its baseline lowered by 2 points. */
+	private static final String ASTERISK_SIZE = "9";
+
+	private static final String ASTERISK_DROP = "2";
+
+	/** Advance width of an Arial Bold figure, as a ratio of its size. */
+	private static final double DIGIT_HEAVY_RATIO = 0.556d;
+
+	/** Ratios of the Arial cap height and descender to the font size. */
+	private static final double ASCENT_RATIO = 0.716d;
+
+	private static final double DESCENT_RATIO = 0.21d;
+
+	private static final double TOLERANCE = 0.001d;
 
 	/** Weight of the rule closing the opening block of a Canadian panel, lighter than its parts. */
 	private static final double RULE_LIGHT = 1d;
@@ -541,17 +563,116 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
-	public void testCanadianCaloriesAreClosedByARuleStoppingAtTheMiddle() throws Exception {
-		List<Element> rects = elements(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "rect");
+	public void testCanadianCaloriesAreClosedByARuleEndingWithTheirFigures() throws Exception {
+		double threeFigures = caloriesRuleWidth(canadianPanel());
+		double oneFigure = caloriesRuleWidth(withCalories(canadianPanel(), "5"));
 
-		double shortest = canadaPanelWidth();
-		for (Element rect : rects) {
-			if (Math.abs(Double.parseDouble(rect.getAttribute("height")) - CA_RULE_THICK) < 0.001d) {
-				shortest = Math.min(shortest, Double.parseDouble(rect.getAttribute("width")));
+		Assert.assertTrue("The rule under the calories leaves the daily value header standing free", threeFigures < (canadaPanelWidth() - 2 * PAD) / 2);
+		Assert.assertEquals("and ends after the figures, never at a fixed length", 2 * DIGIT_HEAVY_RATIO * 10d, threeFigures - oneFigure, 0.01d);
+	}
+
+	@Test
+	public void testCanadianOpeningBlockSetsTheLeadingsOfTheDirectory() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals("The serving sits 11 points under the title", 11d, leading(panel, "Valeur nutritive", "Pour"), TOLERANCE);
+		Assert.assertEquals("and the calories 14.5 points under the serving", CA_THICK_LEAD, leading(panel, "Pour", "Calories"), TOLERANCE);
+	}
+
+	@Test
+	public void testCanadianNutrientsSetTheLeadingsOfTheDirectory() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals("14.5 points under the thick rule closing the calories", CA_THICK_LEAD, leading(panel, "Calories", "Lipides"), TOLERANCE);
+		Assert.assertEquals("9 points with no rule above", CA_ROW_LEAD, leading(panel, "Lipides", "saturés"), TOLERANCE);
+		Assert.assertEquals(CA_ROW_LEAD, leading(panel, "saturés", "+ trans"), TOLERANCE);
+		Assert.assertEquals("12 points under a hairline", CA_HAIRLINE_LEAD, leading(panel, "+ trans", "Sodium"), TOLERANCE);
+		Assert.assertEquals("14.5 points under the thick rule opening the minerals", CA_THICK_LEAD, leading(panel, "Sodium", "Potassium"), TOLERANCE);
+		Assert.assertEquals(CA_HAIRLINE_LEAD, leading(panel, "Potassium", "Calcium"), TOLERANCE);
+	}
+
+	@Test
+	public void testCanadianFootnoteSetsTheLeadingsOfTheDirectory() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals("The footnote opens 13 points under the last mineral", 13d, leading(panel, "Calcium", "* 5 %"), TOLERANCE);
+		Assert.assertEquals("and runs on 7.5 points apart", 7.5d, leading(panel, "* 5 %", "beaucoup"), TOLERANCE);
+	}
+
+	@Test
+	public void testBilingualCanadianPanelSetsTheFatUnderTheCaloriesAndNotUnderTheSecondHeader() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, bilingualCanadianPanel()));
+
+		Assert.assertEquals("The second serving sits 10 points under the first one", 10d, leading(panel, "Per", "Pour"), TOLERANCE);
+		Assert.assertEquals("The second header sits 7 points under the calories", 7d, leading(panel, "Calories", "% valeur quotidienne"), TOLERANCE);
+		Assert.assertEquals("The fat keeps its 14.5 points under the calories", CA_THICK_LEAD, leading(panel, "Calories", "Lipides"), TOLERANCE);
+	}
+
+	@Test
+	public void testCanadianRulesAreDrawnInTheAirBetweenTwoLines() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, bilingualSupplementedCanadianPanel()));
+
+		for (Element rect : elements(panel, "rect")) {
+			if ((Double.parseDouble(rect.getAttribute("x")) > 0d) && (width(rect) > canadaPanelWidth() / 2)) {
+				for (Element text : elements(panel, "text")) {
+					Assert.assertFalse("A rule never runs through the line \"" + text.getTextContent() + "\"", overlaps(rect, text));
+				}
 			}
 		}
-		Assert.assertEquals("The rule under the calories leaves the daily value header standing free",
-				(canadaPanelWidth() - 2 * PAD) / 2, shortest, 0.01d);
+	}
+
+	@Test
+	public void testCanadianNestedNutrientsAreIndentedSixPoints() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertEquals(6d, textStart(panel, "saturés") - textStart(panel, "Lipides"), TOLERANCE);
+	}
+
+	@Test
+	public void testCanadianDailyValueHeaderCallsItsFootnoteWithTheAsteriskOfTheDirectory() throws Exception {
+		assertRegulatoryAsterisk(findText(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "% valeur quotidienne"));
+	}
+
+	@Test
+	public void testCanadianFootnoteOpensOnTheAsteriskOfTheDirectory() throws Exception {
+		assertRegulatoryAsterisk(findText(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "* 5 %"));
+	}
+
+	@Test
+	public void testCanadianLinearLegendCallsItsFootnoteWithTheAsteriskOfTheDirectory() throws Exception {
+		assertRegulatoryAsterisk(findText(parse(renderToString(CANADA_LINEAR_TEMPLATE, canadianPanel())), "% = %"));
+	}
+
+	@Test
+	public void testBilingualSupplementedTableIsSetInTheTypeOfFigure31() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, bilingualSupplementedCanadianPanel()));
+
+		Assert.assertEquals("A 12 point title", "12", findText(panel, "Supplemented Food Facts").getAttribute("font-size"));
+		Assert.assertEquals("the second one 13 points under the first", 13d, leading(panel, "Supplemented Food Facts", "Info-aliment"), TOLERANCE);
+		Assert.assertEquals("a 6.5 point footnote", "6.5", findText(panel, "* 5% or less").getAttribute("font-size"));
+	}
+
+	@Test
+	public void testBilingualSupplementedBlockSetsTheLeadingsOfFigure31() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, bilingualSupplementedCanadianPanel()));
+
+		Element lastFootnoteLine = findTextContaining(panel, "beaucoup");
+		Assert.assertEquals("The caption sits 13.5 points under the footnote", 13.5d,
+				y(findText(panel, "Supplemented with")) - y(lastFootnoteLine), TOLERANCE);
+		Assert.assertEquals("each ingredient 12 points under the line above", CA_HAIRLINE_LEAD, leading(panel, "Supplemented with", "Caffeine"), TOLERANCE);
+		Assert.assertEquals("and the note 11.5 points under the last ingredient", 11.5d, leading(panel, "Vitamin B6", "Includes"), TOLERANCE);
+		Assert.assertEquals("its second language 7.5 points further", 7.5d, leading(panel, "Includes", "Comprend"), TOLERANCE);
+	}
+
+	@Test
+	public void testUnilingualSupplementedTableSetsItsNotesInTheTypeOfFigure11() throws Exception {
+		Document panel = parse(renderToString(CANADA_SUPPLEMENTED_TEMPLATE, supplementedCanadianPanel()));
+
+		Assert.assertEquals("A 13 point title", "13", findText(panel, "Info-aliment").getAttribute("font-size"));
+		Assert.assertEquals("a 6 point footnote", "6", findText(panel, "* 5 %").getAttribute("font-size"));
+		Assert.assertEquals("12.5 points under the last mineral", 12.5d, leading(panel, "Calcium", "* 5 %"), TOLERANCE);
+		Assert.assertEquals("a 6 point note", "6", findText(panel, "Comprend").getAttribute("font-size"));
+		Assert.assertEquals("11 points under the last ingredient", 11d, leading(panel, "Vitamine B6", "Comprend"), TOLERANCE);
 	}
 
 	@Test
@@ -768,7 +889,7 @@ public class NutritionFactsTemplateTest {
 	public void testCanadianHorizontalFootnoteRunsUnderTheColumnsOnly() throws Exception {
 		Element footNote = findText(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())), "* 5% or less");
 
-		Assert.assertEquals("The footnote starts at the first column of nutrients", CA_HORIZONTAL_COLUMN_X,
+		Assert.assertEquals("The footnote starts at the first column of nutrients", firstColumnX(CANADA_HORIZONTAL_TEMPLATE),
 				Double.parseDouble(footNote.getAttribute("x")), 0.01d);
 		Assert.assertTrue("and states both languages on its line", footNote.getTextContent().contains(" / * 5 % ou moins"));
 	}
@@ -791,6 +912,16 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testCanadianHorizontalColumnsCloseOnTheirRulesWithoutAFootnote() throws Exception {
+		NutritionFactsData withoutFootNote = canadianPanel(canadianLabels(true), new NutritionFactsTranslation(canadianLabels(false), null, ""), "");
+		List<Element> withRules = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())), "rect");
+		List<Element> withoutRules = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, withoutFootNote)), "rect");
+
+		Assert.assertEquals("The columns close on their thick rules whether a footnote follows them or not",
+				countByHeight(withRules, CA_HORIZONTAL_RULE_THICK), countByHeight(withoutRules, CA_HORIZONTAL_RULE_THICK));
+	}
+
+	@Test
 	public void testCanadianHorizontalPanelLeavesTheMineralsUnruled() throws Exception {
 		List<Element> rects = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, canadianPanel())), "rect");
 
@@ -798,10 +929,51 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
-	public void testCanadianHorizontalPanelSetsItsNutrientsInACondensedFace() throws Exception {
-		Element columns = elements(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, canadianPanel())), "g").get(0);
+	public void testCanadianHorizontalPanelIsSetInACondensedFace() throws Exception {
+		Document panel = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, canadianPanel()));
 
-		Assert.assertTrue("Figure 4.1 sets the nutrients in a condensed face", columns.getAttribute("font-family").startsWith("'Liberation Sans Narrow'"));
+		for (String text : List.of("Valeur nutritive", "Pour", "Calories", "Lipides", "* 5 %")) {
+			Element face = (Element) findText(panel, text).getParentNode();
+			Assert.assertTrue("Figure 4.1 sets the whole table in a condensed face, " + text + " included",
+					face.getAttribute("font-family").startsWith("'Liberation Sans Narrow'"));
+		}
+	}
+
+	@Test
+	public void testCanadianHorizontalLeftBandIsFittedToItsLongestLine() throws Exception {
+		Assert.assertTrue("The first column starts 5 points after the left band, not at a fixed abscissa",
+				firstColumnX(CANADA_HORIZONTAL_TEMPLATE) < CA_HORIZONTAL_FIXED_BAND - 30d);
+	}
+
+	@Test
+	public void testCanadianHorizontalHeaderSpacesItsPercentSigns() throws Exception {
+		Element header = findText(parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel())), "% DV*");
+
+		Assert.assertEquals("% DV* / % VQ*", header.getTextContent());
+		assertRegulatoryAsterisk(header);
+	}
+
+	@Test
+	public void testCanadianHorizontalLeftBandSetsTheLeadingsOfFigure41() throws Exception {
+		Document panel = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel()));
+
+		Assert.assertEquals("The serving sits 13 points under the title", 13d, leading(panel, "Valeur nutritive", "Per"), TOLERANCE);
+		Assert.assertEquals("its second line 8 points under the first", 8d, leading(panel, "Per", "Pour"), TOLERANCE);
+		Assert.assertEquals("the calories 13 points under the serving", 13d, leading(panel, "Pour", "Calories"), TOLERANCE);
+		Assert.assertEquals("the legend 11 points under the calories", 11d, leading(panel, "Calories", "* DV"), TOLERANCE);
+		Assert.assertEquals("its second line 7 points under the first", 7d, leading(panel, "* DV", "* VQ"), TOLERANCE);
+	}
+
+	@Test
+	public void testCanadianHorizontalColumnsSetTheLeadingsOfFigure41() throws Exception {
+		Document panel = parse(renderToString(CANADA_HORIZONTAL_TEMPLATE, bilingualCanadianPanel()));
+
+		Assert.assertEquals("Second column: 13 points under a hairline", 13d, leading(panel, "% DV*", "Lipides"), TOLERANCE);
+		Assert.assertEquals("9 points with no rule above", 9d, leading(panel, "Lipides", "saturés"), TOLERANCE);
+		Assert.assertEquals("Third column: 11 points under a hairline", 11d, leading(panel, "% DV*", "Sodium"), TOLERANCE);
+		Assert.assertEquals("13 points under a thick rule", 13d, leading(panel, "Sodium", "Potassium"), TOLERANCE);
+		Assert.assertEquals("8 points with no rule above", 8d, leading(panel, "Potassium", "Calcium"), TOLERANCE);
+		Assert.assertEquals("The footnote 12 points under the longest column", 12d, leading(panel, "Calcium", "* 5% or less"), TOLERANCE);
 	}
 
 	@Test
@@ -882,6 +1054,71 @@ public class NutritionFactsTemplateTest {
 				panel.footNote(), "", labels, NutritionFactsTranslation.none());
 	}
 
+	/** The same panel stating both official languages, English first. */
+	private NutritionFactsData bilingualSupplementedCanadianPanel() {
+		NutritionFactsData panel = bilingualCanadianPanel();
+		return new NutritionFactsData("canadaSupplemented", "CA", panel.serving(), panel.calories(), panel.nutrients(), panel.micronutrients(),
+				List.of(line("CAFFN", "Caffeine / Caféine", "100 mg", null, 1, false), line("VITB6-", "Vitamin B6 / Vitamine B6", "1,3 mg", "76%", 1, false)),
+				panel.footNote(), "", panel.labels(), panel.secondary());
+	}
+
+	private NutritionFactsData withCalories(NutritionFactsData data, String calories) {
+		return new NutritionFactsData(data.format(), data.regulationKey(), data.serving(), line("US_ENER-E14", "Calories", calories, null, 1, true),
+				data.nutrients(), data.micronutrients(), data.supplementalIngredients(), data.footNote(), data.notSignificantSource(), data.labels(),
+				data.secondary());
+	}
+
+	/** Width of the shortest thick rule of a Canadian panel, the one closing its calories. */
+	private double caloriesRuleWidth(NutritionFactsData data) throws Exception {
+		double shortest = canadaPanelWidth();
+		for (Element rect : elements(parse(renderToString(CANADA_TEMPLATE, data)), "rect")) {
+			if (Math.abs(height(rect) - CA_RULE_THICK) < TOLERANCE) {
+				shortest = Math.min(shortest, width(rect));
+			}
+		}
+		return shortest;
+	}
+
+	/** Abscissa the first column of nutrients of a panel laid out across its width starts at, read on its hairlines. */
+	private double firstColumnX(String template) throws Exception {
+		double first = Double.MAX_VALUE;
+		for (Element rect : elements(parse(renderToString(template, bilingualCanadianPanel())), "rect")) {
+			double x = Double.parseDouble(rect.getAttribute("x"));
+			if ((x > 0d) && (Math.abs(height(rect) - CA_HAIRLINE) < TOLERANCE)) {
+				first = Math.min(first, x);
+			}
+		}
+		return first;
+	}
+
+	/** Distance from the baseline of the first line starting with upper to the one of the first line starting with lower. */
+	private double leading(Document panel, String upper, String lower) {
+		return y(findText(panel, lower)) - y(findText(panel, upper));
+	}
+
+	/** Whether a rule crosses the space a line of text takes, from its cap height to its descender. */
+	private boolean overlaps(Element rect, Element text) {
+		double size = Double.parseDouble(text.getAttribute("font-size"));
+		double top = y(text) - size * ASCENT_RATIO;
+		double bottom = y(text) + size * DESCENT_RATIO;
+		return (y(rect) < bottom) && (y(rect) + height(rect) > top);
+	}
+
+	/** Checks that a text sets its asterisk in 9 point regular, its baseline lowered by 2 points. */
+	private void assertRegulatoryAsterisk(Element text) {
+		NodeList spans = text.getElementsByTagName("tspan");
+		for (int i = 0; i < spans.getLength(); i++) {
+			Element span = (Element) spans.item(i);
+			if ("*".equals(span.getTextContent())) {
+				Assert.assertEquals("A 9 point asterisk", ASTERISK_SIZE, span.getAttribute("font-size"));
+				Assert.assertEquals("in the regular weight", "normal", span.getAttribute("font-weight"));
+				Assert.assertEquals("its baseline lowered by 2 points", ASTERISK_DROP, span.getAttribute("dy"));
+				return;
+			}
+		}
+		throw new AssertionError("No asterisk set apart in " + text.getTextContent());
+	}
+
 	/** Width the Canadian panels are drawn at, as a figure the geometry of a rule can be checked against. */
 	private double canadaPanelWidth() {
 		return Double.parseDouble(CANADA_PANEL_WIDTH.replace("pt", ""));
@@ -897,7 +1134,7 @@ public class NutritionFactsTemplateTest {
 		labels.put("dailyValueLegend", english ? "* DV = Daily Value" : "* VQ = valeur quotidienne");
 		labels.put("servingColon", english ? ":" : NBSP + ":");
 		labels.put("footNoteEmphasis", english ? "a little,a lot" : "peu,beaucoup");
-		labels.put("dailyValueShort", english ? "%DV*" : "%VQ*");
+		labels.put("dailyValueShort", english ? "% DV*" : "% VQ*");
 		labels.put("supplementedTitle", english ? "Supplemented Food Facts" : "Info-aliment supplémenté");
 		labels.put("supplementedWith", english ? "Supplemented with" : "Supplémenté en");
 		labels.put("supplementedNote", english ? "Includes naturally occurring and supplemental amounts"

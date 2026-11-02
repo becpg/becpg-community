@@ -15,12 +15,8 @@
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
 
-<#assign y = nf.BORDER + 2>
 <#assign body>
-
-	<@nf.canadianHeading data=nf_data y=y/>
-	<#assign y = nf.cursorY>
-
-	<@nf.canadianBody data=nf_data y=y/>
+	<@nf.canadianHeading data=nf_data y=nf.BORDER + 2/>
+	<@nf.canadianBody data=nf_data/>
 </#assign>
 <@nf.panel height=nf.cursorY>${body}</@nf.panel>
