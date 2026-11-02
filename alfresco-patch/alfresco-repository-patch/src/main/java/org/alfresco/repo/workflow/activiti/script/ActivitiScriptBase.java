@@ -64,6 +64,7 @@ public class ActivitiScriptBase
     /** Constant <code>EXECUTION_BINDING_NAME="execution"</code> */
     protected static final String EXECUTION_BINDING_NAME = "execution";
 	private static final String CATEGORY_BECPG = "http://www.bcpg.fr/model/workflow/1.0";
+	private static final String ADMIN_USER_NAME = "admin";
 
     protected Expression script;
     protected Expression runAs;
@@ -95,12 +96,7 @@ public class ActivitiScriptBase
             if (runAsUser != null)
             {
             	//beCPG
-            	if("admin".equals(runAsUser) && AuthenticationUtil.isMtEnabled()) {
-            		runAsUser = AuthenticationUtil.getSystemUserName();
-            	} else {
-                // Check if the user used for running exists
-                validateRunAsUser(runAsUser);
-            }
+            	runAsUser = resolveRunAsUser(runAsUser);
             }
             else
             {
@@ -325,12 +321,40 @@ public class ActivitiScriptBase
     }
     
     /**
-     * Checks that the specified 'runAs' field
-     * specifies a valid username.
+     * beCPG - Resolves the user the script runs as. The beCPG workflows run some listeners as "admin": that user is
+     * replaced by the system user on a multi-tenant repository, or when no "admin" person exists (#37863).
+     *
+     * @param runAsUser the user name of the 'runAs' field
+     * @return the user name to run the script as
+     * @throws WorkflowException if the user does not exist and is not "admin"
      */
-    private void validateRunAsUser(final String runAsUser) 
+    protected String resolveRunAsUser(String runAsUser)
     {
-        Boolean runAsExists = AuthenticationUtil.runAs(new RunAsWork<Boolean>()
+        if (ADMIN_USER_NAME.equals(runAsUser) && AuthenticationUtil.isMtEnabled())
+        {
+            return AuthenticationUtil.getSystemUserName();
+        }
+        if (runAsUserExists(runAsUser))
+        {
+            return runAsUser;
+        }
+        if (ADMIN_USER_NAME.equals(runAsUser))
+        {
+            return AuthenticationUtil.getSystemUserName();
+        }
+        throw new WorkflowException("runas user '" + runAsUser + "' does not exist.");
+    }
+
+    /**
+     * Checks that the specified 'runAs' field
+     * specifies an existing username.
+     *
+     * @param runAsUser the user name of the 'runAs' field
+     * @return true if a person exists for this user name
+     */
+    protected boolean runAsUserExists(final String runAsUser) 
+    {
+        return AuthenticationUtil.runAs(new RunAsWork<Boolean>()
         {
             // Validate using System user to ensure sufficient permissions available to access person node.
 
@@ -339,11 +363,6 @@ public class ActivitiScriptBase
                 return getServiceRegistry().getPersonService().personExists(runAsUser);
             }
         }, AuthenticationUtil.getSystemUserName());
-
-        if (!runAsExists)
-        {
-            throw new WorkflowException("runas user '" + runAsUser + "' does not exist.");
-        }
     }
     
     /**
