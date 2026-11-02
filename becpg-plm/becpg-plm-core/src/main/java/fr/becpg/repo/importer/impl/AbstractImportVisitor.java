@@ -63,6 +63,7 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -1242,21 +1243,80 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				queryBuilder.parent(importContext.getParentNodeRef());
 			} else if (parentRef != null && ! hasParent) {
 				queryBuilder.inParent(parentRef);
+			} else if (!hasParent && isImportedRowLookup(importContext, type, useContextPath) && isDataList(importContext.getParentNodeRef())) {
+				// #36836 rows imported into a data list must never update the rows of another list of the same type
+				queryBuilder.parent(importContext.getParentNodeRef());
 			}
 			if(logger.isDebugEnabled()) {
 				logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 			}
-			
-			for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
-				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-					return tmpNodeRef;
-				}
-			}
+
+			return findImportCandidate(queryBuilder, isImportedRowLookup(importContext, type, useContextPath) ? type : null);
 
 		}
 
 		return nodeRef;
+	}
+
+	/**
+	 * Tells whether the lookup is for the node the import line creates or updates, as opposed to a
+	 * target or the parent entity of an entity list item.
+	 *
+	 * @param importContext the import context
+	 * @param type the type looked up
+	 * @param useContextPath whether the lookup may use the PATH of the import
+	 * @return true when the lookup is for the imported row itself
+	 */
+	private boolean isImportedRowLookup(ImportContext importContext, QName type, boolean useContextPath) {
+		return useContextPath && type.equals(importContext.getType());
+	}
+
+	/**
+	 * @param folderNodeRef the folder given by the PATH of the import, may be null
+	 * @return true when the folder is a data list
+	 */
+	private boolean isDataList(NodeRef folderNodeRef) {
+		return (folderNodeRef != null) && DataListModel.TYPE_DATALIST.equals(nodeService.getType(folderNodeRef));
+	}
+
+	/**
+	 * Returns the first node matching the query, versions and templates excluded. When the lookup is
+	 * for the imported row, a key matching several nodes is rejected instead of silently updating the
+	 * first one; working copies and branches are not counted since they may share the key of the
+	 * entity they come from.
+	 *
+	 * @param queryBuilder the query on the key of the line
+	 * @param importedRowType the type of the imported row, or null when several matching nodes are allowed
+	 * @return the matching node, or null when none matches
+	 * @throws ImporterException if the key is ambiguous
+	 */
+	private NodeRef findImportCandidate(BeCPGQueryBuilder queryBuilder, QName importedRowType) throws ImporterException {
+		NodeRef candidate = null;
+		int mainNodeCount = 0;
+		for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
+			if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+				if (candidate == null) {
+					candidate = tmpNodeRef;
+				}
+				if (importedRowType == null) {
+					return candidate;
+				}
+				if (isMainNode(tmpNodeRef) && (++mainNodeCount > 1)) {
+					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_AMBIGUOUS_KEY,
+							importedRowType.toPrefixString(namespaceService), queryBuilder.toString()));
+				}
+			}
+		}
+		return candidate;
+	}
+
+	/**
+	 * @param nodeRef a node matching the key of the line
+	 * @return true when the node is neither a working copy nor a branch
+	 */
+	private boolean isMainNode(NodeRef nodeRef) {
+		return !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 	}
 
 	/**
