@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -265,6 +266,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// import properties
 		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values);
+		Map<QName, List<NodeRef>> associationTargets = findAssociationTargets(importContext, values);
 
 		// work around since CodePolicy is asynchronous, so we need to generate
 		// code if empty
@@ -354,7 +356,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// import associations
 		logger.debug("Import Assocs");
-		importAssociations(importContext, values, nodeRef);
+		updateAssociations(nodeRef, associationTargets);
 
 		// import files
 		logger.debug("Import Files");
@@ -662,50 +664,58 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	/**
-	 * Import the associations of the node
+	 * Finds the targets of the association columns of a line, before the line writes anything: a
+	 * missing or ambiguous target then fails the line alone. Found after the node was written, it left
+	 * that node without its mandatory association, which failed the commit of the whole batch and hid
+	 * the error of the line behind an integrity error.
 	 *
-	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
-	 * @param values a {@link java.util.List} object.
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 * @param importContext the import context
+	 * @param values the values of the line
+	 * @return the targets of each association column, an empty list clearing the association
+	 * @throws ImporterException if a target is not found, is ambiguous, or a mandatory one is missing
 	 */
-	protected void importAssociations(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ImporterException {
-
+	protected Map<QName, List<NodeRef>> findAssociationTargets(ImportContext importContext, List<String> values) throws ImporterException {
+		Map<QName, List<NodeRef>> associationTargets = new LinkedHashMap<>();
 		for (int z_idx = 0; (z_idx < values.size()) && (z_idx < importContext.getColumns().size()); z_idx++) {
-
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
-
-			if (attributeMapping instanceof AttributeMapping) {
-				ClassAttributeDefinition column = attributeMapping.getAttribute();
-
-				if (column instanceof AssociationDefinition) {
-					AssociationDefinition assocDef = (AssociationDefinition) column;
-					String value = values.get(z_idx);
-
-					if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
-						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
-						QName targetKey = ((AttributeMapping) attributeMapping).getTargetKey();
-						logger.debug("importAssociations targetClass" + targetClass);
-						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
-								targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName(), targetKey);
-
-						// mandatory target not found
-						if (targetRefs.isEmpty()) {
-							throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
-						}
-
-						associationService.update(nodeRef, assocDef.getName(), targetRefs);
-
-					} else if ((value != null) && value.isEmpty() || ImportHelper.NULL_VALUE.equals(value)) {
-
-						associationService.update(nodeRef, assocDef.getName(), new ArrayList<>());
-
-					} else if (assocDef.isTargetMandatory()) {
-
-						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
-					}
+			if ((attributeMapping instanceof AttributeMapping columnMapping) && (columnMapping.getAttribute() instanceof AssociationDefinition assocDef)) {
+				String value = values.get(z_idx);
+				if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
+					associationTargets.put(assocDef.getName(), findColumnTargets(importContext, columnMapping, assocDef, value));
+				} else if (value != null) {
+					associationTargets.put(assocDef.getName(), new ArrayList<>());
+				} else if (assocDef.isTargetMandatory()) {
+					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 				}
 			}
+		}
+		return associationTargets;
+	}
+
+	private List<NodeRef> findColumnTargets(ImportContext importContext, AttributeMapping columnMapping, AssociationDefinition assocDef, String value)
+			throws ImporterException {
+		QName targetClass = columnMapping.getTargetClass();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Find association targets, targetClass: " + targetClass);
+		}
+		List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
+				targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName(), columnMapping.getTargetKey());
+		if (targetRefs.isEmpty()) {
+			throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
+		}
+		return targetRefs;
+	}
+
+	/**
+	 * Sets the associations of the node to the targets found for the line.
+	 *
+	 * @param nodeRef the imported node
+	 * @param associationTargets the targets of each association, as found by
+	 *            {@link #findAssociationTargets(ImportContext, List)}
+	 */
+	protected void updateAssociations(NodeRef nodeRef, Map<QName, List<NodeRef>> associationTargets) {
+		for (Map.Entry<QName, List<NodeRef>> associationTarget : associationTargets.entrySet()) {
+			associationService.update(nodeRef, associationTarget.getKey(), associationTarget.getValue());
 		}
 	}
 
