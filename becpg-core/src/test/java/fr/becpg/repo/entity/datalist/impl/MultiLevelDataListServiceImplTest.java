@@ -35,7 +35,8 @@ import fr.becpg.repo.security.SecurityService;
 /**
  * Checks which rows of a list holding its own hierarchy (bcpg:parentLevel) are kept in the tree, depending on the rows
  * the user collapsed: every descendant of a collapsed row is hidden, whatever its level, while a row whose parent is
- * filtered out of the list is still displayed at the root (#37722, #33948).
+ * filtered out of the list is still displayed at the root (#37722, #33948). Whatever the order the list is sorted in,
+ * rows stay under their parent: roots are sorted among themselves, then the children of each row (#37984).
  *
  * @author matthieu
  */
@@ -58,6 +59,14 @@ public class MultiLevelDataListServiceImplTest {
     private static final NodeRef LEVEL3_NODE_REF = new NodeRef("workspace://SpacesStore/level3");
 
     private static final NodeRef SIBLING_NODE_REF = new NodeRef("workspace://SpacesStore/sibling");
+
+    private static final NodeRef CHILD_A_NODE_REF = new NodeRef("workspace://SpacesStore/childA");
+
+    private static final NodeRef CHILD_Z_NODE_REF = new NodeRef("workspace://SpacesStore/childZ");
+
+    private static final NodeRef CYCLE_A_NODE_REF = new NodeRef("workspace://SpacesStore/cycleA");
+
+    private static final NodeRef CYCLE_B_NODE_REF = new NodeRef("workspace://SpacesStore/cycleB");
 
     @Mock
     private EntityListDAO entityListDAO;
@@ -98,6 +107,10 @@ public class MultiLevelDataListServiceImplTest {
         mockRow(LEVEL2_NODE_REF, 2, LEVEL1_NODE_REF);
         mockRow(LEVEL3_NODE_REF, 3, LEVEL2_NODE_REF);
         mockRow(SIBLING_NODE_REF, 1, null);
+        mockRow(CHILD_A_NODE_REF, 2, LEVEL1_NODE_REF);
+        mockRow(CHILD_Z_NODE_REF, 2, LEVEL1_NODE_REF);
+        mockRow(CYCLE_A_NODE_REF, 2, CYCLE_B_NODE_REF);
+        mockRow(CYCLE_B_NODE_REF, 2, CYCLE_A_NODE_REF);
     }
 
     @After
@@ -141,6 +154,59 @@ public class MultiLevelDataListServiceImplTest {
 
         assertEquals(List.of(LEVEL2_NODE_REF), List.copyOf(tree.getTree().keySet()));
         assertTrue(tree.getTree().get(LEVEL2_NODE_REF).getTree().containsKey(LEVEL3_NODE_REF));
+    }
+
+    @Test
+    public void testChildSortedBeforeItsParentStaysUnderIt() {
+        MultiLevelListData tree = buildTree(CHILD_A_NODE_REF, LEVEL1_NODE_REF, CHILD_Z_NODE_REF);
+
+        assertEquals(List.of(LEVEL1_NODE_REF), List.copyOf(tree.getTree().keySet()));
+        assertEquals(List.of(CHILD_A_NODE_REF, CHILD_Z_NODE_REF), childrenOf(tree, LEVEL1_NODE_REF));
+    }
+
+    @Test
+    public void testChildrenKeepTheSortOrderUnderTheirParent() {
+        MultiLevelListData tree = buildTree(CHILD_Z_NODE_REF, LEVEL1_NODE_REF, CHILD_A_NODE_REF);
+
+        assertEquals(List.of(CHILD_Z_NODE_REF, CHILD_A_NODE_REF), childrenOf(tree, LEVEL1_NODE_REF));
+    }
+
+    @Test
+    public void testRootsKeepTheSortOrderAmongThemselves() {
+        MultiLevelListData tree = buildTree(SIBLING_NODE_REF, CHILD_A_NODE_REF, LEVEL1_NODE_REF);
+
+        assertEquals(List.of(SIBLING_NODE_REF, LEVEL1_NODE_REF), List.copyOf(tree.getTree().keySet()));
+        assertEquals(List.of(CHILD_A_NODE_REF), childrenOf(tree, LEVEL1_NODE_REF));
+    }
+
+    @Test
+    public void testGrandChildSortedBeforeItsAncestorsStaysAtItsLevel() {
+        MultiLevelListData tree = buildTree(LEVEL3_NODE_REF, LEVEL2_NODE_REF, LEVEL1_NODE_REF);
+
+        assertEquals(List.of(LEVEL1_NODE_REF), List.copyOf(tree.getTree().keySet()));
+        MultiLevelListData level2 = tree.getTree().get(LEVEL1_NODE_REF).getTree().get(LEVEL2_NODE_REF);
+        assertEquals(List.of(LEVEL3_NODE_REF), List.copyOf(level2.getTree().keySet()));
+    }
+
+    @Test
+    public void testCollapsedRowHidesDescendantsSortedBeforeIt() {
+        expandedNodes.put(LEVEL1_NODE_REF, false);
+
+        MultiLevelListData tree = buildTree(LEVEL3_NODE_REF, LEVEL2_NODE_REF, LEVEL1_NODE_REF);
+
+        assertEquals(List.of(LEVEL1_NODE_REF), List.copyOf(tree.getTree().keySet()));
+        assertTrue(tree.getTree().get(LEVEL1_NODE_REF).getTree().isEmpty());
+    }
+
+    @Test
+    public void testRowsWhoseParentsFormACycleAreDisplayedAtRoot() {
+        MultiLevelListData tree = buildTree(CYCLE_A_NODE_REF, CYCLE_B_NODE_REF);
+
+        assertEquals(List.of(CYCLE_A_NODE_REF, CYCLE_B_NODE_REF), List.copyOf(tree.getTree().keySet()));
+    }
+
+    private List<NodeRef> childrenOf(MultiLevelListData tree, NodeRef rootNodeRef) {
+        return List.copyOf(tree.getTree().get(rootNodeRef).getTree().keySet());
     }
 
     private MultiLevelListData buildTree(NodeRef... rows) {
