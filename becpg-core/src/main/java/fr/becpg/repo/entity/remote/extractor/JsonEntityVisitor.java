@@ -56,8 +56,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -134,13 +132,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private final LockService lockService;
 	private final AssociationService associationService;
 	private final EntityListDAO entityListDAO;
-	private final PermissionService permissionService;
 
 	/** Association definitions assembled during this request, keyed by node type and aspects. */
 	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
-
-	/** Read access of the nodes checked during this request, one evaluation per node. */
-	private final Map<NodeRef, Boolean> readAccessByNode = new HashMap<>();
 
 	private Boolean requiresAssocs = null;
 
@@ -157,7 +151,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		this.lockService = remoteServiceRegisty.lockService();
 		this.associationService = remoteServiceRegisty.associationService();
 		this.entityListDAO = remoteServiceRegisty.entityListDAO();
-		this.permissionService = remoteServiceRegisty.permissionService();
 	}
 
 	/** {@inheritDoc} */
@@ -774,7 +767,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		// and the entity is returned without it exactly as intended. The ACL that says so is set by
 		// SecurityFormulationHandler on the list node itself, one per list, and its items inherit it
 		// — so one question here answers for the whole list.
-		if (!canRead(listNodeRef)) {
+		if (!canReadNode(listNodeRef)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Datalist " + listNodeRef + " of node " + entityNodeRef
 						+ " is not readable by the current user, returning entity without it");
@@ -953,7 +946,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * The enumeration goes through the unsecured <code>NodeService</code> so as not to pay one
 	 * permission evaluation per child in the AOP chain. Enumerating without filtering would export
 	 * nodes the caller may not read, so the filtering the secured service used to do is made
-	 * explicit here: {@link #canRead} asks once per node, cached for the request.
+	 * explicit here: {@link #canReadNode} asks once per node, cached for the request.
 	 * <p>
 	 * An unreadable child is <b>omitted</b> rather than marked <code>#AccessDenied</code> like an
 	 * association target: a child association describes a composition — a subfolder, an attachment —
@@ -963,7 +956,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private void visitChildAssociations(NodeRef nodeRef, JSONObject entity, Map<QName, AssociationDefinition> assocs, RemoteJSONContext context) throws JSONException, RemoteException {
 		List<ChildAssociationRef> assocRefs = new ArrayList<>();
 		for (ChildAssociationRef assocRef : unsecuredNodeService.getChildAssocs(nodeRef)) {
-			if (canRead(assocRef.getChildRef())) {
+			if (canReadNode(assocRef.getChildRef())) {
 				assocRefs.add(assocRef);
 			} else if (logger.isDebugEnabled()) {
 				logger.debug("Child " + assocRef.getChildRef() + " of " + nodeRef + " (assoc " + assocRef.getTypeQName()
@@ -1076,13 +1069,12 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private JSONObject createTargetAssociationNode(NodeRef nodeRef, NodeRef childRef, AssociationDefinition assocDef, QName nodeType, RemoteJSONContext context) throws JSONException, RemoteException {
 		JSONObject jsonAssocNode = new JSONObject();
 
-		if (!canRead(childRef)) {
+		if (!canReadNode(childRef)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Association target " + childRef + " of " + nodeRef + " (assoc " + assocDef.getName()
 						+ ") not accessible for current user, marking as #AccessDenied");
 			}
-			jsonAssocNode.put(RemoteEntityService.ATTR_ID, childRef.getId());
-			jsonAssocNode.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), ACCESS_DENIED_VALUE);
+			markAccessDenied(childRef, jsonAssocNode);
 			return jsonAssocNode;
 		}
 
@@ -1091,25 +1083,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * Whether the caller may read a node, answered once per node and per request.
-	 * <p>
-	 * This is the whole of the node level access control this visitor performs, and it is asked in
-	 * the two places nothing else filters: an association target, and a datalist of the entity.
-	 * Everywhere else the metadata is read without a check, because the page came from a search that
-	 * had already granted it. Field level security rules are a separate question, see
-	 * {@link #canReadField(NodeRef, QName)}.
-	 * <p>
-	 * The same node comes back over and over — <code>bcpg:entityTpl</code> is one node for every
-	 * product of a listing — and each visit would otherwise be one permission evaluation. The cache
-	 * is what keeps this check from becoming the cost that reading through the public
-	 * <code>NodeService</code> was.
+	 * Writes the placeholder of a node the caller may not read: its id and
+	 * <code>#AccessDenied</code> as its name, nothing else (no code, no path, no type).
 	 *
-	 * @param nodeRef the node to test
-	 * @return true when the node is readable
+	 * @param nodeRef the unreadable node
+	 * @param node the JSON object standing for it
+	 * @throws org.json.JSONException if any.
 	 */
-	private boolean canRead(NodeRef nodeRef) {
-		return readAccessByNode.computeIfAbsent(nodeRef,
-				ref -> AccessStatus.ALLOWED.equals(permissionService.hasPermission(ref, PermissionService.READ)));
+	private void markAccessDenied(NodeRef nodeRef, JSONObject node) throws JSONException {
+		node.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+		node.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), ACCESS_DENIED_VALUE);
 	}
 
 	/**
@@ -1540,7 +1523,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			tmpArray.put(node);
-			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			visitReferencedNode(propType, nodeRef, node, context);
 		} else {
 			logDanglingReference(propType, nodeRef);
 		}
@@ -1562,10 +1545,33 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			entity.put(entityDictionaryService.toPrefixString(propType), node);
-			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			visitReferencedNode(propType, nodeRef, node, context);
 		} else {
 			logDanglingReference(propType, nodeRef);
 		}
+	}
+
+	/**
+	 * Serializes the node a <code>d:noderef</code> value points to, or reports it as
+	 * <code>#AccessDenied</code> when the caller may not read it, as for an association target.
+	 * The metadata is read through the unsecured node service, so the check must be made here:
+	 * without it, the name and codes of an unreadable node would be exported.
+	 *
+	 * @param propType the property holding the reference
+	 * @param nodeRef the referenced node
+	 * @param node the JSON object standing for it
+	 * @param context the context of the current visit
+	 * @throws org.json.JSONException if any.
+	 */
+	private void visitReferencedNode(QName propType, NodeRef nodeRef, JSONObject node, RemoteJSONContext context) throws JSONException {
+		if (canReadNode(nodeRef)) {
+			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			return;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Target " + nodeRef + " of " + propType + " not accessible for current user, marking as #AccessDenied");
+		}
+		markAccessDenied(nodeRef, node);
 	}
 
 	/**

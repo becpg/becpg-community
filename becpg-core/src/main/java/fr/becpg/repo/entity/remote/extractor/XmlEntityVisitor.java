@@ -213,7 +213,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
-				if ((part != null)) {
+				if ((part != null) && canReadNode(part)) {
 					isCharact = true;
 					writeStdAttributes(xmlw, part, name, isCharact, siteInfo);
 				}
@@ -581,9 +581,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * <p>visitPropValue.</p>
+	 * Writes a property value. A <code>d:noderef</code> value whose target is deleted or not readable
+	 * by the current user is left out, see {@link #isExportableValue(Serializable)}.
 	 *
-	 * @param value a {@link java.io.Serializable} object
+	 * @param value the property value
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
 	 * @throws javax.xml.stream.XMLStreamException if any.
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
@@ -591,25 +592,48 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {
-			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
-			for (Serializable subEl : (List<Serializable>) value) {
+			visitPropValues((List<Serializable>) value, xmlw);
+		} else if (isExportableValue(value)) {
+			writeSingleValue(value, xmlw);
+		}
+	}
+
+	/**
+	 * Writes the values of a multi-valued property, one element per exportable value: a left out
+	 * reference leaves no empty element behind.
+	 *
+	 * @param values the values of the property
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitPropValues(List<Serializable> values, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
+		for (Serializable value : values) {
+			if (isExportableValue(value)) {
 				xmlw.writeStartElement(RemoteEntityService.ELEM_LIST_VALUE);
-				visitPropValue(subEl, xmlw);
+				writeSingleValue(value, xmlw);
 				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
-		} else if (value instanceof NodeRef) {
-			if (nodeService.exists((NodeRef) value)) {
-				visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
-			} else {
-				throw new RemoteException("node does not exist: " + value);
-			}
-		} else if (value instanceof Date) {
-			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
-		} else {
-			if (value != null) {
-				xmlw.writeCData(XMLTextHelper.writeCData(value.toString()));
-			}
+		}
+		xmlw.writeEndElement();
+	}
+
+	/**
+	 * Writes a single property value, a referenced node being written as a nested node element.
+	 *
+	 * @param value a single property value
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void writeSingleValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		if (value instanceof NodeRef nodeRef) {
+			visitNode(nodeRef, xmlw, shouldDumpAll(nodeRef), shouldDumpAll(nodeRef), false, false);
+		} else if (value instanceof Date date) {
+			xmlw.writeCharacters(ISO8601DateFormat.format(date));
+		} else if (value != null) {
+			xmlw.writeCData(XMLTextHelper.writeCData(value.toString()));
 		}
 	}
 
