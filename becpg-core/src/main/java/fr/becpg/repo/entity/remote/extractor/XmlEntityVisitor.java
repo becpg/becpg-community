@@ -78,7 +78,13 @@ import fr.becpg.repo.helper.XMLTextHelper;
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
+	/** Association hops from the exported entity whose targets <code>xml_all</code> details. */
+	private static final int MAX_DETAILED_ASSOCIATION_DEPTH = 1;
+
 	private final AssociationService associationService;
+
+	/** Association hops between the exported entity and the node being visited. */
+	private int associationDepth = 0;
 
 	/**
 	 * <p>Constructor for XmlEntityVisitor.</p>
@@ -192,7 +198,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content, boolean siteInfo)
 			throws XMLStreamException, RemoteException {
-		cacheList.add(nodeRef);
+		if (assocs || props) {
+			cacheList.add(nodeRef);
+		}
 
 		extractLevel++;
 
@@ -442,7 +450,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							visitNode(childRef, xmlw, true, true, false, false);
 
 						} else {
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false, false);
+							visitAssociationTarget(childRef, xmlw);
 						}
 						cachedAssocRef = null;
 					}
@@ -455,6 +463,31 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			logger.warn("No typeDef found for :" + nodeRef);
 		}
 
+	}
+
+	/**
+	 * Visits the target of an association. With <code>xml_all</code>, the targets reached from the
+	 * exported entity are detailed (properties, lists and associations) and the targets of those
+	 * targets are written as headers only, as with <code>xml</code>.
+	 * <p>
+	 * Following every association reached the transitive closure of the repository, a supplier
+	 * bringing in its whole catalogue, and the nested visit could exhaust the stack on a long chain.
+	 * Only detailed nodes are marked as visited, so that a node first met beyond the bound is still
+	 * detailed when it is also a direct target.
+	 *
+	 * @param targetRef the association target
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitAssociationTarget(NodeRef targetRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		boolean detailed = (associationDepth < MAX_DETAILED_ASSOCIATION_DEPTH) && shouldDumpAll(targetRef);
+		associationDepth++;
+		try {
+			visitNode(targetRef, xmlw, detailed, detailed, false, false);
+		} finally {
+			associationDepth--;
+		}
 	}
 
 	/**
@@ -620,7 +653,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * Writes a single property value, a referenced node being written as a nested node element.
+	 * Writes a single property value. A referenced node is written as a header only (path, name,
+	 * nodeRef and codes), in every format: a <code>d:noderef</code> value is a reference, not an
+	 * association, and following it with <code>xml_all</code> chained products to one another
+	 * through their requirement sources. The header is enough for the import to resolve it.
 	 *
 	 * @param value a single property value
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
@@ -629,7 +665,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	private void writeSingleValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof NodeRef nodeRef) {
-			visitNode(nodeRef, xmlw, shouldDumpAll(nodeRef), shouldDumpAll(nodeRef), false, false);
+			visitNode(nodeRef, xmlw, false, false, false, false);
 		} else if (value instanceof Date date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format(date));
 		} else if (value != null) {

@@ -16,11 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,7 +52,8 @@ import fr.becpg.repo.security.SecurityService;
 
 /**
  * Unit tests of the XML and Excel remote exports (#37820): the code hidden by a security rule, a
- * node whose folder the user cannot read, and a referenced node the user cannot read.
+ * node whose folder the user cannot read, a referenced node the user cannot read, and the depth
+ * <code>xml_all</code> follows associations and references to.
  */
 public class XmlEntityVisitorTest {
 
@@ -72,6 +76,18 @@ public class XmlEntityVisitorTest {
 	private static final String HIDDEN_NAME = "Hidden source";
 
 	private static final String HIDDEN_CODE = "PF-HIDDEN";
+
+	private static final QName ASSOC_COMPO_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct");
+
+	private static final String ELEM_FINISHED_PRODUCT = "bcpg:finishedProduct";
+
+	private static final int LONG_CHAIN_LENGTH = 2000;
+
+	private static final long SMALL_STACK_SIZE = 256L * 1024L;
+
+	private final NodeRef component = new NodeRef("workspace://SpacesStore/component");
+
+	private final NodeRef subComponent = new NodeRef("workspace://SpacesStore/subComponent");
 
 	private final NodeRef product = new NodeRef("workspace://SpacesStore/product");
 
@@ -261,6 +277,117 @@ public class XmlEntityVisitorTest {
 		assertEquals(listItem.toString(), root.getAttribute(RemoteEntityService.ATTR_NODEREF));
 		assertNull(root.getAttributeNode(RemoteEntityService.CHARACT_ATTR_NODEREF));
 		assertNothingDisclosed(xml);
+	}
+
+	@Test
+	public void allExportDetailsDirectAssociationTarget() throws Exception {
+		givenAssociations(product, component);
+
+		Element root = parse(export(new XmlEntityVisitor(registry), RemoteEntityFormat.xml_all));
+
+		assertTrue(hasChildElement(nodeElements(root, component).get(0)));
+	}
+
+	@Test
+	public void allExportWritesTargetOfTargetAsHeaderOnly() throws Exception {
+		givenAssociations(product, component);
+		givenAssociations(component, subComponent);
+
+		Element root = parse(export(new XmlEntityVisitor(registry), RemoteEntityFormat.xml_all));
+		Element subComponentElement = nodeElements(root, subComponent).get(0);
+
+		assertFalse(hasChildElement(subComponentElement));
+		assertEquals(subComponent.toString(), subComponentElement.getAttribute(RemoteEntityService.ATTR_NODEREF));
+	}
+
+	@Test
+	public void allExportDetailsDirectTargetFirstMetBeyondBound() throws Exception {
+		givenAssociations(product, component, subComponent);
+		givenAssociations(component, subComponent);
+
+		List<Element> subComponentElements = nodeElements(parse(export(new XmlEntityVisitor(registry), RemoteEntityFormat.xml_all)), subComponent);
+
+		assertEquals(2, subComponentElements.size());
+		assertFalse(hasChildElement(subComponentElements.get(0)));
+		assertTrue(hasChildElement(subComponentElements.get(1)));
+	}
+
+	@Test
+	public void allExportWritesReferencedNodeAsHeaderOnly() throws Exception {
+		givenAssociations(product);
+		givenProductProperty(PROP_SOURCES, new ArrayList<>(List.of(readableSource)));
+
+		Element sourceElement = nodeElements(parse(export(new XmlEntityVisitor(registry), RemoteEntityFormat.xml_all)), readableSource).get(0);
+
+		assertFalse(hasChildElement(sourceElement));
+		assertEquals(READABLE_NAME, sourceElement.getAttribute(RemoteEntityService.ATTR_NAME));
+	}
+
+	@Test
+	public void allExportCompletesOnLongAssociationChain() throws Exception {
+		NodeRef previous = product;
+		for (int i = 0; i < LONG_CHAIN_LENGTH; i++) {
+			NodeRef next = new NodeRef("workspace://SpacesStore/chain" + i);
+			givenAssociations(previous, next);
+			previous = next;
+		}
+
+		String xml = exportOnSmallStack(RemoteEntityFormat.xml_all);
+
+		assertEquals(2, parse(xml).getElementsByTagName(ELEM_FINISHED_PRODUCT).getLength());
+	}
+
+	private void givenAssociations(NodeRef source, NodeRef... targets) {
+		AssociationDefinition compoProduct = mock(AssociationDefinition.class);
+		when(compoProduct.getName()).thenReturn(ASSOC_COMPO_PRODUCT);
+		TypeDefinition productType = mock(TypeDefinition.class);
+		when(productType.getAssociations()).thenReturn(Map.of(ASSOC_COMPO_PRODUCT, compoProduct));
+		when(entityDictionaryService.getType(TYPE_FINISHED_PRODUCT)).thenReturn(productType);
+
+		List<AssociationRef> assocRefs = new ArrayList<>();
+		for (NodeRef target : targets) {
+			when(nodeService.getType(target)).thenReturn(TYPE_FINISHED_PRODUCT);
+			assocRefs.add(new AssociationRef(source, ASSOC_COMPO_PRODUCT, target));
+		}
+		when(nodeService.getTargetAssocs(source, ASSOC_COMPO_PRODUCT)).thenReturn(assocRefs);
+	}
+
+	private String exportOnSmallStack(RemoteEntityFormat format) throws Exception {
+		AtomicReference<String> xml = new AtomicReference<>();
+		AtomicReference<Throwable> failure = new AtomicReference<>();
+		Thread exporter = new Thread(null, () -> {
+			try {
+				xml.set(export(new XmlEntityVisitor(registry), format));
+			} catch (Throwable e) {
+				failure.set(e);
+			}
+		}, "xml-export", SMALL_STACK_SIZE);
+		exporter.start();
+		exporter.join();
+		assertNull(failure.get());
+		return xml.get();
+	}
+
+	private static List<Element> nodeElements(Element root, NodeRef nodeRef) {
+		List<Element> elements = new ArrayList<>();
+		NodeList candidates = root.getElementsByTagName(ELEM_FINISHED_PRODUCT);
+		for (int i = 0; i < candidates.getLength(); i++) {
+			Element candidate = (Element) candidates.item(i);
+			if (nodeRef.toString().equals(candidate.getAttribute(RemoteEntityService.ATTR_NODEREF))) {
+				elements.add(candidate);
+			}
+		}
+		return elements;
+	}
+
+	private static boolean hasChildElement(Element element) {
+		NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			if (children.item(i) instanceof Element) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void givenProductProperty(QName propName, Serializable value) {
