@@ -59,6 +59,8 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.score.ScoreEngine;
+import fr.becpg.repo.score.ScoreScale;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
@@ -93,6 +95,27 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final int FIRST_BATCH_FIRST_VALUES_ROW = 5;
 	private static final int SECOND_BATCH_FIRST_ROW = 10;
 	private static final int THIRD_BATCH_FIRST_ROW = 20;
+
+	private static final String DEFAULT_MAPPING = "Default";
+	private static final String LCAS_FOLDER = "ImportLcas";
+	private static final String SCORE_COEFFICIENTS_FOLDER = "ImportScoreCoefficients";
+	private static final String PATH_SCORE_COEFFICIENTS = "/" + PATH_TEMP + "/" + SCORE_COEFFICIENTS_FOLDER;
+	private static final String SCORE_COEFFICIENT_TYPE = "bcpg:scoreDefCoeffList";
+	private static final String[] SCORE_COEFFICIENT_COLUMNS = { ImportHelper.PFX_COLUMS, "cm:name", "bcpg:sdclScoreDef", "bcpg:sdclLca",
+			"bcpg:sdclNormalization", "bcpg:sdclPonderation" };
+	private static final String[] SCORE_COEFFICIENT_COLUMNS_PARAMS = { ImportHelper.PFX_COLUMNS_PARAMS, "@Key", "@Assoc(key=\"cm:name\")",
+			"@Assoc(key=\"bcpg:lcaCode\")", "", "" };
+	private static final String SCORE_DEFINITION_NAME = "Import score definition 35654";
+	private static final String SCORE_DEFINITION_VERSION = "1";
+	private static final String CLIMATE_CHANGE_CODE = "IMPORT_35654_CLIMATE_CHANGE";
+	private static final String CLIMATE_CHANGE_RAW_MATERIAL_CODE = "IMPORT_35654_CLIMATE_CHANGE_RAW_MATERIAL";
+	private static final String DUPLICATED_CODE = "IMPORT_35654_DUPLICATED";
+	private static final String CLIMATE_CHANGE_COEFFICIENT = "Import coefficient climate change";
+	private static final String RAW_MATERIAL_COEFFICIENT = "Import coefficient raw material";
+	private static final String DUPLICATED_COEFFICIENT = "Import coefficient duplicated code";
+	private static final String COEFFICIENT_VALUE = "1";
+	/** The score coefficient header takes rows 0 to 5. */
+	private static final int SCORE_COEFFICIENT_FIRST_VALUES_ROW = 6;
 
 	private static final Log logger = LogFactory.getLog(ImportServiceIT.class);
 
@@ -952,6 +975,137 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	}
 
 	/**
+	 * #35654 The Ecobalyse coefficients of becpg-data declare their COLUMNS_PARAMS after their COLUMNS:
+	 * the <code>@Assoc(key="bcpg:lcaCode")</code> of the indicator column must still be honoured, so that
+	 * each coefficient is linked to the indicator carrying its code and not looked up by name.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testAssocKeyDeclaredAfterColumns() throws Exception {
+		Map<String, NodeRef> lcas = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef lcasFolderNodeRef = createLcasFolder();
+			createScoreDefinition(lcasFolderNodeRef);
+			Map<String, NodeRef> lcaByCode = new HashMap<>();
+			lcaByCode.put(CLIMATE_CHANGE_CODE, createLca(lcasFolderNodeRef, "Climate change", CLIMATE_CHANGE_CODE));
+			lcaByCode.put(CLIMATE_CHANGE_RAW_MATERIAL_CODE,
+					createLca(lcasFolderNodeRef, "Climate change - raw material", CLIMATE_CHANGE_RAW_MATERIAL_CODE));
+			return lcaByCode;
+		}, false, true);
+
+		try {
+			List<String[]> rows = scoreCoefficientHeader(true, SCORE_COEFFICIENT_COLUMNS, SCORE_COEFFICIENT_COLUMNS_PARAMS);
+			rows.add(scoreCoefficient(CLIMATE_CHANGE_COEFFICIENT, CLIMATE_CHANGE_CODE));
+			rows.add(scoreCoefficient(RAW_MATERIAL_COEFFICIENT, CLIMATE_CHANGE_RAW_MATERIAL_CODE));
+			importXlsx("import-assoc-key-after-columns.xlsx", rows);
+
+			assertEquals(lcas.get(CLIMATE_CHANGE_CODE), findCoefficientLca(CLIMATE_CHANGE_COEFFICIENT));
+			assertEquals(lcas.get(CLIMATE_CHANGE_RAW_MATERIAL_CODE), findCoefficientLca(RAW_MATERIAL_COEFFICIENT));
+		} finally {
+			cleanTempFolder();
+		}
+	}
+
+	/**
+	 * #35654 A code carried by two indicators, as when a French and an English set of indicators were
+	 * both imported, is rejected instead of linking the coefficient to whichever indicator comes first.
+	 * The header is the one of the Planet-score coefficients, COLUMNS_PARAMS before COLUMNS.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testAmbiguousAssocKeyIsRejected() throws Exception {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef lcasFolderNodeRef = createLcasFolder();
+			createScoreDefinition(lcasFolderNodeRef);
+			createLca(lcasFolderNodeRef, "Indicateur en double", DUPLICATED_CODE);
+			return createLca(lcasFolderNodeRef, "Duplicated indicator", DUPLICATED_CODE);
+		}, false, true);
+
+		try {
+			List<String[]> rows = scoreCoefficientHeader(false, SCORE_COEFFICIENT_COLUMNS_PARAMS, SCORE_COEFFICIENT_COLUMNS);
+			rows.add(scoreCoefficient(DUPLICATED_COEFFICIENT, DUPLICATED_CODE));
+			NodeRef importFileNodeRef = importXlsx("import-ambiguous-assoc-key.xlsx", rows);
+
+			assertNull(findCoefficientLca(DUPLICATED_COEFFICIENT));
+			assertRowsColor(importFileNodeRef, SCORE_COEFFICIENT_FIRST_VALUES_ROW, SCORE_COEFFICIENT_FIRST_VALUES_ROW + 1,
+					ExcelHelper.createRedColor());
+			String lineError = readLastCell(importFileNodeRef, SCORE_COEFFICIENT_FIRST_VALUES_ROW);
+			assertTrue("Line error: " + lineError, lineError.contains(DUPLICATED_CODE));
+		} finally {
+			cleanTempFolder();
+		}
+	}
+
+	private NodeRef createLcasFolder() {
+		NodeRef tempFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), List.of(PATH_TEMP));
+		return repoService.getOrCreateFolderByPaths(tempFolderNodeRef, List.of(LCAS_FOLDER));
+	}
+
+	private NodeRef createLca(NodeRef folderNodeRef, String name, String code) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_LCA_CODE, code);
+		return nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_LCA, properties)
+				.getChildRef();
+	}
+
+	private void createScoreDefinition(NodeRef folderNodeRef) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, SCORE_DEFINITION_NAME);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, SCORE_DEFINITION_NAME);
+		properties.put(PLMModel.PROP_SCORE_DEF_CODE, SCORE_DEFINITION_NAME);
+		properties.put(PLMModel.PROP_SCORE_DEF_VERSION, SCORE_DEFINITION_VERSION);
+		properties.put(PLMModel.PROP_SCORE_DEF_ENGINE, ScoreEngine.Plugin.name());
+		properties.put(PLMModel.PROP_SCORE_DEF_SCALE, ScoreScale.Letter.name());
+		nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_SCORE_DEFINITION, properties);
+	}
+
+	/**
+	 * The header of the score coefficient files of becpg-data.
+	 *
+	 * @param stopOnFirstError whether the import stops on the first line in error
+	 * @param firstColumnsRow the first of the COLUMNS and COLUMNS_PARAMS rows
+	 * @param secondColumnsRow the second of the COLUMNS and COLUMNS_PARAMS rows
+	 * @return the header rows
+	 */
+	private List<String[]> scoreCoefficientHeader(boolean stopOnFirstError, String[] firstColumnsRow, String[] secondColumnsRow) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { ImportHelper.PFX_MAPPING, DEFAULT_MAPPING });
+		rows.add(new String[] { ImportHelper.PFX_STOP_ON_FIRST_ERROR, String.valueOf(stopOnFirstError) });
+		rows.add(new String[] { ImportHelper.PFX_PATH, PATH_SCORE_COEFFICIENTS });
+		rows.add(new String[] { ImportHelper.PFX_TYPE, SCORE_COEFFICIENT_TYPE });
+		rows.add(firstColumnsRow);
+		rows.add(secondColumnsRow);
+		return rows;
+	}
+
+	private String[] scoreCoefficient(String name, String lcaCode) {
+		return new String[] { ImportHelper.PFX_VALUES, name, SCORE_DEFINITION_NAME, lcaCode, COEFFICIENT_VALUE, COEFFICIENT_VALUE };
+	}
+
+	/**
+	 * @param coefficientName the name of an imported score coefficient
+	 * @return the indicator the coefficient is linked to, or null when the coefficient was not imported
+	 */
+	private NodeRef findCoefficientLca(String coefficientName) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef tempFolderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
+			NodeRef folderNodeRef = tempFolderNodeRef == null ? null
+					: nodeService.getChildByName(tempFolderNodeRef, ContentModel.ASSOC_CONTAINS, SCORE_COEFFICIENTS_FOLDER);
+			NodeRef coefficientNodeRef = folderNodeRef == null ? null
+					: nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, coefficientName);
+			if (coefficientNodeRef == null) {
+				return null;
+			}
+			List<AssociationRef> lcaAssocs = nodeService.getTargetAssocs(coefficientNodeRef, PLMModel.ASSOC_SDCL_LCA);
+			assertEquals(1, lcaAssocs.size());
+			return lcaAssocs.get(0).getTargetRef();
+		}, true, true);
+	}
+
+	/**
 	 * Imports, as a user who may only read one of the folders, two costs then a cost created in that
 	 * folder, refused inside NodeService, then a cost in the next batch.
 	 */
@@ -1108,6 +1262,13 @@ public class ImportServiceIT extends PLMBaseTestCase {
 				assertNotNull("Row " + rowIndex + " should be colored", rowColor);
 				assertTrue("Unexpected color of row " + rowIndex, Arrays.equals(expectedColor.getRGB(), rowColor.getRGB()));
 			}
+		}
+	}
+
+	private String readLastCell(NodeRef importFileNodeRef, int rowIndex) throws IOException {
+		try (XSSFWorkbook workbook = readWorkbook(importFileNodeRef)) {
+			XSSFRow row = workbook.getSheetAt(workbook.getNumberOfSheets() - 1).getRow(rowIndex);
+			return row.getCell(row.getLastCellNum() - 1).getStringCellValue();
 		}
 	}
 
