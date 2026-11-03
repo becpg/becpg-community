@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.extractor;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +30,8 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -68,6 +72,11 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	protected final Set<NodeRef> cacheList = new HashSet<>();
 
 	private final RemoteFieldReadAccess fieldReadAccess;
+
+	private final PermissionService permissionService;
+
+	/** Read access of the nodes checked during this request, one evaluation per node. */
+	private final Map<NodeRef, Boolean> readAccessByNode = new HashMap<>();
 
 	/**
 	 * <p>isLight.</p>
@@ -117,6 +126,60 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		this.contentService = remoteServiceRegisty.contentService();
 		this.siteService = remoteServiceRegisty.siteService();
 		this.fieldReadAccess = new RemoteFieldReadAccess(remoteServiceRegisty.securityService(), unsecuredNodeService, namespaceService);
+		this.permissionService = remoteServiceRegisty.permissionService();
+	}
+
+	/**
+	 * Whether the current user may read a node, answered once per node and per request.
+	 * <p>
+	 * A node reached by reference (an association target, a <code>d:noderef</code> value, a datalist)
+	 * has been filtered by nothing: the entity being exported is readable, not what it points to.
+	 * The same node comes back over and over (<code>bcpg:entityTpl</code> is one node for every
+	 * product of a listing), hence the cache. Field level security rules are a separate question,
+	 * see {@link #canReadField(NodeRef, QName)}.
+	 *
+	 * @param nodeRef the node to test
+	 * @return true when the node is readable
+	 */
+	protected boolean canReadNode(NodeRef nodeRef) {
+		return readAccessByNode.computeIfAbsent(nodeRef,
+				ref -> AccessStatus.ALLOWED.equals(permissionService.hasPermission(ref, PermissionService.READ)));
+	}
+
+	/**
+	 * Whether a single property value is written in an XML export: any value but a reference to a
+	 * node that is deleted or not readable, see {@link #isExportableReference(NodeRef)}.
+	 *
+	 * @param value a single property value
+	 * @return a boolean
+	 */
+	protected boolean isExportableValue(Serializable value) {
+		return !(value instanceof NodeRef nodeRef) || isExportableReference(nodeRef);
+	}
+
+	/**
+	 * Whether the node a <code>d:noderef</code> value points to may be written in the export.
+	 * <p>
+	 * A deleted target is left out with a warning: one dead reference must not fail the export.
+	 * A target the user cannot read is left out as well, and nothing of it is written, neither its
+	 * name nor its codes nor its path. Reading it would throw in the middle of a streamed export,
+	 * on a response already committed, and truncate the document.
+	 *
+	 * @param nodeRef the referenced node
+	 * @return true when the target exists and the current user may read it
+	 */
+	private boolean isExportableReference(NodeRef nodeRef) {
+		if (!unsecuredNodeService.exists(nodeRef)) {
+			logger.warn("Skipping a reference to a node that does not exist: " + nodeRef);
+			return false;
+		}
+		if (!canReadNode(nodeRef)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Referenced node " + nodeRef + " not readable by the current user, left out of the export");
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**
