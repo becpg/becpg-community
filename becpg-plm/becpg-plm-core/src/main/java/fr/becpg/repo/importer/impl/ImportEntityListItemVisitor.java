@@ -144,10 +144,16 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		QName listType = importContext.getListType() != null ? importContext.getListType() : importContext.getType();
 
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, listType);
+		boolean isNewList = listNodeRef == null;
 
-		if (listNodeRef == null) {
+		if (isNewList) {
 			listNodeRef = entityListDAO.createList(listContainerNodeRef, listType);
-		} else if (importContext.isDeleteDataList(entityNodeRef)) {
+		}
+
+		// looked up once the list exists: the labeling group of a labeling rule is searched in the labeling list of the entity
+		Map<QName, List<NodeRef>> associationTargets = findAssociationTargets(importContext, values);
+
+		if (!isNewList && importContext.isDeleteDataList(entityNodeRef)) {
 			List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, listType);
 			for (NodeRef dataListItem : dataListItems) {
 				nodeService.addAspect(dataListItem, ContentModel.ASPECT_TEMPORARY, null);
@@ -274,7 +280,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		}
 
 		// import associations
-		importAssociations(importContext, values, entityListItemNodeRef);
+		updateAssociations(entityListItemNodeRef, associationTargets);
 		
 		MLText comment = (MLText) propValues.get(PLMModel.PROP_PRODUCT_COMMENTS);
 		logger.debug("Import comments :"+comment +" for product :"+entityListItemNodeRef);

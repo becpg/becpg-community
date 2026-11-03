@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.node.integrity.IntegrityException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -113,6 +114,8 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final String CLIMATE_CHANGE_COEFFICIENT = "Import coefficient climate change";
 	private static final String RAW_MATERIAL_COEFFICIENT = "Import coefficient raw material";
 	private static final String DUPLICATED_COEFFICIENT = "Import coefficient duplicated code";
+	private static final String UNKNOWN_CODE = "IMPORT_35654_UNKNOWN";
+	private static final String UNKNOWN_CODE_COEFFICIENT = "Import coefficient unknown code";
 	private static final String COEFFICIENT_VALUE = "1";
 	/** The score coefficient header takes rows 0 to 5. */
 	private static final int SCORE_COEFFICIENT_FIRST_VALUES_ROW = 6;
@@ -1011,27 +1014,39 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	 * both imported, is rejected instead of linking the coefficient to whichever indicator comes first.
 	 * The header is the one of the Planet-score coefficients, COLUMNS_PARAMS before COLUMNS.
 	 *
+	 * The line in error, like a line whose code matches no indicator, must fail alone: the next line of
+	 * the batch is imported and the import log keeps the error of the line instead of the integrity
+	 * error of a coefficient left without its mandatory indicator.
+	 *
 	 * @throws Exception if the import fails to run
 	 */
 	@Test
 	public void testAmbiguousAssocKeyIsRejected() throws Exception {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef validLcaNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			NodeRef lcasFolderNodeRef = createLcasFolder();
 			createScoreDefinition(lcasFolderNodeRef);
 			createLca(lcasFolderNodeRef, "Indicateur en double", DUPLICATED_CODE);
-			return createLca(lcasFolderNodeRef, "Duplicated indicator", DUPLICATED_CODE);
+			createLca(lcasFolderNodeRef, "Duplicated indicator", DUPLICATED_CODE);
+			return createLca(lcasFolderNodeRef, "Climate change", CLIMATE_CHANGE_CODE);
 		}, false, true);
 
 		try {
 			List<String[]> rows = scoreCoefficientHeader(false, SCORE_COEFFICIENT_COLUMNS_PARAMS, SCORE_COEFFICIENT_COLUMNS);
 			rows.add(scoreCoefficient(DUPLICATED_COEFFICIENT, DUPLICATED_CODE));
+			rows.add(scoreCoefficient(UNKNOWN_CODE_COEFFICIENT, UNKNOWN_CODE));
+			rows.add(scoreCoefficient(CLIMATE_CHANGE_COEFFICIENT, CLIMATE_CHANGE_CODE));
 			NodeRef importFileNodeRef = importXlsx("import-ambiguous-assoc-key.xlsx", rows);
 
 			assertNull(findCoefficientLca(DUPLICATED_COEFFICIENT));
-			assertRowsColor(importFileNodeRef, SCORE_COEFFICIENT_FIRST_VALUES_ROW, SCORE_COEFFICIENT_FIRST_VALUES_ROW + 1,
+			assertNull(findCoefficientLca(UNKNOWN_CODE_COEFFICIENT));
+			assertEquals(validLcaNodeRef, findCoefficientLca(CLIMATE_CHANGE_COEFFICIENT));
+			assertRowsColor(importFileNodeRef, SCORE_COEFFICIENT_FIRST_VALUES_ROW, SCORE_COEFFICIENT_FIRST_VALUES_ROW + 2,
 					ExcelHelper.createRedColor());
 			String lineError = readLastCell(importFileNodeRef, SCORE_COEFFICIENT_FIRST_VALUES_ROW);
 			assertTrue("Line error: " + lineError, lineError.contains(DUPLICATED_CODE));
+			String importLog = transactionService.getRetryingTransactionHelper()
+					.doInTransaction(() -> (String) nodeService.getProperty(importFileNodeRef, ContentModel.PROP_TITLE), true, true);
+			assertFalse("Import log: " + importLog, importLog.contains(IntegrityException.class.getSimpleName()));
 		} finally {
 			cleanTempFolder();
 		}
