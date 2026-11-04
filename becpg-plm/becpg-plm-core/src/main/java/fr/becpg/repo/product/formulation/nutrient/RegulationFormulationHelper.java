@@ -21,6 +21,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
@@ -718,7 +719,7 @@ public class RegulationFormulationHelper {
 
 				}
 
-				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
+				Double containerQty = getContainerQty(formulatedProduct);
 				if ((key.equals("US"))) {
 					if ((n.getValue() != null)) {
 						Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
@@ -773,6 +774,23 @@ public class RegulationFormulationHelper {
 			n.setRoundedValuePrepared(null);
 		}
 		n.setRoundedValue(jsonRound.toString());
+	}
+
+	/**
+	 * Returns the quantity the per container values are computed on, in kg or L: the nutrient basis
+	 * quantity of the consumer container when it is filled, because the product may be modelled as a
+	 * case of several consumer units, and the net quantity of the product otherwise.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 * @return the container quantity in kg or L, 0 when the product has no quantity
+	 */
+	static Double getContainerQty(ProductData formulatedProduct) {
+		Double containerNutrientBasisQuantity = formulatedProduct.getContainerNutrientBasisQuantity();
+		if ((containerNutrientBasisQuantity == null) || (containerNutrientBasisQuantity <= 0)) {
+			return FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
+		}
+		ProductUnit unit = formulatedProduct.getContainerNutrientBasisQuantityUnit();
+		return containerNutrientBasisQuantity / (unit != null ? unit : ProductUnit.g).getUnitFactor();
 	}
 
 	/**

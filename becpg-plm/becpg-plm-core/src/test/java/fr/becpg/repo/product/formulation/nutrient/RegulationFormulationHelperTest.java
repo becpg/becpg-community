@@ -47,6 +47,10 @@ public class RegulationFormulationHelperTest {
 
 	private static final double DELTA = 1e-9;
 
+	private static final String US = "US";
+
+	private static final String US_SUPPORTED_LOCALES = "en,en_US";
+
 	@Before
 	public void setUpSupportedLocales() {
 		MLTextHelper.flushCache();
@@ -145,5 +149,55 @@ public class RegulationFormulationHelperTest {
 		MLTextHelper.flushCache();
 		MLTextHelper.setSupportedLocales("en,es_EC");
 		assertTrue(roundedFat().getJSONObject(ROUNDED_VALUE_KEY).has(ECUADOR));
+	}
+
+	@Test
+	public void computesPerContainerValuesOnTheContainerQuantityWhenFilled() {
+		FinishedProductData caseOfConsumerUnits = productOfOneKilogram();
+		caseOfConsumerUnits.setContainerNutrientBasisQuantity(250d);
+		caseOfConsumerUnits.setContainerNutrientBasisQuantityUnit(ProductUnit.g);
+		assertEquals(47d, usFatPerContainer(caseOfConsumerUnits), DELTA);
+	}
+
+	@Test
+	public void computesPerContainerValuesOnTheNetQuantityWhenNoContainerQuantity() {
+		assertEquals(189d, usFatPerContainer(productOfOneKilogram()), DELTA);
+	}
+
+	@Test
+	public void readsTheContainerQuantityInGramsWhenItHasNoUnit() {
+		FinishedProductData product = productOfOneKilogram();
+		product.setContainerNutrientBasisQuantity(250d);
+		assertEquals(0.25d, RegulationFormulationHelper.getContainerQty(product), DELTA);
+	}
+
+	@Test
+	public void convertsAContainerQuantityInMillilitresToLitres() {
+		FinishedProductData product = productOfOneKilogram();
+		product.setContainerNutrientBasisQuantity(355d);
+		product.setContainerNutrientBasisQuantityUnit(ProductUnit.mL);
+		assertEquals(0.355d, RegulationFormulationHelper.getContainerQty(product), DELTA);
+	}
+
+	@Test
+	public void keepsTheNetQuantityWhenTheContainerQuantityIsZero() {
+		FinishedProductData product = productOfOneKilogram();
+		product.setContainerNutrientBasisQuantity(0d);
+		assertEquals(1d, RegulationFormulationHelper.getContainerQty(product), DELTA);
+	}
+
+	private FinishedProductData productOfOneKilogram() {
+		FinishedProductData product = new FinishedProductData();
+		product.setUnit(ProductUnit.kg);
+		product.setQty(1d);
+		return product;
+	}
+
+	private double usFatPerContainer(FinishedProductData product) {
+		MLTextHelper.flushCache();
+		MLTextHelper.setSupportedLocales(US_SUPPORTED_LOCALES);
+		NutListDataItem fat = NutListDataItem.build().withValue(18.9d).withUnit("g/100g");
+		RegulationFormulationHelper.extractRoundedValue(product, NutrientCode.Fat, fat);
+		return RegulationFormulationHelper.extractValuePerContainer(fat.getRoundedValue(), US);
 	}
 }

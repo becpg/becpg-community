@@ -69,6 +69,8 @@
           <show force="true" id="gs1:nutrientBasisQuantity"/>
           <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
           <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantity"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantityUnit"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
           <show force="false" id="bcpg:ecoScoreCategory"/>
@@ -567,6 +569,8 @@
           <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
           	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field help-id="becpg.forms.help.gs1.containerNutrientBasisQuantity" id="gs1:containerNutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:containerNutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
           
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1513,6 +1517,8 @@
           <show force="true" id="bcpg:allergenRegulatoryFramework"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantity"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantityUnit"/>
           <show force="true" id="bcpg:nutrientPreparationState"/>
           <show force="false" id="bcpg:nutrientPreparedUnit"/>
           <show force="false" id="bcpg:nutrientPreparationQty" />
@@ -1546,6 +1552,8 @@
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field help-id="becpg.forms.help.gs1.containerNutrientBasisQuantity" id="gs1:containerNutrientBasisQuantity" mandatory="false" read-only="false"/>
+          <field id="gs1:containerNutrientBasisQuantityUnit" mandatory="false" read-only="false"/>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false"/>
           <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
@@ -2313,6 +2321,8 @@
           <show force="true" id="gs1:nutrientBasisQuantity"/>
           <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
           <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantity"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantityUnit"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
@@ -2469,6 +2479,8 @@
           <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
           	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field help-id="becpg.forms.help.gs1.containerNutrientBasisQuantity" id="gs1:containerNutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:containerNutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -2669,6 +2681,8 @@
           <show force="true" id="gs1:nutrientBasisQuantity"/>
           <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
           <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantity"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantityUnit"/>
           <show force="true" id="bcpg:nutrientPreparationQty" />
           <show force="true" id="bcpg:nutrientPreparationReconstituantRef" />
 		  <show force="true" id="bcpg:nutrientPreparationReconstituantQty"/>
@@ -3055,6 +3069,8 @@
           <field  id="gs1:nutrientBasisQuantityDescription" mandatory="false" read-only="false" set="formulation">
           	<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field help-id="becpg.forms.help.gs1.containerNutrientBasisQuantity" id="gs1:containerNutrientBasisQuantity" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="gs1:containerNutrientBasisQuantityUnit" mandatory="false" read-only="false" set="formulation"> </field>
           
          <field  id="bcpg:nutrientPreparationQty" mandatory="false" read-only="false" set="formulation"> </field>
           <field  id="bcpg:nutrientPreparationReconstituantRef" mandatory="false" read-only="false" set="formulation">
@@ -3618,6 +3634,8 @@
           <show force="true" id="gs1:nutrientBasisQuantity"/>
           <show force="true" id="gs1:nutrientBasisQuantityUnit"/>
           <show force="true" id="gs1:nutrientBasisQuantityDescription"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantity"/>
+          <show force="true" id="gs1:containerNutrientBasisQuantityUnit"/>
           <show force="false" id="bcpg:nutrientPreparationQty" />
           <show force="false" id="bcpg:nutrientPreparationReconstituantRef"/>
           <show force="false" id="bcpg:nutrientPreparationReconstituantQty"/>
