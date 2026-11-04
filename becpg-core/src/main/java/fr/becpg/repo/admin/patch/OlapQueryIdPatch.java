@@ -80,7 +80,7 @@ public class OlapQueryIdPatch extends AbstractBeCPGPatch {
 	private static final String LABEL_KEY_PREFIX = "olap.";
 
 	/** Preference holding the query selected in an OLAP dashlet, one per dashlet region. */
-	private static final String PREFERENCE_ROOT = "fr.becpg.olap.chart.dashlet";
+	static final String PREFERENCE_ROOT = "fr.becpg.olap.chart.dashlet";
 
 	private static final String PREFERENCE_QUERY_SUFFIX = ".query";
 
@@ -267,7 +267,7 @@ public class OlapQueryIdPatch extends AbstractBeCPGPatch {
 	 * @param idByOldIdentity the mapping from the old identity to the technical id
 	 * @return the number of preferences rewritten
 	 */
-	private int rewritePreferences(Map<String, String> idByOldIdentity) {
+	int rewritePreferences(Map<String, String> idByOldIdentity) {
 		if (idByOldIdentity.isEmpty()) {
 			logger.info("No OLAP resource migrated, leaving the dashlet preferences alone");
 			return 0;
@@ -275,11 +275,7 @@ public class OlapQueryIdPatch extends AbstractBeCPGPatch {
 
 		int rewritten = 0;
 
-		Set<String> userNames = new HashSet<>();
-		for (NodeRef person : personService.getAllPeople()) {
-			userNames.add((String) nodeService.getProperty(person, ContentModel.PROP_USERNAME));
-		}
-
+		Set<String> userNames = findResolvableUserNames();
 		for (String userName : userNames) {
 			rewritten += rewritePreferences(userName, idByOldIdentity);
 		}
@@ -287,6 +283,27 @@ public class OlapQueryIdPatch extends AbstractBeCPGPatch {
 		logger.info("Rewrote " + rewritten + " OLAP dashlet preferences over " + userNames.size() + " users");
 
 		return rewritten;
+	}
+
+	/**
+	 * Lists the user names the preference service can resolve to a person.
+	 *
+	 * <p>Old repositories may hold a person node for the system user, which the preference service
+	 * refuses with a {@code NoSuchPersonException}. That exception marks the patch transaction
+	 * rollback-only, so such a person must be skipped before the call rather than caught after it
+	 * (#36439).
+	 *
+	 * @return the user names of every person the preference service accepts
+	 */
+	private Set<String> findResolvableUserNames() {
+		Set<String> userNames = new HashSet<>();
+		for (NodeRef person : personService.getAllPeople()) {
+			String userName = (String) nodeService.getProperty(person, ContentModel.PROP_USERNAME);
+			if ((userName != null) && personService.personExists(userName)) {
+				userNames.add(userName);
+			}
+		}
+		return userNames;
 	}
 
 	private int rewritePreferences(String userName, Map<String, String> idByOldIdentity) {
