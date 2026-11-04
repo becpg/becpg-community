@@ -1,4 +1,5 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/product/product-list.lib.js">
 
 function getTypes()
 {
@@ -38,11 +39,11 @@ function main()
 {
 
 	var site = page.url.templateArgs.site;
-	var prefsId = "org.alfresco.share.product.list."+(site!= null && site.length>0 ? site : "home");
+	var prefsId = getProductListPrefsId(site);
 	
 	model.preferences = AlfrescoUtil.getPreferences(prefsId);
 	
-	model.selectedType = page.url.args.list ? page.url.args.list: (model.preferences.type!=null ? model.preferences.type: "finishedProduct");
+	model.selectedType = getProductListType(model.preferences);
 	model.selectedFilter = page.url.args.filter ? page.url.args.filter : (model.preferences.filter!=null ? model.preferences.filter: "all");
 	model.showThumbnails = model.preferences.showThumbnails !== null ? (model.preferences.showThumbnails) : false;
 
