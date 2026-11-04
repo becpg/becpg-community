@@ -1,16 +1,15 @@
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/components/workflow/filter/filter.lib.js">
 <import resource="classpath:alfresco/site-webscripts/org/alfresco/modules/entity-datagrid/include/actions.lib.js">
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:alfresco/site-webscripts/org/alfresco/components/product/product-list.lib.js">
 
 
 function main()
 {
 
     var site = page.url.templateArgs.site;
-	var prefs = "org.alfresco.share.product.list."+ (site!= null && site.length > 0 ? site : "home")
-		
-	var preferences = AlfrescoUtil.getPreferences(prefs);
-	var currentType = page.url.args.list ? page.url.args.list : (preferences.type!=null ? preferences.type: "finishedProduct");
+	var preferences = AlfrescoUtil.getPreferences(getProductListPrefsId(site));
+	var currentType = getProductListType(preferences);
     var showThumbnails = preferences.showThumbnails !== null ? (preferences.showThumbnails) : false;
     
 	var filterParameters =  getFilterParameters();
