@@ -55,6 +55,7 @@ import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
+import fr.becpg.repo.multilingual.translation.GoogleCloudTranslationClient;
 
 /**
  * Return or save MLText field
@@ -123,6 +124,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 	private String deepLAPIKey;
 
+	private GoogleCloudTranslationClient googleCloudTranslationClient;
+
 	private ServiceRegistry serviceRegistry;
 	
 	private EntityFormatService entityFormatService;
@@ -161,6 +164,15 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	 */
 	public void setDeepLAPIKey(String deepLAPIKey) {
 		this.deepLAPIKey = deepLAPIKey;
+	}
+
+	/**
+	 * <p>Setter for the field <code>googleCloudTranslationClient</code>.</p>
+	 *
+	 * @param googleCloudTranslationClient a {@link fr.becpg.repo.multilingual.translation.GoogleCloudTranslationClient} object
+	 */
+	public void setGoogleCloudTranslationClient(GoogleCloudTranslationClient googleCloudTranslationClient) {
+		this.googleCloudTranslationClient = googleCloudTranslationClient;
 	}
 
 	/** {@inheritDoc} */
@@ -408,6 +420,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			} catch (JSONException e) {
 				logger.error("Fail to parse JSON", e);
 			}
+
+		} else if ((googleCloudTranslationClient != null) && googleCloudTranslationClient.isEnabled()) {
+			logger.debug("Try to translate : " + defaultValue + " in " + target + " using google cloud translation v3");
+
+			return googleCloudTranslationClient.translate(defaultValue, language, target.split("_")[0]).orElse(NO_SUGGESTION_MSG);
 
 		} else if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
 

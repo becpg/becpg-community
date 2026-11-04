@@ -38,10 +38,17 @@
 		<property name="autoCompleteService" ref="autoCompleteService" />
 	</bean>
 
+	<bean id="googleCloudTranslationClient" class="fr.becpg.repo.multilingual.translation.GoogleCloudTranslationClient">
+		<property name="projectId" value="${beCPG.translate.google.projectId}" />
+		<property name="location" value="${beCPG.translate.google.location}" />
+		<property name="endpoint" value="${beCPG.translate.google.endpoint}" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.form.multilingualField.get" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="googleApiKey" value="${beCPG.translate.googleAPIKey}" />
 		<property name="deepLAPIKey" value="${beCPG.translate.deepLAPIKey}" />
+		<property name="googleCloudTranslationClient" ref="googleCloudTranslationClient" />
 		<property name="entityFormatService" ref="entityFormatService" />
 	</bean>
 
