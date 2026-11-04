@@ -137,6 +137,8 @@ public class ProductData extends AbstractScorableEntity
 	private Double servingSize;
 	private MLText servingSizeByCountry;
 	private ProductUnit servingSizeUnit;
+	private Double containerNutrientBasisQuantity;
+	private ProductUnit containerNutrientBasisQuantityUnit;
 	private String allergenRegulatoryFramework;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
@@ -1528,6 +1530,47 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setServingSizeUnit(ProductUnit servingSizeUnit) {
 		this.servingSizeUnit = servingSizeUnit;
+	}
+
+	/**
+	 * Contents of the consumer package or container the nutrient values per container are given for
+	 * (GDSN nutrient header BY_PACKAGE_OR_CONTAINER).
+	 *
+	 * @return the quantity, or null when the net quantity of the product is the container
+	 */
+	@AlfProp
+	@AlfQname(qname = "gs1:containerNutrientBasisQuantity")
+	public Double getContainerNutrientBasisQuantity() {
+		return containerNutrientBasisQuantity;
+	}
+
+	/**
+	 * Sets the contents of the consumer package or container.
+	 *
+	 * @param containerNutrientBasisQuantity the quantity, expressed in the container unit
+	 */
+	public void setContainerNutrientBasisQuantity(Double containerNutrientBasisQuantity) {
+		this.containerNutrientBasisQuantity = containerNutrientBasisQuantity;
+	}
+
+	/**
+	 * Unit of the contents of the consumer package or container.
+	 *
+	 * @return the unit, or null when none is set
+	 */
+	@AlfProp
+	@AlfQname(qname = "gs1:containerNutrientBasisQuantityUnit")
+	public ProductUnit getContainerNutrientBasisQuantityUnit() {
+		return containerNutrientBasisQuantityUnit;
+	}
+
+	/**
+	 * Sets the unit of the contents of the consumer package or container.
+	 *
+	 * @param containerNutrientBasisQuantityUnit the unit
+	 */
+	public void setContainerNutrientBasisQuantityUnit(ProductUnit containerNutrientBasisQuantityUnit) {
+		this.containerNutrientBasisQuantityUnit = containerNutrientBasisQuantityUnit;
 	}
 
 	/**
@@ -3426,8 +3469,8 @@ public class ProductData extends AbstractScorableEntity
 				hierarchy2, ingType, legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile,
 				nutrientScore, plants, profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount,
 				regulatoryCountriesRef, regulatoryUsagesRef, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry,
-				servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice, unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary,
-				weightTertiary, yield, yieldVolume, suppliers, securityRef);
+				servingSizeUnit, containerNutrientBasisQuantity, containerNutrientBasisQuantityUnit, state, tare, tareUnit, title, unit, unitPrice,
+				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume, suppliers, securityRef);
 		return result;
 	}
 
@@ -3459,6 +3502,8 @@ public class ProductData extends AbstractScorableEntity
 				&& Objects.equals(regulatoryMode, other.regulatoryMode) && Objects.equals(regulatoryRecipeId, other.regulatoryRecipeId)
 				&& Objects.equals(reportLocales, other.reportLocales) && Objects.equals(servingSize, other.servingSize)
 				&& Objects.equals(servingSizeByCountry, other.servingSizeByCountry) && servingSizeUnit == other.servingSizeUnit
+				&& Objects.equals(containerNutrientBasisQuantity, other.containerNutrientBasisQuantity)
+				&& containerNutrientBasisQuantityUnit == other.containerNutrientBasisQuantityUnit
 				&& state == other.state && Objects.equals(tare, other.tare) && tareUnit == other.tareUnit && Objects.equals(title, other.title)
 				&& unit == other.unit && Objects.equals(unitPrice, other.unitPrice) && Objects.equals(unitTotalCost, other.unitTotalCost)
 				&& Objects.equals(updateFormulatedDate, other.updateFormulatedDate) && Objects.equals(weightPrimary, other.weightPrimary)

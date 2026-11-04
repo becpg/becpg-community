@@ -2966,6 +2966,24 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="gs1:containerNutrientBasisQuantity">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:containerNutrientBasisQuantityUnit">
+					<type>d:text</type>
+					<default>g</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:nutrientBasisQuantityUnit" />
+					</constraints>
+				</property>
 				
 			</properties>
 			<associations>
