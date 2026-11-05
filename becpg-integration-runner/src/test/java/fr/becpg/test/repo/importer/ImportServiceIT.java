@@ -44,6 +44,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.PlmRepoConsts;
@@ -92,6 +93,8 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final String COST_CURRENCY_COLUMN = "bcpg:costCurrency";
 	private static final String VALID_CURRENCY = "€";
 	private static final String INVALID_CURRENCY = "XXX";
+	private static final String KEY_ANNOTATION = "@Key";
+	private static final String KEY_LIST_NAME = "KeyCostList ";
 	/** The import header takes rows 0 to 4, the import is processed by batches of 10 rows. */
 	private static final int FIRST_BATCH_FIRST_VALUES_ROW = 5;
 	private static final int SECOND_BATCH_FIRST_ROW = 10;
@@ -1117,6 +1120,92 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			List<AssociationRef> lcaAssocs = nodeService.getTargetAssocs(coefficientNodeRef, PLMModel.ASSOC_SDCL_LCA);
 			assertEquals(1, lcaAssocs.size());
 			return lcaAssocs.get(0).getTargetRef();
+		}, true, true);
+	}
+
+	/**
+	 * #36836 - a key that is not unique across the repository only updates the rows of the data list
+	 * given by the PATH: the other list of the same type is left untouched.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testImportInDataListDoesNotUpdateOtherListOfSameType() throws Exception {
+		NodeRef importedListNodeRef = createCostDataListWith("Key cost A1");
+		NodeRef otherListNodeRef = createCostDataListWith("Key cost B1");
+
+		importXlsx("import-key-in-data-list.xlsx", importCostByCurrencyKey(importedListNodeRef, "Key cost A1 updated"));
+
+		assertEquals(List.of("Key cost A1 updated"), findCostNames(importedListNodeRef));
+		assertEquals(List.of("Key cost B1"), findCostNames(otherListNodeRef));
+	}
+
+	/**
+	 * #36836 - a key matching several nodes puts the line in error instead of updating the first one found.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testAmbiguousKeyReportsLineInError() throws Exception {
+		NodeRef dataListNodeRef = createCostDataListWith("Key cost A1", "Key cost A2");
+
+		List<String[]> rows = importCostByCurrencyKey(dataListNodeRef, "Key cost updated");
+		NodeRef importFileNodeRef = importXlsx("import-ambiguous-key.xlsx", rows);
+
+		List<String> costNames = new ArrayList<>(findCostNames(dataListNodeRef));
+		costNames.sort(null);
+		assertEquals(List.of("Key cost A1", "Key cost A2"), costNames);
+		int keyedLineRow = rows.size() - 1;
+		assertRowsColor(importFileNodeRef, keyedLineRow, keyedLineRow + 1, ExcelHelper.createRedColor());
+	}
+
+	/**
+	 * Builds an import of one cost into the given data list, keyed on its currency, which every test cost shares.
+	 */
+	private List<String[]> importCostByCurrencyKey(NodeRef dataListNodeRef, String costName) {
+		String dataListName = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME), true, true);
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { ImportHelper.PFX_MAPPING, TEST_MAPPING });
+		rows.add(new String[] { ImportHelper.PFX_STOP_ON_FIRST_ERROR, String.valueOf(false) });
+		rows.add(new String[] { ImportHelper.PFX_PATH, "/" + PATH_TEMP + "/" + dataListName });
+		rows.add(new String[] { ImportHelper.PFX_TYPE, COST_TYPE });
+		rows.add(new String[] { ImportHelper.PFX_COLUMNS_PARAMS, "", KEY_ANNOTATION });
+		rows.add(new String[] { ImportHelper.PFX_COLUMS, CHARACT_NAME_COLUMN, COST_CURRENCY_COLUMN });
+		rows.add(new String[] { ImportHelper.PFX_VALUES, costName, VALID_CURRENCY });
+		return rows;
+	}
+
+	/**
+	 * Creates a cost data list in the temp folder; the data list policy renames it after its item type
+	 * (cost, cost@1...), as in the characteristics folder.
+	 */
+	private NodeRef createCostDataListWith(String... costNames) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef tempFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), List.of(PATH_TEMP));
+			Map<QName, Serializable> listProperties = new HashMap<>();
+			listProperties.put(ContentModel.PROP_NAME, KEY_LIST_NAME + costNames[0]);
+			listProperties.put(DataListModel.PROP_DATALISTITEMTYPE, COST_TYPE);
+			NodeRef dataListNodeRef = nodeService.createNode(tempFolderNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_COST,
+					DataListModel.TYPE_DATALIST, listProperties).getChildRef();
+
+			for (String costName : costNames) {
+				Map<QName, Serializable> costProperties = new HashMap<>();
+				costProperties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
+				costProperties.put(PLMModel.PROP_COSTCURRENCY, VALID_CURRENCY);
+				nodeService.createNode(dataListNodeRef, ContentModel.ASSOC_CONTAINS, PLMModel.TYPE_COST, PLMModel.TYPE_COST, costProperties);
+			}
+			return dataListNodeRef;
+		}, false, true);
+	}
+
+	private List<String> findCostNames(NodeRef dataListNodeRef) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<String> names = new ArrayList<>();
+			for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(dataListNodeRef)) {
+				names.add((String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_CHARACT_NAME));
+			}
+			return names;
 		}, true, true);
 	}
 
