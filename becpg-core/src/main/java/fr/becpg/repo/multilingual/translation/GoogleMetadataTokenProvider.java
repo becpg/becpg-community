@@ -37,7 +37,7 @@ import fr.becpg.repo.helper.RestTemplateHelper;
  *
  * @author matthieu
  */
-public class GoogleMetadataTokenProvider {
+public class GoogleMetadataTokenProvider implements GoogleAccessTokenProvider {
 
     static final URI TOKEN_URI = URI.create("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token");
 
@@ -72,11 +72,8 @@ public class GoogleMetadataTokenProvider {
         this.clock = clock;
     }
 
-    /**
-     * Returns a valid access token, fetching a new one from the metadata server when the cached one is about to expire.
-     *
-     * @return the bearer access token
-     */
+    /** {@inheritDoc} */
+    @Override
     public synchronized String getAccessToken() {
         if ((accessToken == null) || !clock.instant().isBefore(refreshAfter)) {
             fetchAccessToken();

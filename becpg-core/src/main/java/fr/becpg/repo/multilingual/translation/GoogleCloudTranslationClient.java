@@ -38,7 +38,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import fr.becpg.repo.helper.RestTemplateHelper;
 
 /**
- * Cloud Translation v3 client authenticated by the service account of the pod, without API key.
+ * Cloud Translation v3 client authenticated by the service account of the pod, without API key, or by a service
+ * account key file on a server outside Google Cloud.
  * Enabled only when a Google project is configured.
  *
  * @author matthieu
@@ -65,7 +66,7 @@ public class GoogleCloudTranslationClient {
 
     private final RestTemplate restTemplate;
 
-    private final GoogleMetadataTokenProvider tokenProvider;
+    private GoogleAccessTokenProvider tokenProvider;
 
     private String projectId;
 
@@ -73,14 +74,16 @@ public class GoogleCloudTranslationClient {
 
     private String endpoint;
 
+    private String credentialsFile;
+
     /**
      * <p>Constructor for GoogleCloudTranslationClient.</p>
      */
     public GoogleCloudTranslationClient() {
-        this(RestTemplateHelper.getRestTemplate(), new GoogleMetadataTokenProvider());
+        this(RestTemplateHelper.getRestTemplate(), null);
     }
 
-    GoogleCloudTranslationClient(RestTemplate restTemplate, GoogleMetadataTokenProvider tokenProvider) {
+    GoogleCloudTranslationClient(RestTemplate restTemplate, GoogleAccessTokenProvider tokenProvider) {
         this.restTemplate = restTemplate;
         this.tokenProvider = tokenProvider;
     }
@@ -113,6 +116,15 @@ public class GoogleCloudTranslationClient {
     }
 
     /**
+     * Authenticates with the key of a service account instead of the metadata server, when set.
+     *
+     * @param credentialsFile path of the JSON key of the service account
+     */
+    public void setCredentialsFile(String credentialsFile) {
+        this.credentialsFile = credentialsFile;
+    }
+
+    /**
      * <p>isEnabled.</p>
      *
      * @return true when a Google project is configured
@@ -135,7 +147,7 @@ public class GoogleCloudTranslationClient {
             ResponseEntity<String> response = restTemplate.exchange(buildTranslateUri(), HttpMethod.POST,
                     buildRequest(text, sourceLanguage, targetLanguage), String.class);
             return parseTranslatedText(response.getBody());
-        } catch (RestClientException | JSONException e) {
+        } catch (RestClientException | JSONException | IllegalStateException e) {
             logger.error("Cloud Translation v3 request to " + endpoint + " failed: " + e.getMessage());
             return Optional.empty();
         }
@@ -154,8 +166,17 @@ public class GoogleCloudTranslationClient {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
-        headers.setBearerAuth(tokenProvider.getAccessToken());
+        headers.setBearerAuth(getTokenProvider().getAccessToken());
         return new HttpEntity<>(body.toString(), headers);
+    }
+
+    // Read on first use: an unreadable key fails the translation, not the startup of the repository
+    private synchronized GoogleAccessTokenProvider getTokenProvider() {
+        if (tokenProvider == null) {
+            tokenProvider = (credentialsFile == null) || credentialsFile.isBlank() ? new GoogleMetadataTokenProvider()
+                    : new GoogleServiceAccountTokenProvider(credentialsFile.trim());
+        }
+        return tokenProvider;
     }
 
     static Optional<String> parseTranslatedText(String responseBody) {

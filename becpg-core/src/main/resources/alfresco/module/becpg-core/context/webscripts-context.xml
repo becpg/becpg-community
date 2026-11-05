@@ -42,6 +42,7 @@
 		<property name="projectId" value="${beCPG.translate.google.projectId}" />
 		<property name="location" value="${beCPG.translate.google.location}" />
 		<property name="endpoint" value="${beCPG.translate.google.endpoint}" />
+		<property name="credentialsFile" value="${beCPG.translate.google.credentialsFile}" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.form.multilingualField.get" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
