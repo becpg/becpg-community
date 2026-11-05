@@ -136,6 +136,14 @@ public class BeCPGQueryHelperTest {
 	}
 
 	@Test
+	public void typedPluralDoesNotStartLongerWords() {
+		assertTrue(BeCPGQueryHelper.isQueryMatch("de lacs", "PJ4170 - Recette - Tour de lacs"));
+		assertTrue(BeCPGQueryHelper.isQueryMatch("de lacs", "PJ4170 - Recette - Bord de lac"));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("de lacs", "PJ4170 - Recette - Taux de lactose"));
+		assertFalse(BeCPGQueryHelper.isQueryMatch("de lacs", "PJ4170 - Recette - Choix de lacets"));
+	}
+
+	@Test
 	public void joinedWordsOfAnAutocompleteFollowEachOther() {
 		assertTrue(BeCPGQueryHelper.isQueryMatch("d'eau", WATER_CHESTNUT));
 		assertFalse(BeCPGQueryHelper.isQueryMatch("d'eau", TAP_WATER));
