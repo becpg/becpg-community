@@ -1076,6 +1076,7 @@
 		<constraint name="bcpg:regulatoryExposureRoutes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>OTHER</value>
 					<value>AEROSOL</value>
 					<value>PUMP_SPRAY</value>

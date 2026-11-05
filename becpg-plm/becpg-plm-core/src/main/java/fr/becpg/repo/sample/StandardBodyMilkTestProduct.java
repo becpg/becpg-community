@@ -59,7 +59,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	public static final String FLAM_LIQ_3_H_226_SKIN_SENS_1_H_317 = "Flam. Liq. 3:H226, Skin Sens. 1:H317";
 	public static final String ACUTE_TOX_4_H_302 = "Acute Tox. 4:H302";
 
-	private static final String USE_MODE_RINSE_OFF = "RINSE_OFF";
+	private static final String USE_MODE_LEAVE_ON = "LEAVE_ON";
 	private static final String TARGET_POPULATION_ADULT = "ADULT";
 	private static final String APPLICATION_ZONE_BODY = "BODY";
 	private static final String LEGAL_STATUS_COSMETIC = "COSMETIC";
@@ -225,7 +225,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	}
 
 	/**
-	 * Sets the regulatory attributes selecting the limits that apply to the body milk: a rinse-off product for the
+	 * Sets the regulatory attributes selecting the limits that apply to the body milk: a leave-on product for the
 	 * body of adults, with no mucous contact and no professional use. They are written through the node service, as
 	 * the repository mapping does not hold them.
 	 *
@@ -237,7 +237,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		properties.put(PLMModel.PROP_REGULATORY_MUCOUS_CONTACT, false);
 		properties.put(PLMModel.PROP_REGULATORY_TARGET_POPULATION, TARGET_POPULATION_ADULT);
 		properties.put(PLMModel.PROP_REGULATORY_APPLICATION_ZONES, new ArrayList<>(List.of(APPLICATION_ZONE_BODY)));
-		properties.put(PLMModel.PROP_REGULATORY_USE_MODE, USE_MODE_RINSE_OFF);
+		properties.put(PLMModel.PROP_REGULATORY_USE_MODE, USE_MODE_LEAVE_ON);
 		nodeService.addAspect(bodyMilkProduct.getNodeRef(), PLMModel.ASPECT_REGULATORY_PRODUCT, properties);
 	}
 
