@@ -26,6 +26,9 @@ record SearchWord(String raw, String stem) {
 			Map.entry(Pattern.compile("(?<=\\p{L}{3})[sx]$"), ""),
 			Map.entry(Pattern.compile("(?<=\\p{L}{2})ee$"), "e"));
 
+	/** Feminine ending of an adjective, which a typed plural may lack: "végétaux" for "végétale". */
+	private static final String FEMININE_ENDING = "e";
+
 	/**
 	 * Builds the search word of a lower-cased, accent-free word.
 	 *
@@ -41,13 +44,30 @@ record SearchWord(String raw, String stem) {
 	}
 
 	/**
-	 * Tells whether a typed word starts this word, as typed or in its common form.
+	 * Tells whether a typed word starts this word, as typed or in its common form. A typed word whose ending was
+	 * rewritten, such as the plural "lacs", is a complete word: it finds its common form in either gender ("lac",
+	 * "végétale" for "végétaux") but no longer word ("lactose").
 	 *
 	 * @param prefix the typed word
 	 * @return true when this word starts with it
 	 */
 	boolean isStartedBy(SearchWord prefix) {
-		return raw.startsWith(prefix.raw) || stem.startsWith(prefix.stem);
+		if (raw.startsWith(prefix.raw)) {
+			return true;
+		}
+		if (prefix.hasRewrittenEnding()) {
+			return stem.equals(prefix.stem) || stem.equals(prefix.stem + FEMININE_ENDING);
+		}
+		return stem.startsWith(prefix.stem);
+	}
+
+	/**
+	 * Tells whether one of the ending rules rewrote this word.
+	 *
+	 * @return true when the common form differs from the word
+	 */
+	private boolean hasRewrittenEnding() {
+		return !raw.equals(stem);
 	}
 
 	/**
