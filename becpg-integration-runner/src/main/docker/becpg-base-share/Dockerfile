@@ -26,7 +26,7 @@ RUN mkdir -p ${TOMCAT_DIR}/shared/classes/alfresco/messages/custom && \
 RUN mkdir -p ${TOMCAT_DIR}/data
       
 
-RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default list above.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\n' >> $TOMCAT_DIR/conf/catalina.properties && \
+RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default lists above.\n# The OOTBee support tools register a servlet (Share log download) and a filter\n# (repository CSRF) by annotation, so their jars are still scanned.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\ntomcat.util.scan.StandardJarScanFilter.jarsToScan=support-tools-*.jar\n' >> $TOMCAT_DIR/conf/catalina.properties && \
          mkdir -p ${TOMCAT_DIR}/conf/Catalina/localhost && \
          groupadd -g ${GROUPID} ${GROUPNAME} && \
          useradd -u ${USERID} -G ${GROUPNAME} ${IMAGEUSERNAME} && \
