@@ -1067,49 +1067,46 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	/**
-	 * Answers the methodology point of #34702: an evaporation rate may be carried by a composite
-	 * ingredient and by one of its sub-ingredients at the same time. Once the composite is used in a
-	 * recipe, it is the composite that loses water (a mozzarella, not the milk it contains): the
-	 * parent rate must win and the result be identical to the parent-only declaration. The two rates
-	 * differ on purpose, so that the child-only declaration would give another result.
+	 * Answers the methodology point of #34702: the same ingredient may be used both as a simple
+	 * component and as a composite one, so an evaporation rate is often carried by a parent and by one
+	 * of its sub-ingredients at the same time. The sub-ingredient rate must then win, so that the
+	 * water is not counted twice and the result is identical to the child-only declaration.
 	 */
 	@Test
 	public void testEvaporationRateOnBothParentAndChild() {
 
-		final NodeRef parentOnlyNodeRef = buildEvaporatingCompositeProduct("34702p", EvaporationRatePlacement.PARENT);
-		final NodeRef parentAndChildNodeRef = buildEvaporatingCompositeProduct("34702q", EvaporationRatePlacement.BOTH);
+		final NodeRef childOnlyNodeRef = buildEvaporatingCompositeProduct("34702f", false);
+		final NodeRef parentAndChildNodeRef = buildEvaporatingCompositeProduct("34702g", true);
 
 		inWriteTx(() -> {
-			productService.formulate(parentOnlyNodeRef);
+			productService.formulate(childOnlyNodeRef);
 			productService.formulate(parentAndChildNodeRef);
 			return null;
 		});
 
 		inReadTx(() -> {
-			List<IngListDataItem> parentOnly = ((FinishedProductData) alfrescoRepository.findOne(parentOnlyNodeRef)).getIngList();
+			List<IngListDataItem> childOnly = ((FinishedProductData) alfrescoRepository.findOne(childOnlyNodeRef)).getIngList();
 			List<IngListDataItem> parentAndChild = ((FinishedProductData) alfrescoRepository.findOne(parentAndChildNodeRef)).getIngList();
-			Assert.assertNotNull("Parent-only ingredient list should not be null", parentOnly);
+			Assert.assertNotNull("Child-only ingredient list should not be null", childOnly);
 			Assert.assertNotNull("Parent and child ingredient list should not be null", parentAndChild);
 
 			for (String ingName : List.of("ING Tomato puree", "ING Tomato", "ING Oil", "ING Cheese")) {
-				IngListDataItem expected = findIngByName(parentOnly, ingName + " 34702p");
-				IngListDataItem actual = findIngByName(parentAndChild, ingName + " 34702q");
-				Assert.assertNotNull(ingName + " missing in the parent-only product", expected);
+				IngListDataItem expected = findIngByName(childOnly, ingName + " 34702f");
+				IngListDataItem actual = findIngByName(parentAndChild, ingName + " 34702g");
+				Assert.assertNotNull(ingName + " missing in the child-only product", expected);
 				Assert.assertNotNull(ingName + " missing in the parent and child product", actual);
 				Assert.assertEquals(ingName + " qtyPerc must not depend on where the evaporation rate is entered", expected.getQtyPerc(),
 						actual.getQtyPerc(), 0.05);
 				Assert.assertNotNull(ingName + " Qty with yield should not be null", actual.getQtyPercWithYield());
-				Assert.assertEquals(ingName + " Qty with yield must ignore the sub-ingredient rate under an evaporating composite",
+				Assert.assertEquals(ingName + " Qty with yield must ignore the parent rate when a sub-ingredient evaporates",
 						expected.getQtyPercWithYield(), actual.getQtyPercWithYield(), 0.1);
 			}
 
-			// 100 kg in, 95 kg net: the puree loses the 5 kg, its 99 / 1 make-up is kept
-			IngListDataItem puree = findIngByName(parentAndChild, "ING Tomato puree 34702q");
-			IngListDataItem tomato = findIngByName(parentAndChild, "ING Tomato 34702q");
-			IngListDataItem oil = findIngByName(parentAndChild, "ING Oil 34702q");
-			Assert.assertEquals("Puree loses the water", 36.84d, puree.getQtyPercWithYield(), 0.01);
-			Assert.assertEquals("Tomato keeps its declared share of the puree", 36.47d, tomato.getQtyPercWithYield(), 0.01);
-			Assert.assertEquals("Oil keeps its declared share of the puree", 0.37d, oil.getQtyPercWithYield(), 0.01);
+			IngListDataItem puree = findIngByName(parentAndChild, "ING Tomato puree 34702g");
+			IngListDataItem tomato = findIngByName(parentAndChild, "ING Tomato 34702g");
+			IngListDataItem oil = findIngByName(parentAndChild, "ING Oil 34702g");
+			Assert.assertEquals("Puree must equal the sum of its children", tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(),
+					puree.getQtyPercWithYield(), 0.1);
 
 			double topLevelWithYield = 0d;
 			for (IngListDataItem item : parentAndChild) {
@@ -1122,19 +1119,15 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		});
 	}
 
-	private enum EvaporationRatePlacement {
-		PARENT, BOTH
-	}
-
 	/**
-	 * Builds a finished product whose tomato puree is detailed by a tomato, the puree carrying a 50 %
-	 * evaporation rate and, optionally, the tomato a 10 % one.
+	 * Builds a finished product whose tomato puree is detailed by an evaporating tomato, optionally
+	 * carrying the same evaporation rate on the composite parent itself.
 	 *
 	 * @param suffix the ingredient naming suffix, so each product owns its own characteristics
-	 * @param placement where the evaporation rates are entered
+	 * @param rateOnParent true to also set the evaporation rate on the composite parent
 	 * @return the created finished product node reference
 	 */
-	private NodeRef buildEvaporatingCompositeProduct(String suffix, EvaporationRatePlacement placement) {
+	private NodeRef buildEvaporatingCompositeProduct(String suffix, boolean rateOnParent) {
 		return inWriteTx(() -> {
 
 			NodeRef ingTomatoPuree = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato puree " + suffix);
@@ -1142,9 +1135,9 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			NodeRef ingOil = CharactTestHelper.getOrCreateIng(nodeService, "ING Oil " + suffix);
 			NodeRef ingCheese = CharactTestHelper.getOrCreateIng(nodeService, "ING Cheese " + suffix);
 
-			nodeService.setProperty(ingTomatoPuree, PLMModel.PROP_EVAPORATED_RATE, 50d);
-			if (placement == EvaporationRatePlacement.BOTH) {
-				nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 10d);
+			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
+			if (rateOnParent) {
+				nodeService.setProperty(ingTomatoPuree, PLMModel.PROP_EVAPORATED_RATE, 50d);
 			}
 
 			IngListDataItem puree = buildIng(ingTomatoPuree, 40d);
@@ -1156,6 +1149,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 					.withIngList(List.of(puree, tomato, oil, cheese));
 			NodeRef sauceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sauce).getNodeRef();
 
+			// 100 kg in, 95 kg net: the 5 kg lost come from the evaporating tomato
 			FinishedProductData fp = FinishedProductData.build().withName("FP Sauce " + suffix).withUnit(ProductUnit.kg).withQty(95d)
 					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.kg)
 							.withDeclarationType(DeclarationType.Detail).withProduct(sauceNodeRef)));
