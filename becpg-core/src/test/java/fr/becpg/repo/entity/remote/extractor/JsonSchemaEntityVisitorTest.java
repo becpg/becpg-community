@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,8 +94,13 @@ public class JsonSchemaEntityVisitorTest {
 
     private JsonSchemaEntityVisitor visitor;
 
+    private Locale defaultLocale;
+
     @Before
     public void setUp() {
+        // The schema locale is the nearest supported one to the JVM default, which a French build machine would not find
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
         MLTextHelper.flushCache();
         MLTextHelper.setSupportedLocales("en");
         when(namespaceService.getPrefixes(BeCPGModel.BECPG_URI)).thenReturn(List.of(BeCPGModel.BECPG_PREFIX));
@@ -118,6 +124,7 @@ public class JsonSchemaEntityVisitorTest {
     @After
     public void tearDown() {
         MLTextHelper.flushCache();
+        Locale.setDefault(defaultLocale);
     }
 
     @Test
