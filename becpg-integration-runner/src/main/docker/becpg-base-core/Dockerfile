@@ -28,7 +28,7 @@ RUN dnf update -y && dnf clean all && \
 COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml 
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 
-RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default list above.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\n' >> $TOMCAT_DIR/conf/catalina.properties && \
+RUN printf '\n# No bundled jar declares a TLD or a ServletContainerInitializer, so scanning\n# them on every startup is pure cost. Overrides the default lists above.\n# The OOTBee support tools register a servlet (Share log download) and a filter\n# (repository CSRF) by annotation, so their jars are still scanned.\ntomcat.util.scan.StandardJarScanFilter.jarsToSkip=*\ntomcat.util.scan.StandardJarScanFilter.jarsToScan=support-tools-*.jar\n' >> $TOMCAT_DIR/conf/catalina.properties && \
     printf '\n// Spring reads this flag on every CGLIB proxy creation. Grant it globally so that\n// calls whose stack holds code outside the AllPermission code bases do not log an\n// AccessControlException under the Tomcat security manager.\ngrant {\n    permission java.util.PropertyPermission "spring.aot.enabled", "read";\n};\n' >> $TOMCAT_DIR/conf/catalina.policy && \
     rm -rf $TOMCAT_DIR/amps/* && \
     mkdir -p ${TOMCAT_DIR}/data && \

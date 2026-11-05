@@ -55,6 +55,14 @@ public class SearchWordTest {
 	}
 
 	@Test
+	public void typedPluralFindsItsSingularButIsNoShorterPrefix() {
+		assertTrue(SearchWord.of("lacs").isStartedBy(SearchWord.of("lacs")));
+		assertTrue(SearchWord.of("lac").isStartedBy(SearchWord.of("lacs")));
+		assertFalse(SearchWord.of("lactose").isStartedBy(SearchWord.of("lacs")));
+		assertFalse(SearchWord.of("lacets").isStartedBy(SearchWord.of("lacs")));
+	}
+
+	@Test
 	public void sameWordIsComparedInEitherFormButNotAsPrefix() {
 		assertTrue(SearchWord.of("r").isSameWordAs(SearchWord.of("r")));
 		assertTrue(SearchWord.of("pate").isSameWordAs(SearchWord.of("pates")));
