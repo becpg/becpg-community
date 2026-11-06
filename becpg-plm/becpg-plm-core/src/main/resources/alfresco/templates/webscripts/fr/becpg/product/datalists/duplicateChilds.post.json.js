@@ -75,21 +75,72 @@ function findCopyNodeRef(results, oldNodeRef) {
 }
 
 /**
- * Points the parent level of a copy to the copy of its source parent, or, when that parent
- * was not copied, to the parent level of the replaced line, never to a line of the source product.
+ * Gives the parent level of a copy: the copy of its source parent, or, when it has no parent or
+ * its parent was not copied, the parent level of the replaced line, never a line of the source product.
  *
- * @param newNode {ScriptNode} the copy
- * @param results {array} action results
- * @param replacedParentLevelRef {string|null} parent level of the replaced line
+ * @param sourceLine {ScriptNode} the source line
+ * @param copiedNodes {object} copies already created, by source nodeRef
+ * @param replacedParentLevel {ScriptNode|null} parent level of the replaced line
+ * @return {ScriptNode|null} the parent level of the copy
  */
-function remapParentLevel(newNode, results, replacedParentLevelRef) {
-	var parentLevel = newNode.properties["bcpg:parentLevel"];
+function getCopyParentLevel(sourceLine, copiedNodes, replacedParentLevel) {
+	var parentLevel = sourceLine.properties["bcpg:parentLevel"];
 	if (parentLevel != null) {
-		var copyNodeRef = findCopyNodeRef(results, parentLevel.nodeRef);
-		var newParentLevelRef = copyNodeRef != null ? copyNodeRef : replacedParentLevelRef;
-		newNode.properties["bcpg:parentLevel"] = newParentLevelRef != null ? search.findNode(newParentLevelRef) : null;
-		newNode.save();
+		var parentCopy = copiedNodes[parentLevel.nodeRef.toString()];
+		if (parentCopy != null) {
+			return parentCopy;
+		}
 	}
+	return replacedParentLevel;
+}
+
+/**
+ * Gives the depth of a copy in the destination list: a top-level source line takes the depth
+ * of the replaced line, its descendants follow.
+ *
+ * @param sourceLine {ScriptNode} the source line
+ * @param replacedLine {ScriptNode} the replaced line of the destination list
+ * @return {number} the depth level of the copy
+ */
+function getCopyDepthLevel(sourceLine, replacedLine) {
+	var sourceDepth = sourceLine.properties["bcpg:depthLevel"] || 1;
+	var replacedDepth = replacedLine.properties["bcpg:depthLevel"] || 1;
+	return replacedDepth + sourceDepth - 1;
+}
+
+/**
+ * @param compoList {ScriptNode} the compoList of the source product
+ * @return {array} its compoList lines of the default variant, parents before their children
+ */
+function getSourceLines(compoList) {
+	var sourceLines = [];
+	for (var subIndex in compoList.children) {
+		var currentChild = compoList.children[subIndex];
+		if ("{http://www.bcpg.fr/model/becpg/1.0}compoList" == currentChild.type && isInDefaultVariant(currentChild)) {
+			sourceLines.push(currentChild);
+		}
+	}
+	sourceLines.sort(function(a, b) {
+		return (a.properties["bcpg:sort"] || 0) - (b.properties["bcpg:sort"] || 0);
+	});
+	return sourceLines;
+}
+
+/**
+ * @param line {ScriptNode} a compoList line
+ * @return {boolean} true when the line has no variant or belongs to the default variant
+ */
+function isInDefaultVariant(line) {
+	var variants = line.properties["bcpg:variantIds"];
+	if (variants == null || variants.length == 0) {
+		return true;
+	}
+	for (var vIdx in variants) {
+		if (true == variants[vIdx].properties["bcpg:isDefaultVariant"]) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -140,7 +191,6 @@ function runAction(p_params) {
 		parentNode = p_params.rootNode,
 		items = p_params.items,
 		sortKeys = {},
-		replacedParentLevels = {},
 		index, itemNode;
 
 	// Must have parent node and array of items
@@ -183,51 +233,36 @@ function runAction(p_params) {
 	
 				if (compoList != null) {
 					var copiedChilds = [];
+					var copiedNodes = {};
 					var itemParentLevel = itemNode.properties["bcpg:parentLevel"];
+					var sourceLines = getSourceLines(compoList);
 
-					for (var subIndex in compoList.children) {
-						var currentChild = compoList.children[subIndex];
-						if ("{http://www.bcpg.fr/model/becpg/1.0}compoList" == currentChild.type) {
+					for (var lineIndex = 0; lineIndex < sourceLines.length; lineIndex++) {
+						var currentChild = sourceLines[lineIndex];
+						var result =
+						{
+							nodeRef: currentChild.nodeRef.toString(),
+							oldNodeRef: currentChild.nodeRef.toString(),
+							action: "duplicateItem",
+							success: false
+						};
 
-							var variants = currentChild.properties["bcpg:variantIds"];
-							if(variants!=null && variants.length > 0){
-								var isDefault = false;
-								for(var vIdx in variants ){
-									var variant = variants[vIdx];
-									if(true == variant.properties["bcpg:isDefaultVariant"]){
-										isDefault = true;
-									}
-								}	
-									
-								if(!isDefault){
-									continue;
-								}
+						var duplicateProperties = new Array(),
+							propNames = currentChild.getPropertyNames(true),
+							propName;
+
+						// Copy selected properties from the original node
+						for (var i = 0, ii = propNames.length; i < ii; i++) {
+							propName = propNames[i];
+							if (propName in propertiesToSkip || propName.indexOf("sys:") == 0) {
+								continue;
 							}
-							
-							var result =
-							{
-								nodeRef: currentChild.nodeRef.toString(),
-								oldNodeRef: currentChild.nodeRef.toString(),
-								action: "duplicateItem",
-								success: false
-							};
+							duplicateProperties[propName] = currentChild.properties[propName];
 
-							var duplicateProperties = new Array(),
-								propNames = currentChild.getPropertyNames(true),
-								propName;
-
-							// Copy selected properties from the original node
-							for (var i = 0, ii = propNames.length; i < ii; i++) {
-								propName = propNames[i];
-								if (propName in propertiesToSkip || propName.indexOf("sys:") == 0) {
-									continue;
-								}
-								duplicateProperties[propName] = currentChild.properties[propName];
-
-							}
+						}
                             
                             duplicateProperties["bcpg:compoListQtySubFormula"] = bFormulation.computeDuplicateChildQty(itemNode, currentChild);
-	
+
                             if(duplicateProperties["bcpg:compoListUnit"] == "Perc"){
                                 duplicateProperties["bcpg:compoListUnit"]= "kg";
                             }
@@ -245,18 +280,23 @@ function runAction(p_params) {
                                 }
                             }
 
-							// Duplicate the node with a new GUID cm:name
-							var newNode = parentNode.createNode(null, currentChild.type, duplicateProperties);
-							if (newNode !== null) {
-								result.nodeRef = newNode.nodeRef.toString();
-								result.success = true;
-								copiedChilds.push({ nodeRef: result.nodeRef, oldSort: currentChild.properties["bcpg:sort"] });
-								replacedParentLevels[result.nodeRef] = itemParentLevel != null ? itemParentLevel.nodeRef.toString() : null;
-							}
+						// Parent level, depth and a provisional sort are set at creation, so that the sortable list
+						// policy does not reorder the copies at commit: renumberSorts gives their final sort
+						duplicateProperties["bcpg:parentLevel"] = getCopyParentLevel(currentChild, copiedNodes, itemParentLevel);
+						duplicateProperties["bcpg:depthLevel"] = getCopyDepthLevel(currentChild, itemNode);
+						duplicateProperties["bcpg:sort"] = itemNode.properties["bcpg:sort"] || 0;
 
-
-							results.push(result);
+						// Duplicate the node with a new GUID cm:name
+						var newNode = parentNode.createNode(null, currentChild.type, duplicateProperties);
+						if (newNode !== null) {
+							result.nodeRef = newNode.nodeRef.toString();
+							result.success = true;
+							copiedChilds.push({ nodeRef: result.nodeRef, oldSort: currentChild.properties["bcpg:sort"] });
+							copiedNodes[currentChild.nodeRef.toString()] = newNode;
 						}
+
+
+						results.push(result);
 					}
 					assignSortKeys(copiedChilds, itemNode.properties["bcpg:sort"], sortKeys);
 					itemNode.remove();
@@ -277,7 +317,6 @@ function runAction(p_params) {
 				var oldNode = search.findNode(results[index].oldNodeRef);
 				var newNode = search.findNode(results[index].nodeRef);
 				if (newNode !== null && oldNode !== null) {
-					remapParentLevel(newNode, results, replacedParentLevels[results[index].nodeRef]);
 					copyAssociations(oldNode, newNode, results);
 				}
 			}

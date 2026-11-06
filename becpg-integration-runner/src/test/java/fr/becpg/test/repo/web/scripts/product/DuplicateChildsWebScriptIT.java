@@ -58,13 +58,10 @@ public class DuplicateChildsWebScriptIT extends PLMBaseTestCase {
 
 		duplicateChilds(destNodeRef, BeCPGPLMTestHelper.USER_ONE, TEST_USER_PASSWORD);
 
-		inReadTx(() -> {
-			assertEquals(sourceSortsBefore, getSorts(sourceNodeRef));
-			assertEquals(sourceModifiedBefore, nodeService.getProperty(sourceNodeRef, ContentModel.PROP_MODIFIED));
-			assertEquals(List.of("RM A", "RM 1", "RM 2", "RM 3", "RM B"), getProductNames(destNodeRef));
-			assertUniqueSorts(destNodeRef);
-			return null;
-		});
+		assertEquals(sourceSortsBefore, inReadTx(() -> getSorts(sourceNodeRef)));
+		assertEquals(sourceModifiedBefore, inReadTx(() -> nodeService.getProperty(sourceNodeRef, ContentModel.PROP_MODIFIED)));
+		assertEquals(List.of("RM A", "RM 1", "RM 2", "RM 3", "RM B"), inReadTx(() -> getProductNames(destNodeRef)));
+		assertUniqueSorts(inReadTx(() -> getSorts(destNodeRef)));
 	}
 
 	/**
@@ -81,18 +78,15 @@ public class DuplicateChildsWebScriptIT extends PLMBaseTestCase {
 
 		duplicateChilds(destNodeRef, ADMIN, null);
 
-		inReadTx(() -> {
-			assertEquals(sourceSortsBefore, getSorts(sourceNodeRef));
+		List<String> expectedNames = new ArrayList<>();
+		expectedNames.add("RM A");
+		expectedNames.addAll(sourceNames);
+		expectedNames.add("RM B");
 
-			List<String> expectedNames = new ArrayList<>();
-			expectedNames.add("RM A");
-			expectedNames.addAll(sourceNames);
-			expectedNames.add("RM B");
-			assertEquals(expectedNames, getProductNames(destNodeRef));
-			assertUniqueSorts(destNodeRef);
-			assertParentLevelsInList(destNodeRef);
-			return null;
-		});
+		assertEquals(sourceSortsBefore, inReadTx(() -> getSorts(sourceNodeRef)));
+		assertEquals(expectedNames, inReadTx(() -> getProductNames(destNodeRef)));
+		assertUniqueSorts(inReadTx(() -> getSorts(destNodeRef)));
+		assertEquals(List.of(), inReadTx(() -> findLinesOutsideTheTree(destNodeRef)));
 	}
 
 	private NodeRef createSourceWithConsecutiveSorts() {
@@ -176,21 +170,31 @@ public class DuplicateChildsWebScriptIT extends PLMBaseTestCase {
 		return names;
 	}
 
-	private void assertUniqueSorts(NodeRef productNodeRef) {
-		List<Integer> sorts = getSorts(productNodeRef);
-		assertFalse(sorts.contains(null));
-		assertEquals(sorts.size(), new HashSet<>(sorts).size());
+	private void assertUniqueSorts(List<Integer> sorts) {
+		assertFalse("sorts " + sorts, sorts.contains(null));
+		assertEquals("sorts " + sorts, sorts.size(), new HashSet<>(sorts).size());
 	}
 
-	private void assertParentLevelsInList(NodeRef productNodeRef) {
+	/**
+	 * Assertions are made outside the transaction: an assertion failing inside it is reported
+	 * as "Exception in Transaction", without its message.
+	 *
+	 * @param productNodeRef the product whose compoList is checked
+	 * @return the lines that are not compoList lines or whose parent level is not a line of the list
+	 */
+	private List<NodeRef> findLinesOutsideTheTree(NodeRef productNodeRef) {
 		Set<NodeRef> lineNodeRefs = new HashSet<>();
 		for (CompoListDataItem line : getCompoList(productNodeRef)) {
 			lineNodeRefs.add(line.getNodeRef());
 		}
+		List<NodeRef> linesOutsideTheTree = new ArrayList<>();
 		for (NodeRef lineNodeRef : lineNodeRefs) {
-			assertEquals(PLMModel.TYPE_COMPOLIST, nodeService.getType(lineNodeRef));
 			NodeRef parentLevel = (NodeRef) nodeService.getProperty(lineNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-			assertTrue(parentLevel == null || lineNodeRefs.contains(parentLevel));
+			boolean isCompoLine = PLMModel.TYPE_COMPOLIST.equals(nodeService.getType(lineNodeRef));
+			if (!isCompoLine || ((parentLevel != null) && !lineNodeRefs.contains(parentLevel))) {
+				linesOutsideTheTree.add(lineNodeRef);
+			}
 		}
+		return linesOutsideTheTree;
 	}
 }
