@@ -175,7 +175,7 @@ public class BeCPGQueryHelper {
 	 */
 	private static boolean startsDistinctExpressions(List<List<SearchWord>> queryExpressions, List<SearchWord> nameWords) {
 		List<List<SearchWord>> sortedExpressions = new ArrayList<>(queryExpressions);
-		sortedExpressions.sort(Comparator.comparingInt((List<SearchWord> expression) -> expression.size())
+		sortedExpressions.sort(Comparator.comparingInt(List<SearchWord>::size)
 				.thenComparingInt(BeCPGQueryHelper::countTypedCharacters).reversed());
 
 		boolean[] takenNameWords = new boolean[nameWords.size()];

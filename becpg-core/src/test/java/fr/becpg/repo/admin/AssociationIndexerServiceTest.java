@@ -68,7 +68,8 @@ public class AssociationIndexerServiceTest {
 		mocks = MockitoAnnotations.openMocks(this);
 		associationIndexerService.batchProcessor = batchProcessor;
 		when(entityDictionaryService.getAssocIndexQName(ASSOC_QNAME)).thenReturn(INDEX_QNAME);
-		when(entityDictionaryService.getType(SOURCE_TYPE)).thenReturn(mock(TypeDefinition.class));
+		TypeDefinition sourceTypeDefinition = mock(TypeDefinition.class);
+		when(entityDictionaryService.getType(SOURCE_TYPE)).thenReturn(sourceTypeDefinition);
 		when(entityDictionaryService.getSubTypes(SOURCE_TYPE, true)).thenReturn(Collections.emptyList());
 	}
 

@@ -84,7 +84,8 @@ public class JsonEntityVisitorTest {
 		when(namespaceService.getPrefixes(NamespaceService.CONTENT_MODEL_1_0_URI)).thenReturn(List.of(NamespaceService.CONTENT_MODEL_PREFIX));
 		when(registry.namespaceService()).thenReturn(namespaceService);
 		when(registry.entityDictionaryService()).thenReturn(entityDictionaryService);
-		when(registry.securityService()).thenReturn(mock(SecurityService.class));
+		SecurityService securityService = mock(SecurityService.class);
+		when(registry.securityService()).thenReturn(securityService);
 		when(registry.permissionService()).thenReturn(permissionService);
 
 		visitor = new JsonEntityVisitor(registry);
