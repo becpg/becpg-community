@@ -136,7 +136,8 @@ public class XmlEntityVisitorTest {
 		when(registry.namespaceService()).thenReturn(namespaceService);
 		when(registry.entityDictionaryService()).thenReturn(entityDictionaryService);
 		when(registry.securityService()).thenReturn(securityService);
-		when(registry.contentService()).thenReturn(mock(ContentService.class));
+		ContentService contentService = mock(ContentService.class);
+		when(registry.contentService()).thenReturn(contentService);
 		when(registry.permissionService()).thenReturn(permissionService);
 		when(registry.associationService()).thenReturn(associationService);
 
@@ -252,7 +253,8 @@ public class XmlEntityVisitorTest {
 	@Test
 	public void excelLeavesUnreadableReferenceOutOfMultiValuedProperty() throws Exception {
 		givenProductProperty(PROP_SOURCES, new ArrayList<>(List.of(readableSource, hiddenSource)));
-		when(entityDictionaryService.getType(TYPE_FINISHED_PRODUCT)).thenReturn(mock(TypeDefinition.class));
+		TypeDefinition finishedProductType = mock(TypeDefinition.class);
+		when(entityDictionaryService.getType(TYPE_FINISHED_PRODUCT)).thenReturn(finishedProductType);
 
 		String xml = export(new ExcelXmlEntityVisitor(registry), RemoteEntityFormat.xml_excel);
 		Element sources = firstElement(parse(xml), "bcpg_rclSourcesV2");

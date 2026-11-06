@@ -273,12 +273,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	 * @param visit the state of the list being visited
 	 */
 	private void appendUnreachedRows(MultiLevelListData ret, List<NodeRef> rows, TreeVisit visit) {
-		List<NodeRef> unreachedRows = new ArrayList<>();
-		for (NodeRef row : rows) {
-			if (!visit.visitedRows().contains(row)) {
-				unreachedRows.add(row);
-			}
-		}
+		List<NodeRef> unreachedRows = rows.stream().filter(row -> !visit.visitedRows().contains(row)).toList();
 		visit.visitedRows().addAll(unreachedRows);
 		for (NodeRef row : unreachedRows) {
 			appendRow(ret, row, visit);

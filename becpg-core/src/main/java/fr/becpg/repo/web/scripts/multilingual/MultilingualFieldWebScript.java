@@ -89,6 +89,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_DEST_FIELD="destField"</code> */
 	private static final String PARAM_DEST_FIELD = "destField";
 
+	private static final String TRANSLATE_LOG_PREFIX = "Try to translate : ";
+
 	/** Constant <code>DEEPL_API_URL="https://api.deepl.com/v2/translate"</code> */
 	private static final String DEEPL_API_URL = "https://api.deepl.com/v2/translate";
 	/** Constant <code>GOOGLE_TRANSLATE_API_URL="https://www.googleapis.com/language/tra"{trunked}</code> */
@@ -396,7 +398,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		}
 
 		if ((deepLAPIKey != null) && !deepLAPIKey.isEmpty()) {
-			logger.debug("Try to translate : " + defaultValue + " in " + target + " using deepL");
+			if (logger.isDebugEnabled()) {
+				logger.debug(TRANSLATE_LOG_PREFIX + defaultValue + " in " + target + " using deepL");
+			}
 
 			try {
 				String url = DEEPL_API_URL;
@@ -422,13 +426,17 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			}
 
 		} else if ((googleCloudTranslationClient != null) && googleCloudTranslationClient.isEnabled()) {
-			logger.debug("Try to translate : " + defaultValue + " in " + target + " using google cloud translation v3");
+			if (logger.isDebugEnabled()) {
+				logger.debug(TRANSLATE_LOG_PREFIX + defaultValue + " in " + target + " using google cloud translation v3");
+			}
 
 			return googleCloudTranslationClient.translate(defaultValue, language, target.split("_")[0]).orElse(NO_SUGGESTION_MSG);
 
 		} else if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
 
-			logger.debug("Try to translate : " + defaultValue + " in " + target + " using google");
+			if (logger.isDebugEnabled()) {
+				logger.debug(TRANSLATE_LOG_PREFIX + defaultValue + " in " + target + " using google");
+			}
 
 			Map<String, String> vars = new HashMap<>();
 			vars.put(GOOGLE_KEY, googleApiKey);

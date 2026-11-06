@@ -2027,7 +2027,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 */
 	static BigDecimal computeSubCompositionYield(Double productYield, BigDecimal inheritedYield, DeclarationType declarationType) {
 
-		BigDecimal ownYield = (productYield != null) && (productYield != 0d) ? BigDecimal.valueOf(productYield) : BigDecimal.valueOf(100d);
+		BigDecimal ownYield = BigDecimal.valueOf((productYield != null) && (productYield != 0d) ? productYield : 100d);
 
 		if (DeclarationType.Detail.equals(declarationType) || (inheritedYield == null)) {
 			return ownYield;

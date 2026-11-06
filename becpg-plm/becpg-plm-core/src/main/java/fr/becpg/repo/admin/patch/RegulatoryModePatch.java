@@ -5,9 +5,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.regulatory.decernis.RegulatoryMode;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -29,9 +26,6 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.regulatoryModePatch.result";
 	public static final QName PROP_REGULATORY_MODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryMode");
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 	private IntegrityChecker integrityChecker;
@@ -132,36 +126,6 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
-	}
-
-	@Override
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	@Override
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	@Override
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	@Override
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	@Override
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
-	@Override
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
 	}
 
 	public BehaviourFilter getPolicyBehaviourFilter() {

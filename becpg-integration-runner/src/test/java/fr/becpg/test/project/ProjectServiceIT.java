@@ -892,6 +892,11 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			commentService.deleteComment(commentNodeRef);
 			return null;
 		});
+
+		inReadTx(() -> {
+			assertFalse(nodeService.exists(commentNodeRef));
+			return null;
+		});
 	}
 
 	@Test
@@ -918,6 +923,11 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		inWriteTx(() -> {
 			commentService.updateComment(commentNodeRef, "", UPDATED_TASK_COMMENT);
 			commentService.deleteComment(commentNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			assertFalse(nodeService.exists(commentNodeRef));
 			return null;
 		});
 	}

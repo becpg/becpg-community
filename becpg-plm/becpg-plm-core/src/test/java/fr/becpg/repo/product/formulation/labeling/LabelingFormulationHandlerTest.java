@@ -20,36 +20,36 @@ public class LabelingFormulationHandlerTest {
 
 	@Test
 	public void detailedSemiFinishedDoesNotHandDownTheInheritedYield() {
-		BigDecimal yield = LabelingFormulationHandler.computeSubCompositionYield(null, INHERITED_YIELD, DeclarationType.Detail);
+		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(null, INHERITED_YIELD, DeclarationType.Detail);
 
-		assertEquals(100d, yield.doubleValue(), DELTA);
+		assertEquals(100d, subCompositionYield.doubleValue(), DELTA);
 	}
 
 	@Test
 	public void detailedSemiFinishedHandsDownItsOwnYield() {
-		BigDecimal yield = LabelingFormulationHandler.computeSubCompositionYield(80d, INHERITED_YIELD, DeclarationType.Detail);
+		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(80d, INHERITED_YIELD, DeclarationType.Detail);
 
-		assertEquals(80d, yield.doubleValue(), DELTA);
+		assertEquals(80d, subCompositionYield.doubleValue(), DELTA);
 	}
 
 	@Test
 	public void declaredSemiFinishedCombinesItsOwnYieldWithTheInheritedOne() {
-		BigDecimal yield = LabelingFormulationHandler.computeSubCompositionYield(80d, BigDecimal.valueOf(90d), DeclarationType.Declare);
+		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(80d, BigDecimal.valueOf(90d), DeclarationType.Declare);
 
-		assertEquals(72d, yield.doubleValue(), DELTA);
+		assertEquals(72d, subCompositionYield.doubleValue(), DELTA);
 	}
 
 	@Test
 	public void semiFinishedWithoutYieldOfItsOwnHandsDownTheInheritedOne() {
-		BigDecimal yield = LabelingFormulationHandler.computeSubCompositionYield(0d, INHERITED_YIELD, DeclarationType.Declare);
+		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(0d, INHERITED_YIELD, DeclarationType.Declare);
 
-		assertEquals(90.76d, yield.doubleValue(), DELTA);
+		assertEquals(90.76d, subCompositionYield.doubleValue(), DELTA);
 	}
 
 	@Test
 	public void kitStillCarriesTheInheritedYield() {
-		BigDecimal yield = LabelingFormulationHandler.computeSubCompositionYield(null, INHERITED_YIELD, DeclarationType.Kit);
+		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(null, INHERITED_YIELD, DeclarationType.Kit);
 
-		assertEquals(90.76d, yield.doubleValue(), DELTA);
+		assertEquals(90.76d, subCompositionYield.doubleValue(), DELTA);
 	}
 }
