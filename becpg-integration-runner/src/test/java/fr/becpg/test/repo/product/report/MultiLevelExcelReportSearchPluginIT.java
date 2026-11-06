@@ -20,14 +20,19 @@ package fr.becpg.test.repo.product.report;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -41,6 +46,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -85,6 +91,22 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 	private static final String COMPONENT_NAME_COLUMN = "bcpg:compoListProduct|cm:name";
 
 	private static final String COMPONENT_ERP_CODE_COLUMN = "bcpg:compoListProduct|bcpg:erpCode";
+
+	private static final int TYPE_ROW_INDEX = 0;
+
+	private static final int TYPE_PARAMETER_CELL_INDEX = 2;
+
+	private static final String ONLY_LEVEL_2 = "OnlyLevel2";
+
+	private static final String WUSED_ONLY_LEVEL_2 = "wUsedOnlyLevel2";
+
+	private static final String LEVEL_1_SEMI_FINISHED = "Level 1 semi-finished product";
+
+	private static final String LEVEL_1_COMPONENT = "Level 1 raw material";
+
+	private static final String LEVEL_2_COMPONENT_A = "Level 2 raw material A";
+
+	private static final String LEVEL_2_COMPONENT_B = "Level 2 raw material B";
 
 	private static final String COMPOSITION_TEMPLATE_FOLDER_PATH = "/app:company_home/cm:System/cm:Reports/cm:ExportSearch/cm:ExportProducts";
 	private static final String COMPOSITION_TEMPLATE_FILE_NAME = "Export des listes composition et emballages.xlsx";
@@ -270,41 +292,125 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 	}
 
 	/**
-	 * Test level filtering with OnlyLevel3 parameter
+	 * A composition sheet set to OnlyLevel2 holds the components of the semi-finished products, and
+	 * them alone: the export goes through level 1 to reach them but leaves its rows out (#38193).
 	 */
 	@Test
-	public void testMultiLevelExcelReportOnlyLevel3() throws IOException {
+	public void testMultiLevelExcelReportOnlyLevel2() throws IOException {
 		initTestReports();
 
-		// Create test product
-		StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
-				.withAlfrescoRepository(alfrescoRepository)
-				.withNodeService(nodeService)
-				.withDestFolder(getTestFolderNodeRef())
-				.withCompo(true)
-				.withLabeling(true)
-				.withIngredients(false)
-				.build();
+		CompositionTree tree = createProductWithSemiFinishedComponent();
+		NodeRef onlyLevel2Tpl = createTemplateWithCompositionParameter(ONLY_LEVEL_2);
 
-		FinishedProductData product = testProduct.createTestProduct();
+		List<String> componentNames = exportCompositionComponentNames(PLMModel.TYPE_FINISHEDPRODUCT, onlyLevel2Tpl, tree.product());
 
-		// Generate report using existing template with OnlyLevel3 - use webscript call
-		String query = "{\"datatype\":\"bcpg:finishedProduct\",\"prop_cm_name\":\"" + product.getName() + "\"}";
-		String url = "/becpg/report/exportsearch/" + compositionPackagingReportTpl.toString().replace("://", "/") 
-			+ "/Excel.xlsx?repo=true&term=&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
-			+ "&parameter=OnlyLevel3";
+		assertEquals(List.of(LEVEL_2_COMPONENT_A, LEVEL_2_COMPONENT_B), componentNames);
+	}
 
-		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-		byte[] reportData = response.getContentAsByteArray();
+	/**
+	 * A where-used composition sheet set to wUsedOnlyLevel2 holds the lines using the product that uses
+	 * the exported raw material, and them alone (#38193).
+	 */
+	@Test
+	public void testMultiLevelExcelReportWUsedOnlyLevel2() throws IOException {
+		initTestReports();
 
-		assertNotNull("Report data should not be null", reportData);
-		assertTrue("Report data should not be empty", reportData.length > 0);
+		CompositionTree tree = createProductWithSemiFinishedComponent();
+		NodeRef wUsedOnlyLevel2Tpl = createTemplateWithCompositionParameter(WUSED_ONLY_LEVEL_2);
 
-		// Parse Excel and verify structure
+		List<String> componentNames = exportCompositionComponentNames(PLMModel.TYPE_RAWMATERIAL, wUsedOnlyLevel2Tpl, tree.level2Component());
+
+		assertEquals(List.of(LEVEL_1_SEMI_FINISHED), componentNames);
+	}
+
+	/**
+	 * The product of a test composition and one of the raw materials of its semi-finished component.
+	 */
+	private record CompositionTree(NodeRef product, NodeRef level2Component) {
+	}
+
+	/**
+	 * Exports one entity with the given template and reads the component names of its composition sheet.
+	 */
+	private List<String> exportCompositionComponentNames(QName searchType, NodeRef templateNodeRef, NodeRef exportedNodeRef)
+			throws IOException {
+		byte[] reportData = inReadTx(() -> {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			exportSearchService.createReport(searchType, templateNodeRef, List.of(exportedNodeRef), ReportFormat.XLSX, out, new String[0]);
+			return out.toByteArray();
+		});
+
 		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
-			XSSFSheet sheet = workbook.getSheetAt(0);
-			assertNotNull("Sheet should not be null", sheet);
+			return readComponentNames(workbook.getSheetAt(COMPOSITION_SHEET_INDEX));
 		}
+	}
+
+	private CompositionTree createProductWithSemiFinishedComponent() {
+		return inWriteTx(() -> {
+			NodeRef componentA = createRawMaterial(LEVEL_2_COMPONENT_A);
+			NodeRef componentB = createRawMaterial(LEVEL_2_COMPONENT_B);
+			NodeRef directComponent = createRawMaterial(LEVEL_1_COMPONENT);
+
+			SemiFinishedProductData semiFinished = SemiFinishedProductData.build().withName(LEVEL_1_SEMI_FINISHED).withQty(1d)
+					.withUnit(ProductUnit.kg);
+			semiFinished.withCompoList(List.of(compoLine(componentA), compoLine(componentB)));
+			NodeRef semiFinishedNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+
+			FinishedProductData product = FinishedProductData.build().withName("Product of a semi-finished component").withQty(1d)
+					.withUnit(ProductUnit.kg);
+			product.withCompoList(List.of(compoLine(semiFinishedNodeRef), compoLine(directComponent)));
+
+			return new CompositionTree(alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef(), componentA);
+		});
+	}
+
+	private NodeRef createRawMaterial(String name) {
+		RawMaterialData rawMaterial = RawMaterialData.build().withName(name).withQty(1d).withUnit(ProductUnit.kg);
+		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+	}
+
+	private CompoListDataItem compoLine(NodeRef componentNodeRef) {
+		return CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(componentNodeRef);
+	}
+
+	/**
+	 * A copy of the composition and packaging template whose composition sheet carries the given level
+	 * parameter: the parameter of a sheet comes from its TYPE row, not from the export request.
+	 */
+	private NodeRef createTemplateWithCompositionParameter(String parameter) throws IOException {
+		byte[] templateContent = inReadTx(() -> {
+			try (InputStream in = contentService.getReader(compositionPackagingReportTpl, ContentModel.PROP_CONTENT).getContentInputStream();
+					XSSFWorkbook workbook = new XSSFWorkbook(in);
+					ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				workbook.getSheetAt(COMPOSITION_SHEET_INDEX).getRow(TYPE_ROW_INDEX).getCell(TYPE_PARAMETER_CELL_INDEX).setCellValue(parameter);
+				workbook.write(out);
+				return out.toByteArray();
+			}
+		});
+
+		return inWriteTx(() -> {
+			NodeRef templateNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
+					ContentModel.TYPE_CONTENT, Map.of(ContentModel.PROP_NAME, parameter + ".xlsx")).getChildRef();
+			ContentWriter writer = contentService.getWriter(templateNodeRef, ContentModel.PROP_CONTENT, true);
+			writer.setMimetype(MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET);
+			writer.putContent(new ByteArrayInputStream(templateContent));
+			return templateNodeRef;
+		});
+	}
+
+	/**
+	 * The component names of the rows holding values, in the order of the sheet.
+	 */
+	private List<String> readComponentNames(XSSFSheet sheet) {
+		List<String> names = new ArrayList<>();
+		for (int rownum = 0; rownum <= sheet.getLastRowNum(); rownum++) {
+			Row row = sheet.getRow(rownum);
+
+			if ((row != null) && (row.getCell(0) != null) && HEADER_VALUES.equals(row.getCell(0).getStringCellValue())) {
+				names.add(readColumn(sheet, row, COMPONENT_NAME_COLUMN));
+			}
+		}
+		return names;
 	}
 
 	/**
