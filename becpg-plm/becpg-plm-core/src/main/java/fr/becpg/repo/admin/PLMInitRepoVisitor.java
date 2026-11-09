@@ -187,6 +187,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * standing for the responsible person, with its address. They only apply to the extraction of the PIF.
 	 */
 	private static final String PIF_REPORT_PARAMETERS = "{\"prefs\":{\"assocsToExtract\":\"mpm:plStep,bcpg:subsidiaryRef\"}}";
+
+	/**
+	 * The cost sheet reads the cost lists of the components two levels deep, and those of the packaging and resources.
+	 * The components keep to their properties and the extracted entities to the four lists the sheet reads: the other
+	 * lists of every component would blow up the data source of a rich product.
+	 */
+	public static final String COST_REPORT_PARAMETERS = "{\"prefs\":{\"componentDatalistsToExtract\":\"bcpg:costList\","
+			+ "\"maxCompoListLevelToExtract\":\"2\",\"extractInMultiLevel\":\"true\","
+			+ "\"assocsToExtract\":\"bcpg:compoListProduct\","
+			+ "\"assocsToExtractWithDataList\":\"bcpg:packagingListProduct,mpm:plResource\","
+			+ "\"entityDatalistsToExtract\":\"bcpg:compoList,bcpg:packagingList,mpm:processList,bcpg:costList\"}}";
+
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -2093,6 +2105,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(otherReport[i][b]));
 						reportTplInformation.setResources(resources);
 						reportTplInformation.setSupportedLocale(getReportTemplateLocales(otherReport[i][b]));
+						if (PRODUCT_REPORT_COST_PATH.equals(otherReport[i][b])) {
+							reportTplInformation.setTextParameter(COST_REPORT_PARAMETERS);
+						}
 
 						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i][b], otherReport[i][b], reportTplInformation, false);
 

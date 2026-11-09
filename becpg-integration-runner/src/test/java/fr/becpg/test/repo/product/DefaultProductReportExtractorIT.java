@@ -13,6 +13,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
+import org.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.repo.admin.PLMInitRepoVisitor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -62,6 +64,17 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 	private static final String TAG_COMPOLISTS = "compoLists";
 
 	private static final String ATTR_COMPOLIST_PRODUCT = "compoListProduct";
+
+	/** The preferences first set by hand on the cost sheets, which extracted every list of every component */
+	private static final String WORKAROUND_COST_REPORT_PARAMETERS = "{\"prefs\":{\"componentDatalistsToExtract\":\"bcpg:costList\","
+			+ "\"maxCompoListLevelToExtract\":\"2\",\"extractInMultiLevel\":\"true\","
+			+ "\"assocsToExtractWithDataList\":\"bcpg:compoListProduct,bcpg:packagingListProduct,mpm:plResource\"}}";
+
+	private static final String COMPONENT_COST_XPATH = "dataLists/compoLists/compoList/dataLists/costLists/costList";
+
+	private static final String COMPONENT_XPATH = "dataLists/compoLists/compoList/compoListProduct/*";
+
+	private static final String COMPONENT_LISTS_XPATH = COMPONENT_XPATH + "/dataLists/*";
 
 	@Autowired
 	@Qualifier("productReportExtractor")
@@ -209,6 +222,67 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 
 			return null;
 		}, false, true);
+	}
+
+	/**
+	 * The cost sheet created at init extracts the costs of the components two levels deep and their properties, but
+	 * not their lists: those would blow up the data source of a rich product.
+	 */
+	@Test
+	public void testCostSheetPreferencesKeepToTheCostLists() {
+		inWriteTx(() -> {
+			NodeRef finishedProductNodeRef = createTwoLevelFinishedProduct();
+
+			Element costSheet = defaultProductReportExtractor.extract(finishedProductNodeRef, preferences(PLMInitRepoVisitor.COST_REPORT_PARAMETERS))
+					.getXmlDataSource();
+			Element workaround = defaultProductReportExtractor
+					.extract(finishedProductNodeRef, preferences(WORKAROUND_COST_REPORT_PARAMETERS)).getXmlDataSource();
+
+			logger.info("Cost sheet data source: " + costSheet.asXML().length() + " chars, " + workaround.asXML().length()
+					+ " with the workaround preferences");
+			Assert.assertFalse("the component costs are extracted", costSheet.selectNodes(COMPONENT_COST_XPATH).isEmpty());
+			Assert.assertFalse("the components are extracted", costSheet.selectNodes(COMPONENT_XPATH).isEmpty());
+			Assert.assertTrue("their lists are not", costSheet.selectNodes(COMPONENT_LISTS_XPATH).isEmpty());
+			Assert.assertFalse("the workaround extracted them", workaround.selectNodes(COMPONENT_LISTS_XPATH).isEmpty());
+			return null;
+		});
+	}
+
+	private NodeRef createTwoLevelFinishedProduct() {
+		SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
+		semiFinishedProduct.setName("Cost sheet SF");
+		List<CompoListDataItem> sfCompo = new ArrayList<>();
+		sfCompo.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+				.withProduct(rawMaterial1NodeRef));
+		sfCompo.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+				.withProduct(rawMaterial2NodeRef));
+		semiFinishedProduct.getCompoListView().setCompoList(sfCompo);
+		NodeRef sfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
+
+		FinishedProductData finishedProduct = new FinishedProductData();
+		finishedProduct.setName("Cost sheet PF");
+		finishedProduct.setUnit(ProductUnit.kg);
+		finishedProduct.setQty(1d);
+		List<CompoListDataItem> compoList = new ArrayList<>();
+		compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+				.withProduct(sfNodeRef));
+		compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+				.withProduct(rawMaterial3NodeRef));
+		finishedProduct.getCompoListView().setCompoList(compoList);
+		NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		productService.formulate(sfNodeRef);
+		productService.formulate(finishedProductNodeRef);
+		return finishedProductNodeRef;
+	}
+
+	private static Map<String, String> preferences(String reportParameters) {
+		JSONObject prefs = new JSONObject(reportParameters).getJSONObject("prefs");
+		Map<String, String> preferences = new HashMap<>();
+		for (String key : prefs.keySet()) {
+			preferences.put(key, prefs.getString(key));
+		}
+		return preferences;
 	}
 
 	/**
