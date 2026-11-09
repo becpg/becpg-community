@@ -64,8 +64,17 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	/** Constant <code>ECO_SCORE_SOURCE_TYPE="ecoscore"</code> */
 	public static final String ECO_SCORE_SOURCE_TYPE = "ecoscore";
 
-	/** Constant <code>SCORE_VERSION="2021"</code> */
-	public static final String SCORE_VERSION = "2021";
+	/** Methodology of 19 September 2024: classes A+ to F, no packaging cap, no country bonus once a label scores */
+	public static final String SCORE_VERSION = "2024";
+
+	private static final int MAX_SCORE = 100;
+
+	/** Lower bound of each class, best first, from the methodology of 19 September 2024 */
+	private static final int[] CLASS_THRESHOLDS = { 90, 75, 60, 45, 30, 15 };
+
+	private static final String[] CLASSES = { "A+", "A", "B", "C", "D", "E" };
+
+	private static final String WORST_CLASS = "F";
 
 	/**
 	 *
@@ -183,7 +192,6 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 		if ((productData.getEcoScoreCategory() != null) && !productData.getEcoScoreCategory().isEmpty()) {
 			Boolean hasThreatenedSpecies = false;
-			Boolean notRecyclable = false;
 			Boolean isDrink = false;
 
 			int packagingMalus = 0;
@@ -207,20 +215,16 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 				packagingMalus = computePackagingMalus(packMaterialList);
 
-				notRecyclable = isNotRecyclable(packMaterialList);
-
-				if (Boolean.TRUE.equals(notRecyclable)) {
-					ecoScore = 79;
-				} else {
-					ecoScore = 100;
-				}
+				// since September 2024 a non recyclable packaging weighs through its malus only, it no longer caps the score
+				ecoScore = MAX_SCORE;
 
 				acvScore = computeEFScore(productData.getEcoScoreCategory(), isDrink);
 
 				int[] result = computeTransportAndPoliticalScore(productData);
 
 				transportScore = result[0];
-				politicalScore = result[1];
+				// since September 2024 a product already rewarded by a label gets no country bonus or malus
+				politicalScore = claimBonus > 0 ? 0 : result[1];
 
 				if (logger.isDebugEnabled()) {
 					logger.info("Ecoscore details: ");
@@ -288,27 +292,6 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		}
 
 		return hasThreatenedSpecies;
-	}
-
-	/**
-	 * <p>isNotRecyclable.</p>
-	 *
-	 * @param packMaterialList a {@link java.util.List} object
-	 * @return a {@link java.lang.Boolean} object
-	 */
-	private Boolean isNotRecyclable(List<PackMaterialListDataItem> packMaterialList) {
-
-		Boolean notRecyclable = false;
-
-		if (packMaterialList != null) {
-			for (PackMaterialListDataItem material : packMaterialList) {
-				if (!Boolean.TRUE.equals(notRecyclable)) {
-					notRecyclable = Boolean.TRUE.equals(nodeService.getProperty(material.getPmlMaterial(), PackModel.PROP_PM_ISNOTRECYCLABLE));
-				}
-			}
-
-		}
-		return notRecyclable;
 	}
 
 	/**
@@ -445,40 +428,35 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		Double politicalScore = 0d;
 		if (productData.getIngList() != null) {
 			for (IngListDataItem ingListDataItem : productData.getIngList()) {
+				// since September 2021 the origin of water, when an ingredient, counts like any other
 				if (ingListDataItem.getQtyPerc() != null) {
-					//L'origine de l'ingrédient "eau" (si présent) n'entre pas en compte dans le calcul du score transport
-					if (isWater(ingListDataItem.getIng())) {
-						ingListDataItem.getQtyPerc();
-					} else {
-						// À défaut d'origine disponible, l'origine "Monde" est appliquée pour les ingrédients concernés.
-						// L'origine "UE et hors UE" correspond à l'origine "Monde"
-						Double transportScoreByCountry = 100d;
-						Double politicalScoreByCountry = 100d;
+					// À défaut d'origine disponible, l'origine "Monde" est appliquée pour les ingrédients concernés.
+					// L'origine "UE et hors UE" correspond à l'origine "Monde"
+					Double transportScoreByCountry = 100d;
+					Double politicalScoreByCountry = 100d;
 
-						if ((ingListDataItem.getGeoOrigin() != null) && !ingListDataItem.getGeoOrigin().isEmpty()) {
-							for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
-								String geoCode = (String) nodeService.getProperty(geoOrigin, PLMModel.PROP_GEO_ORIGIN_ISOCODE);
-								if (ecoScoreService.getCountryScores().containsKey(geoCode)) {
-									transportScoreByCountry = Math.min(transportScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getFirst());
+					if ((ingListDataItem.getGeoOrigin() != null) && !ingListDataItem.getGeoOrigin().isEmpty()) {
+						for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
+							String geoCode = (String) nodeService.getProperty(geoOrigin, PLMModel.PROP_GEO_ORIGIN_ISOCODE);
+							if (ecoScoreService.getCountryScores().containsKey(geoCode)) {
+								transportScoreByCountry = Math.min(transportScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getFirst());
 
-									politicalScoreByCountry = Math.min(politicalScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getSecond());
+								politicalScoreByCountry = Math.min(politicalScoreByCountry, ecoScoreService.getCountryScores().get(geoCode).getSecond());
 
-									logger.debug("Found transportScoreByCountry: " + transportScoreByCountry + " for " + geoCode);
-									logger.debug("Found politicalScoreByCountry: " + politicalScoreByCountry + " for " + geoCode);
-								} else {
-									transportScoreByCountry = 0d;
-									politicalScoreByCountry = 0d;
-								}
+								logger.debug("Found transportScoreByCountry: " + transportScoreByCountry + " for " + geoCode);
+								logger.debug("Found politicalScoreByCountry: " + politicalScoreByCountry + " for " + geoCode);
+							} else {
+								transportScoreByCountry = 0d;
+								politicalScoreByCountry = 0d;
 							}
-						} else {
-							transportScoreByCountry = 0d;
-							politicalScoreByCountry = 0d;
 						}
-
-						transportScore += (transportScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
-						politicalScore += (politicalScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
+					} else {
+						transportScoreByCountry = 0d;
+						politicalScoreByCountry = 0d;
 					}
 
+					transportScore += (transportScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
+					politicalScore += (politicalScoreByCountry * ingListDataItem.getQtyPerc()) / 100d;
 				}
 
 			}
@@ -492,38 +470,19 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	}
 
 	/**
-	 * <p>isWater.</p>
+	 * Class of a score on the seven class grid of September 2024: A+ from 90, then a class
+	 * every 15 points down to F under 15.
 	 *
-	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a boolean
-	 */
-	private boolean isWater(NodeRef ing) {
-		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) 
-				|| (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)
-				&& nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) != null
-				&& (Double) nodeService.getProperty(ing, PLMModel.PROP_EVAPORATED_RATE) == 100d);
-	}
-
-	/**
-	 * <p>computeScoreClass.</p>
-	 *
-	 * @param score a int
-	 * @return a {@link java.lang.String} object
+	 * @param score the score out of 100
+	 * @return the class, from "A+" to "F"
 	 */
 	public String computeScoreClass(int score) {
-
-		if (score >= 80) {
-			return "A";
-		} else if (score >= 60) {
-			return "B";
-		} else if (score >= 40) {
-			return "C";
-		} else if (score >= 20) {
-			return "D";
+		for (int i = 0; i < CLASS_THRESHOLDS.length; i++) {
+			if (score >= CLASS_THRESHOLDS[i]) {
+				return CLASSES[i];
+			}
 		}
-
-		return "E";
-
+		return WORST_CLASS;
 	}
 
 }

@@ -258,6 +258,7 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
+					<show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -277,6 +278,7 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />
+                    <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
                 </field-visibility>
                 <appearance>
@@ -296,6 +298,7 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />    
+                    <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
                 </field-visibility>
                 <appearance>
@@ -392,6 +395,13 @@
 					<show id="pack:pmIsNotRecyclable" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+			</form>
+
+			<!-- Ecological score of the material, shown as a column of the packaging material list -->
+			<form id="ecoScore">
+				<field-visibility>
+					<show id="pack:pmEcoScore" />
 				</field-visibility>
 			</form>
 

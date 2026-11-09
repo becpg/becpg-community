@@ -323,6 +323,11 @@
             layout: "strip",
             colours: { A: "#1f6f4a", B: "#5aa469", C: "#c8b560", D: "#c98a3c", E: "#a8503a" }
         },
+        GREENSCORE: {
+            layout: "strip",
+            classes: ["A+", "A", "B", "C", "D", "E", "F"],
+            colours: { "A+": "#3d8b55", A: "#458b56", B: "#66c979", C: "#ecc244", D: "#e08537", E: "#d15032", F: "#b23a2c" }
+        },
         PPWR: {
             layout: "strip",
             classes: ["A", "B", "C", "NR"],
