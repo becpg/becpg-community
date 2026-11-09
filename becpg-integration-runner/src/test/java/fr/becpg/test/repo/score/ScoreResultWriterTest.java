@@ -190,6 +190,49 @@ public class ScoreResultWriterTest {
 		assertEquals(List.of("2023"), writer.listedVersions(product, CODE));
 	}
 
+	@Test
+	public void testAScoreLeftWithoutDataIsEmptied() {
+		RegulatoryScoreListDataItem item = line(DEFINITION_REF);
+		item.setValue(62.5d);
+		item.setScoreClass("B");
+		item.setDetails("{}");
+		product.getRegulatoryScoreList().add(item);
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertNull(item.getValue());
+		assertNull(item.getScoreClass());
+		assertNull(item.getDetails());
+		assertTrue(product.getRegulatoryScoreList().contains(item));
+	}
+
+	@Test
+	public void testAManualScoreIsNotEmptied() {
+		RegulatoryScoreListDataItem item = manualItem(96d, "A");
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertEquals(96d, item.getValue(), PRECISION);
+		assertEquals("A", item.getScoreClass());
+	}
+
+	@Test
+	public void testAnEmptyScoreIsNotRewritten() {
+		RegulatoryScoreListDataItem item = line(DEFINITION_REF);
+		product.getRegulatoryScoreList().add(item);
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertNull(item.getComputedDate());
+	}
+
+	private static ScoreDefinitionItem definition(NodeRef nodeRef) {
+		ScoreDefinitionItem definition = new ScoreDefinitionItem();
+		definition.setNodeRef(nodeRef);
+		definition.setCode(CODE);
+		return definition;
+	}
+
 	/**
 	 * <p>Gives the product a template listing the given score lines.</p>
 	 *
