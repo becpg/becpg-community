@@ -83,6 +83,29 @@ public class ThresholdScoreEngine {
 	}
 
 	/**
+	 * Tells a product that crosses no threshold from a product the scheme cannot read: at least
+	 * one nutrient the thresholds compare must be documented on the basis of the definition.
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @return true when the product documents a nutrient of the scheme
+	 */
+	public boolean isDocumented(ProductData product, ScoreDefinitionItem definition) {
+		List<ScoreThresholdListDataItem> thresholds = definition.getThresholdList();
+		if ((thresholds == null) || thresholds.isEmpty()) {
+			return false;
+		}
+
+		Map<String, Double> nutrients = nutrientValueProvider.extractNutrients(product, definition.getScoreBasis());
+		for (ScoreThresholdListDataItem threshold : thresholds) {
+			if (nutrients.get(threshold.getNutCode()) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * <p>newContext.</p>
 	 *
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
