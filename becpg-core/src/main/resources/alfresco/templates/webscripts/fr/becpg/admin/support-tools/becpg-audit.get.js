@@ -26,7 +26,7 @@ function main() {
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
                 { key: "batchId", label: msg.get("audit.col.batchId") },
                 { key: "batchUser", label: msg.get("audit.col.batchUser") },
-                { key: "totalItems", label: msg.get("audit.col.totalItems") },
+                { key: "totalItems", label: msg.get("audit.col.totalItems"), format: "number" },
                 { key: "totalErrors", label: msg.get("audit.col.totalErrors"), format: "errors" },
                 { key: "isCompleted", label: msg.get("audit.col.status"), format: "completed" }
             ]
@@ -52,10 +52,10 @@ function main() {
                 { key: "startedAt", label: msg.get("audit.col.startedAt"), format: "date" },
                 { key: "completedAt", label: msg.get("audit.col.completedAt"), format: "date" },
                 { key: "duration", label: msg.get("audit.col.duration"), format: "duration" },
-                { key: "filename", label: msg.get("audit.col.filename") },
+                { key: "filename", label: msg.get("audit.col.filename"), filterable: false },
                 { key: "username", label: msg.get("audit.col.username") },
                 { key: "template", label: msg.get("audit.col.template") },
-                { key: "resultsSize", label: msg.get("audit.col.resultsSize") },
+                { key: "resultsSize", label: msg.get("audit.col.resultsSize"), format: "number" },
                 { key: "async", label: msg.get("audit.col.async"), format: "async" },
                 { key: "isCompleted", label: msg.get("audit.col.status"), format: "completed" }
             ]
