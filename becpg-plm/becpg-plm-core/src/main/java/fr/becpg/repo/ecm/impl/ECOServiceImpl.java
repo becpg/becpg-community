@@ -62,6 +62,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.ECMModel;
@@ -133,6 +134,8 @@ public class ECOServiceImpl implements ECOService {
 	
 	/** Constant <code>ACTION_URL_PREFIX="page/entity-data-lists?list=changeUnitL"{trunked}</code> */
 	private static final String ACTION_URL_PREFIX = "page/entity-data-lists?list=changeUnitList&nodeRef=%s";
+
+	private static final String MESSAGE_MISSING_WUSED_LINK = "plm.ecm.apply.missing.wused.link";
 
 	@Autowired
 	private WUsedListService wUsedListService;
@@ -823,6 +826,7 @@ public class ECOServiceImpl implements ECOService {
 								if (isMergeItem && !isSimulation) {
 									merge(ecoData);
 								} else {
+									checkWUsedLinksFound(ecoData, productToFormulateData);
 									for (AbstractProductDataView view : productToFormulateData.getViews()) {
 										applyToList(ecoData, productToFormulateData, view.getMainDataList());
 									}
@@ -1425,6 +1429,33 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 
+		}
+	}
+
+	/**
+	 * Fails when an impacted where used line of the product no longer matches one
+	 * of its list items: the replacement would silently be skipped otherwise.
+	 *
+	 * @param ecoData the change order being applied
+	 * @param productData the product the change order is applied to
+	 * @throws BeCPGException if a where used line was not found in the product
+	 */
+	private void checkWUsedLinksFound(ChangeOrderData ecoData, ProductData productData) {
+		Set<NodeRef> listItemNodeRefs = new HashSet<>();
+		for (AbstractProductDataView view : productData.getViews()) {
+			for (CompositionDataItem item : view.getMainDataList()) {
+				listItemNodeRefs.add(item.getNodeRef());
+			}
+		}
+
+		List<WUsedListDataItem> missingLinks = MissingWUsedLinkFinder.findMissingLinks(productData.getNodeRef(), ecoData.getWUsedList(),
+				listItemNodeRefs);
+
+		if (!missingLinks.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Where used lines not found in " + productData.getNodeRef() + ": " + missingLinks);
+			}
+			throw new BeCPGException(I18NUtil.getMessage(MESSAGE_MISSING_WUSED_LINK, productData.getName()));
 		}
 	}
 
