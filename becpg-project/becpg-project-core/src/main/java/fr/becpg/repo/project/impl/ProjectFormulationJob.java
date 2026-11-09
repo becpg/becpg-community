@@ -17,10 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.util.List;
-
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.apache.commons.logging.Log;
@@ -31,6 +27,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+
+import fr.becpg.repo.helper.TenantJobHelper;
 
 /**
  * <p>ProjectFormulationJob class.</p>
@@ -61,24 +59,7 @@ public class ProjectFormulationJob extends AbstractScheduledLockedJob implements
 		final ProjectFormulationWorker projectFormulationWorker = (ProjectFormulationWorker) jobData.get(KEY_PROJECT_FORMULATION_WORKER);
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
 
-		AuthenticationUtil.runAsSystem(() -> {
-			projectFormulationWorker.executeFormulation();
-			return null;
-		});
-
-		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
-			@SuppressWarnings("deprecation")
-			List<Tenant> tenants = tenantAdminService.getAllTenants();
-			for (Tenant tenant : tenants) {
-				if(tenant.isEnabled()) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.runAs(() -> {
-						projectFormulationWorker.executeFormulation();
-						return null;
-					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-				}
-			}
-		}
+		TenantJobHelper.runForEachTenant(tenantAdminService, projectFormulationWorker::executeFormulation);
 
 		logger.info("End of Project Formulation Job.");
 	}
