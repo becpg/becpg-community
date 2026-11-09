@@ -131,6 +131,37 @@ public class ScoreResultWriter {
 	}
 
 	/**
+	 * Empties the score the entity lists for a definition that nothing computes any more, so
+	 * the previous verdict does not outlive the data it was computed from. The line stays: it
+	 * belongs to the list the template sets, and a score entered by hand is left untouched.
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param definition the definition left without data
+	 */
+	public void clear(ScoredEntity entity, ScoreDefinitionItem definition) {
+		Optional<RegulatoryScoreListDataItem> listedItem = findItem(entity, definition.getNodeRef());
+
+		if (listedItem.isEmpty() || Boolean.TRUE.equals(listedItem.get().getIsManual()) || !holdsResult(listedItem.get())) {
+			return;
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Nothing left to compute score " + definition.getCode() + ", emptying it");
+		}
+
+		RegulatoryScoreListDataItem item = listedItem.get();
+		item.keepPreviousValue();
+		item.setValue(null);
+		item.setScoreClass(null);
+		item.setDetails(null);
+		item.setComputedDate(new Date());
+	}
+
+	private static boolean holdsResult(RegulatoryScoreListDataItem item) {
+		return (item.getValue() != null) || (item.getScoreClass() != null) || (item.getDetails() != null);
+	}
+
+	/**
 	 * Rewrites the breakdown of a score entered by hand around the verdict entered, the value
 	 * and class of the item being left untouched.
 	 *

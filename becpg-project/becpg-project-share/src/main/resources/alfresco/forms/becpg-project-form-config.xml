@@ -2232,6 +2232,12 @@
                     </field>
                      
                 
+                    <field id="pjt:slScoreDefinition">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:scoreDefinition?filter=bcpg:scoreDefEngine%7CCriteria&amp;excludeProps=bcpg:isDeleted%7Ctrue</control-param>
+                        </control>
+                    </field>
+
                     <field id="pjt:slScreening">
                         <control template="/org/alfresco/components/form/controls/richtext.ftl">
                             <control-param name="row">8</control-param>
@@ -2263,6 +2269,12 @@
                     </field>
                      
                 
+                    <field id="pjt:slScoreDefinition">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:scoreDefinition?filter=bcpg:scoreDefEngine%7CCriteria&amp;excludeProps=bcpg:isDeleted%7Ctrue</control-param>
+                        </control>
+                    </field>
+
                     <field id="pjt:slScreening">
                         <control template="/org/alfresco/components/form/controls/richtext.ftl">
                             <control-param name="row">8</control-param>
@@ -2300,7 +2312,13 @@
                     </field>
 				     
 				
-					<field id="pjt:slScreening">
+					<field id="pjt:slScoreDefinition">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:scoreDefinition?filter=bcpg:scoreDefEngine%7CCriteria&amp;excludeProps=bcpg:isDeleted%7Ctrue</control-param>
+                        </control>
+                    </field>
+
+                    <field id="pjt:slScreening">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="row">8</control-param>
 						</control>
@@ -2331,7 +2349,13 @@
                     </field>
 				     
 				
-					<field id="pjt:slScreening">
+					<field id="pjt:slScoreDefinition">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:scoreDefinition?filter=bcpg:scoreDefEngine%7CCriteria&amp;excludeProps=bcpg:isDeleted%7Ctrue</control-param>
+                        </control>
+                    </field>
+
+                    <field id="pjt:slScreening">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="row">8</control-param>
 						</control>
@@ -2352,6 +2376,7 @@
 				    <show id="bcpg:depthLevel" />
 				   
 				    <show id="pjt:slScoreCriterion" />
+                    <show id="pjt:slScoreDefinition" />
                     <show id="pjt:slWeight" />
                     <show id="pjt:slScore" />
                     <show id="pjt:slScoreRange" />

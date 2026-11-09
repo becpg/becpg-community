@@ -94,6 +94,7 @@ public class CriteriaScoreEngine {
 		List<ScoreListDataItem> roots = extractRoots(scoreList, definition.getNodeRef());
 
 		if (roots.isEmpty()) {
+			scoreResultWriter.clear(scoredEntity, definition);
 			return;
 		}
 
@@ -103,6 +104,7 @@ public class CriteriaScoreEngine {
 			if (logger.isDebugEnabled()) {
 				logger.debug("No weighted criterion for score " + definition.getCode());
 			}
+			scoreResultWriter.clear(scoredEntity, definition);
 			return;
 		}
 
