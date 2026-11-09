@@ -2,9 +2,10 @@ package fr.becpg.repo.activity;
 
 import java.util.List;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -34,27 +35,30 @@ public class EntityActivityJob  extends AbstractScheduledLockedJob implements Jo
 
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 
-		final EntityActivityService entityActivityService = (EntityActivityService) jobData.get(KEY_ENTITY_ACTIVITY_SERVICE);
-		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
+		cleanActivities((EntityActivityService) jobData.get(KEY_ENTITY_ACTIVITY_SERVICE), (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE));
+	}
 
-		AuthenticationUtil.runAsSystem(() -> {
-			entityActivityService.cleanActivities();
-			return null;
-		});
+	static void cleanActivities(EntityActivityService entityActivityService, TenantAdminService tenantAdminService) {
+
+		// AuthenticationUtil.runAs as System@tenant leaves the default tenant context, so every tenant batch was
+		// queued under the default batch id and rejected as a duplicate
+		cleanActivities(entityActivityService, TenantService.DEFAULT_DOMAIN);
 
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				if(tenant.isEnabled()) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.runAs(() -> {
-						entityActivityService.cleanActivities();
-						return null;
-					} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if (tenant.isEnabled()) {
+					cleanActivities(entityActivityService, tenant.getTenantDomain());
 				}
 			}
 		}
+	}
 
+	private static void cleanActivities(EntityActivityService entityActivityService, String tenantDomain) {
+		TenantUtil.runAsSystemTenant(() -> {
+			entityActivityService.cleanActivities();
+			return null;
+		}, tenantDomain);
 	}
 }
