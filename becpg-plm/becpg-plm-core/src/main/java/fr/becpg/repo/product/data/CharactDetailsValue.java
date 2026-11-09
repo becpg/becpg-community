@@ -217,6 +217,7 @@ public class CharactDetailsValue {
 	 * @param caractValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object.
 	 */
 	public void add(CharactDetailsValue caractValue) {
+		allowZeroValue = allowZeroValue || caractValue.allowZeroValue;
 		if (caractValue.getValue() != null) {
 			if(value==null) {
 				value = 0d;

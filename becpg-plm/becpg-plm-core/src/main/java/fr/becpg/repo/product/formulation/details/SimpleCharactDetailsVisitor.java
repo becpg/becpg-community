@@ -459,7 +459,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	private void calculateCharactDetailsValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct,
 			NodeRef componentDataList, Integer currLevel, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty) {
 		Double basisQtyUsed = qtyUsed * provideQtyUsedBasisFactor(context);
-		Double value = FormulationHelper.calculateValue(0d, basisQtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
+		Double componentValue = extractValue(formulatedProduct, partProduct, simpleCharact);
+		Double value = FormulationHelper.calculateValue(0d, basisQtyUsed, componentValue, netQty);
 
 		CharactDetailsValue currentCharactDetailsValue = null;
 
@@ -473,6 +474,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 			currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(),
 					componentDataList, value, currLevel, unit);
+			// A zero the component carries is a value; only a missing one is left blank
+			currentCharactDetailsValue.setAllowZeroValue(componentValue != null);
 			
 			if ((simpleCharact instanceof ForecastValueDataItem forecastValue) && !context.getCharactDetails().isMultiple()) {
 
