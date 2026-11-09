@@ -334,6 +334,15 @@ public class ScoreMarkingRendererTest {
 	}
 
 	@Test
+	public void testGreenScoreGradesFromAPlusToF() throws Exception {
+		String svg = renderClass("GREENSCORE", "A+", Locale.ENGLISH);
+
+		assertTrue(svg.contains(">A+</text>"));
+		assertTrue(svg.contains(">F</text>"));
+		assertTrue("the reached class is outlined", svg.contains("fill=\"#3d8b55\" stroke=\"#333333\""));
+	}
+
+	@Test
 	public void testNutriGradeIsStampedAsATag() {
 		String svg = renderShipped("NUTRIGRADE", Locale.ENGLISH);
 

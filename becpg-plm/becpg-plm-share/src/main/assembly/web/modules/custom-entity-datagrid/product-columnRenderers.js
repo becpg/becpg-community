@@ -362,6 +362,12 @@ if (beCPG.module.EntityDataGridRenderers) {
             return "";
         }
         var upper = scoreClass.toString().toUpperCase();
+        // the badges predate the A+ and F classes of 2024: each shows the badge next to it
+        if (upper === "A+") {
+            upper = "A";
+        } else if (upper === "F") {
+            upper = "E";
+        }
         if (upper === "A" || upper === "B" || upper === "C" || upper === "D" || upper === "E") {
             return "ecoscore-class-" + upper.toLowerCase();
         }
