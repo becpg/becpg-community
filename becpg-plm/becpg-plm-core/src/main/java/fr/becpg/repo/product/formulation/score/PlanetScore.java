@@ -403,8 +403,7 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		Double claimed = fairTradeShare(product);
 
 		if (claimed == null) {
-			// unknown, the mark shows its grey level rather than a bad one
-			context.getParts().add(new ScorePart(FAIR_PAY).withScoreClass(LEVEL_B));
+			// unknown, the axis is left out rather than graded: it must not weigh on the synthesis
 			return;
 		}
 
