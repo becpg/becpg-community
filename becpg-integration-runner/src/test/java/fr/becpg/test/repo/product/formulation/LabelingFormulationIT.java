@@ -598,10 +598,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				firstChildPerc + secondChildPerc, 0.2d);
 		Assert.assertEquals("The only top level ingredient must be at 100%:" + context, 100d, parentPerc, 0.2d);
 
-		// The water lost by the composite is shared over its sub ingredients proportionally to their declared
-		// percentages, so they keep their 60/40 split instead of charging the whole loss to the evaporating one.
-		Assert.assertEquals("Evaporating sub ingredient must keep its share of its parent:" + context, 60d, firstChildPerc, 0.2d);
-		Assert.assertEquals("Sub ingredient must keep its share of its parent:" + context, 40d, secondChildPerc, 0.2d);
+		// The composite carries no rate : ing1 loses the 400 g on its own account, as it would at the top level, and
+		// ing2 keeps its quantity (#34702, retest of 2026-11-05). 1.2 - 0.4 = 0.8 kg and 0.8 kg out of 1.6 kg.
+		Assert.assertEquals("Evaporating sub ingredient must bear its own loss:" + context, 50d, firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient must keep its quantity:" + context, 50d, secondChildPerc, 0.2d);
 
 		// The labeling must tell the same story as the "Qty with yield" column of the ingredient list
 		Assert.assertNotNull("Composite ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing3));

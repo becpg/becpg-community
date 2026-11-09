@@ -18,10 +18,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleConsumer;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -1935,7 +1933,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							visitIngList(compositeLabeling, productData,
 									CompositeHelper.getHierarchicalCompoList(
-											IngListHelper.extractParentList(productData.getIngList(), associationService, alfrescoRepository)),
+											IngListHelper.extractParentList(getAbsoluteIngList(productData), associationService, alfrescoRepository)),
 									null, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors,
 									calculatedYield);
 						}
@@ -2190,14 +2188,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	/**
-	 * <p>applyEvaporation.</p>
+	 * Applies the water lost by the yield of a labeling level on its evaporating components and ingredients.
+	 * <p>
+	 * Ingredients evaporating at 100 % lose their water first, the rest is shared proportionally to the water
+	 * each one can lose. The sub-ingredients of a composite ingredient without evaporation rate evaporate as the
+	 * level ingredients do, and their composite loses the same water, so the label matches the ingredient list
+	 * (see #34702). The rates below a composite carrying its own rate are ignored.
 	 *
-	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
-	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext the labeling context
+	 * @param parent the labeling level
 	 */
 	private void applyEvaporation(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent) {
 
-		if (!parent.getEvaporatedDataItems().isEmpty()) {
+		List<LabelingEvaporationTarget> targets = collectEvaporationTargets(parent);
+
+		if (!targets.isEmpty()) {
 
 			if (logger.isTraceEnabled()) {
 				logger.trace("Before applyEvaporation \n" + parent.toString());
@@ -2205,171 +2210,188 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.trace("- VOL to evaporate: " + parent.getEvaporatedVolume());
 			}
 
-			// 1. Evaporate ingredients with 100% rate first
-			Set<EvaporatedDataItem> fullEvaporationItems = parent.getEvaporatedDataItems().stream()
-					.filter(item -> (item.getRate() != null) && (item.getRate() == 100d)).collect(Collectors.toSet());
+			boolean doNotPropagateYield = labelingFormulaContext.isDoNotPropagateYield();
+			List<LabelingEvaporationTarget> fullEvaporationTargets = targets.stream().filter(LabelingEvaporationTarget::evaporatesFully).toList();
+			List<LabelingEvaporationTarget> remainingTargets = targets.stream().filter(target -> !target.evaporatesFully()).toList();
 
-			processEvaporation(parent, fullEvaporationItems, null, labelingFormulaContext.isDoNotPropagateYield());
+			processEvaporation(parent, fullEvaporationTargets, doNotPropagateYield);
+			processEvaporation(parent, remainingTargets, doNotPropagateYield);
 
-			if (logger.isTraceEnabled()) {
-				logger.trace("- REMAINING evaporation QTY: " + parent.getEvaporatedQty());
-				logger.trace("- REMAINING evaporation VOL: " + parent.getEvaporatedVolume());
-				logger.trace("- Propagate yield: " + !labelingFormulaContext.isDoNotPropagateYield());
-			}
-
-			// 2. Distribute remaining evaporation proportionally
-			Set<EvaporatedDataItem> remainingItems = parent.getEvaporatedDataItems().stream().filter(item -> !fullEvaporationItems.contains(item))
-					.collect(Collectors.toSet());
-
-			Double totalRate  = remainingItems.stream()
-				    .filter(i -> i.getRate() != null && i.getRate() > 0)
-				    .mapToDouble(EvaporatedDataItem::getRate)
-				    .sum();
-
-			processEvaporation(parent, remainingItems, totalRate, labelingFormulaContext.isDoNotPropagateYield());
-
-			// 3 - If not all has been evaporated remove from first
-			if ((parent.getEvaporatedQty() > 0) && !fullEvaporationItems.isEmpty() && !labelingFormulaContext.isDoNotPropagateYield()) {
-
+			if ((parent.getEvaporatedQty() > 0) && !fullEvaporationTargets.isEmpty() && !doNotPropagateYield) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("- STILL REMAINING evaporation: " + parent.getEvaporatedQty());
 				}
-
-				EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
-				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
-				if (productLabelItem != null) {
-					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null)) {
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - parent.getEvaporatedQty());
-					}
-					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)) {
-						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - parent.getEvaporatedVolume());
-					}
+				LabelingEvaporationTarget firstTarget = fullEvaporationTargets.get(0);
+				if (firstTarget.node() != null) {
+					firstTarget.evaporate(parent.getEvaporatedQty(), parent.getEvaporatedVolume());
 				}
 			}
-
 		}
 	}
 
 	/**
-	 * <p>processEvaporation.</p>
+	 * Collects the evaporating items of a labeling level: its own components and ingredients, and the
+	 * sub-ingredients of its composite ingredients without evaporation rate.
 	 *
-	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
-	 * @param items a {@link java.util.Set} object
-	 * @param totalRate a {@link java.lang.Double} object
-	 * @param isDoNotPropagateYield a boolean
+	 * @param parent the labeling level
+	 * @return the evaporation targets
 	 */
-	private void processEvaporation(CompositeLabeling parent, Set<EvaporatedDataItem> items, Double totalRate, boolean isDoNotPropagateYield) {
-		if (parent.getEvaporatedQty() > 0d) {
-			AtomicReference<Double> evaporatingQty = new AtomicReference<>(parent.getEvaporatedQty());
-			AtomicReference<Double> evaporatingVolume = new AtomicReference<>(parent.getEvaporatedVolume());
+	private List<LabelingEvaporationTarget> collectEvaporationTargets(CompositeLabeling parent) {
+		List<LabelingEvaporationTarget> targets = new ArrayList<>();
+		for (EvaporatedDataItem evaporatedDataItem : parent.getEvaporatedDataItems()) {
+			targets.add(new LabelingEvaporationTarget(evaporatedDataItem, parent.get(evaporatedDataItem.getProductNodeRef()), List.of()));
+		}
+		for (CompositeLabeling component : parent.getIngList().values()) {
+			collectSubIngredientEvaporationTargets(component, List.of(), targets);
+		}
+		return targets;
+	}
 
-			// Step 1: Calculate available water for each ingredient based on rate and quantity
-			Map<EvaporatedDataItem, LabelingEvapData> evaporationDataMap = new HashMap<>();
-			double totalAvailableWaterQty = 0d;
-			double totalAvailableWaterVol = 0d;
-
-			for (EvaporatedDataItem evaporatedDataItem : items) {
-				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
-				if (productLabelItem != null) {
-					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
-
-					Double maxEvapQty = null;
-					if (rate > 0d && productLabelItem.getQtyWithYield() != null && productLabelItem.getQtyWithYield() > 0d) {
-						maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
-						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
-							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
-						}
-						totalAvailableWaterQty += maxEvapQty;
-					}
-
-					Double maxEvapVol = null;
-					if (rate > 0d && (productLabelItem.getVolumeWithYield() != null) && (productLabelItem.getVolumeWithYield() > 0d)) {
-						maxEvapVol = (productLabelItem.getVolumeWithYield() * rate) / 100d;
-						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
-							maxEvapVol = Math.min(maxEvapVol, evaporatedDataItem.getMaxEvaporableVolume());
-						}
-						totalAvailableWaterVol += maxEvapVol;
-					}
-
-					evaporationDataMap.put(evaporatedDataItem, new LabelingEvapData(productLabelItem, maxEvapQty, maxEvapVol));
-				} else {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Take in account evaporation in Do Not declare");
-					}
-					if (evaporatedDataItem.getMaxEvaporableQty() != null) {
-						evaporatingQty.set(evaporatingQty.get() - evaporatedDataItem.getMaxEvaporableQty());
-					}
-					if (evaporatedDataItem.getMaxEvaporableVolume() != null) {
-						evaporatingVolume.set(evaporatingVolume.get() - evaporatedDataItem.getMaxEvaporableVolume());
-					}
-				}
+	/**
+	 * Collects the evaporating sub-ingredients of a composite ingredient without evaporation rate, recursively.
+	 *
+	 * @param composite the composite ingredient
+	 * @param ancestors the composite ingredients above it, within the labeling level
+	 * @param targets the targets to fill
+	 */
+	private void collectSubIngredientEvaporationTargets(CompositeLabeling composite, List<CompositeLabeling> ancestors,
+			List<LabelingEvaporationTarget> targets) {
+		if (!(composite instanceof IngItem) || (composite.getNodeRef() == null) || hasEvaporationData(composite.getNodeRef())) {
+			return;
+		}
+		List<CompositeLabeling> chain = new ArrayList<>(ancestors);
+		chain.add(composite);
+		for (EvaporatedDataItem evaporatedDataItem : composite.getEvaporatedDataItems()) {
+			if (evaporatedDataItem.isHeldByParent()) {
+				targets.add(new LabelingEvaporationTarget(evaporatedDataItem, composite, ancestors));
+			} else {
+				targets.add(new LabelingEvaporationTarget(evaporatedDataItem, composite.get(evaporatedDataItem.getProductNodeRef()), chain));
 			}
-
-			// Step 2: Distribute evaporation based on available water rather than just rates
-			if (!evaporationDataMap.isEmpty()) {
-				// Process quantity evaporation
-				if ((parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d) && (totalAvailableWaterQty > 0d)) {
-					Double evaporatingQtyAtStart = evaporatingQty.get();
-					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
-						LabelingEvapData evapData = entry.getValue();
-
-						if ((evapData.maxEvapQty != null) && (evapData.maxEvapQty > 0d)) {
-							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(evaporatingQtyAtStart,
-									evapData.maxEvapQty, totalAvailableWaterQty);
-
-							evapData.productLabelItem.setQtyWithYield(evapData.productLabelItem.getQtyWithYield() - evaporatedQty);
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Apply evaporation qty " + evaporatedQty + " (max: " + evapData.maxEvapQty + ") on "
-										+ getName(evapData.productLabelItem) + " - remaining: " + evapData.productLabelItem.getQtyWithYield());
-							}
-
-							evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
-						}
-					}
-				}
-
-				// Process volume evaporation
-				if ((parent.getEvaporatedVolume() != null) && (parent.getEvaporatedVolume() > 0d) && (totalAvailableWaterVol > 0d)) {
-					Double evaporatingVolumeAtStart = evaporatingVolume.get();
-					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
-						LabelingEvapData evapData = entry.getValue();
-
-						if ((evapData.maxEvapVol != null) && (evapData.maxEvapVol > 0d)) {
-							// Use FormulationHelper to calculate proportional evaporation
-							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(evaporatingVolumeAtStart, 
-									evapData.maxEvapVol, totalAvailableWaterVol);
-
-							evapData.productLabelItem.setVolumeWithYield(evapData.productLabelItem.getVolumeWithYield() - evaporatedVol);
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Apply evaporation volume " + evaporatedVol + " (max: " + evapData.maxEvapVol + ") on "
-										+ getName(evapData.productLabelItem) + " - remaining: " + evapData.productLabelItem.getVolumeWithYield());
-							}
-
-							evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
-						}
-					}
-				}
-			}
-
-			parent.setEvaporatedQty(evaporatingQty.get());
-			parent.setEvaporatedVolume(evaporatingVolume.get());
+		}
+		for (CompositeLabeling subIng : composite.getIngList().values()) {
+			collectSubIngredientEvaporationTargets(subIng, chain, targets);
 		}
 	}
 
 	/**
-	 * Helper class to store labeling evaporation data
+	 * Shares the remaining water loss of a labeling level over evaporation targets, proportionally to the water
+	 * each one can lose.
+	 *
+	 * @param parent the labeling level
+	 * @param targets the evaporation targets
+	 * @param doNotPropagateYield true when the loss is limited to the evaporable quantities of the components
 	 */
-	private static class LabelingEvapData {
-		final CompositeLabeling productLabelItem;
-		final Double maxEvapQty;
-		final Double maxEvapVol;
+	private void processEvaporation(CompositeLabeling parent, List<LabelingEvaporationTarget> targets, boolean doNotPropagateYield) {
+		if ((parent.getEvaporatedQty() == null) || (parent.getEvaporatedQty() <= 0d)) {
+			return;
+		}
 
-		LabelingEvapData(CompositeLabeling productLabelItem, Double maxEvapQty, Double maxEvapVol) {
-			this.productLabelItem = productLabelItem;
-			this.maxEvapQty = maxEvapQty;
-			this.maxEvapVol = maxEvapVol;
+		boolean hasVolumeToEvaporate = (parent.getEvaporatedVolume() != null) && (parent.getEvaporatedVolume() > 0d);
+		double evaporatingQty = parent.getEvaporatedQty();
+		double evaporatingVolume = orZero(parent.getEvaporatedVolume());
+		double totalAvailableQty = 0d;
+		double totalAvailableVolume = 0d;
+
+		for (LabelingEvaporationTarget target : targets) {
+			if (target.node() == null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Take in account evaporation in Do Not declare");
+				}
+				evaporatingQty -= orZero(target.item().getMaxEvaporableQty());
+				evaporatingVolume -= orZero(target.item().getMaxEvaporableVolume());
+			} else {
+				totalAvailableQty += orZero(target.availableQty(doNotPropagateYield));
+				totalAvailableVolume += orZero(target.availableVolume(doNotPropagateYield));
+			}
+		}
+
+		double evaporatingQtyAtStart = evaporatingQty;
+		double evaporatingVolumeAtStart = evaporatingVolume;
+
+		for (LabelingEvaporationTarget target : targets) {
+			if (target.node() != null) {
+				double evaporatedQty = shareEvaporation(evaporatingQtyAtStart, target.availableQty(doNotPropagateYield), totalAvailableQty);
+				double evaporatedVolume = hasVolumeToEvaporate
+						? shareEvaporation(evaporatingVolumeAtStart, target.availableVolume(doNotPropagateYield), totalAvailableVolume)
+						: 0d;
+				target.evaporate(evaporatedQty, evaporatedVolume);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Apply evaporation qty " + evaporatedQty + " on " + getName(target.node()) + " - remaining: "
+							+ target.node().getQtyWithYield());
+				}
+				evaporatingQty -= evaporatedQty;
+				evaporatingVolume -= evaporatedVolume;
+			}
+		}
+
+		parent.setEvaporatedQty(evaporatingQty);
+		if (parent.getEvaporatedVolume() != null) {
+			parent.setEvaporatedVolume(evaporatingVolume);
+		}
+	}
+
+	private static double shareEvaporation(double evaporatingQty, Double availableQty, double totalAvailableQty) {
+		if ((availableQty == null) || (availableQty <= 0d) || (totalAvailableQty <= 0d)) {
+			return 0d;
+		}
+		return FormulationHelper.calculateProportionalEvaporation(evaporatingQty, availableQty, totalAvailableQty);
+	}
+
+	private static double orZero(Double value) {
+		return value != null ? value : 0d;
+	}
+
+	/**
+	 * An evaporating item of a labeling level: the label node losing the water, null when the item is not
+	 * declared, and the composite ingredients holding it, which lose the same water.
+	 *
+	 * @param item the evaporation data of the item
+	 * @param node the label node losing the water
+	 * @param ancestors the composite ingredients holding the node within the labeling level
+	 */
+	private record LabelingEvaporationTarget(EvaporatedDataItem item, CompositeLabeling node, List<CompositeLabeling> ancestors) {
+
+		boolean evaporatesFully() {
+			return (item.getRate() != null) && (item.getRate() == 100d);
+		}
+
+		Double availableQty(boolean doNotPropagateYield) {
+			if (item.isHeldByParent()) {
+				return item.getMaxEvaporableQty();
+			}
+			return available(node.getQtyWithYield(), item.getMaxEvaporableQty(), doNotPropagateYield);
+		}
+
+		Double availableVolume(boolean doNotPropagateYield) {
+			if (item.isHeldByParent()) {
+				return item.getMaxEvaporableVolume();
+			}
+			return available(node.getVolumeWithYield(), item.getMaxEvaporableVolume(), doNotPropagateYield);
+		}
+
+		private Double available(Double withYield, Double maxEvaporable, boolean doNotPropagateYield) {
+			double rate = item.getRate() != null ? item.getRate() : 100d;
+			if ((rate <= 0d) || (withYield == null) || (withYield <= 0d)) {
+				return null;
+			}
+			double availableQty = (withYield * rate) / 100d;
+			return doNotPropagateYield && (maxEvaporable != null) ? Math.min(availableQty, maxEvaporable) : availableQty;
+		}
+
+		void evaporate(Double evaporatedQty, Double evaporatedVolume) {
+			subtract(node, evaporatedQty, evaporatedVolume);
+			for (CompositeLabeling ancestor : ancestors) {
+				subtract(ancestor, evaporatedQty, evaporatedVolume);
+			}
+		}
+
+		private static void subtract(CompositeLabeling labeling, Double evaporatedQty, Double evaporatedVolume) {
+			if ((labeling.getQtyWithYield() != null) && (evaporatedQty != null)) {
+				labeling.setQtyWithYield(labeling.getQtyWithYield() - evaporatedQty);
+			}
+			if ((labeling.getVolumeWithYield() != null) && (evaporatedVolume != null)) {
+				labeling.setVolumeWithYield(labeling.getVolumeWithYield() - evaporatedVolume);
+			}
 		}
 	}
 
@@ -2786,12 +2808,72 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext,
 							compoListDataItem, errors, calculatedYield);
 
+				} else if (!ingListItem.isLeaf() && DeclarationType.DoNotDetails.equals(ingDeclarationType) && (calculatedYield != null)
+						&& (calculatedYield != 100d) && !hasEvaporationData(ingNodeRef)) {
+					registerHiddenSubIngredientsEvaporation(ingLabelItem, ingListItem, qtyWithYield, volumeWithYield);
 				}
 
 			}
 		}
 
 		return parent;
+	}
+
+	/**
+	 * Returns the ingredient list of a component with the percentages of its sub-ingredients expressed in percent of
+	 * the component, as the ingredient list formulation reads them.
+	 * <p>
+	 * Sub-ingredients entered by hand are percentages of their parent ingredient. Reading them as percentages of the
+	 * component made their evaporation and the loss taken off their parent use another unit than the other
+	 * ingredients of the level (see #34702).
+	 *
+	 * @param productData the component
+	 * @return the ingredient list with absolute sub-ingredient percentages
+	 */
+	private List<IngListDataItem> getAbsoluteIngList(ProductData productData) {
+		if (productData.hasCompoListEl()) {
+			return productData.getIngList();
+		}
+		return IngListHelper.scaleRelativeDepthChildren(productData.getIngList());
+	}
+
+	/**
+	 * Registers on a composite ingredient shown without its sub-ingredients the evaporation of those
+	 * sub-ingredients.
+	 * <p>
+	 * A composite ingredient without evaporation rate loses the water of its evaporating sub-ingredients, as the
+	 * ingredient list computes it (see #34702). Its sub-ingredients are not on the label, so the composite carries
+	 * their loss, limited to what they can lose themselves. A sub-ingredient carrying a rate supersedes the rates
+	 * below it.
+	 *
+	 * @param ingLabelItem the composite ingredient on the label
+	 * @param compositeIngList the composite ingredient in the ingredient list of the component
+	 * @param qtyWithYield the quantity with yield of the component
+	 * @param volumeWithYield the volume with yield of the component
+	 */
+	private void registerHiddenSubIngredientsEvaporation(CompositeLabeling ingLabelItem, Composite<IngListDataItem> compositeIngList,
+			Double qtyWithYield, Double volumeWithYield) {
+		for (Composite<IngListDataItem> subIng : compositeIngList.getChildren()) {
+			NodeRef subIngNodeRef = subIng.getData().getIng();
+			Double qtyPerc = subIng.getData().getQtyPerc();
+			if ((subIngNodeRef == null) || (qtyPerc == null)) {
+				continue;
+			}
+			if (hasEvaporationData(subIngNodeRef)) {
+				Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(subIngNodeRef, nodeService);
+				EvaporatedDataItem evaporatedDataItem = new EvaporatedDataItem(subIngNodeRef, evaporateRate,
+						EvaporatingFormulationHelper.calculateMaxEvaporableQty(percentageOf(qtyWithYield, qtyPerc), evaporateRate),
+						EvaporatingFormulationHelper.calculateMaxEvaporableVolume(percentageOf(volumeWithYield, qtyPerc), evaporateRate));
+				evaporatedDataItem.setHeldByParent(true);
+				mergeEvaporatedItem(ingLabelItem.getEvaporatedDataItems(), evaporatedDataItem);
+			} else if (!subIng.isLeaf()) {
+				registerHiddenSubIngredientsEvaporation(ingLabelItem, subIng, qtyWithYield, volumeWithYield);
+			}
+		}
+	}
+
+	private static Double percentageOf(Double value, Double perc) {
+		return value != null ? (value * perc) / 100d : null;
 	}
 
 	/**
