@@ -36,6 +36,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantContextHolder;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -200,7 +201,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		return false;
 	}
-	
+
+	static void setFullyAuthenticatedBatchUser(String batchUser, String tenantDomain) {
+		if (tenantDomain != null) {
+			// A pooled thread may still hold the tenant of a previous batch, which setFullyAuthenticatedUser keeps:
+			// the work provider then queries another tenant store than the one the workers read
+			TenantContextHolder.setTenantDomain(tenantDomain);
+		}
+		AuthenticationUtil.setFullyAuthenticatedUser(batchUser);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isBatchInQueue(BatchInfo batchInfo) {
@@ -653,7 +663,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					batchUser = AuthenticationUtil.getSystemUserName();
 				}
 			}
-			AuthenticationUtil.setFullyAuthenticatedUser(batchUser);
+			setFullyAuthenticatedBatchUser(batchUser, tenantAdminService.isEnabled() ? tenantAdminService.getUserDomain(batchUser) : null);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
