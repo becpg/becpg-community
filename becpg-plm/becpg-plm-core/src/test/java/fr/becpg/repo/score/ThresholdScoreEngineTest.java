@@ -1,6 +1,8 @@
 package fr.becpg.repo.score;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -123,6 +125,20 @@ public class ThresholdScoreEngineTest {
 		withNutrients(410d, 300d);
 
 		assertEquals(1d, chile().getValue(), PRECISION);
+	}
+
+	@Test
+	public void aProductBelowEveryBoundIsDocumented() {
+		withNutrients(200d, 400d);
+
+		assertTrue(engine.isDocumented(product, definition(List.of(threshold(400d, false, HIGH_IN_SODIUM)))));
+	}
+
+	@Test
+	public void aProductWithoutTheNutrientIsNotDocumented() {
+		product.setNutList(new ArrayList<>());
+
+		assertFalse(engine.isDocumented(product, definition(List.of(threshold(400d, false, HIGH_IN_SODIUM)))));
 	}
 
 	private ScoreContext mexico() {

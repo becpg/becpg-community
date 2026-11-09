@@ -84,7 +84,9 @@ public class ThresholdNutritionScore implements ScoreCalculatingPlugin {
 	}
 
 	/**
-	 * <p>publish.</p>
+	 * Publishes the score, including when no threshold is crossed: a dated line without part
+	 * then says that the product was checked and nothing exceeds, where an empty line would
+	 * not tell it from a product never computed.
 	 *
 	 * @param scoredEntity a {@link fr.becpg.repo.score.ScoredEntity} object
 	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
@@ -93,7 +95,7 @@ public class ThresholdNutritionScore implements ScoreCalculatingPlugin {
 	private void publish(ScoredEntity scoredEntity, ProductData product, ScoreDefinitionItem definition) {
 		ScoreContext context = thresholdScoreEngine.compute(product, definition);
 
-		if (!context.getParts().isEmpty()) {
+		if (!context.getParts().isEmpty() || thresholdScoreEngine.isDocumented(product, definition)) {
 			scoreResultWriter.write(scoredEntity, context);
 		}
 	}

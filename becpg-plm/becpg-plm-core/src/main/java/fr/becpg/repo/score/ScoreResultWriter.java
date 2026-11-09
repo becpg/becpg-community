@@ -245,6 +245,8 @@ public class ScoreResultWriter {
 	private static RegulatoryScoreListDataItem copyOf(RegulatoryScoreListDataItem templateItem) {
 		RegulatoryScoreListDataItem item = new RegulatoryScoreListDataItem();
 		item.setScoreDef(templateItem.getScoreDef());
+		// at the root until published: a line without level is drawn under the line above it
+		item.setDepthLevel(0);
 
 		if (Boolean.TRUE.equals(templateItem.getIsManual())) {
 			item.setIsManual(true);

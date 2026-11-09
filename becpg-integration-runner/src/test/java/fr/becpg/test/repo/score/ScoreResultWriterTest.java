@@ -151,6 +151,15 @@ public class ScoreResultWriterTest {
 	}
 
 	@Test
+	public void testALineCopiedFromTheTemplateStandsAtTheRoot() {
+		withTemplate(line(DEFINITION_REF));
+
+		writer.synchronizeTemplate(product);
+
+		assertEquals(Integer.valueOf(0), product.getRegulatoryScoreList().get(0).getDepthLevel());
+	}
+
+	@Test
 	public void testATemplateLineOutOfTheMarketsOfTheProductIsNotCopied() {
 		withTemplate(line(OUT_OF_MARKET_REF), line(RETIRED_REF));
 

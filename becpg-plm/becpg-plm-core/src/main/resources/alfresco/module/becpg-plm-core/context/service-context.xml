@@ -139,6 +139,8 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="scoreMarkingRenderer" ref="scoreMarkingRenderer" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="frontOfPackMarkingService" ref="frontOfPackMarkingService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.product.nutDatabaseCompare.get" class="fr.becpg.repo.web.scripts.product.NutDatabaseCompareWebScript" parent="webscript">
