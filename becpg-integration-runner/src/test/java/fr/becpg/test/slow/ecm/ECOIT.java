@@ -798,6 +798,68 @@ public class ECOIT extends AbstractFinishedProductTest {
 		});
 	}
 
+	/**
+	 * A composition line recreated after the where used calculation, by a merge
+	 * for instance, puts the change order in error instead of skipping the
+	 * replacement.
+	 */
+	@Test
+	public void testRecreatedCompoLinePutsChangeOrderInError() throws InterruptedException {
+
+		final NodeRef componentNodeRef = createRawMaterial("RM to replace");
+		final NodeRef replacementNodeRef = createRawMaterial("RM replacement");
+		final NodeRef productNodeRef = createProductUsing(componentNodeRef, "PF recreated line", null);
+
+		final NodeRef ecoNodeRef = inWriteTx(() -> {
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO recreated line", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement,
+					new ArrayList<>());
+			changeOrderData.setReplacementList(
+					Collections.singletonList(new ReplacementListDataItem(RevisionType.NoRevision, Arrays.asList(componentNodeRef), replacementNodeRef, 100)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+		});
+
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, true, false));
+
+		final NodeRef initialLineNodeRef = inReadTx(() -> {
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef lineNodeRef = productData.getCompoList().get(0).getNodeRef();
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertTrue("Check the composition line is impacted", dbECOData.getWUsedList().stream()
+					.anyMatch(wUsed -> lineNodeRef.equals(wUsed.getLink()) && Boolean.TRUE.equals(wUsed.getIsWUsedImpacted())));
+			return lineNodeRef;
+		});
+
+		inWriteTx(() -> {
+			nodeService.deleteNode(initialLineNodeRef);
+			return null;
+		});
+
+		inWriteTx(() -> {
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			productData.getCompoListView().setCompoList(new ArrayList<>(Collections.singletonList(CompoListDataItem.build().withQtyUsed(1d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(componentNodeRef))));
+			return alfrescoRepository.save(productData).getNodeRef();
+		});
+
+		inReadTx(() -> {
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			assertNotEquals("Check the composition line was recreated", initialLineNodeRef, productData.getCompoList().get(0).getNodeRef());
+			return null;
+		});
+
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
+
+		inReadTx(() -> {
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertEquals(ECOState.InError, dbECOData.getEcoState());
+			assertNotNull(dbECOData.getChangeUnitMap().get(productNodeRef).getErrorMsg());
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			assertEquals(componentNodeRef, productData.getCompoList().get(0).getProduct());
+			return null;
+		});
+	}
+
 	private NodeRef createRawMaterial(String name) {
 		return inWriteTx(() -> {
 
