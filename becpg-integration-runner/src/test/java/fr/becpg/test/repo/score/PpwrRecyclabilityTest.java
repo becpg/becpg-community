@@ -213,6 +213,49 @@ public class PpwrRecyclabilityTest {
 		assertEquals(CLEAR_PET, context().getSteps().get(0).getLabel());
 	}
 
+	@Test
+	public void testAShareOfExactly95PercentReachesGradeA() {
+		pack(CLEAR_PET, 0.6d, PackagingLevel.Primary);
+		pack(CARDBOARD, 336d, PackagingLevel.Primary);
+
+		// summed raw, the weights times rates give 94.99999999999999
+		assertEquals(95d, value(), 0d);
+		assertEquals("A", grade(PackagingLevel.Primary));
+		assertEquals("A", context().getScoreClass());
+	}
+
+	@Test
+	public void testAShareOfExactly80PercentReachesGradeB() {
+		pack("PLASTIC_RIGID_PET", 0.1d, PackagingLevel.Primary);
+		pack("PLASTIC_RIGID_PET_CAP", 0.2d, PackagingLevel.Primary);
+		categories.put("PLASTIC_RIGID_PET", RIGID_PET_CATEGORY);
+		categories.put("PLASTIC_RIGID_PET_CAP", RIGID_PET_CATEGORY);
+
+		// summed raw, the weights times rates give 79.99999999999999
+		assertEquals(80d, value(), 0d);
+		assertEquals("B", grade(PackagingLevel.Primary));
+	}
+
+	@Test
+	public void testAShareOfExactly70PercentReachesGradeC() {
+		pack(COMPLEX, 36.5d, PackagingLevel.Primary);
+		pack(CLEAR_PET, 58.4d, PackagingLevel.Primary);
+
+		// summed raw, the weights times rates give 69.99999999999999
+		assertEquals(70d, value(), 0d);
+		assertEquals("C", grade(PackagingLevel.Primary));
+	}
+
+	@Test
+	public void testAShareJustBelowABoundStaysInTheLowerGrade() {
+		pack(CARDBOARD, 99.995d, PackagingLevel.Primary);
+		pack(PVC, 0.005d, PackagingLevel.Primary);
+
+		// 99.995 x 95 / 100 = 94.99525: displayed as 95, but truly below the bound
+		assertEquals(94.99525d, value(), 1e-9d);
+		assertEquals("B", grade(PackagingLevel.Primary));
+	}
+
 	/**
 	 * <p>Step of the breakdown stating one material.</p>
 	 *
