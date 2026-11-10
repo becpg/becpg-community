@@ -32,6 +32,7 @@ import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -292,8 +293,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_NO_PARENT));
 			}
 
+			Map<QName, Serializable> nodeProperties = ImportHelper.cleanProperties(properties);
+			keepImportedSortOfRootRow(importContext.getType(), nodeProperties);
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
-					ImportHelper.cleanProperties(properties)).getChildRef();
+					nodeProperties).getChildRef();
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("create node ("+nodeRef+"). Type: " + importContext.getType() + " - Properties: " + properties);
@@ -366,6 +369,26 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		logger.debug("Node Imported");
 
 		return nodeRef;
+	}
+
+	/**
+	 * Keeps the sort imported on a new root row of a hierarchical list (#36836): once its depth level is
+	 * set, the sortable list policy leaves the row as imported instead of computing a new sort. A row
+	 * with a parent level is still placed under its parent by the policy.
+	 *
+	 * @param type the type of the imported row
+	 * @param properties the properties of the row to create, completed with the root depth level when needed
+	 */
+	protected void keepImportedSortOfRootRow(QName type, Map<QName, Serializable> properties) {
+		if ((properties.get(BeCPGModel.PROP_SORT) != null) && (properties.get(BeCPGModel.PROP_DEPTH_LEVEL) == null)
+				&& (properties.get(BeCPGModel.PROP_PARENT_LEVEL) == null) && hasDepthLevelAspect(type)) {
+			properties.put(BeCPGModel.PROP_DEPTH_LEVEL, RepoConsts.DEFAULT_LEVEL);
+		}
+	}
+
+	private boolean hasDepthLevelAspect(QName type) {
+		ClassDefinition classDefinition = entityDictionaryService.getClass(type);
+		return (classDefinition != null) && classDefinition.getDefaultAspectNames().contains(BeCPGModel.ASPECT_DEPTH_LEVEL);
 	}
 
 	/**
