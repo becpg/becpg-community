@@ -105,9 +105,7 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 			}
 
 			NodeRef entityTplRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-			if (entityTplRef != null) {
-				ret.append(" ").append(typeCss).append("-").append(entityTplRef.getId());
-			}
+			ret.append(templateCssClasses(typeCss, nodeRef, entityTplRef));
 		}
 
 		return ret.toString();
