@@ -2558,6 +2558,45 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	/**
+	 * #34702 : a sub-ingredient brought by two raw materials is declared in the plural. The label reads the
+	 * sub-ingredients through rescaled copies of the ingredient list, which must keep the identity the plural
+	 * detection relies on.
+	 */
+	@Test
+	public void testSubIngBroughtByTwoRawMaterialsIsPlural() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			NodeRef composite = CharactTestHelper.getOrCreateIng(nodeService, "base 34702pl");
+			MLText pluralLegalName = new MLText();
+			pluralLegalName.addValue(I18NUtil.getContentLocaleLang(), "noisettes 34702pl");
+			pluralLegalName.addValue(Locale.FRENCH, "noisettes 34702pl");
+			NodeRef nut = CharactTestHelper.getOrCreateIng(nodeService, "noisette 34702pl");
+			nodeService.setProperty(nut, PLMModel.PROP_PLURAL_LEGAL_NAME, pluralLegalName);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			for (String rawMaterialName : List.of("MP base A 34702pl", "MP base B 34702pl")) {
+				IngListDataItem parent = IngListDataItem.build().withQtyPerc(100d).withIngredient(composite);
+				RawMaterialData rawMaterial = RawMaterialData.build().withName(rawMaterialName).withQty(1d).withUnit(ProductUnit.kg)
+						.withIngList(List.of(parent, IngListDataItem.build().withQtyPerc(100d).withIngredient(nut).withParent(parent)));
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef()));
+			}
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("PF pluriel 34702pl").withUnit(ProductUnit.kg).withQty(2d)
+					.withCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(List.of(inReadTx(() -> CharactTestHelper.getOrCreateIng(nodeService, "base 34702pl")))).withReplacements(null));
+
+		String label = getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, rules), Locale.FRENCH);
+
+		Assert.assertTrue("The sub-ingredient brought by two raw materials must be plural, label: " + label,
+				label.toLowerCase(Locale.FRENCH).contains("noisettes 34702pl"));
+	}
+
+	/**
 	 * #37354 : the legal name declaration chosen on the compo line of a reconstitutable raw material turns its
 	 * reconstitution off. The raw material is declared as it is used and its diluent stays on the label.
 	 */

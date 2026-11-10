@@ -2315,8 +2315,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (logger.isDebugEnabled()) {
 					logger.debug("Take in account evaporation in Do Not declare");
 				}
-				evaporatingQty -= orZero(target.item().getMaxEvaporableQty());
-				evaporatingVolume -= orZero(target.item().getMaxEvaporableVolume());
+				double hiddenQty = Math.min(Math.max(evaporatingQty, 0d), orZero(target.item().getMaxEvaporableQty()));
+				double hiddenVolume = Math.min(Math.max(evaporatingVolume, 0d), orZero(target.item().getMaxEvaporableVolume()));
+				target.evaporateAncestors(hiddenQty, hiddenVolume);
+				evaporatingQty -= hiddenQty;
+				evaporatingVolume -= hiddenVolume;
 			} else {
 				totalAvailableQty += orZero(target.availableQty(doNotPropagateYield));
 				totalAvailableVolume += orZero(target.availableVolume(doNotPropagateYield));
@@ -2398,6 +2401,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		void evaporate(Double evaporatedQty, Double evaporatedVolume) {
 			subtract(node, evaporatedQty, evaporatedVolume);
+			evaporateAncestors(evaporatedQty, evaporatedVolume);
+		}
+
+		void evaporateAncestors(Double evaporatedQty, Double evaporatedVolume) {
 			for (CompositeLabeling ancestor : ancestors) {
 				subtract(ancestor, evaporatedQty, evaporatedVolume);
 			}
@@ -2671,8 +2678,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (hasEvaporationData(ingNodeRef) && (calculatedYield != null) && (calculatedYield != 100d)) {
 
 					Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(ingNodeRef, nodeService);
-					Double maxEvaporableQty = EvaporatingFormulationHelper.calculateMaxEvaporableQty(qtyWithYield, evaporateRate);
-					Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(volumeWithYield, evaporateRate);
+					Double ingQtyPerc = ingListItem.getData().getQtyPerc();
+					Double maxEvaporableQty = EvaporatingFormulationHelper
+							.calculateMaxEvaporableQty(ingQtyPerc != null ? percentageOf(qtyWithYield, ingQtyPerc) : qtyWithYield, evaporateRate);
+					Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(
+							ingQtyPerc != null ? percentageOf(volumeWithYield, ingQtyPerc) : volumeWithYield, evaporateRate);
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "

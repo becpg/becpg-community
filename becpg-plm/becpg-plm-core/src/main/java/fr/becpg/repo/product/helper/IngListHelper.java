@@ -89,6 +89,19 @@ public class IngListHelper {
 		return ret;
 	}
 
+	/**
+	 * Copies an ingredient list item, keeping the node it stands for : the labeling tells a sub-ingredient brought by
+	 * two raw materials, declared in the plural, from the same line visited twice by that node (#34702).
+	 *
+	 * @param item the item to copy
+	 * @return a copy standing for the same node
+	 */
+	private static IngListDataItem copyKeepingIdentity(IngListDataItem item) {
+		IngListDataItem copy = item.copy();
+		copy.setNodeRef(item.getNodeRef());
+		return copy;
+	}
+
 	private static IngListDataItem scaleDepthChild(IngListDataItem item, Map<IngListDataItem, IngListDataItem> scaledItems) {
 
 		IngListDataItem scaled = scaledItems.get(item);
@@ -110,13 +123,13 @@ public class IngListHelper {
 				scaledItems.put(item, item);
 				return item;
 			}
-			IngListDataItem unscaled = item.copy();
+			IngListDataItem unscaled = copyKeepingIdentity(item);
 			unscaled.setParent(scaledParent);
 			scaledItems.put(item, unscaled);
 			return unscaled;
 		}
 
-		IngListDataItem copy = item.copy();
+		IngListDataItem copy = copyKeepingIdentity(item);
 		copy.setParent(scaledParent);
 
 		if (copy.getQtyPerc() != null) {

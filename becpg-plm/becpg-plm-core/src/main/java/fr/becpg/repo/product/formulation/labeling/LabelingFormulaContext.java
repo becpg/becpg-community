@@ -4093,11 +4093,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return computeQtyPerc(parent, component, ratio, false);
 		}
 
-		// After the yield, a composite ingredient holds exactly what its sub ingredients hold once they lost their
-		// water : they are rendered as their share of it, whatever the water they lost (#34702).
+		// After the yield, a composite ingredient without evaporation rate holds exactly what its sub ingredients hold
+		// once they lost their water : they are rendered as their share of it, whatever the water they lost. A
+		// composite carrying its own rate loses water its sub ingredients do not : they add up to more than it and are
+		// scaled back to it, keeping the proportions of the recipe (#34702).
 		Double qtyWithYield = useVolume ? composite.getVolume(true) : composite.getQty(true);
 		if (withYield && (composite instanceof IngItem) && (qtyWithYield != null) && (qtyWithYield > 0d)) {
-			return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION).divide(BigDecimal.valueOf(qtyWithYield), PRECISION);
+			return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION)
+					.divide(BigDecimal.valueOf(Math.max(qtyWithYield, subIngsQty)), PRECISION);
 		}
 
 		// Sub ingredients falling short of their parent are a partial declaration, which is legitimate :
