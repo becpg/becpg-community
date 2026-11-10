@@ -2502,6 +2502,62 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	/**
+	 * #34702 : the sub-ingredients of a raw material are entered as percentages of their parent ingredient. A partly
+	 * declared composite used to show its only sub-ingredient at the percentage of the composite itself, whereas the
+	 * ingredient list gives 75 % of 70 % = 52.5 %. The label now reads the same percentages as the ingredient list.
+	 */
+	@Test
+	public void testPartiallyDeclaredSubIngIsScaledByItsParent() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createPartiallyDeclaredCompositeProduct("34702p", 1d));
+
+		checkILL(finishedProductNodeRef, partiallyDeclaredCompositeRules("34702p", false),
+				"compose 34702p 70% (enfant 34702p 52,5%), autre 34702p 30%", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702 : same recipe in a product that loses 15 % of its weight, none of the ingredients carrying an evaporation
+	 * rate. Every percentage is concentrated by the yield, the sub-ingredient included : 52.5 / 0.85 = 61.76 %.
+	 */
+	@Test
+	public void testPartiallyDeclaredSubIngIsScaledByItsParentWithYield() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createPartiallyDeclaredCompositeProduct("34702y", 0.85d));
+
+		checkILL(finishedProductNodeRef, partiallyDeclaredCompositeRules("34702y", true),
+				"compose 34702y 82,35% (enfant 34702y 61,76%), autre 34702y 35,29%", Locale.FRENCH);
+	}
+
+	private NodeRef createPartiallyDeclaredCompositeProduct(String key, double netQty) {
+		IngListDataItem composite = IngListDataItem.build().withQtyPerc(70d)
+				.withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "compose " + key));
+		List<IngListDataItem> ingList = List.of(composite,
+				IngListDataItem.build().withQtyPerc(75d).withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "enfant " + key))
+						.withParent(composite),
+				IngListDataItem.build().withQtyPerc(30d).withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "autre " + key)));
+		RawMaterialData rawMaterial = RawMaterialData.build().withName("MP compose " + key).withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(ingList);
+		NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		FinishedProductData finishedProduct = FinishedProductData.build().withName("PF compose " + key).withUnit(ProductUnit.kg).withQty(netQty)
+				.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterialNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
+	private List<LabelingRuleListDataItem> partiallyDeclaredCompositeRules(String key, boolean withYield) {
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.##%} ({2})").withLabelingRuleType(LabelingRuleType.Format));
+		rules.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.##%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		if (withYield) {
+			rules.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("ingsLabelingWithYield=true")
+					.withLabelingRuleType(LabelingRuleType.Prefs));
+		}
+		rules.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(List.of(inReadTx(() -> CharactTestHelper.getOrCreateIng(nodeService, "compose " + key)))).withReplacements(null));
+		return rules;
+	}
+
+	/**
 	 * #37354 : the legal name declaration chosen on the compo line of a reconstitutable raw material turns its
 	 * reconstitution off. The raw material is declared as it is used and its diluent stays on the label.
 	 */
