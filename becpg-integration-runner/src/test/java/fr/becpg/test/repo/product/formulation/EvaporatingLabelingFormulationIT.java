@@ -1395,6 +1395,10 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 68.43d, 34.22d, 20.53d, 13.69d, 31.57d }, QUICHE_MIX_RATE_80, ING_MILK,
 				ING_EGGS, ING_CREAM, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(QUICHE_MIX_RATE_80),
+				"appareil 80 34702e 68,43% (lait 34702e 34,22%, oeufs 34702e 20,53%, creme 34702e 13,69%), lardons 34702e 31,57%",
+				Locale.FRENCH);
 	}
 
 	/**
@@ -1408,6 +1412,10 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 82.35d, 41.18d, 24.71d, 16.47d, 17.65d }, QUICHE_MIX_RATE_0, ING_MILK,
 				ING_EGGS, ING_CREAM, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(QUICHE_MIX_RATE_0),
+				"appareil 0 34702e 82,35% (lait 34702e 41,18%, oeufs 34702e 24,71%, creme 34702e 16,47%), lardons 34702e 17,65%",
+				Locale.FRENCH);
 	}
 
 	/**
@@ -1440,6 +1448,24 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		List<IngListDataItem> ingList = List.of(buildIng(ing(ING_CHEESE), 60d), puree, buildIng(ingWithRate(ING_TOMATO, 10d), 75d).withParent(puree),
 				buildIngWithoutQtyPerc(ing(ING_OIL)).withParent(puree));
 		return createFinishedProduct(PUREE_WITHOUT_RATE, ingList, 0.98d);
+	}
+
+	/**
+	 * #34702 : a sub-ingredient not declared on the label still loses its own water, and only its own : the sauce
+	 * holds 28 % of hidden water out of which 15 evaporate, the lardons keep their quantity.
+	 * <pre>
+	 * 1 kg in, 0.85 kg net : sauce 70 - 15 = 55 -> 64.71 %, lardons 30 -> 35.29 %
+	 * </pre>
+	 */
+	@Test
+	public void testHiddenSubIngredientLosesOnlyItsOwnWater() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createSauceProduct);
+
+		List<LabelingRuleListDataItem> labelingRules = detailedLabelingRules(SAUCE_WITHOUT_RATE);
+		labelingRules.add(LabelingRuleListDataItem.build().withName("Hide water").withLabelingRuleType(LabelingRuleType.DoNotDeclare)
+				.withComponents(List.of(inReadTx(() -> ing(ING_WATER)))).withReplacements(null));
+
+		checkILL(finishedProductNodeRef, labelingRules, "sauce vide 34702e 64,71% (tomate 34702e 49,41%), lardons 34702e 35,29%", Locale.FRENCH);
 	}
 
 	private NodeRef createFinishedProduct(String name, List<IngListDataItem> ingList, double netQty) {
