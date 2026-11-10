@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -329,11 +331,20 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	}
 
 	/**
-	 * <p>updateDepthUserPref.</p>
+	 * Saves the depth of the filter as the user's preference for this list type.
+	 * Skipped outside a read-write transaction: the pages of an asynchronous export are
+	 * extracted in read-only transactions and must not persist UI preferences.
 	 *
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
 	 */
 	private void updateDepthUserPref(DataListFilter dataListFilter) {
+		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Depth preference not saved outside a read-write transaction");
+			}
+			return;
+		}
+
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
