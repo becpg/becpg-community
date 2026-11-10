@@ -64,6 +64,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScoreScale;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -95,6 +96,13 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	private static final String INVALID_CURRENCY = "XXX";
 	private static final String KEY_ANNOTATION = "@Key";
 	private static final String KEY_LIST_NAME = "KeyCostList ";
+	private static final String SURVEY_QUESTION_TYPE = "survey:surveyQuestion";
+	private static final String NAME_COLUMN = "cm:name";
+	private static final String SURVEY_QUESTION_LABEL_COLUMN = "survey:questionLabel";
+	private static final String SORT_COLUMN = "bcpg:sort";
+	private static final String SORTED_QUESTIONS_LIST_NAME = "SortedQuestionList";
+	private static final int FIRST_IMPORTED_SORT = 98361;
+	private static final int SECOND_IMPORTED_SORT = 98362;
 	/** The import header takes rows 0 to 4, the import is processed by batches of 10 rows. */
 	private static final int FIRST_BATCH_FIRST_VALUES_ROW = 5;
 	private static final int SECOND_BATCH_FIRST_ROW = 10;
@@ -1157,6 +1165,59 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		assertEquals(List.of("Key cost A1", "Key cost A2"), costNames);
 		int keyedLineRow = rows.size() - 1;
 		assertRowsColor(importFileNodeRef, keyedLineRow, keyedLineRow + 1, ExcelHelper.createRedColor());
+	}
+
+	/**
+	 * #36836 - the questions created by an import keep the sort of the file without a depth level
+	 * column: they are root rows, so the sortable list policy must not compute a new sort.
+	 *
+	 * @throws Exception if the import fails to run
+	 */
+	@Test
+	public void testImportedSortIsKeptOnNewRootRows() throws Exception {
+		NodeRef dataListNodeRef = createSurveyQuestionDataList();
+		String dataListName = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME), true, true);
+
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { ImportHelper.PFX_MAPPING, TEST_MAPPING });
+		rows.add(new String[] { ImportHelper.PFX_STOP_ON_FIRST_ERROR, String.valueOf(false) });
+		rows.add(new String[] { ImportHelper.PFX_PATH, "/" + PATH_TEMP + "/" + dataListName });
+		rows.add(new String[] { ImportHelper.PFX_TYPE, SURVEY_QUESTION_TYPE });
+		rows.add(new String[] { ImportHelper.PFX_COLUMS, NAME_COLUMN, SURVEY_QUESTION_LABEL_COLUMN, SORT_COLUMN });
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "Sorted question 1", "Sorted question 1", String.valueOf(FIRST_IMPORTED_SORT) });
+		rows.add(new String[] { ImportHelper.PFX_VALUES, "Sorted question 2", "Sorted question 2", String.valueOf(SECOND_IMPORTED_SORT) });
+		importXlsx("import-sorted-questions.xlsx", rows);
+
+		Map<Integer, Integer> depthLevelBySort = findDepthLevelBySort(dataListNodeRef);
+		assertEquals(Map.of(FIRST_IMPORTED_SORT, RepoConsts.DEFAULT_LEVEL, SECOND_IMPORTED_SORT, RepoConsts.DEFAULT_LEVEL), depthLevelBySort);
+	}
+
+	/**
+	 * Creates a survey question data list in the temp folder; the data list policy renames it after its
+	 * item type, so the caller reads its name back.
+	 */
+	private NodeRef createSurveyQuestionDataList() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef tempFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), List.of(PATH_TEMP));
+			Map<QName, Serializable> listProperties = new HashMap<>();
+			listProperties.put(ContentModel.PROP_NAME, SORTED_QUESTIONS_LIST_NAME);
+			listProperties.put(DataListModel.PROP_DATALISTITEMTYPE, SURVEY_QUESTION_TYPE);
+			return nodeService.createNode(tempFolderNodeRef, ContentModel.ASSOC_CONTAINS, SurveyModel.TYPE_SURVEY_QUESTION,
+					DataListModel.TYPE_DATALIST, listProperties).getChildRef();
+		}, false, true);
+	}
+
+	private Map<Integer, Integer> findDepthLevelBySort(NodeRef dataListNodeRef) {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<Integer, Integer> depthLevelBySort = new HashMap<>();
+			for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(dataListNodeRef)) {
+				NodeRef questionNodeRef = childAssoc.getChildRef();
+				depthLevelBySort.put((Integer) nodeService.getProperty(questionNodeRef, BeCPGModel.PROP_SORT),
+						(Integer) nodeService.getProperty(questionNodeRef, BeCPGModel.PROP_DEPTH_LEVEL));
+			}
+			return depthLevelBySort;
+		}, true, true);
 	}
 
 	/**

@@ -4,6 +4,8 @@
 package fr.becpg.repo.importer.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,11 +18,14 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -32,13 +37,17 @@ import org.junit.Test;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.AttributeMapping;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImporterException;
 
 /**
  * Unit tests of the association targets of an imported line (#35654): they are all found before the
- * line writes anything, so that a missing or ambiguous target fails the line alone.
+ * line writes anything, so that a missing or ambiguous target fails the line alone. Also covers the
+ * sort kept on a new root row of a hierarchical list (#36836).
  */
 public class AbstractImportVisitorTest {
 
@@ -48,6 +57,9 @@ public class AbstractImportVisitorTest {
 	private static final QName NAME = QName.createQName(BECPG_URI, "name");
 	private static final String TARGET_CODE = "CLIMATE_CHANGE";
 	private static final NodeRef TARGET = new NodeRef("workspace://SpacesStore/target");
+	private static final QName HIERARCHICAL_TYPE = QName.createQName(BECPG_URI, "hierarchicalItem");
+	private static final QName FLAT_TYPE = QName.createQName(BECPG_URI, "flatItem");
+	private static final int IMPORTED_SORT = 98361;
 
 	private AbstractImportVisitor visitor;
 
@@ -62,6 +74,7 @@ public class AbstractImportVisitorTest {
 		visitor = spy(new ImportNodeVisitor());
 		associationService = mock(AssociationService.class);
 		visitor.setAssociationService(associationService);
+		visitor.setEntityDictionaryService(mockDictionary());
 
 		ClassDefinition targetClass = mock(ClassDefinition.class);
 		when(targetClass.getName()).thenReturn(TARGET_TYPE);
@@ -128,5 +141,70 @@ public class AbstractImportVisitorTest {
 		visitor.updateAssociations(nodeRef, targets);
 
 		verify(associationService).update(nodeRef, ASSOC, List.of(TARGET));
+	}
+
+	@Test
+	public void rootRowWithSortGetsTheRootDepthLevel() {
+		Map<QName, Serializable> properties = rowWithSort();
+
+		visitor.keepImportedSortOfRootRow(HIERARCHICAL_TYPE, properties);
+
+		assertEquals(RepoConsts.DEFAULT_LEVEL, properties.get(BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(IMPORTED_SORT, properties.get(BeCPGModel.PROP_SORT));
+	}
+
+	@Test
+	public void childRowIsLeftToTheSortPolicy() {
+		Map<QName, Serializable> properties = rowWithSort();
+		properties.put(BeCPGModel.PROP_PARENT_LEVEL, TARGET);
+
+		visitor.keepImportedSortOfRootRow(HIERARCHICAL_TYPE, properties);
+
+		assertNull(properties.get(BeCPGModel.PROP_DEPTH_LEVEL));
+	}
+
+	@Test
+	public void importedDepthLevelIsKept() {
+		Map<QName, Serializable> properties = rowWithSort();
+		properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 2);
+
+		visitor.keepImportedSortOfRootRow(HIERARCHICAL_TYPE, properties);
+
+		assertEquals(2, properties.get(BeCPGModel.PROP_DEPTH_LEVEL));
+	}
+
+	@Test
+	public void rowWithoutSortIsLeftToTheSortPolicy() {
+		Map<QName, Serializable> properties = new HashMap<>();
+
+		visitor.keepImportedSortOfRootRow(HIERARCHICAL_TYPE, properties);
+
+		assertFalse(properties.containsKey(BeCPGModel.PROP_DEPTH_LEVEL));
+	}
+
+	@Test
+	public void typeWithoutDepthLevelAspectGetsNoDepthLevel() {
+		Map<QName, Serializable> properties = rowWithSort();
+
+		visitor.keepImportedSortOfRootRow(FLAT_TYPE, properties);
+
+		assertFalse(properties.containsKey(BeCPGModel.PROP_DEPTH_LEVEL));
+	}
+
+	private static Map<QName, Serializable> rowWithSort() {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_SORT, IMPORTED_SORT);
+		return properties;
+	}
+
+	private static EntityDictionaryService mockDictionary() {
+		EntityDictionaryService dictionary = mock(EntityDictionaryService.class);
+		ClassDefinition hierarchicalClass = mock(ClassDefinition.class);
+		when(hierarchicalClass.getDefaultAspectNames()).thenReturn(Set.of(BeCPGModel.ASPECT_DEPTH_LEVEL));
+		when(dictionary.getClass(HIERARCHICAL_TYPE)).thenReturn(hierarchicalClass);
+		ClassDefinition flatClass = mock(ClassDefinition.class);
+		when(flatClass.getDefaultAspectNames()).thenReturn(Set.of());
+		when(dictionary.getClass(FLAT_TYPE)).thenReturn(flatClass);
+		return dictionary;
 	}
 }
