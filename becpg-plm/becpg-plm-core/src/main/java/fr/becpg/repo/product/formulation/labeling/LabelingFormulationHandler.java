@@ -1687,6 +1687,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Double calculatedYield = (currYield != null) && (currYield != 0d) ? currYield : 100d;
 			CompoListDataItem compoListDataItem = composite.getData();
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
+			DeclarationType requestedDeclarationType = declarationType;
 
 			if (!DeclarationType.Omit.equals(declarationType)) {
 
@@ -1789,8 +1790,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-				// Reconstitution (skipped when the raw material quantity is 0)
-				if (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_RECONSTITUTABLE) && (qty != null) && (qty > 0d)) {
+				// Reconstitution (skipped when the raw material quantity is 0 or when the recipe declares its legal name)
+				if (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_RECONSTITUTABLE) && (qty != null) && (qty > 0d)
+						&& isReconstitutionRequested(requestedDeclarationType)) {
 					Double reconstitionRate = (Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_RECONSTITUTION_RATE);
 					if (reconstitionRate != null) {
 						NodeRef diluentNodeRef = associationService.getTargetAssoc(productNodeRef, PLMModel.ASSOC_DILUENT_REF);
@@ -2006,6 +2008,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			applyEvaporation(labelingFormulaContext, parent);
 
 		}
+	}
+
+	/**
+	 * Tells whether a reconstitutable raw material is reconstituted in a recipe.
+	 * <p>
+	 * A reconstitutable raw material is always declared by its legal name, so choosing that declaration had no
+	 * effect and the reconstitution could not be turned off without duplicating the raw material (#37354). The
+	 * declaration requested on the compo line, or by a labeling rule targeting the raw material, now decides: asking
+	 * for its legal name keeps the raw material as it is used, and its diluent stays on the label.
+	 *
+	 * @param requestedDeclarationType the declaration type requested for the raw material, before the overrides of
+	 *            the water loss and of the reconstitution
+	 * @return false when the legal name of the raw material is requested
+	 */
+	static boolean isReconstitutionRequested(DeclarationType requestedDeclarationType) {
+		return !DeclarationType.DoNotDetails.equals(requestedDeclarationType) && !DeclarationType.DoNotDetailsAtEnd.equals(requestedDeclarationType);
 	}
 
 	/**
