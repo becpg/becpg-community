@@ -189,12 +189,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PIF_REPORT_PARAMETERS = "{\"prefs\":{\"assocsToExtract\":\"mpm:plStep,bcpg:subsidiaryRef\"}}";
 
 	/**
-	 * The cost sheet reads the cost lists of the components two levels deep, and those of the packaging and resources.
-	 * The components keep to their properties and the extracted entities to the four lists the sheet reads: the other
-	 * lists of every component would blow up the data source of a rich product.
+	 * The cost sheet reads the cost of a composition line in the cost list of its component, and those of the
+	 * packaging and resources. The components keep to their properties and the extracted entities to the four lists
+	 * the sheet reads: the other lists of every component would blow up the data source of a rich product.
+	 * <p>
+	 * No maximum composition level is set: a line of the last extracted level comes without the lists of its
+	 * component, so the components of a semi-finished product were listed without their cost (#38241). Cost lists are
+	 * small, every level can carry its own.
 	 */
 	public static final String COST_REPORT_PARAMETERS = "{\"prefs\":{\"componentDatalistsToExtract\":\"bcpg:costList\","
-			+ "\"maxCompoListLevelToExtract\":\"2\",\"extractInMultiLevel\":\"true\","
+			+ "\"extractInMultiLevel\":\"true\","
 			+ "\"assocsToExtract\":\"bcpg:compoListProduct\","
 			+ "\"assocsToExtractWithDataList\":\"bcpg:packagingListProduct,mpm:plResource\","
 			+ "\"entityDatalistsToExtract\":\"bcpg:compoList,bcpg:packagingList,mpm:processList,bcpg:costList\"}}";

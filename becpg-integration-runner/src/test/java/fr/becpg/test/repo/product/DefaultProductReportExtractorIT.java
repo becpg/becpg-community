@@ -74,6 +74,12 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 
 	private static final String COMPONENT_XPATH = "dataLists/compoLists/compoList/compoListProduct/*";
 
+	private static final String COMPOSITION_LINE_XPATH = "dataLists/compoLists/compoList";
+
+	private static final String RAW_MATERIAL_LINE_XPATH = COMPOSITION_LINE_XPATH + "[compoListProduct/rawMaterial]";
+
+	private static final String RAW_MATERIAL_LINE_WITH_COST_XPATH = RAW_MATERIAL_LINE_XPATH + "[dataLists/costLists/costList]";
+
 	private static final String COMPONENT_LISTS_XPATH = COMPONENT_XPATH + "/dataLists/*";
 
 	@Autowired
@@ -225,8 +231,8 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 	}
 
 	/**
-	 * The cost sheet created at init extracts the costs of the components two levels deep and their properties, but
-	 * not their lists: those would blow up the data source of a rich product.
+	 * The cost sheet created at init extracts the costs of the components and their properties, but not their lists:
+	 * those would blow up the data source of a rich product.
 	 */
 	@Test
 	public void testCostSheetPreferencesKeepToTheCostLists() {
@@ -246,6 +252,57 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 			Assert.assertFalse("the workaround extracted them", workaround.selectNodes(COMPONENT_LISTS_XPATH).isEmpty());
 			return null;
 		});
+	}
+
+	/**
+	 * #38241: the raw materials of a semi-finished product, and those of a semi-finished product nested in it, are
+	 * listed on the cost sheet with the cost list of their component. With a maximum level, the lines of the last
+	 * extracted level came without their cost and the deeper ones were not listed.
+	 */
+	@Test
+	public void testCostSheetGivesEveryCompositionLineItsCosts() {
+		inWriteTx(() -> {
+			NodeRef finishedProductNodeRef = createThreeLevelFinishedProduct();
+
+			Element costSheet = defaultProductReportExtractor.extract(finishedProductNodeRef, preferences(PLMInitRepoVisitor.COST_REPORT_PARAMETERS))
+					.getXmlDataSource();
+
+			Assert.assertEquals("the two semi-finished products and the two raw materials are listed", 4,
+					costSheet.selectNodes(COMPOSITION_LINE_XPATH).size());
+			Assert.assertEquals("the raw materials of both semi-finished products are listed", 2, costSheet.selectNodes(RAW_MATERIAL_LINE_XPATH).size());
+			Assert.assertEquals("every raw material line carries its costs", 2, costSheet.selectNodes(RAW_MATERIAL_LINE_WITH_COST_XPATH).size());
+			Assert.assertTrue("the components still come without their other lists", costSheet.selectNodes(COMPONENT_LISTS_XPATH).isEmpty());
+			return null;
+		});
+	}
+
+	private NodeRef createThreeLevelFinishedProduct() {
+		NodeRef innerNodeRef = createFormulatedSemiFinishedProduct("Cost sheet inner SF", rawMaterial1NodeRef);
+		NodeRef outerNodeRef = createFormulatedSemiFinishedProduct("Cost sheet outer SF", innerNodeRef, rawMaterial2NodeRef);
+
+		FinishedProductData finishedProduct = new FinishedProductData();
+		finishedProduct.setName("Cost sheet three level PF");
+		finishedProduct.setUnit(ProductUnit.kg);
+		finishedProduct.setQty(1d);
+		finishedProduct.getCompoListView().setCompoList(new ArrayList<>(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+				.withDeclarationType(DeclarationType.Detail).withProduct(outerNodeRef))));
+		NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		productService.formulate(finishedProductNodeRef);
+		return finishedProductNodeRef;
+	}
+
+	private NodeRef createFormulatedSemiFinishedProduct(String name, NodeRef... components) {
+		SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
+		semiFinishedProduct.setName(name);
+		List<CompoListDataItem> compoList = new ArrayList<>();
+		for (NodeRef component : components) {
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+					.withProduct(component));
+		}
+		semiFinishedProduct.getCompoListView().setCompoList(compoList);
+		NodeRef semiFinishedNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
+		productService.formulate(semiFinishedNodeRef);
+		return semiFinishedNodeRef;
 	}
 
 	private NodeRef createTwoLevelFinishedProduct() {
