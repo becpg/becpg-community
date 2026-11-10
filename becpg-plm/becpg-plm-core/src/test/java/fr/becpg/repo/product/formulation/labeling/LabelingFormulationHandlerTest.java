@@ -1,6 +1,8 @@
 package fr.becpg.repo.product.formulation.labeling;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 
@@ -11,6 +13,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 /**
  * #37613 : the components of a detailed semi-finished product only carry its own yield, so that its bracket keeps
  * the proportions of its recipe, while declared components still carry the yield inherited from the levels above.
+ * #37354 : declaring the legal name of a reconstitutable raw material turns its reconstitution off.
  */
 public class LabelingFormulationHandlerTest {
 
@@ -51,5 +54,27 @@ public class LabelingFormulationHandlerTest {
 		BigDecimal subCompositionYield = LabelingFormulationHandler.computeSubCompositionYield(null, INHERITED_YIELD, DeclarationType.Kit);
 
 		assertEquals(90.76d, subCompositionYield.doubleValue(), DELTA);
+	}
+
+	@Test
+	public void legalNameDeclarationTurnsTheReconstitutionOff() {
+		assertFalse(LabelingFormulationHandler.isReconstitutionRequested(DeclarationType.DoNotDetails));
+	}
+
+	@Test
+	public void legalNameDeclaredAtTheEndTurnsTheReconstitutionOff() {
+		assertFalse(LabelingFormulationHandler.isReconstitutionRequested(DeclarationType.DoNotDetailsAtEnd));
+	}
+
+	@Test
+	public void defaultDeclarationKeepsTheReconstitution() {
+		assertTrue(LabelingFormulationHandler.isReconstitutionRequested(DeclarationType.Declare));
+		assertTrue(LabelingFormulationHandler.isReconstitutionRequested(null));
+	}
+
+	@Test
+	public void ingredientDeclarationsKeepTheReconstitution() {
+		assertTrue(LabelingFormulationHandler.isReconstitutionRequested(DeclarationType.Detail));
+		assertTrue(LabelingFormulationHandler.isReconstitutionRequested(DeclarationType.DoNotDeclare));
 	}
 }

@@ -2501,6 +2501,131 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		});
 	}
 
+	/**
+	 * #37354 : the legal name declaration chosen on the compo line of a reconstitutable raw material turns its
+	 * reconstitution off. The raw material is declared as it is used and its diluent stays on the label.
+	 */
+	@Test
+	public void testLegalNameDeclarationTurnsReconstitutionOff() {
+		NodeRef finishedProductNodeRef = createReconstitutionProduct("Produit fini 37354 lib legal", DeclarationType.DoNotDetails);
+		try {
+			String label = renderReconstitutionLabel(finishedProductNodeRef, new ArrayList<>());
+
+			Assert.assertFalse("The reconstitution target must be absent, label: " + label, label.contains("ing6 french"));
+			Assert.assertTrue("The raw material must be declared by its legal name, label: " + label, label.contains("Legal Raw material 1"));
+		} finally {
+			removeReconstitution();
+		}
+	}
+
+	/**
+	 * #37354 : a "do not detail" labeling rule targeting a reconstitutable raw material turns its reconstitution off
+	 * as well, the compo line staying declared.
+	 */
+	@Test
+	public void testDoNotDetailsRuleTurnsReconstitutionOff() {
+		NodeRef finishedProductNodeRef = createReconstitutionProduct("Produit fini 37354 regle", DeclarationType.Declare);
+		try {
+			List<LabelingRuleListDataItem> rules = new ArrayList<>();
+			rules.add(LabelingRuleListDataItem.build().withName("Lib legal").withLabelingRuleType(LabelingRuleType.DoNotDetails)
+					.withComponents(List.of(rawMaterial1NodeRef)).withReplacements(null));
+
+			String label = renderReconstitutionLabel(finishedProductNodeRef, rules);
+
+			Assert.assertFalse("The reconstitution target must be absent, label: " + label, label.contains("ing6 french"));
+			Assert.assertTrue("The raw material must be declared by its legal name, label: " + label, label.contains("Legal Raw material 1"));
+		} finally {
+			removeReconstitution();
+		}
+	}
+
+	/**
+	 * #37354 : without reconstitution, the water loss set on the water of the diluent raw material is still applied.
+	 * <pre>
+	 * 1 kg of powder + 4 kg of water in, 4.5 kg net : the water loses 0.5 kg
+	 * water 3.5 / 4.5 = 77.8 %, powder 1 / 4.5 = 22.2 %
+	 * </pre>
+	 */
+	@Test
+	public void testWaterLossIsKeptWhenReconstitutionIsOff() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createRehydratedProduct);
+
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}").withLabelingRuleType(LabelingRuleType.Format));
+		rules.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		checkILL(finishedProductNodeRef, rules, "eau 37354 77,8%, poudre 37354 22,2%", Locale.FRENCH);
+	}
+
+	private NodeRef createReconstitutionProduct(String name, DeclarationType reconstitutableDeclarationType) {
+		return inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(name);
+			finishedProduct.setLegalName("Legal " + name);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+							.withProduct(rawMaterial7NodeRef),
+					CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+							.withDeclarationType(reconstitutableDeclarationType).withProduct(rawMaterial1NodeRef)));
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+			nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+	}
+
+	private String renderReconstitutionLabel(NodeRef finishedProductNodeRef, List<LabelingRuleListDataItem> rules) {
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		return getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, rules), Locale.FRENCH);
+	}
+
+	private void removeReconstitution() {
+		inWriteTx(() -> {
+			nodeService.removeAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE);
+			return null;
+		});
+	}
+
+	private NodeRef createRehydratedProduct() {
+		NodeRef water = CharactTestHelper.getOrCreateIng(nodeService, "eau 37354");
+		if (!nodeService.hasAspect(water, PLMModel.ASPECT_WATER)) {
+			nodeService.addAspect(water, PLMModel.ASPECT_WATER, null);
+		}
+		NodeRef driedFruit = CharactTestHelper.getOrCreateIng(nodeService, "fruit sec 37354");
+		NodeRef fruit = CharactTestHelper.getOrCreateIng(nodeService, "fruit 37354");
+
+		RawMaterialData waterRawMaterial = RawMaterialData.build().withName("MP eau 37354").withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(water)));
+		NodeRef waterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), waterRawMaterial).getNodeRef();
+
+		RawMaterialData powder = RawMaterialData.build().withName("MP poudre 37354").withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(driedFruit)));
+		powder.setLegalName("poudre 37354");
+		NodeRef powderNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), powder).getNodeRef();
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+		nodeService.addAspect(powderNodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+		associationService.update(powderNodeRef, PLMModel.ASSOC_DILUENT_REF, water);
+		associationService.update(powderNodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, fruit);
+
+		FinishedProductData finishedProduct = FinishedProductData.build().withName("PF rehydrate 37354").withUnit(ProductUnit.kg).withQty(4.5d)
+				.withCompoList(List.of(
+						CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.DoNotDetails)
+								.withProduct(powderNodeRef),
+						CompoListDataItem.build().withQtyUsed(4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(waterNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
 	@Test
 	public void testRenderAllergens() {
 
