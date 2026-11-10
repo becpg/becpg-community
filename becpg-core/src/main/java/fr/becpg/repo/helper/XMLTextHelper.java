@@ -55,6 +55,17 @@ public class XMLTextHelper {
 				|| ((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) || ((codePoint >= 0x10000) && (codePoint <= 0x10FFFF));
 	}
 
+	/**
+	 * Tells whether a text holds a character that may not appear in an XML 1.0 document and that the datasource
+	 * writer therefore drops.
+	 *
+	 * @param in the text to test, possibly null
+	 * @return true if at least one character is not allowed
+	 */
+	public static boolean hasInvalidChar(String in) {
+		return (in != null) && (indexOfInvalidChar(in, 0) >= 0);
+	}
+
 	private static int indexOfInvalidChar(String in, int from) {
 		int i = from;
 		while (i < in.length()) {

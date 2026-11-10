@@ -3,6 +3,7 @@ package fr.becpg.repo.helper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -95,5 +96,13 @@ public class XMLDataSourceWriterTest {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml))).getDocumentElement();
+	}
+
+	@Test
+	public void tellsWhetherATextHoldsForbiddenCharacters() {
+		assertTrue(XMLTextHelper.hasInvalidChar(PASTED_LABEL));
+		assertFalse(XMLTextHelper.hasInvalidChar(CLEAN_LABEL));
+		assertFalse(XMLTextHelper.hasInvalidChar(null));
+		assertFalse(XMLTextHelper.hasInvalidChar(""));
 	}
 }
