@@ -75,15 +75,12 @@ function findCopyNodeRef(results, oldNodeRef) {
 }
 
 /**
- * Gives the parent level of a copy: the copy of its source parent, or, when it has no parent or
- * its parent was not copied, the parent level of the replaced line, never a line of the source product.
- *
  * @param sourceLine {ScriptNode} the source line
  * @param copiedNodes {object} copies already created, by source nodeRef
- * @param replacedParentLevel {ScriptNode|null} parent level of the replaced line
- * @return {ScriptNode|null} the parent level of the copy
+ * @return {ScriptNode|null} the copy of the source parent of the line, null when the line has no
+ *         parent or its parent was not copied
  */
-function getCopyParentLevel(sourceLine, copiedNodes, replacedParentLevel) {
+function getParentCopy(sourceLine, copiedNodes) {
 	var parentLevel = sourceLine.properties["bcpg:parentLevel"];
 	if (parentLevel != null) {
 		var parentCopy = copiedNodes[parentLevel.nodeRef.toString()];
@@ -91,21 +88,24 @@ function getCopyParentLevel(sourceLine, copiedNodes, replacedParentLevel) {
 			return parentCopy;
 		}
 	}
-	return replacedParentLevel;
+	return null;
 }
 
 /**
- * Gives the depth of a copy in the destination list: a top-level source line takes the depth
- * of the replaced line, its descendants follow.
+ * Gives the depth of a copy in the destination list, read from the parent level the copy is given:
+ * one level below the copy of its source parent, or the depth of the replaced line when the copy
+ * takes its place. A source line whose own parent was not copied, being out of the default variant,
+ * thus stays consistent with the parent level it falls back on.
  *
- * @param sourceLine {ScriptNode} the source line
+ * @param parentCopy {ScriptNode|null} the copy of the source parent of the line
  * @param replacedLine {ScriptNode} the replaced line of the destination list
  * @return {number} the depth level of the copy
  */
-function getCopyDepthLevel(sourceLine, replacedLine) {
-	var sourceDepth = sourceLine.properties["bcpg:depthLevel"] || 1;
-	var replacedDepth = replacedLine.properties["bcpg:depthLevel"] || 1;
-	return replacedDepth + sourceDepth - 1;
+function getCopyDepthLevel(parentCopy, replacedLine) {
+	if (parentCopy == null) {
+		return replacedLine.properties["bcpg:depthLevel"] || 1;
+	}
+	return (parentCopy.properties["bcpg:depthLevel"] || 1) + 1;
 }
 
 /**
@@ -282,8 +282,11 @@ function runAction(p_params) {
 
 						// Parent level, depth and a provisional sort are set at creation, so that the sortable list
 						// policy does not reorder the copies at commit: renumberSorts gives their final sort
-						duplicateProperties["bcpg:parentLevel"] = getCopyParentLevel(currentChild, copiedNodes, itemParentLevel);
-						duplicateProperties["bcpg:depthLevel"] = getCopyDepthLevel(currentChild, itemNode);
+						// A copy hangs below the copy of its source parent or, when that parent was not copied,
+						// takes the place of the replaced line: never below a line of the source product
+						var parentCopy = getParentCopy(currentChild, copiedNodes);
+						duplicateProperties["bcpg:parentLevel"] = parentCopy != null ? parentCopy : itemParentLevel;
+						duplicateProperties["bcpg:depthLevel"] = getCopyDepthLevel(parentCopy, itemNode);
 						duplicateProperties["bcpg:sort"] = itemNode.properties["bcpg:sort"] || 0;
 
 						// Duplicate the node with a new GUID cm:name

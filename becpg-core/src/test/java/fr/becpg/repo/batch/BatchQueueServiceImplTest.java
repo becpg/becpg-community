@@ -58,6 +58,30 @@ public class BatchQueueServiceImplTest {
 	}
 
 	@Test
+	public void threadGetsBackItsAuthenticationAndTenantAfterTheBatch() {
+		AuthenticationUtil.setMtEnabled(true);
+		AuthenticationUtil.setFullyAuthenticatedUser("admin");
+
+		BatchQueueServiceImpl.runRestoringAuthentication(() -> BatchQueueServiceImpl
+				.setFullyAuthenticatedBatchUser(AuthenticationUtil.getSystemUserName() + TenantService.SEPARATOR + DEMO, DEMO));
+
+		Assert.assertEquals("admin", AuthenticationUtil.getFullyAuthenticatedUser());
+		Assert.assertEquals(TenantService.DEFAULT_DOMAIN, TenantUtil.getCurrentDomain());
+	}
+
+	@Test
+	public void threadGetsBackItsAuthenticationWhenTheBatchFails() {
+		AuthenticationUtil.setFullyAuthenticatedUser("admin");
+
+		Assert.assertThrows(IllegalStateException.class, () -> BatchQueueServiceImpl.runRestoringAuthentication(() -> {
+			BatchQueueServiceImpl.setFullyAuthenticatedBatchUser(AuthenticationUtil.getSystemUserName(), null);
+			throw new IllegalStateException("batch failed");
+		}));
+
+		Assert.assertEquals("admin", AuthenticationUtil.getFullyAuthenticatedUser());
+	}
+
+	@Test
 	public void keepsThreadTenantWithoutMultiTenancy() {
 		BatchQueueServiceImpl.setFullyAuthenticatedBatchUser(AuthenticationUtil.getSystemUserName(), null);
 

@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.json.JSONException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
@@ -168,8 +169,15 @@ public class ScoreMarkingWebScript extends AbstractWebScript {
 
 	private static boolean isTrafficLightsPerPortion(RegulatoryScoreListDataItem line) {
 		String details = line.getDetails();
-		return (details != null) && !details.isBlank()
-				&& FrontOfPackMarkingService.MTL_PORTION_CODE.equals(ScoreContext.parse(details).getCode());
+		if ((details == null) || details.isBlank()) {
+			return false;
+		}
+		try {
+			return FrontOfPackMarkingService.MTL_PORTION_CODE.equals(ScoreContext.parse(details).getCode());
+		} catch (JSONException e) {
+			// a breakdown that cannot be read has no marking: the renderer answers none and Share falls back
+			return false;
+		}
 	}
 
 	private Optional<RenderedScoreMarking> renderFrontOfPack(NodeRef scoreLineNodeRef) {

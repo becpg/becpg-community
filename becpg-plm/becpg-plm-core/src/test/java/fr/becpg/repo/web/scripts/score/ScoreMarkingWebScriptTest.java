@@ -180,6 +180,16 @@ public class ScoreMarkingWebScriptTest {
 	}
 
 	@Test
+	public void testMalformedBreakdownIsNotFound() throws IOException {
+		RegulatoryScoreListDataItem line = new RegulatoryScoreListDataItem();
+		line.setDetails("{\"code\":");
+		when(alfrescoRepository.findOne(SCORE_LINE)).thenReturn(line);
+		when(renderer.render(any(RegulatoryScoreListDataItem.class), any())).thenReturn(Optional.empty());
+
+		assertEquals(Status.STATUS_NOT_FOUND, statusOf(request));
+	}
+
+	@Test
 	public void testScoreWithoutMarkingIsNotFoundSoThatShareFallsBack() throws IOException {
 		when(renderer.render(any(RegulatoryScoreListDataItem.class), any())).thenReturn(Optional.empty());
 

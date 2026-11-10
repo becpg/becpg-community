@@ -5,13 +5,16 @@ package fr.becpg.test.repo.web.scripts.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -87,6 +90,48 @@ public class DuplicateChildsWebScriptIT extends PLMBaseTestCase {
 		assertEquals(expectedNames, inReadTx(() -> getProductNames(destNodeRef)));
 		assertUniqueSorts(inReadTx(() -> getSorts(destNodeRef)));
 		assertEquals(List.of(), inReadTx(() -> findLinesOutsideTheTree(destNodeRef)));
+	}
+
+	/**
+	 * Tests that a line whose source parent is out of the default variant, and is therefore not copied, takes the
+	 * place of the replaced line: it gets its parent level and its depth, not the depth it had below its parent.
+	 */
+	@Test
+	public void testCopyChildOfParentOutOfDefaultVariant() throws Exception {
+		NodeRef sourceNodeRef = inWriteTx(this::createSourceWithParentOutOfDefaultVariant);
+		NodeRef destNodeRef = inWriteTx(() -> createDestination(sourceNodeRef));
+
+		duplicateChilds(destNodeRef, ADMIN, null);
+
+		assertEquals(List.of("RM A", "RM variant child", "RM B"), inReadTx(() -> getProductNames(destNodeRef)));
+		NodeRef copyNodeRef = inReadTx(() -> getCompoList(destNodeRef).get(1).getNodeRef());
+		assertEquals(Integer.valueOf(1), inReadTx(() -> (Integer) nodeService.getProperty(copyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL)));
+		assertEquals(List.of(), inReadTx(() -> findLinesOutsideTheTree(destNodeRef)));
+	}
+
+	private NodeRef createSourceWithParentOutOfDefaultVariant() {
+		SemiFinishedProductData source = SemiFinishedProductData.build().withName("SF copy childs variant");
+		NodeRef sourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), source).getNodeRef();
+		createVariant(sourceNodeRef, "default variant", true);
+		NodeRef otherVariantNodeRef = createVariant(sourceNodeRef, "other variant", false);
+
+		CompoListDataItem parentLine = createCompoLine(createRawMaterial("RM variant parent"));
+		parentLine.setVariants(List.of(otherVariantNodeRef));
+		CompoListDataItem childLine = createCompoLine(createRawMaterial("RM variant child"));
+		childLine.setParent(parentLine);
+
+		SemiFinishedProductData saved = (SemiFinishedProductData) alfrescoRepository.findOne(sourceNodeRef);
+		saved.getCompoListView().setCompoList(new ArrayList<>(List.of(parentLine, childLine)));
+		alfrescoRepository.save(saved);
+		return sourceNodeRef;
+	}
+
+	private NodeRef createVariant(NodeRef productNodeRef, String name, boolean isDefault) {
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(ContentModel.PROP_NAME, name);
+		props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, isDefault);
+		return nodeService.createNode(productNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
+				.getChildRef();
 	}
 
 	private NodeRef createSourceWithConsecutiveSorts() {

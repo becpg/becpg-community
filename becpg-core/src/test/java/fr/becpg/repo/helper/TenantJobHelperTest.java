@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +67,38 @@ public class TenantJobHelperTest {
 		TenantJobHelper.runForEachTenant(tenantAdminService(tenant(DEMO, true)), this::recordRun);
 
 		assertEquals(List.of(run(TenantService.DEFAULT_DOMAIN), run(DEMO)), runs);
+	}
+
+	@Test
+	public void failureInOneTenantDoesNotKeepTheFollowingOnesFromRunning() {
+		AuthenticationUtil.setMtEnabled(true);
+		TenantAdminService tenantAdminService = tenantAdminService(tenant(DEMO, true), tenant(COSM, true));
+
+		IllegalStateException failure = assertThrows(IllegalStateException.class,
+				() -> TenantJobHelper.runForEachTenant(tenantAdminService, this::recordRunFailingInDemo));
+
+		assertEquals(DEMO, failure.getMessage());
+		assertEquals(List.of(run(TenantService.DEFAULT_DOMAIN), run(DEMO), run(COSM)), runs);
+	}
+
+	@Test
+	public void everyFailureIsReportedWithTheFirstOne() {
+		AuthenticationUtil.setMtEnabled(true);
+		TenantAdminService tenantAdminService = tenantAdminService(tenant(DEMO, true), tenant(COSM, true));
+
+		IllegalStateException failure = assertThrows(IllegalStateException.class, () -> TenantJobHelper.runForEachTenant(tenantAdminService, () -> {
+			throw new IllegalStateException(TenantUtil.getCurrentDomain());
+		}));
+
+		assertEquals(TenantService.DEFAULT_DOMAIN, failure.getMessage());
+		assertEquals(2, failure.getSuppressed().length);
+	}
+
+	private void recordRunFailingInDemo() {
+		recordRun();
+		if (DEMO.equals(TenantUtil.getCurrentDomain())) {
+			throw new IllegalStateException(DEMO);
+		}
 	}
 
 	private void recordRun() {
