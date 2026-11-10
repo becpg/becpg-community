@@ -575,13 +575,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			} else {
 				projectData.setCompletionPercent(totalWork != 0 ? (100 * workDone) / totalWork : 0);
 				
-			    Date base = lastTaskEnd != null ? lastTaskEnd : projectData.getStartDate();
-
-			    NodeRef calendarRef = calendarService.getCalendar(projectData.getNodeRef());
-			    WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
-			    projectData.setCompletionDate(
-			        base != null ? ProjectHelper.calculateEndDate(base, projectData.getOverdue(), provider) : null
-			    );
+				// Task ends already carry the delay: a late task in progress ends today and pushes the tasks after it
+				projectData.setCompletionDate(lastTaskEnd != null ? lastTaskEnd : projectData.getStartDate());
 			}
 		}
 

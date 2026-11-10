@@ -25,6 +25,8 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectOverdueIT extends AbstractProjectTestCase {
 
+	private static final int LATE_START_IN_WORKING_DAYS = 30;
+
 	@Autowired
 	FormulationService<ProjectData> formulationService;	
 	/**
@@ -120,5 +122,39 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			return null;
 		}, false, true);
 
+	}
+
+	/**
+	 * The completion date of a late project is the end of its last task: the delay is not added a second time
+	 */
+	@Test
+	public void testCompletionDateCountsTheDelayOnce() {
+
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			Date lateStart = ProjectHelper.calculateNextDate(new Date(), LATE_START_IN_WORKING_DAYS, false, new DefaultWorkingDayProvider());
+			projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
+			projectData.getTaskList().get(0).setStart(lateStart);
+			formulationService.formulate(projectData);
+
+			assertTrue(projectData.getOverdue() > 0);
+			assertEquals(lastTaskEnd(projectData), projectData.getCompletionDate());
+
+			return null;
+		}, false, true);
+	}
+
+	private Date lastTaskEnd(ProjectData projectData) {
+		Date lastTaskEnd = null;
+		for (TaskListDataItem task : projectData.getTaskList()) {
+			if ((task.getEnd() != null) && ((lastTaskEnd == null) || task.getEnd().after(lastTaskEnd))) {
+				lastTaskEnd = task.getEnd();
+			}
+		}
+		return lastTaskEnd;
 	}
 }
