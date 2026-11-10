@@ -7,6 +7,7 @@ import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,16 +26,14 @@ public final class TenantJobHelper {
 	/**
 	 * Runs the work in the default domain, then once in each other enabled tenant.
 	 * <p>
-	 * A failure in one domain does not keep the work from running in the following ones: it is logged, and the
-	 * first failure is thrown again once every domain has been served, the others being attached to it as
-	 * suppressed, so that the job still reports its failure.
+	 * A failure in one domain is logged and does not keep the work from running in the following ones. An
+	 * exception the transaction helper retries on is the exception of that rule: it is thrown again untouched,
+	 * so that a job called inside a retrying transaction is still replayed.
 	 *
 	 * @param tenantAdminService the tenant admin service, null when multi-tenancy is not wired
 	 * @param work the work to run
 	 */
 	public static void runForEachTenant(TenantAdminService tenantAdminService, Runnable work) {
-
-		List<RuntimeException> failures = new ArrayList<>();
 
 		// The tenant context is set explicitly: AuthenticationUtil.runAs as System@tenant only implies the tenant
 		// when the thread holds no authentication, and a Quartz thread may still hold the one of a previous job
@@ -42,12 +41,12 @@ public final class TenantJobHelper {
 			try {
 				runAsSystem(work, tenantDomain);
 			} catch (RuntimeException e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
+				}
 				logger.error("Scheduled work failed in tenant '" + tenantDomain + "': " + e.getMessage(), e);
-				failures.add(e);
 			}
 		}
-
-		throwFirstFailure(failures);
 	}
 
 	private static List<String> domainsToServe(TenantAdminService tenantAdminService) {
@@ -63,17 +62,6 @@ public final class TenantJobHelper {
 			}
 		}
 		return domains;
-	}
-
-	private static void throwFirstFailure(List<RuntimeException> failures) {
-		if (failures.isEmpty()) {
-			return;
-		}
-		RuntimeException firstFailure = failures.get(0);
-		for (RuntimeException failure : failures.subList(1, failures.size())) {
-			firstFailure.addSuppressed(failure);
-		}
-		throw firstFailure;
 	}
 
 	private static void runAsSystem(Runnable work, String tenantDomain) {
