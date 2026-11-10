@@ -16,6 +16,7 @@ import org.alfresco.repo.tenant.TenantUtil;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.dao.ConcurrencyFailureException;
 
 /**
  * Unit tests of the tenant context given to the work of a scheduled job.
@@ -70,28 +71,27 @@ public class TenantJobHelperTest {
 	}
 
 	@Test
-	public void failureInOneTenantDoesNotKeepTheFollowingOnesFromRunning() {
+	public void failureInOneTenantIsLoggedAndTheFollowingOnesStillRun() {
 		AuthenticationUtil.setMtEnabled(true);
-		TenantAdminService tenantAdminService = tenantAdminService(tenant(DEMO, true), tenant(COSM, true));
 
-		IllegalStateException failure = assertThrows(IllegalStateException.class,
-				() -> TenantJobHelper.runForEachTenant(tenantAdminService, this::recordRunFailingInDemo));
+		TenantJobHelper.runForEachTenant(tenantAdminService(tenant(DEMO, true), tenant(COSM, true)), this::recordRunFailingInDemo);
 
-		assertEquals(DEMO, failure.getMessage());
 		assertEquals(List.of(run(TenantService.DEFAULT_DOMAIN), run(DEMO), run(COSM)), runs);
 	}
 
 	@Test
-	public void everyFailureIsReportedWithTheFirstOne() {
+	public void retryableFailureIsThrownAgainSoThatTheTransactionIsReplayed() {
 		AuthenticationUtil.setMtEnabled(true);
 		TenantAdminService tenantAdminService = tenantAdminService(tenant(DEMO, true), tenant(COSM, true));
 
-		IllegalStateException failure = assertThrows(IllegalStateException.class, () -> TenantJobHelper.runForEachTenant(tenantAdminService, () -> {
-			throw new IllegalStateException(TenantUtil.getCurrentDomain());
+		assertThrows(ConcurrencyFailureException.class, () -> TenantJobHelper.runForEachTenant(tenantAdminService, () -> {
+			recordRun();
+			if (DEMO.equals(TenantUtil.getCurrentDomain())) {
+				throw new ConcurrencyFailureException("deadlock");
+			}
 		}));
 
-		assertEquals(TenantService.DEFAULT_DOMAIN, failure.getMessage());
-		assertEquals(2, failure.getSuppressed().length);
+		assertEquals(List.of(run(TenantService.DEFAULT_DOMAIN), run(DEMO)), runs);
 	}
 
 	private void recordRunFailingInDemo() {
