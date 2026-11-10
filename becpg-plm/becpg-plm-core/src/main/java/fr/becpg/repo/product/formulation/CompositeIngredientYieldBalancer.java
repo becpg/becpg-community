@@ -40,7 +40,8 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
  * <p>
  * The evaporation rate of a composite ingredient prevails over the rates of its sub-ingredients: once a
  * composite is used in a recipe, it is the composite that loses water, whatever its sub-ingredients would lose
- * on their own (see #34702). A sub-ingredient rate only applies when none of its ancestors carries one.
+ * on their own (see #34702). A sub-ingredient rate only applies when none of its ancestors carries one: the
+ * sub-ingredient then evaporates as a top-level ingredient would, and its ancestors lose the same water.
  * <p>
  * Items are tracked by identity: {@link IngListDataItem#equals(Object)} is value-based on mutable fields,
  * among which the very percentages adjusted here.
@@ -89,6 +90,31 @@ public class CompositeIngredientYieldBalancer {
 	}
 
 	/**
+	 * Deducts the water lost by evaporating sub-ingredients from all their ancestors.
+	 * <p>
+	 * A composite ingredient without evaporation rate does not lose water on its own account, but it contains the
+	 * water its sub-ingredients lose. Its percentage is concentrated by the yield like any non evaporating ingredient,
+	 * so the loss of each evaporating descendant must be taken off it, whether its sub-ingredients declare it fully
+	 * or only partially (see #34702). The loss of a sub-ingredient is the gap between its concentrated percentage,
+	 * as if it did not evaporate, and its percentage once evaporated.
+	 *
+	 * @param valuesBeforeEvaporation the evaporating sub-ingredients with their percentage before the evaporation
+	 * @param yieldFactor the yield applied by the evaporation, as a ratio
+	 * @param getter the accessor of the evaporated column
+	 * @param setter the mutator of the evaporated column
+	 */
+	public void deductEvaporationFromAncestors(Map<IngListDataItem, Double> valuesBeforeEvaporation, double yieldFactor,
+			Function<IngListDataItem, Double> getter, BiConsumer<IngListDataItem, Double> setter) {
+		for (Map.Entry<IngListDataItem, Double> entry : valuesBeforeEvaporation.entrySet()) {
+			IngListDataItem item = entry.getKey();
+			Double valueAfterEvaporation = getter.apply(item);
+			if ((item.getParent() != null) && (valueAfterEvaporation != null) && (entry.getValue() != null)) {
+				deductFromAncestors(item, (entry.getValue() / yieldFactor) - valueAfterEvaporation, getter, setter);
+			}
+		}
+	}
+
+	/**
 	 * Recomputes each composite ingredient "with yield" percentages as the sum of its direct children
 	 * percentages, when the children fully declare their parent.
 	 * <p>
@@ -121,13 +147,13 @@ public class CompositeIngredientYieldBalancer {
 	}
 
 	/**
-	 * Shares the water lost by a composite ingredient over all its sub-ingredients, proportionally to their
-	 * declared percentages.
+	 * Shares the water lost by an evaporating composite ingredient over all its sub-ingredients, proportionally to
+	 * their declared percentages.
 	 * <p>
-	 * The breakdown of a composite ingredient is a declaration of its make-up, and reads as such on the label,
-	 * so it must keep its declared proportions whether the water is lost by the composite itself or by one of
-	 * its sub-ingredients (see #34702). Only the split inside the composite changes: its own percentage - and
-	 * therefore every total - is left untouched.
+	 * A composite carrying its own rate is the only one that loses water without knowing which of its
+	 * sub-ingredients loses it, so its breakdown keeps its declared proportions. Only the split inside the composite
+	 * changes: its own percentage - and therefore every total - is left untouched. A composite without rate keeps
+	 * the losses of its own sub-ingredients instead (see #34702).
 	 * <p>
 	 * The redistribution runs top-down so that multi-level hierarchies stay consistent with the parent they
 	 * detail, and only applies to composites fully declared by their sub-ingredients: a partially declared one
@@ -188,8 +214,8 @@ public class CompositeIngredientYieldBalancer {
 	}
 
 	/**
-	 * Collects the composites whose sub-ingredients must be re-split after the evaporation: the ancestors of an
-	 * evaporating sub-ingredient, the evaporating composites and every composite below one of them.
+	 * Collects the composites whose sub-ingredients must be re-split after the evaporation: the evaporating
+	 * composites and every composite below one of them.
 	 *
 	 * @return the composites to spread top-down
 	 */
@@ -199,13 +225,7 @@ public class CompositeIngredientYieldBalancer {
 
 		for (IngListDataItem item : ingList) {
 			IngListDataItem parent = item.getParent();
-			if (parent == null) {
-				continue;
-			}
-			if (isEvaporating(item)) {
-				addAncestors(item, affected);
-			}
-			if (evaporatingComposites.contains(parent) || hasAncestorIn(parent, evaporatingComposites)) {
+			if ((parent != null) && (evaporatingComposites.contains(parent) || hasAncestorIn(parent, evaporatingComposites))) {
 				affected.add(parent);
 			}
 		}
@@ -372,16 +392,22 @@ public class CompositeIngredientYieldBalancer {
 	}
 
 	/**
-	 * Adds every ancestor of an ingredient to a set.
+	 * Takes a lost percentage off every ancestor of an ingredient that has a value for the column.
 	 *
 	 * @param item the ingredient
-	 * @param ancestors the set to fill
+	 * @param lostValue the percentage lost by the ingredient
+	 * @param getter the accessor of the column
+	 * @param setter the mutator of the column
 	 */
-	private static void addAncestors(IngListDataItem item, Set<IngListDataItem> ancestors) {
+	private static void deductFromAncestors(IngListDataItem item, double lostValue, Function<IngListDataItem, Double> getter,
+			BiConsumer<IngListDataItem, Double> setter) {
 		IngListDataItem parent = item.getParent();
 		int depth = 0;
 		while ((parent != null) && (depth < MAX_DEPTH)) {
-			ancestors.add(parent);
+			Double parentValue = getter.apply(parent);
+			if (parentValue != null) {
+				setter.accept(parent, parentValue - lostValue);
+			}
 			parent = parent.getParent();
 			depth++;
 		}

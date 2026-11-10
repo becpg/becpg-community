@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -351,14 +352,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 			}
 
+			Function<NodeRef, IngListDataItem> evaporationTarget = nodeRef -> findEvaporationTarget(formulatedProduct, yieldBalancer, nodeRef);
+
 			if (!formulatedProduct.isGeneric()) {
-				applyEvaporation(formulatedProduct, evaporatedDataItems);
+				applyEvaporation(formulatedProduct, evaporatedDataItems, evaporationTarget, yieldBalancer);
 			}
 
 			initQtyPercWithSecondaryYield(formulatedProduct, evaporatedDataItems, yieldBalancer);
 
 			if (!formulatedProduct.isGeneric()) {
-				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
+				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems, evaporationTarget, yieldBalancer);
 			}
 
 			boolean fixCompositeYield = !formulatedProduct.isGeneric() && !evaporatedDataItems.isEmpty()
@@ -553,75 +556,125 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	/**
-	 * <p>applyEvaporation.</p>
+	 * Applies the product yield evaporation on the "with yield" percentages.
 	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 * @param formulatedProduct the formulated product
+	 * @param evaporatedDataItems the evaporating ingredients
+	 * @param evaporationTarget finds the ingredient list item an evaporating ingredient applies to
+	 * @param yieldBalancer tells which ingredients evaporate and keeps their ancestors consistent
 	 */
-	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
-		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getYield(), IngListDataItem::getQtyPercWithYield,
-				IngListDataItem::setQtyPercWithYield);
+	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems,
+			Function<NodeRef, IngListDataItem> evaporationTarget, CompositeIngredientYieldBalancer yieldBalancer) {
+		applyEvaporation(formulatedProduct, new YieldEvaporation(evaporatedDataItems, formulatedProduct.getYield(), evaporationTarget),
+				IngListDataItem::getQtyPercWithYield, IngListDataItem::setQtyPercWithYield, yieldBalancer);
 	}
 
 	/**
-	 * <p>applySecondaryEvaporation.</p>
+	 * Applies the secondary yield evaporation on the "with secondary yield" percentages.
 	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 * @param formulatedProduct the formulated product
+	 * @param evaporatedDataItems the evaporating ingredients
+	 * @param evaporationTarget finds the ingredient list item an evaporating ingredient applies to
+	 * @param yieldBalancer tells which ingredients evaporate and keeps their ancestors consistent
 	 */
-	private void applySecondaryEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
-		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getSecondaryYield(), IngListDataItem::getQtyPercWithSecondaryYield,
-				IngListDataItem::setQtyPercWithSecondaryYield);
+	private void applySecondaryEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems,
+			Function<NodeRef, IngListDataItem> evaporationTarget, CompositeIngredientYieldBalancer yieldBalancer) {
+		applyEvaporation(formulatedProduct, new YieldEvaporation(evaporatedDataItems, formulatedProduct.getSecondaryYield(), evaporationTarget),
+				IngListDataItem::getQtyPercWithSecondaryYield, IngListDataItem::setQtyPercWithSecondaryYield, yieldBalancer);
 	}
 
 	/**
-	 * <p>applyEvaporation.</p>
+	 * The evaporation of one yield: the evaporating ingredients, the yield and the way to find their list items.
 	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param evaporatedDataItems a {@link java.util.Set} object
-	 * @param currYield a {@link java.lang.Double} object
-	 * @param getQtyPercWithYield a {@link java.util.function.Function} object
-	 * @param setQtyPercWithYield a {@link java.util.function.BiConsumer} object
+	 * @param evaporatedDataItems the evaporating ingredients
+	 * @param currYield the yield, in percent
+	 * @param evaporationTarget finds the ingredient list item an evaporating ingredient applies to
 	 */
-	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems, Double currYield,
-			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
-		if ((currYield != null) && (currYield != 0d)) {
-			double yieldFactor = currYield / 100d;
-			Double evaporatingQty = 100d - currYield;
+	private record YieldEvaporation(Set<EvaporatedDataItem> evaporatedDataItems, Double currYield,
+			Function<NodeRef, IngListDataItem> evaporationTarget) {
 
-			if (!evaporatedDataItems.isEmpty() && (evaporatingQty > 0d)) {
+		boolean evaporates() {
+			return (currYield != null) && (currYield > 0d) && (currYield < 100d) && !evaporatedDataItems.isEmpty();
+		}
+	}
 
-				// Use EvaporatingFormulationHelper for evaporation processing
-				Function<NodeRef, IngListDataItem> matchItem = nodeRef -> formulatedProduct.getIngList().stream()
-						.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(nodeRef)).findFirst().orElse(null);
+	/**
+	 * Applies the evaporation of a yield on a "with yield" column, then takes the water lost by evaporating
+	 * sub-ingredients off their ancestors (see #34702).
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param evaporation the evaporation to apply
+	 * @param getQtyPercWithYield the accessor of the column
+	 * @param setQtyPercWithYield the mutator of the column
+	 * @param yieldBalancer tells which ingredients evaporate and keeps their ancestors consistent
+	 */
+	private void applyEvaporation(ProductData formulatedProduct, YieldEvaporation evaporation, Function<IngListDataItem, Double> getQtyPercWithYield,
+			BiConsumer<IngListDataItem, Double> setQtyPercWithYield, CompositeIngredientYieldBalancer yieldBalancer) {
+		if (!evaporation.evaporates()) {
+			return;
+		}
 
-				Function<IngListDataItem, String> getItemName = IngListDataItem::getName;
+		double yieldFactor = evaporation.currYield() / 100d;
+		Map<IngListDataItem, Double> valuesBeforeEvaporation = captureEvaporatingSubIngredients(formulatedProduct, evaporation, getQtyPercWithYield);
 
-				EvaporatingFormulationHelper.applyEvaporation(evaporatingQty, evaporatedDataItems, getQtyPercWithYield, setQtyPercWithYield,
-						matchItem, getItemName, null);
+		EvaporatingFormulationHelper.applyEvaporation(100d - evaporation.currYield(), evaporation.evaporatedDataItems(), getQtyPercWithYield,
+				setQtyPercWithYield, evaporation.evaporationTarget(), IngListDataItem::getName, null);
 
-				// Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
-				if (Math.abs(yieldFactor) > 0.000001) {
-					for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
-						if ((evaporatedDataItem == null) || (evaporatedDataItem.getProductNodeRef() == null)) {
-							continue;
-						}
+		for (EvaporatedDataItem evaporatedDataItem : evaporation.evaporatedDataItems()) {
+			IngListDataItem ingListDataItem = evaporation.evaporationTarget().apply(evaporatedDataItem.getProductNodeRef());
+			if ((ingListDataItem != null) && (getQtyPercWithYield.apply(ingListDataItem) != null)) {
+				setQtyPercWithYield.accept(ingListDataItem, getQtyPercWithYield.apply(ingListDataItem) / yieldFactor);
+			}
+		}
 
-						IngListDataItem ingListDataItem = matchItem.apply(evaporatedDataItem.getProductNodeRef());
+		yieldBalancer.deductEvaporationFromAncestors(valuesBeforeEvaporation, yieldFactor, getQtyPercWithYield, setQtyPercWithYield);
+	}
 
-						if (ingListDataItem != null) {
-							Double currentQty = getQtyPercWithYield.apply(ingListDataItem);
-							if (currentQty != null) {
-								double adjustedQty = currentQty / yieldFactor;
-								setQtyPercWithYield.accept(ingListDataItem, adjustedQty);
-							}
-						}
-					}
-				} else if (logger.isWarnEnabled()) {
-					logger.warn("Cannot adjust quantities: yieldFactor is zero");
+	/**
+	 * Captures the percentages of the evaporating sub-ingredients before the evaporation is applied.
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param evaporation the evaporation about to be applied
+	 * @param getter the accessor of the evaporated column
+	 * @return the evaporating sub-ingredients with their percentage, by identity
+	 */
+	private Map<IngListDataItem, Double> captureEvaporatingSubIngredients(ProductData formulatedProduct, YieldEvaporation evaporation,
+			Function<IngListDataItem, Double> getter) {
+		Map<IngListDataItem, Double> values = new IdentityHashMap<>();
+		for (EvaporatedDataItem evaporatedDataItem : evaporation.evaporatedDataItems()) {
+			IngListDataItem item = evaporation.evaporationTarget().apply(evaporatedDataItem.getProductNodeRef());
+			if ((item != null) && (item.getParent() != null) && (getter.apply(item) != null)) {
+				values.put(item, getter.apply(item));
+			}
+		}
+		if (logger.isDebugEnabled() && !values.isEmpty()) {
+			logger.debug("Evaporating sub-ingredients of " + formulatedProduct.getName() + ": " + values.size());
+		}
+		return values;
+	}
+
+	/**
+	 * Finds the ingredient list item an evaporating ingredient applies to, preferring the item whose rate is
+	 * applied when the same ingredient is listed several times.
+	 *
+	 * @param formulatedProduct the formulated product
+	 * @param yieldBalancer tells which ingredients evaporate
+	 * @param ingNodeRef the evaporating ingredient
+	 * @return the matching item, null when the ingredient is not listed
+	 */
+	private IngListDataItem findEvaporationTarget(ProductData formulatedProduct, CompositeIngredientYieldBalancer yieldBalancer, NodeRef ingNodeRef) {
+		IngListDataItem firstMatch = null;
+		for (IngListDataItem item : formulatedProduct.getIngList()) {
+			if ((item != null) && ingNodeRef.equals(item.getIng())) {
+				if (yieldBalancer.isEvaporating(item)) {
+					return item;
+				}
+				if (firstMatch == null) {
+					firstMatch = item;
 				}
 			}
 		}
+		return firstMatch;
 	}
 
 	/**

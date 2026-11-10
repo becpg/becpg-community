@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,8 +19,9 @@ import org.junit.Test;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 
 /**
- * #34702 : the evaporation rate of a composite ingredient prevails over those of its sub-ingredients, and the
- * sub-ingredients of a composite keep their declared proportions once the evaporation is applied.
+ * #34702 : the evaporation rate of a composite ingredient prevails over those of its sub-ingredients, which keep
+ * their declared proportions once it evaporates. Under a composite without rate, each sub-ingredient keeps its own
+ * loss and the composite loses the sum of them.
  */
 public class CompositeIngredientYieldBalancerTest {
 
@@ -160,7 +162,7 @@ public class CompositeIngredientYieldBalancerTest {
 	}
 
 	@Test
-	public void evaporatingSubIngredientLossIsSharedByDeclaredProportions() {
+	public void evaporatingSubIngredientKeepsItsOwnLossUnderACompositeWithoutRate() {
 		IngListDataItem puree = ing(40d, 42.1d, null, false);
 		IngListDataItem tomato = ing(30d, 26d, puree, true);
 		IngListDataItem oil = ing(10d, 10.53d, puree, false);
@@ -169,8 +171,36 @@ public class CompositeIngredientYieldBalancerTest {
 		balancer.aggregateParentQtyPercWithYield();
 		balancer.spreadEvaporationOverSubIngredients();
 
-		assertEquals(36.53d * 0.75d, tomato.getQtyPercWithYield(), DELTA);
-		assertEquals(36.53d * 0.25d, oil.getQtyPercWithYield(), DELTA);
+		assertEquals(26d, tomato.getQtyPercWithYield(), DELTA);
+		assertEquals(10.53d, oil.getQtyPercWithYield(), DELTA);
+		assertEquals(36.53d, puree.getQtyPercWithYield(), DELTA);
+	}
+
+	@Test
+	public void partiallyDeclaredCompositeLosesTheWaterOfItsSubIngredients() {
+		IngListDataItem puree = ing(40d, 40d / 0.95d, null, false);
+		IngListDataItem tomato = ing(30d, 26d, puree, true);
+		ing(0d, 0d, puree, false).setQtyPerc(null);
+		CompositeIngredientYieldBalancer balancer = balancer();
+
+		balancer.deductEvaporationFromAncestors(valuesBeforeEvaporation(tomato, 28.5d), 0.95d, IngListDataItem::getQtyPercWithYield,
+				IngListDataItem::setQtyPercWithYield);
+
+		assertEquals((40d / 0.95d) - 4d, puree.getQtyPercWithYield(), DELTA);
+	}
+
+	@Test
+	public void lossOfASubIngredientIsTakenOffEveryAncestor() {
+		IngListDataItem sauce = ing(50d, 50d, null, false);
+		IngListDataItem puree = ing(40d, 40d, sauce, false);
+		IngListDataItem tomato = ing(30d, 25d, puree, true);
+		CompositeIngredientYieldBalancer balancer = balancer();
+
+		balancer.deductEvaporationFromAncestors(valuesBeforeEvaporation(tomato, 30d), 1d, IngListDataItem::getQtyPercWithYield,
+				IngListDataItem::setQtyPercWithYield);
+
+		assertEquals(35d, puree.getQtyPercWithYield(), DELTA);
+		assertEquals(45d, sauce.getQtyPercWithYield(), DELTA);
 	}
 
 	@Test
@@ -201,6 +231,12 @@ public class CompositeIngredientYieldBalancerTest {
 		IngListDataItem salt = ing(0d, 0d, wrapper, false);
 
 		assertFalse(CompositeIngredientYieldBalancer.isFullyDeclaredBySubIngredients(wrapper, List.of(salt)));
+	}
+
+	private static Map<IngListDataItem, Double> valuesBeforeEvaporation(IngListDataItem item, double value) {
+		Map<IngListDataItem, Double> values = new IdentityHashMap<>();
+		values.put(item, value);
+		return values;
 	}
 
 	private CompositeIngredientYieldBalancer balancer() {
