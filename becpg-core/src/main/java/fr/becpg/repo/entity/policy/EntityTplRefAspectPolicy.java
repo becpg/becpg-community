@@ -54,7 +54,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		public void afterCommit() {
 			Set<QName> impactedTypes = TransactionSupportUtil.getResource(PENDING_TPL_CACHE_TYPES);
 			TransactionSupportUtil.bindResource(PENDING_TPL_CACHE_TYPES, null);
-			queueTplCacheInvalidation(impactedTypes);
+			invalidateTplCache(impactedTypes);
 		}
 	};
 
@@ -224,6 +224,11 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		pendingTypes.addAll(impactedTypes);
 	}
 
+	/**
+	 * <p>Drop the cache entry of the impacted types, once the transaction has committed.</p>
+	 *
+	 * @param impactedTypes a {@link java.util.Set} object
+	 */
 	private void invalidateTplCache(Set<QName> impactedTypes) {
 
 		if ((beCPGCacheService == null) || (impactedTypes == null) || impactedTypes.isEmpty()) {
