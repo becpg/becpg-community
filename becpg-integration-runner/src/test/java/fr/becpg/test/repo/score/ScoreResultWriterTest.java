@@ -151,6 +151,15 @@ public class ScoreResultWriterTest {
 	}
 
 	@Test
+	public void testALineCopiedFromTheTemplateStandsAtTheRoot() {
+		withTemplate(line(DEFINITION_REF));
+
+		writer.synchronizeTemplate(product);
+
+		assertEquals(Integer.valueOf(0), product.getRegulatoryScoreList().get(0).getDepthLevel());
+	}
+
+	@Test
 	public void testATemplateLineOutOfTheMarketsOfTheProductIsNotCopied() {
 		withTemplate(line(OUT_OF_MARKET_REF), line(RETIRED_REF));
 
@@ -188,6 +197,49 @@ public class ScoreResultWriterTest {
 		product.getRegulatoryScoreList().add(line(OUT_OF_MARKET_REF));
 
 		assertEquals(List.of("2023"), writer.listedVersions(product, CODE));
+	}
+
+	@Test
+	public void testAScoreLeftWithoutDataIsEmptied() {
+		RegulatoryScoreListDataItem item = line(DEFINITION_REF);
+		item.setValue(62.5d);
+		item.setScoreClass("B");
+		item.setDetails("{}");
+		product.getRegulatoryScoreList().add(item);
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertNull(item.getValue());
+		assertNull(item.getScoreClass());
+		assertNull(item.getDetails());
+		assertTrue(product.getRegulatoryScoreList().contains(item));
+	}
+
+	@Test
+	public void testAManualScoreIsNotEmptied() {
+		RegulatoryScoreListDataItem item = manualItem(96d, "A");
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertEquals(96d, item.getValue(), PRECISION);
+		assertEquals("A", item.getScoreClass());
+	}
+
+	@Test
+	public void testAnEmptyScoreIsNotRewritten() {
+		RegulatoryScoreListDataItem item = line(DEFINITION_REF);
+		product.getRegulatoryScoreList().add(item);
+
+		writer.clear(product, definition(DEFINITION_REF));
+
+		assertNull(item.getComputedDate());
+	}
+
+	private static ScoreDefinitionItem definition(NodeRef nodeRef) {
+		ScoreDefinitionItem definition = new ScoreDefinitionItem();
+		definition.setNodeRef(nodeRef);
+		definition.setCode(CODE);
+		return definition;
 	}
 
 	/**

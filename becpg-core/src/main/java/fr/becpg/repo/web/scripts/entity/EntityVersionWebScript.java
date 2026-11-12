@@ -225,13 +225,16 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 					jsonVersion.put("description", description);
 
-					String versionDescription = version.getDescription();
+					// an entity never versioned has no version comment: its description is already sent above
+					if (!version.isUnversionedEntity()) {
+						String versionDescription = version.getDescription();
 
-					if (versionDescription != null && versionDescription.length() > MAX_DESCRIPTION_LENGTH) {
-						versionDescription = versionDescription.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+						if (versionDescription != null && versionDescription.length() > MAX_DESCRIPTION_LENGTH) {
+							versionDescription = versionDescription.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+						}
+
+						jsonVersion.put("versionDescription", versionDescription);
 					}
-
-					jsonVersion.put("versionDescription", versionDescription);
 
 					Date createdDate = version.getFrozenModifiedDate();
 

@@ -152,7 +152,7 @@
 					me.widgets.columnsListPanel.hide();
 
 					Alfresco.util.Ajax.jsonPost({
-						url: Alfresco.constants.PROXY_URI + "becpg/supplier/create-supplier?emailAddress=" + emailAddress + "&notifySupplier=" + notifySupplier + "&nodeRef=" + nodeRef,
+						url: Alfresco.constants.PROXY_URI + "becpg/supplier/create-supplier?emailAddress=" + encodeURIComponent(emailAddress) + "&notifySupplier=" + notifySupplier + "&nodeRef=" + encodeURIComponent(nodeRef),
 						successCallback: {
 							fn: function(response) {
 								Alfresco.util.PopupManager.displayMessage({

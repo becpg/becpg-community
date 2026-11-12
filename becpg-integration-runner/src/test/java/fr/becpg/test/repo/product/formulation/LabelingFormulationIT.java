@@ -598,10 +598,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				firstChildPerc + secondChildPerc, 0.2d);
 		Assert.assertEquals("The only top level ingredient must be at 100%:" + context, 100d, parentPerc, 0.2d);
 
-		// The water lost by the composite is shared over its sub ingredients proportionally to their declared
-		// percentages, so they keep their 60/40 split instead of charging the whole loss to the evaporating one.
-		Assert.assertEquals("Evaporating sub ingredient must keep its share of its parent:" + context, 60d, firstChildPerc, 0.2d);
-		Assert.assertEquals("Sub ingredient must keep its share of its parent:" + context, 40d, secondChildPerc, 0.2d);
+		// The composite carries no rate : ing1 loses the 400 g on its own account, as it would at the top level, and
+		// ing2 keeps its quantity (#34702, retest of 2026-11-05). 1.2 - 0.4 = 0.8 kg and 0.8 kg out of 1.6 kg.
+		Assert.assertEquals("Evaporating sub ingredient must bear its own loss:" + context, 50d, firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient must keep its quantity:" + context, 50d, secondChildPerc, 0.2d);
 
 		// The labeling must tell the same story as the "Qty with yield" column of the ingredient list
 		Assert.assertNotNull("Composite ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing3));
@@ -859,6 +859,98 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				qtyPercWithYieldByIng.get(ing1).doubleValue(), subPercs.get(0), 0.2d);
 		Assert.assertEquals("Second sub ingredient differs from the ingredient list:" + context,
 				qtyPercWithYieldByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
+	}
+
+	/**
+	 * #37613 : a detailed semi-finished product holding evaporating water, inside a semi-finished product that loses
+	 * weight. The yield of the outer semi-finished product used to be handed down into the bracket : the water there
+	 * absorbed the loss of the level above, the bracket was scaled back up to the detailed product and the prune
+	 * carried the yield twice - "prux 66.7% (water 37%, prune 29.6%)" instead of the 60 / 40 of its recipe.
+	 */
+	@Test
+	public void testRenderDetailedSemiFinishedWithWaterInYieldingSemiFinished() {
+
+		NodeRef waterNodeRef = createSingleIngRawMaterial("ING Water 37613", true);
+		NodeRef pruneNodeRef = createSingleIngRawMaterial("ING Prune 37613", false);
+		NodeRef sugarNodeRef = createSingleIngRawMaterial("ING Sugar 37613", false);
+
+		// 1 kg in, 1 kg out : the detailed product has no yield of its own
+		NodeRef pruxNodeRef = createSemiFinished("prux 37613", 1d, List.of(
+				CompoListDataItem.build().withQtyUsed(0.6d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(waterNodeRef),
+				CompoListDataItem.build().withQtyUsed(0.4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(pruneNodeRef)));
+
+		// 1 kg in, 0.9 kg out : the cream loses 10 %
+		NodeRef creamNodeRef = createSemiFinished("cream 37613", 0.9d, List.of(
+				CompoListDataItem.build().withQtyUsed(0.4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(sugarNodeRef),
+				CompoListDataItem.build().withQtyUsed(0.6d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+						.withProduct(pruxNodeRef)));
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Finished product 37613 " + Calendar.getInstance().getTimeInMillis())
+					.withLegalName("legal Finished product 37613").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+							.withDeclarationType(DeclarationType.Declare).withProduct(creamNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2")
+				.withFormula("detailsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		String rendered = getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, labelingRuleList), Locale.FRENCH);
+		logger.info("Rendered labeling of a detailed semi-finished product in a yielding one: " + rendered);
+
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+		Assert.assertEquals("Expecting the water and the prune between brackets: " + rendered, 2, subPercs.size());
+
+		Assert.assertEquals("The detailed product carries the yield of the cream: " + rendered, 66.667d, extractCompositePerc(rendered), 0.01d);
+		Assert.assertEquals("Water keeps its share of the recipe: " + rendered, 40d, subPercs.get(0), 0.01d);
+		Assert.assertEquals("Prune carries the yield once: " + rendered, 26.667d, subPercs.get(1), 0.01d);
+	}
+
+	private NodeRef createSingleIngRawMaterial(String ingName, boolean evaporating) {
+		return inWriteTx(() -> {
+			NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, ingName);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM " + ingName + " " + Calendar.getInstance().getTimeInMillis());
+			rawMaterial.setDensity(1d);
+			rawMaterial.setIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing).withIsManual(false)));
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+
+			if (evaporating) {
+				nodeService.setProperty(ing, PLMModel.PROP_EVAPORATED_RATE, 100d);
+				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_EVAPORATED_RATE, 100d);
+			}
+			return rawMaterialNodeRef;
+		});
+	}
+
+	/** Creates and formulates a semi-finished product, so that it carries the yield the labeling reads. */
+	private NodeRef createSemiFinished(String name, double netQty, List<CompoListDataItem> compoList) {
+		NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+			SemiFinishedProductData semiFinished = SemiFinishedProductData.build().withName(name + " " + Calendar.getInstance().getTimeInMillis())
+					.withUnit(ProductUnit.kg).withQty(netQty).withDensity(1d).withCompoList(compoList);
+			semiFinished.setLegalName(name);
+			return alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(semiFinishedNodeRef);
+			return null;
+		});
+
+		return semiFinishedNodeRef;
 	}
 
 	/**
@@ -2407,6 +2499,226 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			nodeService.removeAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE);
 			return null;
 		});
+	}
+
+	/**
+	 * #34702 : the sub-ingredients of a raw material are entered as percentages of their parent ingredient. A partly
+	 * declared composite used to show its only sub-ingredient at the percentage of the composite itself, whereas the
+	 * ingredient list gives 75 % of 70 % = 52.5 %. The label now reads the same percentages as the ingredient list.
+	 */
+	@Test
+	public void testPartiallyDeclaredSubIngIsScaledByItsParent() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createPartiallyDeclaredCompositeProduct("34702p", 1d));
+
+		checkILL(finishedProductNodeRef, partiallyDeclaredCompositeRules("34702p", false),
+				"compose 34702p 70% (enfant 34702p 52,5%), autre 34702p 30%", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702 : same recipe in a product that loses 15 % of its weight, none of the ingredients carrying an evaporation
+	 * rate. Every percentage is concentrated by the yield, the sub-ingredient included : 52.5 / 0.85 = 61.76 %.
+	 */
+	@Test
+	public void testPartiallyDeclaredSubIngIsScaledByItsParentWithYield() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createPartiallyDeclaredCompositeProduct("34702y", 0.85d));
+
+		checkILL(finishedProductNodeRef, partiallyDeclaredCompositeRules("34702y", true),
+				"compose 34702y 82,35% (enfant 34702y 61,76%), autre 34702y 35,29%", Locale.FRENCH);
+	}
+
+	private NodeRef createPartiallyDeclaredCompositeProduct(String key, double netQty) {
+		IngListDataItem composite = IngListDataItem.build().withQtyPerc(70d)
+				.withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "compose " + key));
+		List<IngListDataItem> ingList = List.of(composite,
+				IngListDataItem.build().withQtyPerc(75d).withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "enfant " + key))
+						.withParent(composite),
+				IngListDataItem.build().withQtyPerc(30d).withIngredient(CharactTestHelper.getOrCreateIng(nodeService, "autre " + key)));
+		RawMaterialData rawMaterial = RawMaterialData.build().withName("MP compose " + key).withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(ingList);
+		NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		FinishedProductData finishedProduct = FinishedProductData.build().withName("PF compose " + key).withUnit(ProductUnit.kg).withQty(netQty)
+				.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterialNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
+	private List<LabelingRuleListDataItem> partiallyDeclaredCompositeRules(String key, boolean withYield) {
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.##%} ({2})").withLabelingRuleType(LabelingRuleType.Format));
+		rules.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.##%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		if (withYield) {
+			rules.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("ingsLabelingWithYield=true")
+					.withLabelingRuleType(LabelingRuleType.Prefs));
+		}
+		rules.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(List.of(inReadTx(() -> CharactTestHelper.getOrCreateIng(nodeService, "compose " + key)))).withReplacements(null));
+		return rules;
+	}
+
+	/**
+	 * #34702 : a sub-ingredient brought by two raw materials is declared in the plural. The label reads the
+	 * sub-ingredients through rescaled copies of the ingredient list, which must keep the identity the plural
+	 * detection relies on.
+	 */
+	@Test
+	public void testSubIngBroughtByTwoRawMaterialsIsPlural() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			NodeRef composite = CharactTestHelper.getOrCreateIng(nodeService, "base 34702pl");
+			MLText pluralLegalName = new MLText();
+			pluralLegalName.addValue(I18NUtil.getContentLocaleLang(), "noisettes 34702pl");
+			pluralLegalName.addValue(Locale.FRENCH, "noisettes 34702pl");
+			NodeRef nut = CharactTestHelper.getOrCreateIng(nodeService, "noisette 34702pl");
+			nodeService.setProperty(nut, PLMModel.PROP_PLURAL_LEGAL_NAME, pluralLegalName);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			for (String rawMaterialName : List.of("MP base A 34702pl", "MP base B 34702pl")) {
+				IngListDataItem parent = IngListDataItem.build().withQtyPerc(100d).withIngredient(composite);
+				RawMaterialData rawMaterial = RawMaterialData.build().withName(rawMaterialName).withQty(1d).withUnit(ProductUnit.kg)
+						.withIngList(List.of(parent, IngListDataItem.build().withQtyPerc(100d).withIngredient(nut).withParent(parent)));
+				compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef()));
+			}
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("PF pluriel 34702pl").withUnit(ProductUnit.kg).withQty(2d)
+					.withCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(List.of(inReadTx(() -> CharactTestHelper.getOrCreateIng(nodeService, "base 34702pl")))).withReplacements(null));
+
+		String label = getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, rules), Locale.FRENCH);
+
+		Assert.assertTrue("The sub-ingredient brought by two raw materials must be plural, label: " + label,
+				label.toLowerCase(Locale.FRENCH).contains("noisettes 34702pl"));
+	}
+
+	/**
+	 * #37354 : the legal name declaration chosen on the compo line of a reconstitutable raw material turns its
+	 * reconstitution off. The raw material is declared as it is used and its diluent stays on the label.
+	 */
+	@Test
+	public void testLegalNameDeclarationTurnsReconstitutionOff() {
+		NodeRef finishedProductNodeRef = createReconstitutionProduct("Produit fini 37354 lib legal", DeclarationType.DoNotDetails);
+		try {
+			String label = renderReconstitutionLabel(finishedProductNodeRef, new ArrayList<>());
+
+			Assert.assertFalse("The reconstitution target must be absent, label: " + label, label.contains("ing6 french"));
+			Assert.assertTrue("The raw material must be declared by its legal name, label: " + label, label.contains("Legal Raw material 1"));
+		} finally {
+			removeReconstitution();
+		}
+	}
+
+	/**
+	 * #37354 : a "do not detail" labeling rule targeting a reconstitutable raw material turns its reconstitution off
+	 * as well, the compo line staying declared.
+	 */
+	@Test
+	public void testDoNotDetailsRuleTurnsReconstitutionOff() {
+		NodeRef finishedProductNodeRef = createReconstitutionProduct("Produit fini 37354 regle", DeclarationType.Declare);
+		try {
+			List<LabelingRuleListDataItem> rules = new ArrayList<>();
+			rules.add(LabelingRuleListDataItem.build().withName("Lib legal").withLabelingRuleType(LabelingRuleType.DoNotDetails)
+					.withComponents(List.of(rawMaterial1NodeRef)).withReplacements(null));
+
+			String label = renderReconstitutionLabel(finishedProductNodeRef, rules);
+
+			Assert.assertFalse("The reconstitution target must be absent, label: " + label, label.contains("ing6 french"));
+			Assert.assertTrue("The raw material must be declared by its legal name, label: " + label, label.contains("Legal Raw material 1"));
+		} finally {
+			removeReconstitution();
+		}
+	}
+
+	/**
+	 * #37354 : without reconstitution, the water loss set on the water of the diluent raw material is still applied.
+	 * <pre>
+	 * 1 kg of powder + 4 kg of water in, 4.5 kg net : the water loses 0.5 kg
+	 * water 3.5 / 4.5 = 77.8 %, powder 1 / 4.5 = 22.2 %
+	 * </pre>
+	 */
+	@Test
+	public void testWaterLossIsKeptWhenReconstitutionIsOff() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createRehydratedProduct);
+
+		List<LabelingRuleListDataItem> rules = new ArrayList<>();
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		rules.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}").withLabelingRuleType(LabelingRuleType.Format));
+		rules.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		checkILL(finishedProductNodeRef, rules, "eau 37354 77,8%, poudre 37354 22,2%", Locale.FRENCH);
+	}
+
+	private NodeRef createReconstitutionProduct(String name, DeclarationType reconstitutableDeclarationType) {
+		return inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(name);
+			finishedProduct.setLegalName("Legal " + name);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+							.withProduct(rawMaterial7NodeRef),
+					CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+							.withDeclarationType(reconstitutableDeclarationType).withProduct(rawMaterial1NodeRef)));
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+			nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+	}
+
+	private String renderReconstitutionLabel(NodeRef finishedProductNodeRef, List<LabelingRuleListDataItem> rules) {
+		rules.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		return getFirstIll(formulateWithLabelingRules(finishedProductNodeRef, rules), Locale.FRENCH);
+	}
+
+	private void removeReconstitution() {
+		inWriteTx(() -> {
+			nodeService.removeAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE);
+			return null;
+		});
+	}
+
+	private NodeRef createRehydratedProduct() {
+		NodeRef water = CharactTestHelper.getOrCreateIng(nodeService, "eau 37354");
+		if (!nodeService.hasAspect(water, PLMModel.ASPECT_WATER)) {
+			nodeService.addAspect(water, PLMModel.ASPECT_WATER, null);
+		}
+		NodeRef driedFruit = CharactTestHelper.getOrCreateIng(nodeService, "fruit sec 37354");
+		NodeRef fruit = CharactTestHelper.getOrCreateIng(nodeService, "fruit 37354");
+
+		RawMaterialData waterRawMaterial = RawMaterialData.build().withName("MP eau 37354").withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(water)));
+		NodeRef waterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), waterRawMaterial).getNodeRef();
+
+		RawMaterialData powder = RawMaterialData.build().withName("MP poudre 37354").withQty(1d).withUnit(ProductUnit.kg)
+				.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(driedFruit)));
+		powder.setLegalName("poudre 37354");
+		NodeRef powderNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), powder).getNodeRef();
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+		nodeService.addAspect(powderNodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+		associationService.update(powderNodeRef, PLMModel.ASSOC_DILUENT_REF, water);
+		associationService.update(powderNodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, fruit);
+
+		FinishedProductData finishedProduct = FinishedProductData.build().withName("PF rehydrate 37354").withUnit(ProductUnit.kg).withQty(4.5d)
+				.withCompoList(List.of(
+						CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.DoNotDetails)
+								.withProduct(powderNodeRef),
+						CompoListDataItem.build().withQtyUsed(4d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(waterNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 	}
 
 	@Test

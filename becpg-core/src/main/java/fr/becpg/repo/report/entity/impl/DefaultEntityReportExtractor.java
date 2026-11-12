@@ -1456,8 +1456,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if (useCData || isMultiLinesAttribute(propertyQName, context)) {
 			return addCDATA(nodeElt, propertyQName, value, suffix);
 		} else {
+			warnOnInvalidXmlChars(nodeElt, localName, value, context);
 			nodeElt.addAttribute(localName, value);
 			return nodeElt;
+		}
+	}
+
+	/**
+	 * Names in the log the value whose characters are dropped from the datasource because XML forbids them, so that
+	 * the faulty text can be found and corrected on the entity.
+	 *
+	 * @param nodeElt the element receiving the value
+	 * @param localName the name of the attribute or child element
+	 * @param value the value to check
+	 * @param context the extraction context, possibly null
+	 */
+	private void warnOnInvalidXmlChars(Element nodeElt, String localName, String value, DefaultExtractorContext context) {
+		if (XMLTextHelper.hasInvalidChar(value)) {
+			logger.warn("Characters forbidden in XML are dropped from '" + localName + "' of " + nodeElt.getPath() + " in the report datasource"
+					+ (context != null ? " of entity " + context.getRootNodeRef() : ""));
 		}
 	}
 
@@ -1677,6 +1694,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element cDATAElt = nodeElt.addElement(localName);
 		appendPrefix(propertyQName, cDATAElt);
 
+		warnOnInvalidXmlChars(nodeElt, localName, eltValue, null);
 		cDATAElt.addCDATA(XMLTextHelper.writeCData(eltValue));
 
 		return cDATAElt;

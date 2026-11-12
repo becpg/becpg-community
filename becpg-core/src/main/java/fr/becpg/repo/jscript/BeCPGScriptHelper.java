@@ -1393,6 +1393,25 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
+	 * The link of the beCPG menu to the regulatory web application, as for OLAP: the application is served at the
+	 * regulatory server URL without its {@code /api} suffix, and opens read only with the user's beCPG ticket. The
+	 * ticket is URL-encoded: it is Base64, whose "+" a query string would read as a space.
+	 *
+	 * @return the URL of the regulatory web application with the current user's ticket, or null when the regulatory
+	 *         service is disabled or not configured on this instance
+	 */
+	public String getRegulatorySSOUrl() {
+		String serverUrl = systemConfigurationService.confValue("beCPG.regulatory.serverUrl");
+		if (!Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.regulatory.enabled")) || serverUrl == null
+				|| serverUrl.isBlank()) {
+			return null;
+		}
+		String uiUrl = serverUrl.trim().replaceAll("/+$", "").replaceAll("/api$", "");
+		String token = beCPGTicketService.getCurrentAuthToken();
+		return token == null ? null : uiUrl + "/?ticket=" + java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8);
+	}
+
+	/**
 	 * <p>createBranch.</p>
 	 *
 	 * @param entity a {@link org.alfresco.repo.jscript.ScriptNode} object.

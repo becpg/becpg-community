@@ -18,6 +18,7 @@
 package fr.becpg.repo.security;
 
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -61,6 +62,20 @@ public interface SecurityService {
 	 */
 	int computeAccessMode(NodeRef nodeRef, QName nodeType, QName name);
 	
+	/**
+	 * The fields of a type a security rule is set on, among the rules that apply to the given node
+	 * (its local rules, or the global ones).
+	 * <p>
+	 * A field outside this set is readable whoever asks, which lets a caller reading many fields
+	 * evaluate {@link #computeAccessMode(NodeRef, QName, String)} for the ruled ones only.
+	 *
+	 * @param nodeRef the node whose rules apply, or null for the global rules
+	 * @param nodeType the type the rules are set on
+	 * @return the names the rules of the type are set on (prefixed fields and lists, or entries such
+	 *         as <code>View-documents</code>), empty when the type has no rule
+	 */
+	Set<String> getFieldsWithRules(NodeRef nodeRef, QName nodeType);
+
 	/**
 	 * Refresh ACLS cache per tenant
 	 */

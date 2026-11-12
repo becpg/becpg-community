@@ -105,6 +105,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	private static final String PROP_FORMAT = "format";
 	/** Constant <code>PROP_REQUIRED="required"</code> */
 	private static final String PROP_REQUIRED = "required";
+	/** Constant <code>PROP_DEFINED_BY="definedBy"</code> */
+	private static final String PROP_DEFINED_BY = "definedBy";
 
 	private SysAdminParams sysAdminParams;
 
@@ -269,6 +271,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (propertyDefinition.isMultiValued()) {
 							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
 									entityDictionaryService.getTitle(propertyDefinition, entityType), entityDictionaryService.getDescription(propertyDefinition, entityType));
+							addDefinedBy(arrayDef, propertyDefinition.getContainerClass());
 							addProperty(entityType, arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
 						} else {
 							addProperty(entityType, attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
@@ -638,6 +641,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
 					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
+			addDefinedBy(arrayDef, propertyDefinition.getContainerClass());
 			if (!((List<Serializable>) value).isEmpty()) {
 				JSONObject node = new JSONObject();
 				Serializable subEl = ((List<Serializable>) value).get(0);
@@ -660,11 +664,13 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		} else if (value instanceof NodeRef) {
 			JSONObject node = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
 					entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
+			addDefinedBy(node, propertyDefinition.getContainerClass());
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 		} else {
 			if (RemoteHelper.isJSONValue(propType)) {
-				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
+				JSONObject jsonValueDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
 						entityDictionaryService.getTitle(propertyDefinition, nodeService.getType(entityNodeRef)), entityDictionaryService.getDescription(propertyDefinition, nodeService.getType(entityNodeRef)));
+				addDefinedBy(jsonValueDef, propertyDefinition.getContainerClass());
 			} else {
 				addProperty(nodeService.getType(entityNodeRef), entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
@@ -755,6 +761,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		if (entityDictionaryService.getDescription(propertyDefinition, entityType) != null) {
 			object.put(PROP_DESCRIPTION, entityDictionaryService.getDescription(propertyDefinition, getJsonEntityType(entity)));
 		}
+		addDefinedBy(object, propertyDefinition.getContainerClass());
 		properties.put(attr, object);
 		return object;
 
@@ -784,7 +791,21 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		addProperty(entity, entityDictionaryService.toPrefixString(nodeType), type, assocDef.getTitle(entityDictionaryService),
 				assocDef.getDescription(entityDictionaryService), object);
 		addProperty(object, "assoc:targetTypes", TYPE_STRING, String.join(",", entityDictionaryService.getTargetTypes(nodeType).stream().map(q -> q.toPrefixString(namespaceService)).toList()), "Assoc target types");
+		addDefinedBy(object, assocDef.getSourceClass());
 		return object;
+	}
+
+	/**
+	 * Names the type or the aspect that declares a field, so that a client knows on which nodes the
+	 * field may be written: anywhere for an aspect, on the type and its subtypes for a type.
+	 *
+	 * @param field the JSON schema of the field
+	 * @param declaringClass the container class of a property or the source class of an association, ignored when unknown
+	 */
+	private void addDefinedBy(JSONObject field, ClassDefinition declaringClass) {
+		if (declaringClass != null) {
+			field.put(PROP_DEFINED_BY, DefinedBy.of(declaringClass, namespaceService).toJson());
+		}
 	}
 	
 	/**

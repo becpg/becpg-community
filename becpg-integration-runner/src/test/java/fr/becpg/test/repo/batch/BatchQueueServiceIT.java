@@ -401,6 +401,47 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		assertTrue(nodeErrorIds.contains(batchFullId1));
 		assertTrue(nodeErrorIds.contains(batchFullId2));
 	}
+
+	@Test
+	public void testBatchStepWithErrorHandling_NonTransactionalStep() throws InterruptedException {
+		List<NodeRef> testNodes = createTestNodes(3);
+		AtomicInteger processedCount = new AtomicInteger(0);
+
+		BatchInfo batchInfo = new BatchInfo("test.nontx.batch", "test.nontx.batch.desc");
+		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(1);
+		String batchFullId = batchInfo.getBatchId() + "|" + batchInfo.getBatchDescId();
+
+		BatchStep<NodeRef> step = batchQueueService.createBatchStepWithErrorHandling(
+			batchInfo,
+			testNodes,
+			new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
+				@Override
+				public void process(NodeRef entry) throws Throwable {
+					processedCount.incrementAndGet();
+					if (testNodes.indexOf(entry) == 0) {
+						throw new RuntimeException("Error in non transactional step");
+					}
+				}
+			}
+		);
+		step.setTransactional(false);
+
+		batchQueueService.queueBatch(batchInfo, List.of(step));
+		waitForBatchEnd(batchInfo);
+
+		assertEquals(3, processedCount.get());
+
+		NodeRef failedNode = testNodes.get(0);
+		@SuppressWarnings("unchecked")
+		List<String> nodeErrorIds = (List<String>) nodeService.getProperty(failedNode, BeCPGModel.PROP_BATCH_ERROR_IDS);
+		assertNotNull(nodeErrorIds);
+		assertTrue(nodeErrorIds.contains(batchFullId));
+
+		String errorLogs = (String) nodeService.getProperty(failedNode, BeCPGModel.PROP_BATCH_ERROR_LOGS);
+		assertNotNull(errorLogs);
+		assertTrue(errorLogs.contains("Error in non transactional step"));
+	}
 	
 	@Test
 	public void testRetryBatchInError() throws InterruptedException {

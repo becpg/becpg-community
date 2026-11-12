@@ -110,7 +110,7 @@
                                              <a href="${shareUrl}"><button style="margin-bottom:15px">Cliquez ici pour Accéder à votre compte</button></a>
                                              <p style="margin-bottom:8px">Vos informations :<br />
                                              <br />Nom d'utilisateur : <b>${username}</b>
-                                             <br />Mot de passe : <b>${password}</b>
+                                             <br />Mot de passe : <b>${password?html}</b>
                                              </p>
                                              
                                              <p style="font-size:12px;color:#696969;font-style:italic"><b>Nous vous conseillons vivement de changer votre mot de passe lorsque vous vous connectez pour la première fois.</b><br />

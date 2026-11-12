@@ -18,6 +18,8 @@ public class EvaporatedDataItem {
 	
 	private Double maxEvaporableQty;
 	private Double maxEvaporableVolume;
+
+	private boolean heldByParent = false;
 	/**
 	 * <p>Constructor for EvaporatedDataItem.</p>
 	 *
@@ -91,6 +93,25 @@ public class EvaporatedDataItem {
 	 */
 	public void setMaxEvaporableVolume(Double maxEvaporableVolume) {
 		this.maxEvaporableVolume = maxEvaporableVolume;
+	}
+
+	/**
+	 * Tells whether the evaporating ingredient is not shown on the label and loses its water through the composite
+	 * ingredient holding it, in which case the max evaporable quantities are the ingredient own ones.
+	 *
+	 * @return true when the composite ingredient holding the ingredient carries its loss
+	 */
+	public boolean isHeldByParent() {
+		return heldByParent;
+	}
+
+	/**
+	 * Marks the evaporating ingredient as carried by the composite ingredient holding it.
+	 *
+	 * @param heldByParent true when the composite ingredient holding the ingredient carries its loss
+	 */
+	public void setHeldByParent(boolean heldByParent) {
+		this.heldByParent = heldByParent;
 	}
 
 	/** {@inheritDoc} */

@@ -323,10 +323,13 @@
 							var formulateButton = YAHOO.util.Selector.query('div.formulate');
 							Dom.addClass(formulateButton, "loading");
 
+							// The displayed folder is a subfolder of the entity once the user browses into it
+							var entityNodeRef = this.options.rootNode && this.options.rootNode !== "null" ? this.options.rootNode : this.doclistMetadata.parent.nodeRef;
+
 							Alfresco.util.Ajax.request({
 								method: Alfresco.util.Ajax.GET,
 								responseContentType: Alfresco.util.Ajax.JSON,
-								url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.doclistMetadata.parent.nodeRef + "&format=json",
+								url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + entityNodeRef + "&format=json",
 								successCallback: {
 									fn: function(response) {
 										Alfresco.util.PopupManager.displayMessage({

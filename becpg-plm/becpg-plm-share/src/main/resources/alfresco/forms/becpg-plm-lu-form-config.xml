@@ -21,12 +21,12 @@
 					<show force="true" id="gs1:eanCodeInnerPack" />
 					<show force="false" id="bcpg:eanCodeLevel2" />
 					<show force="false" id="bcpg:eanCodeLevel3" />
-					<show force="true" id="gs1:referencedTradeItemEanCode" />
-					<show force="true" id="gs1:referencedTradeItemTypeCode" />
+					<show force="false" id="gs1:referencedTradeItemEanCode" />
+					<show force="false" id="gs1:referencedTradeItemTypeCode" />
 					<show force="true" id="bcpg:subsidiaryRef" />
 					<show force="true" id="bcpg:trademarkRef" />
 					<show force="true" id="bcpg:plants" />
-					<show force="true" id="gs1:organicProductPlaceOfFarmingCode" />
+					<show force="false" id="gs1:organicProductPlaceOfFarmingCode" />
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="true" id="gs1:targetMarkets" />
 					<show force="false" id="bcpg:clients" />
@@ -54,58 +54,58 @@
 					<show force="true" id="gs1:healthClaimDescription" />
 					<show force="true" id="gs1:preparationType" />
 
-					<show force="true" id="gs1:isTradeItemSeasonal" />
-					<show force="true" id="gs1:seasonalAvailabilityStartDateTime" />
-					<show force="true" id="gs1:seasonalAvailabilityEndDateTime" />
-					<show force="true" id="gs1:seasonCalendarYear" />
-					<show force="true" id="gs1:seasonName" />
-					<show force="true" id="gs1:seasonParameterCode" />
+					<show force="false" id="gs1:isTradeItemSeasonal" />
+					<show force="false" id="gs1:seasonalAvailabilityStartDateTime" />
+					<show force="false" id="gs1:seasonalAvailabilityEndDateTime" />
+					<show force="false" id="gs1:seasonCalendarYear" />
+					<show force="false" id="gs1:seasonName" />
+					<show force="false" id="gs1:seasonParameterCode" />
 
-					<show force="true" id="gs1:pegHoleNumber" />
-					<show force="true" id="gs1:pegHoleTypeCode" />
-					<show force="true" id="gs1:pegHorizontal" />
-					<show force="true" id="gs1:pegVertical" />
+					<show force="false" id="gs1:pegHoleNumber" />
+					<show force="false" id="gs1:pegHoleTypeCode" />
+					<show force="false" id="gs1:pegHorizontal" />
+					<show force="false" id="gs1:pegVertical" />
 
-					<show force="true" id="gs1:animalNutritionalClaim" />
-					<show force="true" id="gs1:animalFeedAdditiveStatement" />
-					<show force="true" id="gs1:animalFeedAnalyticalConstituentsStatement" />
-					<show force="true" id="gs1:animalFeedCompositionStatement" />
-					<show force="true" id="gs1:animalFeedingInstructions" />
-					<show force="true" id="gs1:animalFeedType" />
+					<show force="false" id="gs1:animalNutritionalClaim" />
+					<show force="false" id="gs1:animalFeedAdditiveStatement" />
+					<show force="false" id="gs1:animalFeedAnalyticalConstituentsStatement" />
+					<show force="false" id="gs1:animalFeedCompositionStatement" />
+					<show force="false" id="gs1:animalFeedingInstructions" />
+					<show force="false" id="gs1:animalFeedType" />
 
-					<show force="true" id="gs1:cheeseMaturationPeriodDescription" />
-					<show force="true" id="gs1:cheeseMaturationProcessContainerTypeCode" />
-					<show force="true" id="gs1:fatPercentageInDryMatter" />
-					<show force="true" id="gs1:isRindEdible" />
-					<show force="true" id="gs1:rennetTypeCode" />
-					<show force="true" id="gs1:ripeningTimePeriod" />
-					<show force="true" id="gs1:surfaceOfCheeseAtEndOfRipeningCode" />
+					<show force="false" id="gs1:cheeseMaturationPeriodDescription" />
+					<show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode" />
+					<show force="false" id="gs1:fatPercentageInDryMatter" />
+					<show force="false" id="gs1:isRindEdible" />
+					<show force="false" id="gs1:rennetTypeCode" />
+					<show force="false" id="gs1:ripeningTimePeriod" />
+					<show force="false" id="gs1:surfaceOfCheeseAtEndOfRipeningCode" />
 
-					<show force="true" id="gs1:percentageOfAlcoholByVolume" />
-					<show force="true" id="gs1:percentageOfAlcoholByVolumeMeasurementPrecisionCode" />
-					<show force="true" id="gs1:alcoholProof" />
-					<show force="true" id="gs1:alcoholUnits" />
-					<show force="true" id="gs1:originOfWineCode" />
-					<show force="true" id="gs1:alcoholicBeverageSubregion" />
-					<show force="true" id="gs1:isTradeItemAQualityVintageAlcoholProduct" />
-					<show force="true" id="gs1:vintage" />
-					<show force="true" id="gs1:alcoholBeverageAge" />
-					<show force="true" id="gs1:vintner" />
-					<show force="true" id="gs1:degreeOfOriginalWort" />
-					<show force="true" id="gs1:alcoholicBeverageSugarContent" />
-					<show force="true" id="gs1:bitternessOfBeerMeasurement" />
-					<show force="true" id="gs1:isCaskStrength" />
-					<show force="true" id="gs1:alcoholicBeverageColourCode" />
-					<show force="true" id="gs1:sweetnessLevelOfAlcoholicBeverageCode" />
-					<show force="true" id="gs1:primaryAddedFlavouringCode" />
-					<show force="true" id="gs1:secondaryAddedFlavouringCode" />
-					<show force="true" id="gs1:alcoholicPermissionLevel" />
-					<show force="true" id="gs1:alcoholBeverageContainerRef" />
-					<show force="true" id="gs1:alcoholBeverageTypeCode" />
-					<show force="true" id="gs1:beerStyleCode" />
-					<show force="true" id="gs1:alcoholBeverageFilteringMethodTypeCode" />
-					<show force="true" id="gs1:alcoholBeverageDistilledFromCode" />
-					<show force="true" id="gs1:alcoholBeverageProductionMethodTypeCode" />
+					<show force="false" id="gs1:percentageOfAlcoholByVolume" />
+					<show force="false" id="gs1:percentageOfAlcoholByVolumeMeasurementPrecisionCode" />
+					<show force="false" id="gs1:alcoholProof" />
+					<show force="false" id="gs1:alcoholUnits" />
+					<show force="false" id="gs1:originOfWineCode" />
+					<show force="false" id="gs1:alcoholicBeverageSubregion" />
+					<show force="false" id="gs1:isTradeItemAQualityVintageAlcoholProduct" />
+					<show force="false" id="gs1:vintage" />
+					<show force="false" id="gs1:alcoholBeverageAge" />
+					<show force="false" id="gs1:vintner" />
+					<show force="false" id="gs1:degreeOfOriginalWort" />
+					<show force="false" id="gs1:alcoholicBeverageSugarContent" />
+					<show force="false" id="gs1:bitternessOfBeerMeasurement" />
+					<show force="false" id="gs1:isCaskStrength" />
+					<show force="false" id="gs1:alcoholicBeverageColourCode" />
+					<show force="false" id="gs1:sweetnessLevelOfAlcoholicBeverageCode" />
+					<show force="false" id="gs1:primaryAddedFlavouringCode" />
+					<show force="false" id="gs1:secondaryAddedFlavouringCode" />
+					<show force="false" id="gs1:alcoholicPermissionLevel" />
+					<show force="false" id="gs1:alcoholBeverageContainerRef" />
+					<show force="false" id="gs1:alcoholBeverageTypeCode" />
+					<show force="false" id="gs1:beerStyleCode" />
+					<show force="false" id="gs1:alcoholBeverageFilteringMethodTypeCode" />
+					<show force="false" id="gs1:alcoholBeverageDistilledFromCode" />
+					<show force="false" id="gs1:alcoholBeverageProductionMethodTypeCode" />
 
 					<show force="false" id="gs1:sustainabilityFeatureCode" />
 					<show force="false" id="gs1:sustainabilityStatement" />

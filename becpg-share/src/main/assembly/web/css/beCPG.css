@@ -416,6 +416,9 @@ img.icon16_11 {
 .dijitIcon.dijitMenuItemIcon.becpg-olap-header {
     background-image: url("../../components/images/header/becpg-olap.png") !important
 }
+.dijitIcon.dijitMenuItemIcon.becpg-regulatory-header {
+    background-image: url("../../components/images/header/becpg-regulatory.png") !important
+}
 .dijitIcon.dijitMenuItemIcon.model-designer-header {
     background-image: url("../../components/images/header/model-designer.png") !important
 }
@@ -423,6 +426,7 @@ img.icon16_11 {
 
 .dijitIcon.dijitMenuItemIcon.becpg-admin-header,
 .dijitIcon.dijitMenuItemIcon.becpg-olap-header,
+.dijitIcon.dijitMenuItemIcon.becpg-regulatory-header,
 .dijitIcon.dijitMenuItemIcon.ecm-record,
 .dijitIcon.dijitMenuItemIcon.model-designer-header,
 .dijitIcon.dijitMenuItemIcon.nc-list-header,
@@ -973,16 +977,9 @@ span.geo {
     background-repeat: no-repeat;
 }
 
-span.geoOrigin-ASSEMBLY,
-span.geoOrigin-BIRTH,
-span.geoOrigin-BOTTLING,
-span.geoOrigin-CATCH_ZONE,
-span.geoOrigin-FARMING,
-span.geoOrigin-IMPORTATION,
-span.geoOrigin-LAST_PROCESSING,
-span.geoOrigin-MILKING,
-span.geoOrigin-REARING,
-span.geoOrigin-SLAUGHTER {
+/* Any GS1 place of activity type (geoOrigin-BIRTH, geoOrigin-CUTTER...), first class or not */
+span[class^="geoOrigin-"],
+span[class*=" geoOrigin-"] {
    background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat;
@@ -1043,10 +1040,67 @@ span.packagingList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
-span.resourceParam,
-span.resourceParamList,
 span.processList {
     background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.resourceParam,
+span.resourceParamList {
+    background-image: url("../../components/images/filetypes/generic-resourceParam-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.priceList {
+    background-image: url("../../components/images/filetypes/generic-price-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.tradeItemPriceList {
+    background-image: url("../../components/images/filetypes/generic-tradeItemPrice-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.dutyFeeTaxList {
+    background-image: url("../../components/images/filetypes/generic-dutyFeeTax-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.pubChannelList {
+    background-image: url("../../components/images/filetypes/generic-pubChannel-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.fishReportingInformationList {
+    background-image: url("../../components/images/filetypes/generic-fishReportingInformation-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.regulatoryList {
+    background-image: url("../../components/images/filetypes/generic-regulatory-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.View-regulatory {
+    background-image: url("../../components/images/filetypes/generic-regulatoryView-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.toxList {
+    background-image: url("../../components/images/filetypes/generic-tox-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.svhcList {
+    background-image: url("../../components/images/filetypes/generic-svhc-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+/** Core **/
+
+span.activityList {
+    background-image: url("../../components/images/filetypes/generic-activity-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -1061,9 +1115,18 @@ span.project,
 }
 
 span.deliverableList,
-span.scoreList,
 span.invoiceList {
     background-image: url("../../components/images/generic-file-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.scoreList {
+    background-image: url("../../components/images/filetypes/generic-score-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.surveyList {
+    background-image: url("../../components/images/filetypes/generic-survey-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -1126,6 +1189,16 @@ span.productMicrobioCriteria,
 .entity.productMicrobioCriteria
  {
     background-image: url("../../components/images/filetypes/generic-productMicrobioCriteria-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.controlDefList {
+    background-image: url("../../components/images/filetypes/generic-controlDef-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.stockList {
+    background-image: url("../../components/images/filetypes/generic-stock-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -1267,4 +1340,16 @@ div.yui-dialog {
 .people-finder h3.itemname,
 .people-finder .detail {
 	overflow-wrap: anywhere;
+}
+
+/** Align a value written from right to left (Arabic, Hebrew...) to the right, Share dialogs inherit text-align: left **/
+
+[dir="rtl"] {
+	text-align: right;
+}
+
+/** A multilingual value whose language is not known in advance takes its direction from its first letter: align it on that side **/
+
+[dir="auto"] {
+	text-align: start;
 }

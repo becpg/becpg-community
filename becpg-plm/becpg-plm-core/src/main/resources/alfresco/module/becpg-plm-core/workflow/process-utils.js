@@ -1,4 +1,13 @@
+// #37862 Workflows started before #16087 keep their original BPMN, which still calls
+// sendMail(recipient, from, subject, message, templatePath, workflowDocuments) with an already localized subject and message
+var LEGACY_SEND_MAIL_ARGUMENT_COUNT = 6;
+
 function sendMail(recipient, from, subjectKey, subjectParam, messageKey, templatePath, workflowDocuments) {
+	
+	if (arguments.length == LEGACY_SEND_MAIL_ARGUMENT_COUNT) {
+		sendMail(arguments[0], arguments[1], arguments[2], null, arguments[3], arguments[4], arguments[5]);
+		return;
+	}
 	
 	try {
 		var templateArgs = {};
@@ -22,14 +31,14 @@ function sendMail(recipient, from, subjectKey, subjectParam, messageKey, templat
 		var commonLocale = getCommonLocale(persons);
 		
 		if (commonLocale != null) {
-			templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, commonLocale);
+			templateArgs['workflowTitle'] = getLocalizedMessageOrText(messageKey, commonLocale);
 			bcpg.sendMLAwareMail(new Array(authorityName), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
 		} else {
 			for (var i in persons) {
 				var person = persons[i];
 				var personNode = people.getPerson(person);
 				if (personNode != null) {
-					templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, personNode.properties['bcpg:userLocale']);
+					templateArgs['workflowTitle'] = getLocalizedMessageOrText(messageKey, personNode.properties['bcpg:userLocale']);
 					bcpg.sendMLAwareMail(new Array(person), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
 				}
 			}
@@ -39,6 +48,11 @@ function sendMail(recipient, from, subjectKey, subjectParam, messageKey, templat
 		logger.error("Cannot send mail :");
 		logger.error(" - e: " + e);
 	}
+}
+
+function getLocalizedMessageOrText(messageKey, locale) {
+	var localizedMessage = bcpg.getLocalizedMessage(messageKey, locale);
+	return localizedMessage != null ? localizedMessage : messageKey;
 }
 
 function getCommonLocale(persons) {

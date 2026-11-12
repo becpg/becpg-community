@@ -228,13 +228,20 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pack:pmlGeoOrigin" />
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
+					<show id="pack:pmlBioBasedPercentage" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:parentLevel" force="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:packMaterialList&#38;attributeName=pack:pmlMaterial</control-param>
+						</control>
+					</field>
 					<field id="bcpg:isManualListItem">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
@@ -258,6 +265,9 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
+					<show id="pack:pmlBioBasedPercentage" />
+					<show id="bcpg:depthLevel" force="true" />
+					<show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -265,6 +275,7 @@
 					<field id="pack:pmlGeoOrigin">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:depthLevel" label="hidden" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -277,6 +288,9 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />
+                    <show id="pack:pmlBioBasedPercentage" />
+                    <show id="bcpg:depthLevel" force="true" />
+                    <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
                 </field-visibility>
                 <appearance>
@@ -284,6 +298,7 @@
                     <field id="pack:pmlGeoOrigin">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
+                    <field id="bcpg:depthLevel" label="hidden" read-only="true" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -296,6 +311,9 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />    
+                    <show id="pack:pmlBioBasedPercentage" />
+                    <show id="bcpg:depthLevel" force="true" />
+                    <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
                 </field-visibility>
                 <appearance>
@@ -303,6 +321,7 @@
                     <field id="pack:pmlGeoOrigin">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
+                    <field id="bcpg:depthLevel" label="hidden" read-only="true" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -338,13 +357,21 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pack:pmlGeoOrigin" />
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
+					<show id="pack:pmlBioBasedPercentage" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:parentLevel" force="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:packMaterialList&#38;attributeName=pack:pmlMaterial</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
 					<field id="bcpg:isManualListItem">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
@@ -392,6 +419,13 @@
 					<show id="pack:pmIsNotRecyclable" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
+				</field-visibility>
+			</form>
+
+			<!-- Ecological score of the material, shown as a column of the packaging material list -->
+			<form id="ecoScore">
+				<field-visibility>
+					<show id="pack:pmEcoScore" />
 				</field-visibility>
 			</form>
 
@@ -559,6 +593,7 @@
 					<field id="bcpg:parentLevel" force="true">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:packagingComponentList&#38;attributeName=pack:pclComponent</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="pack:pclMaterial">
@@ -712,6 +747,7 @@
 					<field id="bcpg:parentLevel" force="true">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:supplierPackagingList&#38;attributeName=pack:splComponent</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="pack:splMaterial">

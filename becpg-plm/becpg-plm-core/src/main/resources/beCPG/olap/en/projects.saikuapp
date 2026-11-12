@@ -4,11 +4,7 @@
  "version": 1,
  "theme": {
   "mode": "light",
-  "ground": "#f4f7f8",
-  "surface": "#ffffff",
-  "fg": "#0d2b33",
-  "muted": "#5b7780",
-  "accent": "#009dcc"
+  "preset": "becpg"
  },
  "nav": {
   "position": "rail",
@@ -24,14 +20,15 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Projects assistant",
+  "title": "Chef AI",
+  "icon": "chef",
   "persona": "beCPG project portfolio analyst",
-  "scope": "Answer only about the cubes projects, projectsSteps et evaluation.",
-  "greeting": "Ask about progress, the funnel or evaluations.",
+  "scope": "Answers from the Projects cube.",
+  "greeting": "Ask about the progress, duration or state of projects.",
   "suggestedPrompts": [
-   "Tasks per process stage",
+   "Number of projects per state",
    "Average progress per project manager",
-   "Evaluation scores per criterion"
+   "Average project duration per priority"
   ],
   "cube": {
    "connectionName": "beCPG",

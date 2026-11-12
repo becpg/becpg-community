@@ -78,7 +78,13 @@ import fr.becpg.repo.helper.XMLTextHelper;
  */
 public class XmlEntityVisitor extends AbstractEntityVisitor {
 
+	/** Association hops from the exported entity whose targets <code>xml_all</code> details. */
+	private static final int MAX_DETAILED_ASSOCIATION_DEPTH = 1;
+
 	private final AssociationService associationService;
+
+	/** Association hops between the exported entity and the node being visited. */
+	private int associationDepth = 0;
 
 	/**
 	 * <p>Constructor for XmlEntityVisitor.</p>
@@ -192,7 +198,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content, boolean siteInfo)
 			throws XMLStreamException, RemoteException {
-		cacheList.add(nodeRef);
+		if (assocs || props) {
+			cacheList.add(nodeRef);
+		}
 
 		extractLevel++;
 
@@ -200,7 +208,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService));
 		// lists filter
-		if (DataListModel.TYPE_DATALIST.equals(nodeType) && !params.shouldExtractList(name)) {
+		if (DataListModel.TYPE_DATALIST.equals(nodeType) && (!params.shouldExtractList(name) || !canReadDataList(nodeRef))) {
 			extractLevel--;
 			return;
 		}
@@ -213,7 +221,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
-				if ((part != null)) {
+				if ((part != null) && canReadNode(part)) {
 					isCharact = true;
 					writeStdAttributes(xmlw, part, name, isCharact, siteInfo);
 				}
@@ -244,6 +252,26 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
+	 * Whether a data list is exported as far as the security rules are concerned. The rule is set on
+	 * the type of the owning entity, the list being reached through its container.
+	 *
+	 * @param listNodeRef the data list
+	 * @return false when a security rule hides the list from the current user
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if the owning entity cannot be read
+	 */
+	private boolean canReadDataList(NodeRef listNodeRef) throws RemoteException {
+		if (!isFieldSecurityEnforced()) {
+			return true;
+		}
+
+		String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+		NodeRef containerNodeRef = getPrimaryParentRef(listNodeRef);
+		NodeRef entityNodeRef = containerNodeRef != null ? getPrimaryParentRef(containerNodeRef) : null;
+		return (dataListType == null) || dataListType.isEmpty() || (entityNodeRef == null)
+				|| canReadField(entityNodeRef, QName.createQName(dataListType, namespaceService));
+	}
+
+	/**
 	 * <p>writeStdAttributes.</p>
 	 *
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
@@ -256,14 +284,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	 */
 	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact, boolean appendSite)
 			throws XMLStreamException, RemoteException {
-		Path path = null;
-		NodeRef parentRef = getPrimaryParentRef(nodeRef);
-		if (parentRef != null) {
-			path = nodeService.getPath(parentRef);
+		Path path = findReadableParentPath(nodeRef).orElse(null);
+		if (path != null) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_PATH : RemoteEntityService.ATTR_PATH,
 			path.toPrefixString(namespaceService));
-		} else {
-			logger.warn("Node : " + nodeRef + " has no primary parent");
 		}
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
@@ -276,14 +300,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 
-		if (code != null && !code.isBlank()) {
+		if (code != null && !code.isBlank() && canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
 					XMLTextHelper.writeAttribute(code));
 		}
 
 		// erpCode
 		code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE);
-		if (code != null && !code.isBlank()) {
+		if (code != null && !code.isBlank() && canReadField(nodeRef, BeCPGModel.PROP_ERP_CODE)) {
 			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_ERP_CODE : RemoteEntityService.ATTR_ERP_CODE, code);
 		}
 
@@ -370,6 +394,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						continue;
 					}
 
+					if (!canReadField(nodeRef, assocDef.getName())) {
+						continue;
+					}
+
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
@@ -406,6 +434,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						continue;
 					}
 
+					if (!canReadField(nodeRef, assocDef.getName())) {
+						continue;
+					}
+
 					xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 
 					xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.ASSOC_TYPE);
@@ -418,7 +450,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							visitNode(childRef, xmlw, true, true, false, false);
 
 						} else {
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false, false);
+							visitAssociationTarget(childRef, xmlw);
 						}
 						cachedAssocRef = null;
 					}
@@ -431,6 +463,31 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			logger.warn("No typeDef found for :" + nodeRef);
 		}
 
+	}
+
+	/**
+	 * Visits the target of an association. With <code>xml_all</code>, the targets reached from the
+	 * exported entity are detailed (properties, lists and associations) and the targets of those
+	 * targets are written as headers only, as with <code>xml</code>.
+	 * <p>
+	 * Following every association reached the transitive closure of the repository, a supplier
+	 * bringing in its whole catalogue, and the nested visit could exhaust the stack on a long chain.
+	 * Only detailed nodes are marked as visited, so that a node first met beyond the bound is still
+	 * detailed when it is also a direct target.
+	 *
+	 * @param targetRef the association target
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitAssociationTarget(NodeRef targetRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		boolean detailed = (associationDepth < MAX_DETAILED_ASSOCIATION_DEPTH) && shouldDumpAll(targetRef);
+		associationDepth++;
+		try {
+			visitNode(targetRef, xmlw, detailed, detailed, false, false);
+		} finally {
+			associationDepth--;
+		}
 	}
 
 	/**
@@ -451,7 +508,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || params.getFilteredProperties().contains(propName))
-						&& !propQName.equals(ContentModel.PROP_CONTENT)) {
+						&& !propQName.equals(ContentModel.PROP_CONTENT) && canReadField(nodeRef, propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 
@@ -557,9 +614,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * <p>visitPropValue.</p>
+	 * Writes a property value. A <code>d:noderef</code> value whose target is deleted or not readable
+	 * by the current user is left out, see {@link #isExportableValue(Serializable)}.
 	 *
-	 * @param value a {@link java.io.Serializable} object
+	 * @param value the property value
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
 	 * @throws javax.xml.stream.XMLStreamException if any.
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
@@ -567,25 +625,51 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {
-			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
-			for (Serializable subEl : (List<Serializable>) value) {
+			visitPropValues((List<Serializable>) value, xmlw);
+		} else if (isExportableValue(value)) {
+			writeSingleValue(value, xmlw);
+		}
+	}
+
+	/**
+	 * Writes the values of a multi-valued property, one element per exportable value: a left out
+	 * reference leaves no empty element behind.
+	 *
+	 * @param values the values of the property
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitPropValues(List<Serializable> values, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
+		for (Serializable value : values) {
+			if (isExportableValue(value)) {
 				xmlw.writeStartElement(RemoteEntityService.ELEM_LIST_VALUE);
-				visitPropValue(subEl, xmlw);
+				writeSingleValue(value, xmlw);
 				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
-		} else if (value instanceof NodeRef) {
-			if (nodeService.exists((NodeRef) value)) {
-				visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
-			} else {
-				throw new RemoteException("node does not exist: " + value);
-			}
-		} else if (value instanceof Date) {
-			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
-		} else {
-			if (value != null) {
-				xmlw.writeCData(XMLTextHelper.writeCData(value.toString()));
-			}
+		}
+		xmlw.writeEndElement();
+	}
+
+	/**
+	 * Writes a single property value. A referenced node is written as a header only (path, name,
+	 * nodeRef and codes), in every format: a <code>d:noderef</code> value is a reference, not an
+	 * association, and following it with <code>xml_all</code> chained products to one another
+	 * through their requirement sources. The header is enough for the import to resolve it.
+	 *
+	 * @param value a single property value
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void writeSingleValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		if (value instanceof NodeRef nodeRef) {
+			visitNode(nodeRef, xmlw, false, false, false, false);
+		} else if (value instanceof Date date) {
+			xmlw.writeCharacters(ISO8601DateFormat.format(date));
+		} else if (value != null) {
+			xmlw.writeCData(XMLTextHelper.writeCData(value.toString()));
 		}
 	}
 

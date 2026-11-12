@@ -152,7 +152,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Transaction committed, starting batch update for tox: " + toxName);
 				}
-				List<NodeRef> ingList = findAllUndeletedIngredients();
+				List<NodeRef> ingList = findAllIngredients();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Found " + ingList.size() + " ingredients to update");
 				}
@@ -164,11 +164,11 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 				batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef ingNodeRef) throws Throwable {
-						if (nodeService.exists(ingNodeRef) && nodeService.exists(toxNodeRef)) {
+						if (isActiveIngredient(ingNodeRef) && nodeService.exists(toxNodeRef)) {
 							updateIngFromTox(ingNodeRef, toxNodeRef);
 						} else {
 							if (logger.isDebugEnabled()) {
-								logger.debug("Skipping non-existent node - ingredient: " + ingNodeRef + ", tox: " + toxNodeRef);
+								logger.debug("Skipping missing or deleted node - ingredient: " + ingNodeRef + ", tox: " + toxNodeRef);
 							}
 						}
 					}
@@ -189,7 +189,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			logger.debug("Scheduling removal of tox: " + toxNodeRef + " (name: " + toxName + ") from ingredients");
 		}
 		
-		List<NodeRef> ingList = findAllUndeletedIngredients();
+		List<NodeRef> ingList = findAllIngredients();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Found " + ingList.size() + " ingredients for tox removal");
 		}
@@ -216,18 +216,25 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 	}
 
 	/**
-	 * <p>findAllUndeletedIngredients.</p>
+	 * Finds all the ingredients, deleted ones included. The deletion flag is not read here because
+	 * this runs in the request thread: the batch workers skip the deleted ingredients instead
+	 * (see {@link #isActiveIngredient(NodeRef)}).
 	 *
-	 * @return a {@link java.util.List} object
+	 * @return the node references of all the ingredients
 	 */
-	private List<NodeRef> findAllUndeletedIngredients() {
-		logger.debug("Searching for all undeleted ingredients");
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inDB()
-				.ofType(PLMModel.TYPE_ING);
-		List<NodeRef> ingredients = WorkProviderFactory.fromQueryBuilder(queryBuilder).build().collect().stream()
-				.filter(n -> !Boolean.TRUE.equals(nodeService.getProperty(n, BeCPGModel.PROP_IS_DELETED))).toList();
-		logger.debug("Found " + ingredients.size() + " undeleted ingredients");
-		return ingredients;
+	private List<NodeRef> findAllIngredients() {
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_ING);
+		return WorkProviderFactory.fromQueryBuilder(queryBuilder).build().collect();
+	}
+
+	/**
+	 * Tells whether an ingredient still exists and is not flagged as deleted, so that a batch worker may update it.
+	 *
+	 * @param ingNodeRef the ingredient node reference
+	 * @return true if the ingredient exists and is not deleted
+	 */
+	private boolean isActiveIngredient(NodeRef ingNodeRef) {
+		return nodeService.exists(ingNodeRef) && !Boolean.TRUE.equals(nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_IS_DELETED));
 	}
 	
 	/**
@@ -246,7 +253,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 			@Override
 			public void process(NodeRef ingNodeRef) throws Throwable {
-				if (nodeService.exists(ingNodeRef)) {
+				if (isActiveIngredient(ingNodeRef)) {
 					logger.debug("Removing tox: " + toxName + " from ingredient: " + ingNodeRef);
 					
 					String currentSystemicValues = (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
@@ -266,8 +273,8 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 							nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES, newMaxValues);
 						}
 					}
-				} else {
-					logger.debug("Ingredient no longer exists: " + ingNodeRef);
+				} else if (logger.isDebugEnabled()) {
+					logger.debug("Ingredient missing or deleted, skipped: " + ingNodeRef);
 				}
 			}
 		});

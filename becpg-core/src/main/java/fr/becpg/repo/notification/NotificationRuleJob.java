@@ -1,9 +1,5 @@
 package fr.becpg.repo.notification;
 
-import java.util.List;
-
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.transaction.TransactionService;
@@ -15,6 +11,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+
+import fr.becpg.repo.helper.TenantJobHelper;
 
 /**
  * <p>
@@ -49,26 +47,10 @@ public class NotificationRuleJob extends AbstractScheduledLockedJob implements J
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
 		final NotificationRuleService notificationRuleService = (NotificationRuleService) jobData.get(KEY_NOTIFICATION_RULE_SERVICE);
 
-		AuthenticationUtil.runAsSystem(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		TenantJobHelper.runForEachTenant(tenantAdminService, () -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			notificationRuleService.sendNotifications();
 			return null;
 		}, false, true));
-
-		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
-			@SuppressWarnings("deprecation")
-			List<Tenant> tenants = tenantAdminService.getAllTenants();
-			for (Tenant tenant : tenants) {
-				if(tenant.isEnabled()) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						notificationRuleService.sendNotifications();
-						return null;
-					}, false, true)
-	
-							, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-				}
-			}
-		}
 
 		logger.info("End of Notification Job.");
 	}

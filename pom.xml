@@ -6,9 +6,9 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>26.1.0</version>
-	<name>beCPG</name>
+	<name>becpg</name>
 	
-	<description>BeCPG Parent Project</description>
+	<description>beCPG PLM core: Alfresco repository and Share modules for food, beverage and cosmetics product lifecycle management</description>
 	<url>https://github.com/becpg/becpg-community</url>
 	<organization>
 		<name>BeCPG</name>
@@ -179,7 +179,7 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>25.3.0.12</becpg.artworks.version>
+		<becpg.artworks.version>25.3.0.14</becpg.artworks.version>
 		<becpg.i18n.version>1.0.170</becpg.i18n.version>
 		<becpg.supporttools.version>25.2.0.8-beCPG</becpg.supporttools.version>
 		
@@ -290,7 +290,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.5.0</version>
 					<configuration>
 						<encoding>UTF-8</encoding>
 						<propertiesEncoding>ISO-8859-1</propertiesEncoding>
@@ -327,13 +327,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.4.2</version>
+					<version>3.5.1</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.6.1</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -357,7 +357,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.5.4</version>
+							<version>3.6.1</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -365,7 +365,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.11.0</version>
 				</plugin>
 
 				<plugin>
@@ -449,7 +449,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>3.3.1</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -467,7 +467,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.4</version>
+				<version>3.6.1</version>
 				<configuration>
 					<runOrder>alphabetical</runOrder>
 				</configuration>
@@ -476,7 +476,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.3</version>
+				<version>3.12.0</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -484,13 +484,13 @@
 		    <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.6.2</version>
 			</plugin>	
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>3.16.0</version>
 				<configuration>
 					<release>21</release>
 					<compilerArgs>
@@ -503,13 +503,13 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>5.1.0.4751</version>
+				<version>5.8.0.7211</version>
 			</plugin>
 			
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-site-plugin</artifactId>
-			    <version>3.21.0</version>
+			    <version>3.22.0</version>
 			</plugin>
 		</plugins>
 		
@@ -547,7 +547,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.5.4</version>
+            <version>3.6.1</version>
             <configuration>
                 <!-- No specific executions required, just the goal for site phase aggregation -->
                 <aggregate>true</aggregate>
@@ -558,7 +558,7 @@
          <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.3</version>
+                <version>3.12.0</version>
                 <reportSets>
                     <reportSet>
                         <reports>

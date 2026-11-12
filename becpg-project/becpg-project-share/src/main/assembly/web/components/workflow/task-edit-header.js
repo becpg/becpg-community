@@ -425,6 +425,42 @@
          });
       },
 
+      /**
+       * Leaves the task form for a fixed page when the previous page is not a Share page.
+       * A task opened from an emailed link through the SSO has the identity provider page as previous
+       * history entry: going back to it replays the SAML response, which the service provider rejects.
+       *
+       * @method navigateForward
+       * @param submitted {boolean} True if the form was submitted successfully
+       */
+      navigateForward: function TEH_navigateForward(submitted)
+      {
+         var explicitUrl = submitted ? this.options.submitUrl : this.options.cancelUrl;
+
+         if (!explicitUrl && !this._isSharePage(document.referrer))
+         {
+            document.location.href = this.options.defaultUrl || this.getSiteDefaultUrl() || Alfresco.constants.URL_CONTEXT;
+         }
+         else
+         {
+            Alfresco.component.TaskEditHeader.superclass.navigateForward.call(this, submitted);
+         }
+      },
+
+      /**
+       * Tells whether a url belongs to this Share application.
+       *
+       * @method _isSharePage
+       * @param url {String} The url to check, possibly empty
+       * @return {boolean} True if the url is a page of this Share application
+       */
+      _isSharePage: function TEH__isSharePage(url)
+      {
+         var shareUrl = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_CONTEXT;
+
+         return !!url && url.indexOf(shareUrl) === 0;
+      },
+
       _disableActionButtons: function(disabled)
       {
          if (this.widgets.reassignButton)

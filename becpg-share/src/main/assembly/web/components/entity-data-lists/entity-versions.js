@@ -63,9 +63,41 @@
                      /**
                       * Current list
                       */    
-                     list : null
+                     list : null,
+
+                     /**
+                      * Entity states of the branches hidden by default
+                      * 
+                      * @property hiddenStates
+                      * @type array
+                      */
+                     hiddenStates : []
 
                   },
+
+                  /**
+                   * Whether the branches in a hidden state are displayed
+                   * 
+                   * @property showHiddenBranches
+                   * @type boolean
+                   */
+                  showHiddenBranches : false,
+
+                  /**
+                   * Number of branches in a hidden state
+                   * 
+                   * @property hiddenBranchCount
+                   * @type int
+                   */
+                  hiddenBranchCount : 0,
+
+                  /**
+                   * Label of the version shown by the menu
+                   * 
+                   * @property displayedVersionLabel
+                   * @type string
+                   */
+                  displayedVersionLabel : "",
 
                   /**
                    * A local cache of the document version response this is retrieved during set up & updated on each
@@ -111,6 +143,9 @@
                      }
 
                      var instance = this;
+
+                     Event.addListener(this.id + "-branchFilter-toggle", "click", this.onBranchFilterToggleClick, this, true);
+                     Event.addListener(this.id + "-railGraph", "click", this.onRailGraphClick, this, true);
                      
                      this.widgets.alfrescoDataTable = new Alfresco.util.DataTable(
                            {
@@ -137,6 +172,8 @@
                                        
                                        Dom.removeClass(this.id + "-body", "hidden");
                                     }
+
+                                    instance.updateBranchFilter(oFullResponse.branches);
 
                                     return ({
                                        "data" : oFullResponse.branches
@@ -194,7 +231,8 @@
                      + this.options.nodeRef.replace(":/", "") + "/compare?entities="+doc.nodeRef + "&noCache=" + new Date().getTime(), html = '', current = ( this.options.nodeRef == doc.nodeRef),
                      url = beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType, null, this.options.list);
                      
-                     html += '<div class="entity-branches'+(current ? " current":"")+'">';
+                     html += '<div class="entity-branches' + (current ? " current" : "") + this.getBranchStateClasses(doc, current) + '"'
+                           + this.getBranchTooltipAttributes(doc, current) + '>';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
                      html += '   <span class="'+doc.metadata+'" ><a title="'+ $html(doc.description) +'" href="'+url+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
@@ -209,8 +247,128 @@
                      return html;
                   },
 
-                  
-                  
+                  /**
+                   * Returns the attributes of the tooltip that names a branch when the lists panel is collapsed
+                   * 
+                   * @method getBranchTooltipAttributes
+                   * @param doc
+                   *            {Object} The branch details
+                   * @param current
+                   *            {boolean} true if the branch is the current entity
+                   * @return {string} The attributes, prefixed with a space
+                   */
+                  getBranchTooltipAttributes : function EntityVersions_getBranchTooltipAttributes(doc, current) {
+                     var detail = "v" + doc.label + (current ? " \u00B7 " + this.msg("label.currentBranch") : "");
+                     return ' data-rail-tip="' + $html(doc.name) + '" data-rail-tip-detail="' + $html(detail) + '"';
+                  },
+
+                  /**
+                   * Returns the CSS classes of an inactive branch: always faded, and hideable unless it is the
+                   * current one
+                   * 
+                   * @method getBranchStateClasses
+                   * @param branch
+                   *            {Object} The branch details
+                   * @param current
+                   *            {boolean} true if the branch is the current entity
+                   * @return {string} The CSS classes, prefixed with a space, or an empty string
+                   */
+                  getBranchStateClasses : function EntityVersions_getBranchStateClasses(branch, current) {
+                     if (!this.isHiddenBranch(branch)) {
+                        return "";
+                     }
+                     return current ? " inactive-state" : " inactive-state hidden-state";
+                  },
+
+                  /**
+                   * Tells whether a branch is in a state hidden by default
+                   * 
+                   * @method isHiddenBranch
+                   * @param branch
+                   *            {Object} The branch details
+                   * @return {boolean} true if the branch state is hidden by default
+                   */
+                  isHiddenBranch : function EntityVersions_isHiddenBranch(branch) {
+                     return branch.entityState != null && Alfresco.util.arrayContains(this.options.hiddenStates, branch.entityState);
+                  },
+
+                  /**
+                   * Counts the active branches and the inactive ones that can be hidden, i.e. all but the current
+                   * one, and displays the filter banner when some can be hidden
+                   * 
+                   * @method updateBranchFilter
+                   * @param branches
+                   *            {Array} The branches of the entity
+                   */
+                  updateBranchFilter : function EntityVersions_updateBranchFilter(branches) {
+                     var activeBranchCount = 0;
+                     this.hiddenBranchCount = 0;
+
+                     for (var i = 0; i < branches.length; i++) {
+                        if (!this.isHiddenBranch(branches[i])) {
+                           activeBranchCount++;
+                        } else if (branches[i].nodeRef != this.options.nodeRef) {
+                           this.hiddenBranchCount++;
+                        }
+                     }
+
+                     Dom.get(this.id + "-branchFilter-count").innerHTML = $html(this.getCountLabel("label.activeVersion",
+                           activeBranchCount));
+                     this.renderBranchFilterToggle();
+
+                     if (this.hiddenBranchCount > 0) {
+                        Dom.removeClass(this.id + "-branchFilter", "hidden");
+                     } else {
+                        Dom.addClass(this.id + "-branchFilter", "hidden");
+                     }
+                  },
+
+                  /**
+                   * Updates the toggle label, its tooltip, its icon and the visibility of the hidden branches
+                   * 
+                   * @method renderBranchFilterToggle
+                   */
+                  renderBranchFilterToggle : function EntityVersions_renderBranchFilterToggle() {
+                     var toggle = Dom.get(this.id + "-branchFilter-toggle"),
+                        tooltip = this.msg(this.showHiddenBranches ? "label.hideHiddenVersions" : "label.showHiddenVersions");
+                     Dom.get(this.id + "-branchFilter-toggle-label").innerHTML = $html(this.getCountLabel("label.hiddenVersion",
+                           this.hiddenBranchCount));
+                     toggle.title = tooltip;
+                     toggle.setAttribute("aria-label", tooltip);
+
+                     if (this.showHiddenBranches) {
+                        Dom.addClass(this.id + "-branches", "show-hidden-branches");
+                        Dom.addClass(this.id + "-branchFilter-toggle", "active");
+                     } else {
+                        Dom.removeClass(this.id + "-branches", "show-hidden-branches");
+                        Dom.removeClass(this.id + "-branchFilter-toggle", "active");
+                     }
+                  },
+
+                  /**
+                   * Returns the singular or plural label of a count
+                   * 
+                   * @method getCountLabel
+                   * @param labelKey
+                   *            {string} The singular label key, the plural one is suffixed with "s"
+                   * @param count
+                   *            {int} The count
+                   * @return {string} The label with the count
+                   */
+                  getCountLabel : function EntityVersions_getCountLabel(labelKey, count) {
+                     return this.msg(count > 1 ? labelKey + "s" : labelKey, count);
+                  },
+
+                  /**
+                   * Fired when the user clicks on the show / hide hidden branches link
+                   * 
+                   * @method onBranchFilterToggleClick
+                   */
+                  onBranchFilterToggleClick : function EntityVersions_onBranchFilterToggleClick(event) {
+                     this.showHiddenBranches = !this.showHiddenBranches;
+                     this.renderBranchFilterToggle();
+                     Event.preventDefault(event);
+                  },
        
                   /**
                   *
@@ -460,9 +618,34 @@
 
                      // Set the title.
                      this.widgets.versionMenu.set("label", title);
+                     this.renderRailVersion(label || this.latestVersion.label);
 
                   },
                   
+                  /**
+                   * Displays the version shown by the menu in the collapsed lists panel
+                   * 
+                   * @method renderRailVersion
+                   * @param label
+                   *            {string} The version label
+                   */
+                  renderRailVersion : function EntityVersions_renderRailVersion(label) {
+                     this.displayedVersionLabel = label;
+                     Dom.get(this.id + "-railVersion").innerHTML = $html(label);
+                  },
+
+                  /**
+                   * Fired when the user clicks on the branch button of the collapsed lists panel
+                   * 
+                   * @method onRailGraphClick
+                   * @param event
+                   *            {Object} The click event
+                   */
+                  onRailGraphClick : function EntityVersions_onRailGraphClick(event) {
+                     Event.preventDefault(event);
+                     this.onVersionsGraphClick(this.options.nodeRef + "@" + this.displayedVersionLabel);
+                  },
+
                   /**
                    * Called when a "onViewHistoricPropertiesClick" link has been clicked for a version. Will display the
                    * Properties dialogue for that version.

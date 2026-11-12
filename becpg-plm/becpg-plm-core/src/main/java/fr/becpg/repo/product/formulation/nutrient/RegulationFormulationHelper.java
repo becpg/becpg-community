@@ -1,5 +1,7 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
@@ -46,6 +49,7 @@ public class RegulationFormulationHelper {
 	public static final String ATTR_NUT_CODE = "nutCode";
 	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
+	private static final String KEY_ROUNDING_STEP = "step";
 	/**
 	 * Key of the maximum tolerated value. The stored keys are historical: "tl" holds the maximum
 	 * and "tu" the minimum, which is how the nutrient list screen reads them.
@@ -83,6 +87,8 @@ public class RegulationFormulationHelper {
 		regulations.put("TT", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
 		regulations.put("DO", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
 		regulations.put("PE", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
+		// NTE INEN 1334-2 takes the rounding rules and daily values of the FDA format in force before 2016
+		regulations.put("EC", UsNutrientRegulation.withoutTolerances("beCPG/databases/nuts/EcuadorianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
@@ -292,12 +298,13 @@ public class RegulationFormulationHelper {
 		Double value = extractValue(roundedValue, locKey);
 		Double valuePerServing = extractValuePerServing(roundedValue, locKey);
 		Double valuePerContainer = extractValuePerContainer(roundedValue, locKey);
+		RoundedNutrientDisplay display = new RoundedNutrientDisplay(hasCustomRounding(roundedValue, locKey), nutCode, precision, locale, locKey);
 
 		return new RegulatedNutrient(nutCode, toDisplayRule(getRegulation(locKey).getNutrientDefinition(nutCode)), value, valuePerServing,
 				valuePerContainer, extractGDAPerc(roundedValue, locKey), extractGDAPercPerContainer(roundedValue, locKey),
-				toDisplayValue(nutListItem.getValue(), value, nutCode, precision, locale, locKey, nutListItem.getUnit()),
-				toDisplayValue(nutListItem.getValuePerServing(), valuePerServing, nutCode, precision, locale, locKey, nutListItem.getUnit()),
-				toDisplayValue(valuePerContainer, valuePerContainer, nutCode, precision, locale, locKey, null));
+				display.format(nutListItem.getValue(), value, nutListItem.getUnit()),
+				display.format(nutListItem.getValuePerServing(), valuePerServing, nutListItem.getUnit()),
+				display.format(valuePerContainer, valuePerContainer, null));
 	}
 
 	private static NutrientDisplayRule toDisplayRule(NutrientDefinition definition) {
@@ -309,12 +316,16 @@ public class RegulationFormulationHelper {
 				Boolean.TRUE.equals(definition.getShowGDAPerc()), definition.getGda(), definition.getUl(), definition.getUnit());
 	}
 
-	private static String toDisplayValue(Double value, Double roundedValue, String nutCode, String precision, Locale locale, String locKey,
-			String nutUnit) {
-		if (value == null) {
-			return null;
-		}
-		return displayValue(value, roundedValue, nutCode, precision, locale, locKey, nutUnit);
+	/**
+	 * Whether the rounded values were computed with a rounding step declared by the product
+	 * instead of the rule of the regulation.
+	 *
+	 * @param roundedValue the rounded value blob of the nutrient line
+	 * @param locKey the regulation key
+	 * @return {@code true} when a custom step was applied for that regulation
+	 */
+	public static boolean hasCustomRounding(String roundedValue, String locKey) {
+		return extractValueByKey(roundedValue, KEY_ROUNDING_STEP, locKey) != null;
 	}
 
 	/**
@@ -380,7 +391,7 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
 				|| locale.getCountry().equals("PE") || locale.getCountry().equals("TW") || locale.getCountry().equals("JP")
-				|| locale.getCountry().equals("VN")) {
+				|| locale.getCountry().equals("VN") || locale.getCountry().equals("EC")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -392,7 +403,8 @@ public class RegulationFormulationHelper {
 			return "US";
 		} else if (locale.getCountry().equals("PY")) {
 			return "BR";
-		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")) {
+		} else if (locale.getCountry().equals("GT") || locale.getCountry().equals("PA") || locale.getCountry().equals("SV")
+				|| locale.getCountry().equals("HN") || locale.getCountry().equals("NI") || locale.getCountry().equals("CR")) {
 			return "CTA";
 		} else if ((locale.getLanguage().equals("ar") 
 				&& (locale.getCountry() == null || locale.getCountry().isEmpty())) || locale.getCountry().equals("AE")
@@ -403,7 +415,8 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
 				|| locale.getCountry().equals("MW") || locale.getCountry().equals("TZ") || locale.getCountry().equals("ZM")
 				|| locale.getCountry().equals("ZW") || locale.getCountry().equals("KH") || locale.getCountry().equals("MM")
-				|| locale.getCountry().equals("JO") || locale.getCountry().equals("IQ") || locale.getCountry().equals("PS")) {
+				|| locale.getCountry().equals("JO") || locale.getCountry().equals("IQ") || locale.getCountry().equals("PS")
+				|| locale.getCountry().equals("LB") || locale.getCountry().equals("SY") || locale.getCountry().equals("LK")) {
 			return "CODEX";
 		} else if (locale.getCountry().equals("CO")) {
 			return "CO";
@@ -489,10 +502,12 @@ public class RegulationFormulationHelper {
 							}
 						}
 
+						RoundedNutrientDisplay display = new RoundedNutrientDisplay(hasCustomRounding(roundedValue, locKey), nutCode,
+								measurementPrecision, locale, locKey);
+
 						if ((nutListValue != null) && (!nutListValue.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey),
-											nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutListUnit));
 							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
@@ -501,14 +516,14 @@ public class RegulationFormulationHelper {
 						}
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey),
+											nutListUnit));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePrepared),
-											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValuePrepared), extractPreparedValue(roundedValue, locKey),
+											nutListUnit));
 
 							Double nutListValuePreparedPerServing = extractPreparedValuePerServing(roundedValue, locKey);
 
@@ -583,6 +598,8 @@ public class RegulationFormulationHelper {
 			return "ToleranceMin";
 		case KEY_UL:
 			return "UpperLimit";
+		case KEY_ROUNDING_STEP:
+			return "RoundingStep";
 		default:
 			break;
 		}
@@ -649,17 +666,26 @@ public class RegulationFormulationHelper {
 			JSONObject gdaPerContainer = new JSONObject();
 			Map<String, JSONObject> variants = new HashMap<>();
 
+			Double roundingStep = formulatedProduct.getNutrientRoundingSteps().get(nutCode);
+			JSONObject customRoundingStep = new JSONObject();
+
 			for (String key : getAvailableRegulations()) {
 
 				String nutUnit = n.getUnit();
 
 				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
-				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
+				NutrientRounding rounding = new NutrientRounding(regulation, nutCode, nutUnit, roundingStep);
+				if (rounding.isCustom()) {
+					customRoundingStep.put(key, roundingStep);
+					jsonRound.put(KEY_ROUNDING_STEP, customRoundingStep);
+					jsonPreparedRound.put(KEY_ROUNDING_STEP, customRoundingStep);
+				}
+				value.put(key, rounding.round(n.getValue()));
+				secondaryValue.put(key, rounding.round(n.getPreparedValue()));
 
-				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
-				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
+				mini.put(key, rounding.round(n.getMini()));
+				maxi.put(key, rounding.round(n.getMaxi()));
 
 				Double servingSize = getServingSize(key, formulatedProduct);
 				NutrientToleranceCriteria servingCriteria = criteria.withServingSize(servingSize);
@@ -680,8 +706,7 @@ public class RegulationFormulationHelper {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 						if (((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
 							JSONObject variant = new JSONObject();
-							variant.put(key, regulation.round(((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i),
-									nutCode, nutUnit));
+							variant.put(key, rounding.round(((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i)));
 							variants.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i, variant);
 						}
 					}
@@ -693,7 +718,7 @@ public class RegulationFormulationHelper {
 						valuePerserving = n.getManualValuePerServing();
 					}
 
-					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
+					Double vps = rounding.round(valuePerserving);
 					valuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						gda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
@@ -704,7 +729,7 @@ public class RegulationFormulationHelper {
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
 
-					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
+					Double vps = rounding.round(valuePerserving);
 					secondaryValuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
@@ -712,17 +737,17 @@ public class RegulationFormulationHelper {
 
 				}
 
-				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
+				Double containerQty = getContainerQty(formulatedProduct);
 				if ((key.equals("US"))) {
 					if ((n.getValue() != null)) {
-						Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
+						Double vpc = rounding.round(n.getValue() * containerQty * 10);
 						valuePerContainer.put(key, vpc);
 						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 							gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
 						}
 					}
 					if ((n.getPreparedValue() != null)) {
-						Double vpc = regulation.round(n.getPreparedValue() * containerQty * 10, nutCode, nutUnit);
+						Double vpc = rounding.round(n.getPreparedValue() * containerQty * 10);
 						secondaryValuePerContainer.put(key, vpc);
 						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 							secondaryGdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
@@ -767,6 +792,23 @@ public class RegulationFormulationHelper {
 			n.setRoundedValuePrepared(null);
 		}
 		n.setRoundedValue(jsonRound.toString());
+	}
+
+	/**
+	 * Returns the quantity the per container values are computed on, in kg or L: the nutrient basis
+	 * quantity of the consumer container when it is filled, because the product may be modelled as a
+	 * case of several consumer units, and the net quantity of the product otherwise.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 * @return the container quantity in kg or L, 0 when the product has no quantity
+	 */
+	static Double getContainerQty(ProductData formulatedProduct) {
+		Double containerNutrientBasisQuantity = formulatedProduct.getContainerNutrientBasisQuantity();
+		if ((containerNutrientBasisQuantity == null) || (containerNutrientBasisQuantity <= 0)) {
+			return FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
+		}
+		ProductUnit unit = formulatedProduct.getContainerNutrientBasisQuantityUnit();
+		return containerNutrientBasisQuantity / (unit != null ? unit : ProductUnit.g).getUnitFactor();
 	}
 
 	/**
@@ -910,8 +952,12 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PE"))) {
 			ret.add("PE");
 		}
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_EC"))) {
+			ret.add("EC");
+		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_SV"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_HN"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_NI")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_CR"))) {
 			ret.add("CTA");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
@@ -936,12 +982,51 @@ public class RegulationFormulationHelper {
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("my_MM"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_IQ"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_JO"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_PS"))) {
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_PS"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_LB"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_SY"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("si_LK"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ta_LK"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_LK"))) {
 			ret.add("CODEX");
 		}
 
 		ret.add("EU");
 		return ret;
+	}
+
+	/**
+	 * <p>Converts a rounded value back to the unit of the nutrient list.</p>
+	 *
+	 * <p>A regulation stores its rounded values in its own unit, such as grams for the EU
+	 * sodium, whereas the rules reading them, a warning label threshold for instance, reason in
+	 * the unit of the nutrient itself. The conversion is decimal so that a rounded 0.3 g reads
+	 * as exactly 300 mg, which matters to a threshold including its bound.</p>
+	 *
+	 * @param roundedValue the value rounded by the regulation, in the regulation unit
+	 * @param nutCode the nutrient code
+	 * @param nutUnit the unit of the nutrient list, such as mg/100g
+	 * @param key the regulation key, such as EU
+	 * @return the value in the unit of the nutrient list, unchanged when the units match
+	 */
+	public static Double toNutUnit(Double roundedValue, String nutCode, String nutUnit, String key) {
+		if ((roundedValue == null) || (nutUnit == null)) {
+			return roundedValue;
+		}
+
+		NutrientRegulation regulation = getRegulation(key);
+		NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
+		if ((def == null) || (def.getUnit() == null) || def.getUnit().isBlank()) {
+			return roundedValue;
+		}
+
+		Double regulUnitsPerNutUnit = regulation.convertValue(1d, nutUnit, def.getUnit());
+		if ((regulUnitsPerNutUnit == null) || (regulUnitsPerNutUnit == 1d) || (regulUnitsPerNutUnit == 0d)) {
+			return roundedValue;
+		}
+
+		BigDecimal factor = BigDecimal.ONE.divide(BigDecimal.valueOf(regulUnitsPerNutUnit), MathContext.DECIMAL64);
+		return BigDecimal.valueOf(roundedValue).multiply(factor).doubleValue();
 	}
 
 	/**

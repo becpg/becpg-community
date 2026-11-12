@@ -76,8 +76,10 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 				temp.put(PROCESS_INSTANCE_DUE_DATE, formater.formatDate(data.getDueDate()));
 			}
 			
-			temp.put(PROCESS_INSTANCE_IS_ACTIVE, data.getProjectState().equals(ProjectState.Completed) ? false : true);
-			temp.put(PROCESS_INSTANCE_STATE, data.getProjectState().toString());
+			temp.put(PROCESS_INSTANCE_IS_ACTIVE, isActive(data.getProjectState()));
+			if (data.getProjectState() != null) {
+				temp.put(PROCESS_INSTANCE_STATE, data.getProjectState().toString());
+			}
 			
 			NodeRef personRef = null;
 			if(data.getProjectManager()!=null){
@@ -95,6 +97,16 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 		
 		return ret;
 		
+	}
+
+	/**
+	 * A project without state (state not filled at creation) is still running.
+	 *
+	 * @param state the project state, may be null
+	 * @return false only for a completed project
+	 */
+	static boolean isActive(ProjectState state) {
+		return !ProjectState.Completed.equals(state);
 	}
 
 	  

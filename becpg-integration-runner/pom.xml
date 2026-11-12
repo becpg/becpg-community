@@ -13,7 +13,7 @@
 		<version>26.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>26.1.0.51-SNAPSHOT</version>
+    <version>26.1.0.68-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>mockwebserver</artifactId>
-			<version>4.12.0</version>
+			<version>4.12.1</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -281,7 +281,7 @@
 			<plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-javadoc-plugin</artifactId>
-              <version>3.11.3</version> 
+              <version>3.12.0</version> 
               <executions>
                 <execution>
                   <id>attach-javadocs</id>
@@ -401,7 +401,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.15</version>
+						<version>0.8.16</version>
 						<configuration>
 							<append>true</append>
 

@@ -16,6 +16,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
 import fr.becpg.repo.score.ScorePart;
@@ -161,7 +162,7 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	private Map<String, CategoryWeight> weighCategories(ProductData product) {
 		Map<String, CategoryWeight> weights = new LinkedHashMap<>();
 
-		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
+		for (PackMaterialListDataItem line : CompositePackMaterials.materialsOf(product.getPackMaterialList())) {
 			String category = categoryOf(line);
 
 			if ((category != null) && (line.getPmlWeight() != null) && (line.getPmlWeight() != 0d)) {

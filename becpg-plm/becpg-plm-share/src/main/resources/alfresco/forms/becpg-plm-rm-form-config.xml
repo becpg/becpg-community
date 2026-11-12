@@ -18,8 +18,6 @@
 					<show force="true" id="bcpg:erpCode" />
 					<!-- Ecobalyse -->
 					<show force="true" id="bcpg:ecobalyseCode" />
-					<show force="true" id="bcpg:apScenario" />
-					<show force="true" id="bcpg:apCropGroup" />
 					<show force="false" id="bcpg:casNumber" />
 					<show force="false" id="bcpg:ecNumber" />
 					<show force="false" id="bcpg:ceNumber" />
@@ -397,8 +395,6 @@
 							<control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
 						</control>
 					</field>
-					<field id="bcpg:apScenario" set="ecobalyse" />
-					<field id="bcpg:apCropGroup" set="ecobalyse" />
 					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:regulatoryCountries" set="regulatory">
 						<control
@@ -638,6 +634,7 @@
 					<show force="false" id="bcpg:eanCode" />
 					<show force="true" id="bcpg:supplierPlants" />
 					<show force="true" id="bcpg:supplierRefCode" />
+					<show force="true" id="bcpg:certificateDate" />
 					<show force="true" id="bcpg:productGeoOrigin" />
 					<show force="false" id="bcpg:productDensity" />
 					<show force="true" id="bcpg:ingTypeV2" />
@@ -649,7 +646,6 @@
 					<show force="true" id="bcpg:storageConditionsRef" />
 					<show force="true" id="bcpg:precautionOfUseRef" />
 					<show force="true" id="bcpg:preparationTips" />
-					<show force="true" id="bcpg:certificateDate" />
 					<show force="false" id="pack:palletProductsPerBox" />
 					<show force="false" id="pack:palletLayers" />
 					<show force="false" id="pack:palletBoxesPerLayer" />
@@ -696,6 +692,7 @@
 						</control>
 					</field>
 					<field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo" />
+					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="mainInfo" />
 					<field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo" />
 					<set appearance="bordered-panel" id="consumer" label-id="becpg.forms.set.consumer.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -730,7 +727,6 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="consumer" />
 					<set appearance="bordered-panel" id="pallet" label-id="becpg.forms.set.pallet.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="pallet" />

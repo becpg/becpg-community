@@ -89,7 +89,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		File configDir = new File(configPath + FILE_SEPARATOR + "messages");
 		if (configDir.exists()) {
 			List<File> files = new ArrayList<>(Arrays.asList(configDir.listFiles()));
-			Map<String, List<File>> groupedFiles = files.stream().collect(Collectors.groupingBy(f -> f.getName().replace(PROPERTIES, "").split("_")[0]));
+			Map<String, List<File>> groupedFiles = files.stream().collect(Collectors.groupingBy(f -> MessagesFileName.parse(f.getName()).baseName()));
 			groupedFiles.forEach((baseName, associatedFiles) -> {
 				Long bundleId = new Date().getTime();
 				File rootFile = files.stream().filter(f -> f.getName().equalsIgnoreCase(baseName + PROPERTIES)).findFirst().orElse(null);
@@ -103,7 +103,7 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 					writeClassPathMessages(bundleId, defaultLocaleFile);
 					files.remove(defaultLocaleFile);
 				}
-				List<File> otherFiles = files.stream().filter(f -> f.getName().contains("_") && f.getName().split("_")[0].equals(baseName)).toList();
+				List<File> otherFiles = files.stream().filter(f -> isLocaleVariantOf(f.getName(), baseName)).toList();
 				for (File otherFile : otherFiles) {
 					writeClassPathMessages(bundleId, otherFile);
 				}
@@ -112,6 +112,11 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 				I18NUtil.registerResourceBundle("alfresco.messages.custom." + bundleName);
 			});
 		}
+	}
+
+	private static boolean isLocaleVariantOf(String fileName, String baseName) {
+		MessagesFileName messagesFileName = MessagesFileName.parse(fileName);
+		return messagesFileName.hasLocale() && messagesFileName.baseName().equals(baseName);
 	}
 
 	/**
@@ -125,10 +130,10 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			String fileName = file.getName();
 			logger.info("Write classpath file: " + fileName);
 			String content = Files.readString(file.toPath());
-			String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
-			String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
-			String bundleName = fileBaseName + "-" + bundleId;
-			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
+			MessagesFileName messagesFileName = MessagesFileName.parse(fileName);
+			String locale = messagesFileName.locale();
+			String bundleName = messagesFileName.baseName() + "-" + bundleId;
+			if (messagesFileName.appliesToAllUiLocales(Locale.getDefault().getCountry())) {
 				List<String> uiLocales = configService.getConfig("Languages").getConfigElement("ui-languages").getChildren().stream()
 						.map(c -> c.getAttribute("locale")).toList();
 				for (String uiLocale : uiLocales) {
@@ -189,18 +194,18 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 			JSONArray alfrescoConfigFiles = alfrescoConfigList.getJSONArray("items");
 			writeFileOnDisk(configPath + FILE_SEPARATOR + "messages", fileName, jsonResponse.getString("content"));
 			writeClassPathMessages(fileName, jsonResponse.getString("content"), bundleId);
-			String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
-			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
+			MessagesFileName messagesFileName = MessagesFileName.parse(fileName);
+			if (messagesFileName.appliesToAllUiLocales(Locale.getDefault().getCountry())) {
 				for (int i = 0; i < alfrescoConfigFiles.length(); i++) {
 					JSONObject alfrescoConfigFile = alfrescoConfigFiles.getJSONObject(i);
 					String otherFileName = alfrescoConfigFile.getString("displayName");
-					if (otherFileName.contains("_") && (otherFileName.split("_")[0] + PROPERTIES).equals(fileName)) {
+					MessagesFileName otherMessagesFileName = MessagesFileName.parse(otherFileName);
+					if (otherMessagesFileName.hasLocale() && otherMessagesFileName.rootFileName().equals(fileName)) {
 						publishProperties(alfrescoConfigFile.getString("nodeRef"), otherFileName, bundleId);
 					}
 				}
 			}
-			String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
-			String bundleName = fileBaseName + "-" + bundleId;
+			String bundleName = messagesFileName.baseName() + "-" + bundleId;
 			return "alfresco.messages.custom." + bundleName;
 		}
 		return null;
@@ -354,11 +359,11 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 	 */
 	public void writeClassPathMessages(String fileName, String content, Long modifiedDate) {
 		logger.info("Write classpath messages for " + fileName);
-		String fileBaseName = fileName.split("_")[0].replace(PROPERTIES, "");
-		String locale = fileName.contains("_") ? fileName.split("_")[1].replace(PROPERTIES, "") : "";
-		String bundleName = fileBaseName + "-" + modifiedDate;
+		MessagesFileName messagesFileName = MessagesFileName.parse(fileName);
+		String locale = messagesFileName.locale();
+		String bundleName = messagesFileName.baseName() + "-" + modifiedDate;
 		try {
-			if (locale.isEmpty() || locale.equalsIgnoreCase(Locale.getDefault().getCountry())) {
+			if (messagesFileName.appliesToAllUiLocales(Locale.getDefault().getCountry())) {
 				List<String> uiLocales = configService.getConfig("Languages").getConfigElement("ui-languages").getChildren().stream()
 						.map(c -> c.getAttribute("locale")).toList();
 				for (String uiLocale : uiLocales) {

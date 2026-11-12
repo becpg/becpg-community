@@ -1,5 +1,5 @@
 <#--
-  Canadian linear panel, B.01.401 linear format.
+  Canadian linear panel, B.01.401 linear format, figure 16.1 of the directory of formats.
 
   The whole declaration is a single sentence, heading and calories included, which is what the
   format is for: a package too small to carry a table. The percentages are stated bare and a
@@ -7,12 +7,28 @@
 
   The regulation breaks the sentence into four lines and fixes what each one holds, which is why
   the nutrients are grouped here rather than run out in the order of the table: the cholesterol
-  closes the fat line, where the table declares it after the protein.
+  closes the fat line, where the table declares it after the protein. A line may wrap, but only
+  before a nutrient: a declaration keeps its name, its amount and its percentage together.
+
+  The directory figures no bilingual linear panel. It sets the English and the French texts, each
+  complete, side by side in the same frame, which is how a bilingual panel is drawn here: one text
+  per language, from the panel the model carries for each of them.
 
   A sentence needs width rather than height, so the panel is drawn across the package.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#assign W = 504 in nf>
+<#assign WIDTH = 504>
+<#assign W = WIDTH in nf>
+
+<#-- Type of figure 16.1: the sentence runs in 7 point, on an 8 point leading. -->
+<#assign TITLE_SIZE = 10>
+<#assign SERVING_SIZE = 7.5>
+<#assign CALORIES_SIZE = 8>
+<#assign NUTRIENT_SIZE = 7>
+<#assign FOOTNOTE_SIZE = 6>
+
+<#-- Air between the two texts of a bilingual panel, which no rule parts. -->
+<#assign TEXT_GAP = 3 * nf.PAD>
 
 <#-- The four lines of the format, the first one being the heading and the calories. -->
 <#assign LINE_GROUPS = [
@@ -20,23 +36,24 @@
 	["CHO-", "FIBTG", "SUGAR", "PRO-", "NA"],
 	["K", "CA", "FE"]]>
 
-<#-- Heading of the sentence: the title, the serving and the calories, each in both languages. -->
+<#-- Heading of the sentence: the title, the serving and the calories, the serving closing on a colon. -->
 <#function opening data>
-	<#local segments = [nf.emphasis(nf.joined(data.label("title"), data.secondaryLabel("title")))]>
-	<#local segments = segments + [nf.text(serving(data) + ":")]>
+	<#local segments = [nf.sized(nf.emphasis(nf.joined(data.label("title"), data.secondaryLabel("title"))), TITLE_SIZE)]>
+	<#local segments = segments + [nf.text(serving(data) + data.label("servingColon"))]>
 	<#if data.calories()??>
-	<#local segments = segments + [nf.emphasis(data.calories().label() + (data.calories().value()??)?then(" " + data.calories().value(), "") + ",")]>
+	<#local segments = segments + [nf.sized(nf.emphasis(data.calories().label() + (data.calories().value()??)?then(" " + data.calories().value(), "")), CALORIES_SIZE)]>
 	</#if>
 	<#return segments>
 </#function>
 
+<#-- The serving, "per 2/3 cup (56 g)", in lower case since it runs on from the title. -->
 <#function serving data>
-	<#local wording = data.label("servingSize") + (data.serving().servingSize()??)?then(" " + data.serving().servingSize(), "")>
+	<#local wording = data.label("servingSize")?uncap_first + (data.serving().servingSize()??)?then(" " + data.serving().servingSize(), "")>
 	<#if !data.isBilingual()>
 	<#return wording>
 	</#if>
 	<#local secondaryServing = data.secondary().hasServingSize()?then(data.secondary().servingSize(), data.serving().servingSize()!"")>
-	<#return nf.joined(wording, data.secondaryLabel("servingSize") + (secondaryServing?has_content)?then(" " + secondaryServing, ""))>
+	<#return nf.joined(wording, data.secondaryLabel("servingSize")?uncap_first + (secondaryServing?has_content)?then(" " + secondaryServing, ""))>
 </#function>
 
 <#-- The nutrients of the product, gathered into the lines of the format, the empty ones dropped. -->
@@ -59,29 +76,42 @@
 	<#return groups>
 </#function>
 
-<#assign y = nf.BORDER + 3>
+<#-- The sentence of one text, leaving the ordinate it ended on in nf.cursorY. -->
+<#macro sentence data x width y>
+	<@nf.paragraph segments=opening(data) y=y size=SERVING_SIZE indent=x width=width/>
+	<#list declaredGroups(data) as group>
+	<@nf.paragraph segments=nf.linearGroupSegments(data, group, (group?is_last)?then(".", ",")) y=nf.cursorY size=NUTRIENT_SIZE indent=x width=width/>
+	</#list>
+</#macro>
+
+<#--
+  The closing line of one text: the legend pinned to its left margin, its asterisk set the way
+  figure 16.1 sets it, and the footnote pinned to its right one.
+-->
+<#macro footer data x width y>
+	<#if data.label("linearLegend")?has_content>
+	<text x="${x}" y="${nf.baseline(y, FOOTNOTE_SIZE)}" font-size="${FOOTNOTE_SIZE}"><@nf.asterisked text=nf.joined(data.label("linearLegend"), data.isBilingual()?then(data.secondaryLabel("linearLegend"), ""))/></text>
+	</#if>
+	<@nf.emphasisedFootNote data=data y=y size=FOOTNOTE_SIZE singleLine=true indent=x + width anchor="end"/>
+</#macro>
+
+<#assign texts = (nf_data.languagePanels()?size gt 1)?then(nf_data.languagePanels(), [nf_data])>
+<#assign textWidth = (WIDTH - 2 * nf.PAD - (texts?size - 1) * TEXT_GAP) / texts?size>
+
+<#assign top = nf.BORDER + 3>
 <#assign body>
 
-	<@nf.paragraph segments=opening(nf_data) y=y/>
-	<#assign y = nf.cursorY>
-
-	<#list declaredGroups(nf_data) as group>
-	<@nf.paragraph segments=nf.linearGroupSegments(nf_data, group, (group?is_last)?then(".", ",")) y=y/>
-	<#assign y = nf.cursorY>
+	<#assign sentencesBottom = top>
+	<#list texts as text>
+	<@sentence data=text x=nf.PAD + text?index * (textWidth + TEXT_GAP) width=textWidth y=top/>
+	<#assign sentencesBottom = [sentencesBottom, nf.cursorY]?max>
 	</#list>
-	<#assign y = y + 1>
 
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE + 2>
+	<#assign footerY = sentencesBottom + 2>
+	<#list texts as text>
+	<@footer data=text x=nf.PAD + text?index * (textWidth + TEXT_GAP) width=textWidth y=footerY/>
+	</#list>
 
-	<#-- The legend and the footnote share the closing line, one pinned to each margin. -->
-	<#if nf_data.label("linearLegend")?has_content>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${nf.joined(nf_data.label("linearLegend"), nf_data.isBilingual()?then(nf_data.secondaryLabel("linearLegend"), ""))}</text>
-	</#if>
-
-	<@nf.emphasisedFootNote data=nf_data y=y singleLine=true indent=nf.right() anchor="end"/>
-	<#assign y = nf.cursorY>
-
-	<#assign y = y + nf.BORDER + 2>
+	<#assign panelH = nf.cursorY + nf.BORDER + 2>
 </#assign>
-<@nf.panel height=y>${body}</@nf.panel>
+<@nf.panel height=panelH>${body}</@nf.panel>

@@ -153,6 +153,69 @@
         return Alfresco.constants.JS_LOCALE.replace("_", "-");
     };
 
+    /**
+     * Returns the locale that names the country of the displayed data: the content language of the
+     * user when it carries a country (eg. "fr_CA"), the language of the interface otherwise, so
+     * that a country-less content language ("en") does not hide the country of an "en_US" interface.
+     */
+    beCPG.util.getContentLocale = function getContentLocale() {
+        var contentLocale = beCPG.constants ? beCPG.constants.CONTENT_LOCALE : null;
+        if (contentLocale && contentLocale.indexOf("_") > 0) {
+            return contentLocale;
+        }
+        return Alfresco.constants.JS_LOCALE;
+    };
+
+    /**
+     * Languages written from right to left. "iw" is the legacy Java code of Hebrew.
+     */
+    var RIGHT_TO_LEFT_LANGUAGES = ["ar", "he", "iw", "fa", "ur", "ps", "yi", "dv", "ckb", "sd", "ug"];
+
+    /**
+     * Returns the writing direction of a locale, for the dir attribute of the element that shows a
+     * value in that language: "rtl" for Arabic, Hebrew, Persian..., whatever the country ("ar_AE"),
+     * "ltr" otherwise.
+     *
+     * @param locale {String} a locale such as "ar", "ar_AE" or "he-IL"
+     * @return {String} "rtl" or "ltr"
+     */
+    beCPG.util.getTextDirection = function getTextDirection(locale) {
+        if (locale) {
+            var language = String(locale).toLowerCase().split(/[_-]/)[0];
+            for (var i = 0; i < RIGHT_TO_LEFT_LANGUAGES.length; i++) {
+                if (RIGHT_TO_LEFT_LANGUAGES[i] == language) {
+                    return "rtl";
+                }
+            }
+        }
+        return "ltr";
+    };
+
+    /**
+     * Marks an element that shows a value in a right-to-left language with dir="rtl", so that the
+     * browser aligns it to the right and places punctuation and figures accordingly. Elements in
+     * other languages are left untouched.
+     *
+     * @param element {HTMLElement} the element showing the value
+     * @param locale {String} the locale of the value
+     */
+    beCPG.util.applyTextDirection = function applyTextDirection(element, locale) {
+        if (element && beCPG.util.getTextDirection(locale) == "rtl") {
+            element.setAttribute("dir", "rtl");
+        }
+    };
+
+    /**
+     * Returns the writing direction of the data the repository renders in the content language of
+     * the user, which is the language of the interface when the profile sets none.
+     *
+     * @return {String} "rtl" or "ltr"
+     */
+    beCPG.util.getContentTextDirection = function getContentTextDirection() {
+        var contentLocale = beCPG.constants ? beCPG.constants.CONTENT_LOCALE : null;
+        return beCPG.util.getTextDirection(contentLocale || Alfresco.constants.JS_LOCALE);
+    };
+
     beCPG.util.exp = function exp(val) {
         if (val == 0) {
             return "0";
@@ -382,7 +445,7 @@
             || country === "PK" || country === "ZA" || country === "TN"
             || country === "EG" || country === "CL" || country === "UY"
             || country === "BR" || country === "TT" || country === "DO"
-            || country === "PE") {
+            || country === "PE" || country === "EC") {
             return country;
         } else if (language === "zh") {
             return "CN";
@@ -394,7 +457,8 @@
             return "US";
         } else if (country === "PY") {
             return "BR";
-        } else if (country === "GT" || country === "PA" || country === "SV") {
+        } else if (country === "GT" || country === "PA" || country === "SV"
+            || country === "HN" || country === "NI" || country === "CR") {
             return "CTA";
         } else if (country === "AE" || country === "BH" || country === "SA"
             || country === "QA" || country === "OM" || country === "KW") {
@@ -403,7 +467,8 @@
             || country === "CI" || country === "UG" || country === "MZ"
             || country === "MW" || country === "TZ" || country === "ZM"
             || country === "ZW" || country === "KH" || country === "MM"
-            || country === "JO" || country === "IQ" || country === "PS") {
+            || country === "JO" || country === "IQ" || country === "PS"
+            || country === "LB" || country === "SY" || country === "LK") {
             return "CODEX";
         } else if (country === "CO") {
             return "CO";

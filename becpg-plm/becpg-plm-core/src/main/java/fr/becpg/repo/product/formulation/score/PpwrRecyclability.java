@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.project.formulation.ScoreRangeConverter;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
@@ -80,6 +81,9 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 
 	/** Source stated for a material the repository flags as not recyclable */
 	private static final String FLAGGED_SOURCE = "NR";
+
+	/** A share is graded to the millionth of a percent, finer than any weight is entered */
+	private static final double SHARE_PRECISION = 1_000_000d;
 
 	private final ScoreDefinitionService scoreDefinitionService;
 
@@ -235,7 +239,7 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	private List<WeighedLine> weighLines(ProductData product, ScoreDefinitionItem definition) {
 		List<WeighedLine> lines = new ArrayList<>();
 
-		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
+		for (PackMaterialListDataItem line : CompositePackMaterials.materialsOf(product.getPackMaterialList())) {
 			if ((line.getPmlWeight() == null) || (line.getPmlWeight() <= 0d)) {
 				continue;
 			}
@@ -501,8 +505,17 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 			return unknownWeight;
 		}
 
+		/**
+		 * Recyclable share of the unit, cleared of the floating point errors of its sum.
+		 *
+		 * <p>The sum of weights times rates leaves a share of 95% at 94.99999999999999: graded
+		 * raw, it would fall one grade below the share the breakdown displays. Only that noise
+		 * is rounded away, a share truly below a bound keeps the lower grade.</p>
+		 *
+		 * @return the share, in percent
+		 */
 		double recyclableShare() {
-			return weight == 0d ? 0d : (recyclableWeight / weight) * 100d;
+			return weight == 0d ? 0d : Math.round((recyclableWeight / weight) * 100d * SHARE_PRECISION) / SHARE_PRECISION;
 		}
 
 	}

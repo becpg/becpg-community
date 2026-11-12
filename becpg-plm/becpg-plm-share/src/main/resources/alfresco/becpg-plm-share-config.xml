@@ -18,7 +18,7 @@
 	
    <config evaluator="string-compare" condition="SitePages">
       <pages>
-         <page id="product-list">product-list?list=product#filter=all</page>
+         <page id="product-list">product-list#filter=all</page>
       </pages>
    </config>
 	

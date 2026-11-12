@@ -62,7 +62,8 @@
 }
 
 .versions-graph-filter .filter-item {
-   display: inline-block;
+   display: inline-flex;
+   align-items: center;
 }
 
 .versions-graph-filter input[type="text"] {
@@ -72,11 +73,30 @@
    width: 180px;
 }
 
-.versions-graph-filter select {
-   padding: 5px 10px;
-   border: 1px solid #ccc;
-   border-radius: 3px;
-   min-width: 150px;
+.versions-graph-filter label {
+   margin-right: 5px;
+}
+
+.versions-graph-filter .yui-menu-button button {
+   text-align: left;
+}
+
+.yuimenu.versions-graph-state-menu .yuimenuitemlabel {
+   padding: 0 10px 0 5px;
+}
+
+.yuimenu.versions-graph-state-menu .form-field {
+   display: inline;
+   margin: 0;
+   padding: 0;
+}
+
+/* The checkbox only shows the state: the click goes to the menu item, which toggles it */
+.yuimenu.versions-graph-state-menu .form-field label {
+   cursor: default;
+   pointer-events: none;
+   height: 15px;
+   line-height: 15px;
 }
 
 /* Simple/Detailed View Buttons */

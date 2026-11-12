@@ -31,12 +31,39 @@ import java.util.Map;
  * into Java to translate anything, and {@code secondary} carries that same wording in the other
  * official language when the regulation asks for a bilingual table.</p>
  *
+ * <p>{@code languagePanels} holds, for a bilingual panel, the same panel written in each of its
+ * languages alone, in the order of the languages: a format that states the two languages as two
+ * complete texts, the Canadian linear one, draws them from there. It is empty otherwise.</p>
+ *
  * @author matthieu
  * @version $Id: $Id
  */
 public record NutritionFactsData(String format, String regulationKey, NutritionFactsServing serving, NutritionFactsLine calories,
 		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, List<NutritionFactsLine> supplementalIngredients,
-		String footNote, String notSignificantSource, Map<String, String> labels, NutritionFactsTranslation secondary) {
+		String footNote, String notSignificantSource, Map<String, String> labels, NutritionFactsTranslation secondary,
+		List<NutritionFactsData> languagePanels) {
+
+	/**
+	 * <p>Panel written in a single language, which carries no panel per language.</p>
+	 *
+	 * @param format the panel format code
+	 * @param regulationKey the regulation key
+	 * @param serving the serving block
+	 * @param calories the calories line, may be null
+	 * @param nutrients the macronutrient block
+	 * @param micronutrients the vitamin and mineral block
+	 * @param supplementalIngredients what a supplemented food declares as added
+	 * @param footNote the footnote
+	 * @param notSignificantSource the statement closing a simplified panel
+	 * @param labels the fixed wording of the panel
+	 * @param secondary the wording in the second official language
+	 */
+	public NutritionFactsData(String format, String regulationKey, NutritionFactsServing serving, NutritionFactsLine calories,
+			List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, List<NutritionFactsLine> supplementalIngredients,
+			String footNote, String notSignificantSource, Map<String, String> labels, NutritionFactsTranslation secondary) {
+		this(format, regulationKey, serving, calories, nutrients, micronutrients, supplementalIngredients, footNote, notSignificantSource, labels,
+				secondary, List.of());
+	}
 
 	/**
 	 * <p>Tells whether the panel carries any nutrient at all, an empty panel being usually the sign

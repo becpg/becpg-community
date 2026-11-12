@@ -15,6 +15,7 @@ import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
@@ -32,6 +33,7 @@ public class IngredientIdentityReportWriterTest {
 	private static final String EC = "200-289-5,616-940-5";
 	private static final String HUMECTANT = "skin conditioning - humectant";
 	private static final String ATTR_FUNCTION = "ingListFunctionality";
+	private static final String CLP_CLASSIFICATION = "Carc. 1B:H350,Skin Sens. 1:H317";
 
 	private NodeService nodeService;
 
@@ -89,5 +91,14 @@ public class IngredientIdentityReportWriterTest {
 		writer.write(ING, ingListElt);
 
 		assertNull(ingListElt.attributeValue(ATTR_FUNCTION));
+	}
+
+	@Test
+	public void testHazardClassificationIsWritten() {
+		when(nodeService.getProperty(ING, GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS)).thenReturn(CLP_CLASSIFICATION);
+
+		writer.write(ING, ingListElt);
+
+		assertEquals(CLP_CLASSIFICATION, ingListElt.attributeValue(GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS.getLocalName()));
 	}
 }

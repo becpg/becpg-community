@@ -73,6 +73,79 @@ div.entity-versions div.nav h6
 	background-color: #EEEEEE;
 }
 
+.entity-versions div.entity-branches.inactive-state {
+	opacity: 0.5;
+}
+
+.entity-versions div.entity-branches.hidden-state {
+	display: none;
+}
+
+.entity-versions .show-hidden-branches div.entity-branches.hidden-state {
+	display: block;
+}
+
+.entity-versions div.branch-filter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 5px 0 12px;
+	padding: 8px 10px;
+	background-color: var(--becpg-lightGrey, #e8eeef);
+	border: 1px solid var(--becpg-grey, #e4ecee);
+	border-radius: 6px;
+}
+
+.entity-versions div.branch-filter.hidden {
+	display: none;
+}
+
+.entity-versions span.branch-filter-count {
+	color: var(--becpg-blue, #004254);
+	font-size: 13px;
+}
+
+.entity-versions a.branch-filter-toggle,
+.entity-versions a.branch-filter-toggle:visited {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 1px 8px;
+	color: var(--becpg-darkGrey, #747474);
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: 12px;
+	font-size: 13px;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: 0.2s ease all;
+}
+
+.entity-versions a.branch-filter-toggle:hover {
+	color: var(--becpg-blue, #004254);
+	border-color: var(--becpg-blue, #004254);
+	text-decoration: none;
+}
+
+.entity-versions a.branch-filter-toggle.active {
+	color: var(--becpg-blue, #004254);
+}
+
+.entity-versions svg.branch-filter-eye {
+	flex-shrink: 0;
+}
+
+.entity-versions a.branch-filter-toggle svg.eye-open,
+.entity-versions a.branch-filter-toggle.active svg.eye-closed {
+	display: none;
+}
+
+.entity-versions a.branch-filter-toggle.active svg.eye-open {
+	display: inline;
+}
+
 
 .entity-versions .actions a
 {
@@ -103,3 +176,75 @@ div.entity-versions div.nav h6
    background-image: url(images/fork-16.png);
 }
 
+
+/* Collapsed lists panel: the shown version with its branch button, then one icon per branch */
+.entity-versions .rail-version {
+	display: none;
+}
+
+.datalists-collapsed .entity-versions .rail-version {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	margin-top: 4px;
+	padding: 6px 0 4px;
+	border-top: 1px solid #ddd;
+}
+
+.datalists-collapsed .entity-versions .rail-version a.versions-graph {
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+	background: url(images/fork-16.png) no-repeat center;
+}
+
+.datalists-collapsed .entity-versions .rail-version a.versions-graph:hover {
+	background-color: #eee;
+}
+
+.datalists-collapsed .entity-versions div.nav,
+.datalists-collapsed .entity-versions div.clear,
+.datalists-collapsed .entity-versions div.branch-filter {
+	display: none;
+}
+
+.datalists-collapsed .entity-versions div.entity-branches {
+	position: relative;
+	height: 30px;
+	padding: 0;
+}
+
+.datalists-collapsed .entity-versions div.entity-branches:hover {
+	background-color: #f3f3f3;
+}
+
+.datalists-collapsed .entity-versions div.entity-branches.current {
+	background-color: #eee;
+	box-shadow: inset 3px 0 0 var(--becpg-orange, #ff642d);
+}
+
+.datalists-collapsed .entity-versions div.entity-branches span.document-version,
+.datalists-collapsed .entity-versions div.entity-branches span.actions {
+	display: none;
+}
+
+.datalists-collapsed .entity-versions div.entity-branches > span {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 16px;
+	height: 16px;
+	margin: -8px 0 0 -8px;
+	padding: 0;
+}
+
+/* The branch link covers the whole row */
+.datalists-collapsed .entity-versions div.entity-branches > span a {
+	position: absolute;
+	left: -22px;
+	right: -22px;
+	top: -7px;
+	bottom: -7px;
+	font-size: 0;
+}

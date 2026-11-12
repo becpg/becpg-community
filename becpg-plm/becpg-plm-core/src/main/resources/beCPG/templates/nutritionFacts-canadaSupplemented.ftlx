@@ -6,23 +6,37 @@
   else — the rounding, the order of the nutrients, the daily values — is that of the standard
   table, which is why this template only adds to the Canadian body rather than drawing its own.
 
-  Every declaration whose amount covers a naturally occurring amount as well carries the mark the
-  closing note explains, the block itself and the supplemented nutrients the regulation keeps on
-  their own line.
+  The caption of the block carries the mark the closing note explains: the amount declared for an
+  ingredient covers its naturally occurring amount as well.
 
   A nutrient enters the block by being marked as a supplemental ingredient on its line of the
-  nutrition list, and the block declares nothing else: a substance the regulation does not name
-  has no place in a regulated table.
+  nutrition list, provided the List of Permitted Supplemental Ingredients names it, and leaves the
+  table for it even when it is a core nutrient. The block declares nothing else, in the order of
+  that list.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#assign W = nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)) in nf>
 
-<#assign y = nf.BORDER + 2>
+<#--
+  Type the two figures of the directory of supplemented food formats state where they part: the
+  bilingual table, figure 3.1, sets its title a point smaller and its notes in the type and leading
+  of the standard table, where the unilingual one, figure 1.1, sets its notes in 6 point.
+-->
+<#if nf_data.isBilingual()>
+<#assign TITLE_SIZE = 12>
+<#assign GEOMETRY = {"footNoteSize": 6.5, "footNoteLead": 13, "noteSize": 6.5, "noteLead": 11.5}>
+<#else>
+<#assign TITLE_SIZE = 13>
+<#assign GEOMETRY = {"footNoteSize": 6, "footNoteLead": 12.5, "noteSize": 6, "noteLead": 11}>
+</#if>
+
+<#--
+  The panel widens to hold its title at that size, "Info-aliment supplémenté" being longer than the
+  unilingual table is wide.
+-->
+<#assign W = [nf.canadianWidth(nf_data, nf_data.isBilingual()?then(180, 162)), nf.titleWidth(nf_data, "supplementedTitle", TITLE_SIZE)]?max in nf>
+
 <#assign body>
-
-	<@nf.canadianHeading data=nf_data y=y titleKey="supplementedTitle" titleSize=nf.fittedTitleSize(nf_data, "supplementedTitle", 13)/>
-	<#assign y = nf.cursorY>
-
-	<@nf.canadianBody data=nf_data y=y withSupplemental=true/>
+	<@nf.canadianHeading data=nf_data y=nf.BORDER + 2 titleKey="supplementedTitle" titleSize=TITLE_SIZE/>
+	<@nf.canadianBody data=nf_data withSupplemental=true geometry=GEOMETRY/>
 </#assign>
 <@nf.panel height=nf.cursorY>${body}</@nf.panel>

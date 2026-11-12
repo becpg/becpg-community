@@ -23,6 +23,7 @@ import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.ToxType;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -35,6 +36,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -88,6 +90,21 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final QName PROP_SDS_SIGNAL_WORD = QName.createQName(GHSModel.GHS_URI, "sdsSignalWord");
 	private static final QName ASSOC_SDS_HAZARD_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsHazardStatements");
 	private static final QName ASSOC_SDS_PICTOGRAMS = QName.createQName(GHSModel.GHS_URI, "sdsPictograms");
+	private static final QName ASSOC_SDS_PRECAUTIONARY_STATEMENTS = QName.createQName(GHSModel.GHS_URI, "sdsPrecautionaryStatements");
+	private static final QName ASSOC_SDS_PERSONAL_PROTECTIONS = QName.createQName(GHSModel.GHS_URI, "sdsPersonalProtections");
+	private static final QName ASSOC_SDS_ONU_CODE = QName.createQName(GHSModel.GHS_URI, "sdsOnuCode");
+	private static final QName ASSOC_SDS_CLASS_CODE = QName.createQName(GHSModel.GHS_URI, "sdsClassCode");
+	private static final QName ASSOC_SDS_PACKAGING_GROUP_CODE = QName.createQName(GHSModel.GHS_URI, "sdsPackagingGroupCode");
+	private static final QName PROP_SUPPLIER_REF_CODE = QName.createQName(BeCPGModel.BECPG_URI, "supplierRefCode");
+	private static final QName PROP_CONTRACT_DATE = QName.createQName(BeCPGModel.BECPG_URI, "contractDate");
+	private static final QName PROP_SDS_SAFETY_INSTRUCTIONS = QName.createQName(GHSModel.GHS_URI, "sdsSafetyInstructions");
+	private static final QName PROP_PRECAUTIONARY_CODE = QName.createQName(GHSModel.GHS_URI, "precautionaryCode");
+	private static final QName PROP_PERSONAL_PROTECTION_CODE = QName.createQName(GHSModel.GHS_URI, "personalProtectionCode");
+	private static final QName PROP_ONU_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "onuCodeNumber");
+	private static final QName PROP_CLASS_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "classCodeNumber");
+	private static final QName PROP_PACKAGING_GROUP_CODE_NUMBER = QName.createQName(GHSModel.GHS_URI, "packagingGroupCodeNumber");
+	private static final String PHRASE_SEPARATOR = " ";
+	private static final String SECURITY_LISTS_PATH = "/app:company_home/cm:System/cm:SecurityLists/bcpg:entityLists/cm:";
 
 	public static final String PRODUCT_NAME = "🧴 Moisturizing Body Milk - PIF sample";
 	public static final String LEGAL_NAME = "Moisturizing body milk";
@@ -174,8 +191,21 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private record PhysicoChemSpec(String name, String unit, double value, Double mini, Double maxi) {
 	}
 
-	/** The classification of a safety data sheet: signal word, hazard statement codes and pictogram codes. */
-	private record HazardSpec(String signalWord, List<String> hazardStatements, List<String> pictograms) {
+	/** A coded phrase of a safety data sheet, such as a precautionary statement or a personal protection. */
+	private record CodedPhrase(String code, String phrase) {
+	}
+
+	/** The transport classification of a dangerous good: UN number, hazard class and packing group. */
+	private record TransportSpec(String unNumber, String hazardClass, String packingGroup) {
+	}
+
+	/** The classification of a safety data sheet: signal word, hazard statements and pictogram codes. */
+	private record HazardSpec(String signalWord, List<CodedPhrase> hazardStatements, List<String> pictograms) {
+	}
+
+	/** The handling section of a safety data sheet: precautionary statements, protections, instructions and transport. */
+	private record HandlingSpec(List<CodedPhrase> precautions, List<CodedPhrase> protections, String safetyInstructions,
+			TransportSpec transport) {
 	}
 
 	private static final String WARNING = "Warning";
@@ -183,10 +213,119 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	private static final String GHS07_EXCLAMATION_MARK = "GHS07";
 
 	/** Classification of the safety data sheets of the hazardous raw materials, consistent with their ingredients. */
+	private static final CodedPhrase H226 = new CodedPhrase("H226", "Flammable liquid and vapour.");
+	private static final CodedPhrase H317 = new CodedPhrase("H317", "May cause an allergic skin reaction.");
+	private static final CodedPhrase H319 = new CodedPhrase("H319", "Causes serious eye irritation.");
+	private static final CodedPhrase P210 = new CodedPhrase("P210",
+			"Keep away from heat, hot surfaces, sparks, open flames and other ignition sources. No smoking.");
+	private static final CodedPhrase P261 = new CodedPhrase("P261", "Avoid breathing mist/vapours/spray.");
+	private static final CodedPhrase P264 = new CodedPhrase("P264", "Wash hands thoroughly after handling.");
+	private static final CodedPhrase P280 = new CodedPhrase("P280", "Wear protective gloves/eye protection.");
+	private static final CodedPhrase P302_P352 = new CodedPhrase("P302+P352", "IF ON SKIN: Wash with plenty of water.");
+	private static final CodedPhrase P305_P351_P338 = new CodedPhrase("P305+P351+P338",
+			"IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses, if present and easy to do. Continue rinsing.");
+	private static final CodedPhrase P333_P313 = new CodedPhrase("P333+P313", "If skin irritation or rash occurs: Get medical advice/attention.");
+	private static final CodedPhrase P337_P313 = new CodedPhrase("P337+P313", "If eye irritation persists: Get medical advice/attention.");
+	private static final CodedPhrase PROTECTIVE_GLOVES = new CodedPhrase("GLOVES", "Protective gloves");
+	private static final CodedPhrase EYE_PROTECTION = new CodedPhrase("EYES", "Safety glasses with side shields");
+	private static final CodedPhrase DUST_MASK = new CodedPhrase("DUST_MASK", "Dust mask with P2 filter");
+	private static final String NOT_CLASSIFIED = "Not classified as hazardous according to Regulation (EC) No 1272/2008. ";
+
+	/**
+	 * Handling of every raw material, consistent with its classification: a raw material that is not classified holds no
+	 * precautionary statement and no transport classification, only its handling instructions and protections.
+	 */
+	private static final Map<String, HandlingSpec> RAW_MATERIAL_HANDLING = Map.ofEntries(
+			Map.entry(WATER, new HandlingSpec(List.of(), List.of(), NOT_CLASSIFIED
+					+ "Store in closed stainless steel tanks and use within the validated hold time to prevent microbial growth.", null)),
+			Map.entry(GLYCERIN, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Hygroscopic: keep the container tightly closed. Spills make floors slippery.", null)),
+			Map.entry(SUNFLOWER_OIL, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Store away from light and heat to prevent rancidity. Spills make floors slippery.", null)),
+			Map.entry(TRIGLYCERIDES, new HandlingSpec(List.of(), List.of(EYE_PROTECTION), NOT_CLASSIFIED
+					+ "Store in a cool, dry place in the closed original container.", null)),
+			Map.entry(CETYL_PALMITATE, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES), NOT_CLASSIFIED
+					+ "Melt with indirect heating and avoid skin contact with the molten product.", null)),
+			Map.entry(SHEA_BUTTER, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES), NOT_CLASSIFIED
+					+ "Store below 25 °C away from light. Melt with indirect heating.", null)),
+			Map.entry(EMULSIFIER, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, DUST_MASK), NOT_CLASSIFIED
+					+ "Avoid dust formation when handling the flakes. Keep dry.", null)),
+			Map.entry(XANTHAN, new HandlingSpec(List.of(), List.of(EYE_PROTECTION, DUST_MASK), NOT_CLASSIFIED
+					+ "Avoid dust formation and accumulation: fine dust may form explosive mixtures with air. Keep dry.", null)),
+			Map.entry(FRAGRANCE, new HandlingSpec(List.of(P210, P261, P280, P302_P352, P333_P313), List.of(PROTECTIVE_GLOVES, EYE_PROTECTION),
+					"Store in a cool, well-ventilated place away from ignition sources. Ground the containers when transferring.",
+					new TransportSpec("UN1266", "3", "III"))),
+			Map.entry(PRESERVATIVE, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION, PROTECTIVE_GLOVES),
+					"Avoid contact with eyes. Keep the container tightly closed.", null)),
+			Map.entry(CITRIC_ACID, new HandlingSpec(List.of(P264, P280, P305_P351_P338, P337_P313), List.of(EYE_PROTECTION),
+					"Avoid dust formation. Keep the container dry and tightly closed.", null)));
+
 	private static final Map<String, HazardSpec> RAW_MATERIAL_HAZARDS = Map.of(
-			FRAGRANCE, new HazardSpec(WARNING, List.of("H226", "H317"), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
-			PRESERVATIVE, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)),
-			CITRIC_ACID, new HazardSpec(WARNING, List.of("H319"), List.of(GHS07_EXCLAMATION_MARK)));
+			FRAGRANCE, new HazardSpec(WARNING, List.of(H226, H317), List.of(GHS02_FLAME, GHS07_EXCLAMATION_MARK)),
+			PRESERVATIVE, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)),
+			CITRIC_ACID, new HazardSpec(WARNING, List.of(H319), List.of(GHS07_EXCLAMATION_MARK)));
+
+	/**
+	 * The commercial data of a raw material printed on its technical sheet: supplier designation and reference,
+	 * description, density, shelf life and period after opening in days, storage, precautions and packaging.
+	 */
+	private record RawMaterialSheetSpec(String commercialName, String supplierReference, String description, String comments, double density,
+			int shelfLifeDays, int periodAfterOpeningDays, String storageConditions, String precautionOfUse, String packaging) {
+	}
+
+	private static final String STORE_COOL_DRY = "Store in a cool, dry place in the closed original container.";
+	private static final String STORE_AWAY_FROM_LIGHT = "Store between 10 °C and 25 °C, away from light and heat.";
+	private static final String HANDLE_GMP = "For industrial use only. Handle according to good manufacturing practices.";
+	private static final String HOMOGENIZE_BEFORE_USE = "Homogenize the drum before sampling and use.";
+	private static final String DRUM_200_KG = "200 kg HDPE drum";
+	private static final String BAG_25_KG = "25 kg multi-wall paper bag with PE liner";
+	private static final String CARTON_25_KG = "25 kg carton with PE liner";
+	private static final String JERRYCAN_25_KG = "25 kg HDPE jerrycan";
+
+	/** Commercial data of each raw material, as its supplier specification gives it. */
+	private static final Map<String, RawMaterialSheetSpec> RAW_MATERIAL_SHEETS = Map.ofEntries(
+			Map.entry(WATER, new RawMaterialSheetSpec("Purified Water Ph. Eur.", "AQP-PW-01",
+					"Purified water produced on site by reverse osmosis and UV treatment, compliant with the European Pharmacopoeia.",
+					"Conductivity and microbiological quality checked on each batch.", 1d, 30, 7,
+					"Store in closed stainless steel tanks with recirculation.", HANDLE_GMP, "Stainless steel storage tank")),
+			Map.entry(GLYCERIN, new RawMaterialSheetSpec("Vegetable Glycerin 99.5% USP", "OLC-GLY-995",
+					"Refined glycerin of vegetable origin, colourless viscous liquid.",
+					"Certificate of analysis supplied with each batch.", 1.26, 730, 180, STORE_COOL_DRY, HANDLE_GMP, DRUM_200_KG)),
+			Map.entry(SUNFLOWER_OIL, new RawMaterialSheetSpec("Refined Sunflower Oil HO", "OLC-SUN-HO",
+					"High oleic refined sunflower seed oil, stabilized with tocopherol.",
+					"Peroxide value checked at reception.", 0.92, 540, 90, STORE_AWAY_FROM_LIGHT, HOMOGENIZE_BEFORE_USE, DRUM_200_KG)),
+			Map.entry(TRIGLYCERIDES, new RawMaterialSheetSpec("MCT Oil 60/40", "OLC-MCT-6040",
+					"Medium chain triglycerides of caprylic and capric acids, light non-greasy emollient.",
+					"Certificate of analysis supplied with each batch.", 0.95, 730, 180, STORE_COOL_DRY, HANDLE_GMP, DRUM_200_KG)),
+			Map.entry(CETYL_PALMITATE, new RawMaterialSheetSpec("Cetyl Palmitate Flakes", "OLC-CP-FL",
+					"Wax ester of cetyl alcohol and palmitic acid in white flakes, consistency factor for emulsions.",
+					"Melting range checked at reception.", 0.83, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(SHEA_BUTTER, new RawMaterialSheetSpec("Refined Shea Butter", "ALP-SHB-RF",
+					"Refined and deodorized shea butter from Burkina Faso, off-white solid.",
+					"Fair trade sourcing certificate available on request.", 0.91, 730, 180, STORE_AWAY_FROM_LIGHT, HANDLE_GMP, CARTON_25_KG)),
+			Map.entry(EMULSIFIER, new RawMaterialSheetSpec("Olive Glucoside Emulsifier", "ALP-OGE-01",
+					"PEG-free O/W emulsifier made of cetearyl glucoside, sorbitan olivate and cetearyl alcohol, in pellets.",
+					"Natural origin index of 1 according to ISO 16128.", 0.95, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(XANTHAN, new RawMaterialSheetSpec("Xanthan Gum Clear", "ALP-XG-CL",
+					"Transparent grade xanthan gum obtained by fermentation, rheology modifier.",
+					"Viscosity of a 1% solution checked at reception.", 1.5, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)),
+			Map.entry(PRESERVATIVE, new RawMaterialSheetSpec("Preservative Blend CG-EHG", "ALP-PB-CGE",
+					"Preservative booster blend of caprylyl glycol and ethylhexylglycerin, free of parabens and formaldehyde donors.",
+					"Recommended use level: 0.5% to 1%.", 0.9, 730, 180, STORE_COOL_DRY, HOMOGENIZE_BEFORE_USE, JERRYCAN_25_KG)),
+			Map.entry(FRAGRANCE, new RawMaterialSheetSpec("Fresh Floral 2026", "GFH-FF-2026",
+					"Fresh floral fragrance compound with notes of lily of the valley, rose and citrus.",
+					"IFRA certificate of conformity (51st amendment) supplied: maximum 1.5% in category 5A.", 0.88, 730, 180,
+					STORE_AWAY_FROM_LIGHT, HOMOGENIZE_BEFORE_USE, "5 kg aluminium bottle")),
+			Map.entry(CITRIC_ACID, new RawMaterialSheetSpec("Citric Acid Anhydrous Fine Granular", "ALP-CA-ANH",
+					"Anhydrous citric acid in fine white crystals, pH adjuster.",
+					"Hygroscopic: reclose the bag immediately after use.", 1.66, 1095, 365, STORE_COOL_DRY, HANDLE_GMP, BAG_25_KG)));
+
+	private static final String ERP_CODE_PREFIX = "RM-";
+	private static final int ERP_CODE_START = 1001;
+	private static final String RAW_MATERIAL_EAN_PREFIX = "376012345";
+	private static final double MINIMUM_LIFE_RATIO = 2d / 3d;
+	private static final double SINGLE_SUBSTANCE_MIN_PERC = 99d;
+	private static final List<QName> CHEMICAL_CODES = List.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER);
 
 	private static final List<RawMaterialSpec> FORMULA = List.of(
 			new RawMaterialSpec(WATER, 77.45, SUPPLIER_AQUA, "FR", "France", List.of(new IngredientShare("AQUA", 100d))),
@@ -212,6 +351,26 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	/** Fragrance allergens of Regulation (EC) No 1223/2009 Annex III, as shares of the fragrance raw material. */
 	private static final List<AllergenShare> FRAGRANCE_ALLERGENS = List.of(new AllergenShare("Linalool", 1.5),
 			new AllergenShare("Limonene", 1d), new AllergenShare("Geraniol", 0.5), new AllergenShare("Citronellol", 0.5));
+
+	/** A restriction of Regulation (EC) No 1223/2009 on an ingredient: annex entry, restriction and conditions of use. */
+	private record RegulatoryRestrictionSpec(String inciName, String citation, String restrictionLevels, String precautions) {
+	}
+
+	private static final String ALL_COSMETIC_PRODUCTS = "All cosmetic products";
+	private static final String FRAGRANCE_ALLERGEN_LABELLING = "Leave-on products: 0.001%. Rinse-off products: 0.01%.";
+	private static final String FRAGRANCE_ALLERGEN_PRECAUTION = "Must be indicated in the list of ingredients when its concentration "
+			+ "exceeds 0.001% in leave-on products and 0.01% in rinse-off products.";
+
+	/** Restrictions of Annex III of Regulation (EC) No 1223/2009 on the fragrance allergens of the fragrance raw material. */
+	private static final List<RegulatoryRestrictionSpec> FRAGRANCE_RESTRICTIONS = List.of(
+			new RegulatoryRestrictionSpec("LINALOOL", "Regulation (EC) No 1223/2009, Annex III/84", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION),
+			new RegulatoryRestrictionSpec("D-LIMONENE", "Regulation (EC) No 1223/2009, Annex III/88", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION + " Peroxide value below 20 mmol/L."),
+			new RegulatoryRestrictionSpec("GERANIOL", "Regulation (EC) No 1223/2009, Annex III/78", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION),
+			new RegulatoryRestrictionSpec("CITRONELLOL", "Regulation (EC) No 1223/2009, Annex III/86", FRAGRANCE_ALLERGEN_LABELLING,
+					FRAGRANCE_ALLERGEN_PRECAUTION));
 
 	private static final List<PhysicoChemSpec> FINISHED_PRODUCT_SPECIFICATIONS = List.of(new PhysicoChemSpec("pH", "pH", 5.5, 5d, 6d),
 			new PhysicoChemSpec("Viscosity (Brookfield, 20 °C)", "mPa.s", 8000d, 6000d, 10000d),
@@ -366,8 +525,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Creates a raw material with its INCI ingredients, supplier, supplier plant, origin, impurity specification and
-	 * safety data sheet reference.
+	 * Creates a raw material with its INCI ingredients, supplier, supplier plant, origin, impurity specification, safety
+	 * data sheet reference and, for the fragrance, its allergens and the regulatory restrictions of its ingredients.
 	 *
 	 * @param spec the raw material description
 	 * @return the created raw material
@@ -384,10 +543,103 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		if (isWithAllergens && FRAGRANCE.equals(spec.name())) {
 			rawMaterial.setAllergenList(createAllergenList());
 		}
+		if (isWithRegulatory && FRAGRANCE.equals(spec.name())) {
+			rawMaterial.setIngRegulatoryList(createRegulatoryRestrictions(FRAGRANCE_RESTRICTIONS));
+		}
+
+		rawMaterial.setDensity(RAW_MATERIAL_SHEETS.get(spec.name()).density());
 
 		NodeRef rawMaterialNodeRef = alfrescoRepository.create(destFolder, rawMaterial).getNodeRef();
 		addSafetyDataSheet(rawMaterialNodeRef, spec.name());
+		fillSheetData(rawMaterialNodeRef, spec);
 		return rawMaterialNodeRef;
+	}
+
+	/**
+	 * Sets the data the technical sheet of a raw material prints: codes, commercial data, shelf life, conditions, and
+	 * the function and chemical codes taken from its main ingredient.
+	 *
+	 * @param rawMaterialNodeRef the created raw material
+	 * @param spec the raw material description
+	 */
+	private void fillSheetData(NodeRef rawMaterialNodeRef, RawMaterialSpec spec) {
+		RawMaterialSheetSpec sheet = RAW_MATERIAL_SHEETS.get(spec.name());
+		int index = FORMULA.indexOf(spec);
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_ERP_CODE, ERP_CODE_PREFIX + (ERP_CODE_START + index));
+		properties.put(PLMModel.PROP_EAN_CODE, buildEan13(RAW_MATERIAL_EAN_PREFIX + String.format(Locale.ROOT, "%03d", index)));
+		properties.put(PROP_SUPPLIER_REF_CODE, sheet.supplierReference());
+		properties.put(ContentModel.PROP_TITLE, new MLText(sheet.commercialName()));
+		properties.put(ContentModel.PROP_DESCRIPTION, sheet.description());
+		properties.put(PLMModel.PROP_PRODUCT_COMMENTS, new MLText(sheet.comments()));
+		properties.put(PLMModel.PROP_USE_BY_DATE, sheet.shelfLifeDays());
+		properties.put(PLMModel.PROP_PERIOD_AFTER_OPENING, sheet.periodAfterOpeningDays());
+		properties.put(PROP_CONTRACT_DATE, (int) Math.round(sheet.shelfLifeDays() * MINIMUM_LIFE_RATIO));
+		properties.put(PROP_PACKAGING_DESCRIPTION, new MLText(sheet.packaging()));
+		properties.putAll(readMainIngredientIdentity(spec));
+		nodeService.addProperties(rawMaterialNodeRef, properties);
+		nodeService.setAssociations(rawMaterialNodeRef, PLMModel.ASSOC_STORAGE_CONDITIONS,
+				List.of(getOrCreateDescribedCharact(sheet.storageConditions(), PLMModel.TYPE_STORAGE_CONDITIONS, STORAGE_CONDITIONS_LIST)));
+		nodeService.setAssociations(rawMaterialNodeRef, PLMModel.ASSOC_PRECAUTION_OF_USE,
+				List.of(getOrCreateDescribedCharact(sheet.precautionOfUse(), PLMModel.TYPE_PRECAUTION_OF_USE, PRECAUTION_OF_USE_LIST)));
+	}
+
+	/**
+	 * Reads the function of the main ingredient of a raw material, and its chemical codes when the raw material is a
+	 * single substance: a mixture has no CAS or EC number of its own.
+	 *
+	 * @param spec the raw material description
+	 * @return the function and chemical code properties
+	 */
+	private Map<QName, Serializable> readMainIngredientIdentity(RawMaterialSpec spec) {
+		IngredientShare mainIngredient = spec.ingredients().get(0);
+		NodeRef ingredient = CharactTestHelper.getOrCreateIng(nodeService, mainIngredient.inciName());
+		Map<QName, Serializable> identity = new HashMap<>();
+		identity.put(PLMModel.PROP_ING_TYPE_V2, nodeService.getProperty(ingredient, PLMModel.PROP_ING_TYPE_V2));
+		if (mainIngredient.qtyPerc() >= SINGLE_SUBSTANCE_MIN_PERC) {
+			for (QName chemicalCode : CHEMICAL_CODES) {
+				identity.put(chemicalCode, nodeService.getProperty(ingredient, chemicalCode));
+			}
+		}
+		return identity;
+	}
+
+	/**
+	 * Builds an EAN-13 code from its first twelve digits by appending its check digit.
+	 *
+	 * @param twelveDigits the first twelve digits
+	 * @return the EAN-13 code
+	 */
+	private static String buildEan13(String twelveDigits) {
+		int sum = 0;
+		for (int i = 0; i < twelveDigits.length(); i++) {
+			int digit = twelveDigits.charAt(i) - '0';
+			sum += (i % 2 == 0) ? digit : digit * 3;
+		}
+		return twelveDigits + ((10 - (sum % 10)) % 10);
+	}
+
+	/**
+	 * Creates the regulatory restrictions a supplier declares on the ingredients of a raw material, applying to every
+	 * cosmetic product of the European Union.
+	 *
+	 * @param restrictions the restrictions of each ingredient
+	 * @return the ingredient regulatory list
+	 */
+	private List<IngRegulatoryListDataItem> createRegulatoryRestrictions(List<RegulatoryRestrictionSpec> restrictions) {
+		List<NodeRef> europeanUnion = List.of(getOrCreateCountryRef(EU_CODE, EUROPEAN_UNION));
+		List<IngRegulatoryListDataItem> ingRegulatoryList = new ArrayList<>();
+		for (RegulatoryRestrictionSpec restriction : restrictions) {
+			IngRegulatoryListDataItem item = new IngRegulatoryListDataItem();
+			item.setIng(CharactTestHelper.getOrCreateIng(nodeService, restriction.inciName()));
+			item.setCitation(new MLText(restriction.citation()));
+			item.setRestrictionLevels(new MLText(restriction.restrictionLevels()));
+			item.setPrecautions(new MLText(restriction.precautions()));
+			item.setUsages(new MLText(ALL_COSMETIC_PRODUCTS));
+			item.setRegulatoryCountries(europeanUnion);
+			ingRegulatoryList.add(item);
+		}
+		return ingRegulatoryList;
 	}
 
 	/**
@@ -406,8 +658,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	}
 
 	/**
-	 * Adds the supplier safety data sheet to a raw material: its reference, and its classification when the raw
-	 * material is hazardous.
+	 * Adds the supplier safety data sheet to a raw material: its reference, its handling, and its classification when
+	 * the raw material is hazardous.
 	 *
 	 * @param rawMaterialNodeRef the raw material
 	 * @param name the raw material name the sheet number derives from
@@ -420,6 +672,95 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 		if (RAW_MATERIAL_HAZARDS.containsKey(name)) {
 			addHazardClassification(rawMaterialNodeRef, RAW_MATERIAL_HAZARDS.get(name));
 		}
+		addHandling(rawMaterialNodeRef, RAW_MATERIAL_HANDLING.get(name));
+	}
+
+	/**
+	 * Sets the handling section of a safety data sheet: precautionary statements, personal protections, safety
+	 * instructions and, for a dangerous good, its transport classification.
+	 *
+	 * @param rawMaterialNodeRef the raw material holding the safety data sheet
+	 * @param handling the handling section of the sheet
+	 */
+	private void addHandling(NodeRef rawMaterialNodeRef, HandlingSpec handling) {
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PRECAUTIONARY_STATEMENTS, getOrCreateCodedPhrases(handling.precautions(),
+				PlmRepoConsts.PATH_PRECAUTIONARY_STATEMENTS, GHSModel.TYPE_PRECAUTIONARY_STATEMENT, PROP_PRECAUTIONARY_CODE));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PERSONAL_PROTECTIONS, getOrCreateProtections(handling.protections()));
+		nodeService.setProperty(rawMaterialNodeRef, PROP_SDS_SAFETY_INSTRUCTIONS, handling.safetyInstructions());
+		if (handling.transport() != null) {
+			addTransport(rawMaterialNodeRef, handling.transport());
+		}
+	}
+
+	/**
+	 * Sets the transport classification of a dangerous good.
+	 *
+	 * @param rawMaterialNodeRef the raw material holding the safety data sheet
+	 * @param transport the UN number, hazard class and packing group
+	 */
+	private void addTransport(NodeRef rawMaterialNodeRef, TransportSpec transport) {
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_ONU_CODE, List.of(
+				getOrCreateSecurityValue(PlmRepoConsts.PATH_ONU_CODES, GHSModel.TYPE_ONU_CODE, PROP_ONU_CODE_NUMBER, transport.unNumber())));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_CLASS_CODE, List.of(
+				getOrCreateSecurityValue(PlmRepoConsts.PATH_CLASS_CODES, GHSModel.TYPE_CLASS_CODE, PROP_CLASS_CODE_NUMBER, transport.hazardClass())));
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_PACKAGING_GROUP_CODE, List.of(getOrCreateSecurityValue(
+				PlmRepoConsts.PATH_PACKAGING_GROUP_CODES, GHSModel.TYPE_PACKAGING_GROUP_CODE, PROP_PACKAGING_GROUP_CODE_NUMBER, transport.packingGroup())));
+	}
+
+	/**
+	 * Gets or creates coded phrases of a security list, each one named by its code followed by its phrase so the
+	 * reports print the phrase. The node name stays the code, so a value created by the other sample products is
+	 * reused.
+	 *
+	 * @param phrases the coded phrases
+	 * @param listName the name of the security list
+	 * @param type the type of the list values
+	 * @param codeProperty the property holding the code
+	 * @return the list values
+	 */
+	private List<NodeRef> getOrCreateCodedPhrases(List<CodedPhrase> phrases, String listName, QName type, QName codeProperty) {
+		List<NodeRef> values = new ArrayList<>();
+		for (CodedPhrase phrase : phrases) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, phrase.code() + PHRASE_SEPARATOR + phrase.phrase());
+			properties.put(codeProperty, phrase.code());
+			values.add(CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + listName, phrase.code(), type, properties));
+		}
+		return values;
+	}
+
+	/**
+	 * Gets or creates personal protections, each one named by its description.
+	 *
+	 * @param protections the coded personal protections
+	 * @return the personal protections
+	 */
+	private List<NodeRef> getOrCreateProtections(List<CodedPhrase> protections) {
+		List<NodeRef> values = new ArrayList<>();
+		for (CodedPhrase protection : protections) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, protection.phrase());
+			properties.put(PROP_PERSONAL_PROTECTION_CODE, protection.code());
+			values.add(CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, protection.code(),
+					GHSModel.TYPE_PERSONAL_PROTECTION, properties));
+		}
+		return values;
+	}
+
+	/**
+	 * Gets or creates a coded value of a security list, named by its code.
+	 *
+	 * @param listName the name of the security list
+	 * @param type the type of the list value
+	 * @param codeProperty the property holding the code
+	 * @param code the code
+	 * @return the list value
+	 */
+	private NodeRef getOrCreateSecurityValue(String listName, QName type, QName codeProperty, String code) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, code);
+		properties.put(codeProperty, code);
+		return CharactTestHelper.getOrCreateNode(nodeService, SECURITY_LISTS_PATH + listName, code, type, properties);
 	}
 
 	/**
@@ -430,11 +771,8 @@ public class ProductInformationFileTestProduct extends StandardBodyMilkTestProdu
 	 */
 	private void addHazardClassification(NodeRef rawMaterialNodeRef, HazardSpec hazard) {
 		nodeService.setProperty(rawMaterialNodeRef, PROP_SDS_SIGNAL_WORD, hazard.signalWord());
-		List<NodeRef> hazardStatements = new ArrayList<>();
-		for (String code : hazard.hazardStatements()) {
-			hazardStatements.add(CharactTestHelper.getOrCreateH(nodeService, code));
-		}
-		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_HAZARD_STATEMENTS, hazardStatements);
+		nodeService.setAssociations(rawMaterialNodeRef, ASSOC_SDS_HAZARD_STATEMENTS, getOrCreateCodedPhrases(hazard.hazardStatements(),
+				PlmRepoConsts.PATH_HAZARD_STATEMENTS, GHSModel.TYPE_HAZARD_STATEMENT, GHSModel.PROP_HAZARD_CODE));
 		List<NodeRef> pictograms = new ArrayList<>();
 		for (String code : hazard.pictograms()) {
 			pictograms.add(CharactTestHelper.getOrCreatePicto(nodeService, code));

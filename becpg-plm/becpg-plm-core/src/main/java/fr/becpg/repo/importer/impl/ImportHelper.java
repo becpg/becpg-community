@@ -182,6 +182,9 @@ public class ImportHelper {
 	/** Constant <code>MSG_ERROR_TARGET_ASSOC_SEVERAL="import_service.error.err_target_assoc_s"{trunked}</code> */
 	public static final String MSG_ERROR_TARGET_ASSOC_SEVERAL = "import_service.error.err_target_assoc_several";
 
+	/** Constant <code>MSG_ERROR_AMBIGUOUS_KEY="import_service.error.err_ambiguous_key"</code> */
+	public static final String MSG_ERROR_AMBIGUOUS_KEY = "import_service.error.err_ambiguous_key";
+
 	/** Constant <code>MSG_ERROR_GET_ASSOC_TARGET="import_service.error.err_get_assoc_targ"{trunked}</code> */
 	public static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 

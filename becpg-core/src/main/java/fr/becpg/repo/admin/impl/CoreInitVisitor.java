@@ -212,7 +212,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	 */
 	private void visitGroups() {
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(),
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(), SystemGroup.RegulatoryUser.toString(),
 				SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString(),
 				SystemGroup.LanguageMgr.toString(), SystemGroup.SavedSearchMgr.toString(), SystemGroup.ApiConnector.toString() });
 

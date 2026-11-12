@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.test.repo.security;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessPermission;
@@ -45,10 +51,14 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.SecurityFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -72,6 +82,12 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	protected static final String RM_GLOBAL_ACL = "Rm Global Acl";
 	protected static final String RM_LOCAL_ACL = "Rm Local Acl";
+
+	private static final String ERP_CODE_37820 = "ERP-37820";
+
+	private static final String HIDDEN_SUPPLIER_37820 = "Hidden supplier 37820";
+
+	private static final String ACCESS_DENIED = "#AccessDenied";
 
 	private String grp1;
 	private String grp2;
@@ -98,6 +114,9 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 	
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
+
+	@Autowired
+	private RemoteEntityService remoteEntityService;
 
 	private void createUsers() {
 
@@ -905,5 +924,104 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		rmAclGroupData.setAcls(permissionList);
 
 		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
+	}
+
+	/**
+	 * A field hidden by a security rule must not be readable through the remote export (#37820),
+	 * while the internal exports (version archive, backup before deletion) keep it.
+	 */
+	@Test
+	public void testRemoteExportHidesRestrictedFields() {
+
+		final NodeRef globalAclGroupNodeRef = inWriteTx(this::createGlobalACLGroup);
+
+		final NodeRef localAclGroupNodeRef = inWriteTx(this::createLocalACLGroup);
+
+		final Map<String, NodeRef> products = inWriteTx(() -> {
+			Map<String, NodeRef> ret = createTestProducts(localAclGroupNodeRef);
+			for (NodeRef productNodeRef : ret.values()) {
+				nodeService.setProperty(productNodeRef, BeCPGModel.PROP_ERP_CODE, ERP_CODE_37820);
+			}
+			securityService.refreshAcls();
+			return ret;
+		});
+
+		try {
+			// USER_ONE is outside the group allowed to read bcpg:erpCode on raw materials
+			assertFalse(exportEntity(products.get(RM_GLOBAL_ACL), true, USER_ONE).contains(ERP_CODE_37820));
+			assertTrue(exportEntity(products.get(RM_GLOBAL_ACL), false, USER_ONE).contains(ERP_CODE_37820));
+
+			// The local rule of the entity does not restrict bcpg:erpCode
+			assertTrue(exportEntity(products.get(RM_LOCAL_ACL), true, USER_ONE).contains(ERP_CODE_37820));
+
+			// USER_TWO is in the allowed group
+			assertTrue(exportEntity(products.get(RM_GLOBAL_ACL), true, USER_TWO).contains(ERP_CODE_37820));
+		} finally {
+			inWriteTx(() -> {
+				nodeService.deleteNode(globalAclGroupNodeRef);
+				nodeService.deleteNode(localAclGroupNodeRef);
+				securityService.refreshAcls();
+				return null;
+			});
+		}
+	}
+
+	/**
+	 * A node the user cannot read, referenced by a readable entity through a d:noderef property and
+	 * an association, must neither truncate the XML exports nor be disclosed: left out of the XML
+	 * exports, reported as #AccessDenied in JSON (#37820).
+	 */
+	@Test
+	public void testRemoteExportHidesUnreadableReferencedNode() {
+
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			permissionService.setPermission(getTestFolderNodeRef(), USER_ONE, PermissionService.COORDINATOR, true);
+
+			SupplierData hiddenSupplier = new SupplierData();
+			hiddenSupplier.setName(HIDDEN_SUPPLIER_37820);
+			NodeRef hiddenSupplierNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), hiddenSupplier).getNodeRef();
+			permissionService.setInheritParentPermissions(hiddenSupplierNodeRef, false);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Rm referencing a hidden supplier");
+			rawMaterial.setSuppliers(List.of(hiddenSupplierNodeRef));
+			NodeRef nodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+			nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_HIERARCHY1, hiddenSupplierNodeRef);
+			return nodeRef;
+		});
+
+		for (RemoteEntityFormat format : List.of(RemoteEntityFormat.xml, RemoteEntityFormat.xml_all, RemoteEntityFormat.xml_excel)) {
+			String export = exportEntity(rawMaterialNodeRef, format, true, USER_ONE);
+			assertWellFormed(export, format);
+			assertFalse(format + " discloses the hidden supplier", export.contains(HIDDEN_SUPPLIER_37820));
+		}
+
+		String json = exportEntity(rawMaterialNodeRef, RemoteEntityFormat.json, true, USER_ONE);
+		assertTrue(json.contains(ACCESS_DENIED));
+		assertFalse(json.contains(HIDDEN_SUPPLIER_37820));
+
+		assertTrue(exportEntity(rawMaterialNodeRef, RemoteEntityFormat.xml, true, AuthenticationUtil.getAdminUserName()).contains(HIDDEN_SUPPLIER_37820));
+	}
+
+	private void assertWellFormed(String xml, RemoteEntityFormat format) {
+		try {
+			DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+		} catch (Exception e) {
+			throw new AssertionError(format + " export is not well-formed: " + e.getMessage(), e);
+		}
+	}
+
+	private String exportEntity(NodeRef productNodeRef, boolean enforceFieldSecurity, String userName) {
+		return exportEntity(productNodeRef, RemoteEntityFormat.json, enforceFieldSecurity, userName);
+	}
+
+	private String exportEntity(NodeRef productNodeRef, RemoteEntityFormat format, boolean enforceFieldSecurity, String userName) {
+		return inReadTx(() -> AuthenticationUtil.runAs(() -> {
+			RemoteParams params = new RemoteParams(format);
+			params.setEnforceFieldSecurity(enforceFieldSecurity);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			remoteEntityService.getEntity(productNodeRef, out, params);
+			return out.toString(StandardCharsets.UTF_8);
+		}, userName));
 	}
 }

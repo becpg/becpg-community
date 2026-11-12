@@ -30,7 +30,7 @@
       <filter-name>ResourcePathValidationFilter</filter-name>
       <filter-class>org.alfresco.web.site.servlet.ResourcePathValidationFilter</filter-class>
    </filter>
-   
+
    <filter>
       <description>Redirects view and service URLs to the dispatcher servlet.</description>
       <filter-name>UrlRewriteFilter</filter-name>

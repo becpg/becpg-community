@@ -34,6 +34,7 @@ import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -788,4 +789,15 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * A batch (manufacturing order) must come with a standard report, otherwise its reports view stays empty.
+	 */
+	@Test
+	public void testBatchHasStandardProductionSheet() {
+		inReadTx(() -> {
+			List<NodeRef> batchTemplates = reportTplService.getSystemReportTemplates(ReportType.Document, QualityModel.TYPE_BATCH);
+			assertFalse("a standard report is expected for batches", batchTemplates.isEmpty());
+			return null;
+		});
+	}
 }

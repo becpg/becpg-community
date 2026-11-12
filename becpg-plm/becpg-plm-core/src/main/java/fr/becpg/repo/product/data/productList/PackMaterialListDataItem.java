@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -27,7 +28,8 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "pack:packMaterialList")
-public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem, ManualDataItem {
+public class PackMaterialListDataItem extends BeCPGDataObject
+		implements SimpleCharactDataItem, AspectAwareDataItem, ManualDataItem, CompositeDataItem<PackMaterialListDataItem> {
 
 	/**
 	 * 
@@ -37,6 +39,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	private Double pmlPerc;
 	private Double pmlWeight;
 	private Double pmlRecycledPercentage;
+	private Double pmlBioBasedPercentage;
+	private Integer depthLevel;
+	private PackMaterialListDataItem parent;
 	private NodeRef pmlMaterial;
 	private List<NodeRef> geoOrigins = new ArrayList<>();
 	private PackagingLevel pkgLevel = PackagingLevel.Primary;
@@ -108,6 +113,64 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 */
 	public void setPmlRecycledPercentage(Double pmlRecycledPercentage) {
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
+	}
+
+	/**
+	 * <p>Getter for the field <code>pmlBioBasedPercentage</code>.</p>
+	 *
+	 * @return the share of bio-based plastic incorporated in the material, in percent
+	 */
+	@AlfProp
+	@AlfQname(qname = "pack:pmlBioBasedPercentage")
+	public Double getPmlBioBasedPercentage() {
+		return pmlBioBasedPercentage;
+	}
+
+	/**
+	 * <p>Setter for the field <code>pmlBioBasedPercentage</code>.</p>
+	 *
+	 * @param pmlBioBasedPercentage the share of bio-based plastic incorporated in the material, in percent
+	 */
+	public void setPmlBioBasedPercentage(Double pmlBioBasedPercentage) {
+		this.pmlBioBasedPercentage = pmlBioBasedPercentage;
+	}
+
+	/**
+	 * The composite material this line is a component of, or {@code null} for a
+	 * mono-material or for the composite itself.
+	 *
+	 * @return the parent line
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:parentLevel")
+	@InternalField
+	@Override
+	public PackMaterialListDataItem getParent() {
+		return parent;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setParent(PackMaterialListDataItem parent) {
+		this.parent = parent;
+	}
+
+	/** {@inheritDoc} */
+	@AlfProp
+	@AlfQname(qname = "bcpg:depthLevel")
+	@InternalField
+	@Override
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel the depth of the line, 1 for a root line
+	 */
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
 	}
 
 	/**
@@ -274,6 +337,29 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	}
 
 	/**
+	 * <p>withBioBasedPerc.</p>
+	 *
+	 * @param pmlBioBasedPercentage the share of bio-based plastic, in percent
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
+	public PackMaterialListDataItem withBioBasedPerc(Double pmlBioBasedPercentage) {
+		this.pmlBioBasedPercentage = pmlBioBasedPercentage;
+		return this;
+	}
+
+	/**
+	 * Declares the line as a component of a composite material.
+	 *
+	 * @param parent the composite line
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 */
+	public PackMaterialListDataItem withParent(PackMaterialListDataItem parent) {
+		setParent(parent);
+		setDepthLevel((parent == null) || (parent.getDepthLevel() == null) ? 1 : parent.getDepthLevel() + 1);
+		return this;
+	}
+
+	/**
 	 * <p>withPkgLevel.</p>
 	 *
 	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
@@ -308,6 +394,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlWeight = o.pmlWeight;
 		this.pkgLevel = o.pkgLevel;
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
+		this.pmlBioBasedPercentage = o.pmlBioBasedPercentage;
+		this.depthLevel = o.depthLevel;
+		this.parent = o.parent;
 		this.isManual = o.isManual;
 		this.geoOrigins = new ArrayList<>(o.geoOrigins);
 	}
@@ -327,7 +416,8 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(geoOrigins, isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
+		result = prime * result + Objects.hash(geoOrigins, isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlBioBasedPercentage, depthLevel,
+				parent != null ? parent.getNodeRef() : null, pmlWeight);
 		return result;
 	}
 
@@ -344,6 +434,8 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return Objects.equals(geoOrigins, other.geoOrigins) && Objects.equals(isManual, other.isManual) && pkgLevel == other.pkgLevel
 				&& Objects.equals(pmlMaterial, other.pmlMaterial)
 				&& Objects.equals(pmlPerc, other.pmlPerc) && Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage)
+				&& Objects.equals(pmlBioBasedPercentage, other.pmlBioBasedPercentage) && Objects.equals(depthLevel, other.depthLevel)
+				&& Objects.equals(parent, other.parent)
 				&& Objects.equals(pmlWeight, other.pmlWeight);
 	}
 

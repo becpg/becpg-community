@@ -77,7 +77,8 @@
                 key: "${col.key}",
                 label: "${col.label?js_string}"<#if col.format??>,
                 format: "${col.format}"</#if><#if col.width??>,
-                width: "${col.width}"</#if>
+                width: "${col.width}"</#if><#if col.filterable??>,
+                filterable: ${col.filterable?c}</#if>
               }<#if col_has_next>,</#if>
               </#list>
             ]
@@ -88,6 +89,7 @@
           loading: "${msg("audit.loading")?js_string}",
           noRecords: "${msg("audit.no-records")?js_string}",
           errorLoading: "${msg("audit.error.loading")?js_string}",
+          invalidDateRange: "${msg("audit.error.invalidDateRange")?js_string}",
           recordsRange: "${msg("audit.records-range")?js_string}",
           moreToRead: "${msg("audit.page.more")?js_string}",
           next: "${msg("audit.btn.next")?js_string}",

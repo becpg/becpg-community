@@ -165,7 +165,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                     + displayName + (url != null ? '</a>' : '') + '</span>';
             }
 
-            return (toogleGroupButton != null ? toogleGroupButton : '') + content;
+            return '<div class="mtl-label">' + (toogleGroupButton != null ? toogleGroupButton : '') + content + '</div>';
         }
 
     });
@@ -362,6 +362,12 @@ if (beCPG.module.EntityDataGridRenderers) {
             return "";
         }
         var upper = scoreClass.toString().toUpperCase();
+        // the badges predate the A+ and F classes of 2024: each shows the badge next to it
+        if (upper === "A+") {
+            upper = "A";
+        } else if (upper === "F") {
+            upper = "E";
+        }
         if (upper === "A" || upper === "B" || upper === "C" || upper === "D" || upper === "E") {
             return "ecoscore-class-" + upper.toLowerCase();
         }
@@ -621,6 +627,22 @@ if (beCPG.module.EntityDataGridRenderers) {
             }
 
             return '<div class="score-badge-cell">' + badge + "</div>";
+        }
+    });
+
+    // Category of a score: the value of the product property its definition names, a list key
+    // such as "Beverages", shown in the language of the user when the bundle names it.
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:rslCategory"],
+        renderer: function(oRecord, data) {
+            var value = data && data.value ? data.value.toString() : "";
+            if (!value) {
+                return "";
+            }
+
+            var key = "score.category." + value;
+            var label = Alfresco.util.message(key);
+            return Alfresco.util.encodeHTML(label !== key ? label : (data.displayValue || value));
         }
     });
 
@@ -884,6 +906,26 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 
+    // The components of a composite packaging material are indented under it (#38305).
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pack:packMaterial_pack:pmlMaterial"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+
+            var padding = 0;
+            var depthLevel = oRecord.getData("itemData")["prop_bcpg_depthLevel"];
+
+            if (depthLevel && depthLevel.value) {
+                padding = (depthLevel.value - 1) * 25;
+
+                Dom.addClass(scope.widgets.dataTable.getTrEl(elCell), "mtl-level-" + depthLevel.value);
+            }
+
+            return '<span class="' + (data.metadata || "") + '" ' + (padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+        }
+
+    });
+
     // Packaging components carry their hierarchy on a free-text column, so none of the
     // association renderers above applies and the rows used to be drawn flat even though
     // the level and the parent were stored (#34468).
@@ -1079,7 +1121,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (data.value != null) {
 
-                var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                 var jsonData = JSON.parse(data.value);
                 if (jsonData && jsonData.v) {
                     if (jsonData.v[key] != null) {
@@ -1967,7 +2009,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var html = '', displayValue = data.displayValue,
                 htmlId = "id-" + oRecord._sId, suffix = "bcpg_illValue",
-                editPermission = oRecord.getData().permissions.userAccess.edit;
+                editPermission = oRecord.getData().permissions.userAccess.edit,
+                dirAttribute = '';
 
             if (data.value != null) {
                 if (data.displayValue == null || data.displayValue == "") {
@@ -1979,8 +2022,13 @@ if (beCPG.module.EntityDataGridRenderers) {
                 }
             }
 
+            // The label falls back to another language when it has no value in the content language,
+            // so the browser takes the direction from the text itself rather than from the user locale.
+            if (data.displayValue != null && data.displayValue != "" && beCPG.util.getContentTextDirection() == "rtl") {
+                dirAttribute = ' dir="auto"';
+            }
 
-            html += '<div class="note rounded"><div id="' + htmlId + suffix + '" > ' + displayValue + '</div>';
+            html += '<div class="note rounded"><div id="' + htmlId + suffix + '"' + dirAttribute + ' > ' + displayValue + '</div>';
 
             var nodeRef = oRecord._oData.nodeRef;
             html += '<div class="labeling-action-container">';
@@ -2580,7 +2628,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                 if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"]
                     && oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value != null) {
-                    var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+                    var key = beCPG.util.getRegulatoryCountryKey(beCPG.util.getContentLocale());
                     var jsonData = JSON.parse(oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value);
                     if (jsonData.ul && jsonData.ul[key]) {
                         ul = jsonData.ul[key];

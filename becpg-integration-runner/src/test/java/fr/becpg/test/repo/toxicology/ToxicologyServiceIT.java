@@ -29,6 +29,18 @@ import fr.becpg.test.PLMBaseTestCase;
 
 public class ToxicologyServiceIT extends PLMBaseTestCase {
 
+	private static final String ADULT_LO_BODY_NAME = "Adult LO Body - test";
+
+	private static final String ADULT_LO_BODY_SYSTEMIC_VALUE = "- Adult LO Body - test: 30303";
+
+	private static final String ADULT_RO_HAIR_SYSTEMIC_VALUE_AFTER_UPDATE = "- Adult RO Hair - test: 15151";
+
+	private static final String ADULT_RO_FACE_LINE = "- Adult RO Face - test";
+
+	private static final Double ADULT_LO_BODY_TOX_VALUE = 110d;
+
+	private static final Double UPDATED_ADULT_RO_HAIR_TOX_VALUE = 220d;
+
 	@Autowired
 	private Repository repository;
 	
@@ -46,6 +58,8 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 	private NodeRef citricAcidNodeRef;
 	
 	private NodeRef alpiniaNodeRef;
+
+	private NodeRef toxFolderNodeRef;
 	
 	@Override
 	public void setUp() throws Exception {
@@ -56,6 +70,7 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
 		NodeRef listContainer = nodeService.getChildByName(charactsNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 		NodeRef toxFolder = nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, PlmRepoConsts.PATH_TOXICITIES);
+		toxFolderNodeRef = toxFolder;
 		
 		inWriteTx(() -> {
 			NodeRef nodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, "Adult RO Hair - test").singleValue();
@@ -343,5 +358,106 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 			return null;
 		});
 	}
-	
+
+	/**
+	 * Creating a tox, as the DIP test product does for its exposure scenario, recalculates the
+	 * ingredients that already hold toxicology values.
+	 */
+	@Test
+	public void shouldRecalculateIngredientsWhenToxIsCreated() {
+		computeToxValues(glycerinNodeRef);
+		waitForBatchQueueToDrain();
+		NodeRef adultLOBodyNodeRef = inWriteTx(this::createAdultLOBodyTox);
+		try {
+			waitForBatchQueueToDrain();
+			assertTrue(getSystemicValues(glycerinNodeRef).contains(ADULT_LO_BODY_SYSTEMIC_VALUE));
+		} finally {
+			deleteTox(adultLOBodyNodeRef);
+		}
+	}
+
+	/**
+	 * Updating a tox recalculates the undeleted ingredients and leaves the deleted ones untouched.
+	 */
+	@Test
+	public void shouldKeepDeletedIngredientValuesWhenToxIsUpdated() {
+		computeToxValues(glycerinNodeRef, citricAcidNodeRef);
+		markIngredientDeleted(citricAcidNodeRef);
+		String citricAcidSystemicValues = getSystemicValues(citricAcidNodeRef);
+		String citricAcidMaxValues = getMaxValues(citricAcidNodeRef);
+		waitForBatchQueueToDrain();
+
+		inWriteTx(() -> {
+			nodeService.setProperty(adultROHairNodeRef, PLMModel.PROP_TOX_VALUE, UPDATED_ADULT_RO_HAIR_TOX_VALUE);
+			return null;
+		});
+		waitForBatchQueueToDrain();
+
+		assertTrue(getSystemicValues(glycerinNodeRef).contains(ADULT_RO_HAIR_SYSTEMIC_VALUE_AFTER_UPDATE));
+		assertEquals(citricAcidSystemicValues, getSystemicValues(citricAcidNodeRef));
+		assertEquals(citricAcidMaxValues, getMaxValues(citricAcidNodeRef));
+	}
+
+	/**
+	 * Deleting a tox removes its line from the undeleted ingredients and leaves the deleted ones untouched.
+	 */
+	@Test
+	public void shouldKeepDeletedIngredientValuesWhenToxIsDeleted() {
+		computeToxValues(glycerinNodeRef, citricAcidNodeRef);
+		markIngredientDeleted(citricAcidNodeRef);
+		waitForBatchQueueToDrain();
+
+		deleteTox(adultROFaceNodeRef);
+
+		assertFalse(getSystemicValues(glycerinNodeRef).contains(ADULT_RO_FACE_LINE));
+		assertTrue(getSystemicValues(citricAcidNodeRef).contains(ADULT_RO_FACE_LINE));
+	}
+
+	private void computeToxValues(NodeRef... ingNodeRefs) {
+		inWriteTx(() -> {
+			for (NodeRef ingNodeRef : ingNodeRefs) {
+				nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			}
+			return null;
+		});
+	}
+
+	private void markIngredientDeleted(NodeRef ingNodeRef) {
+		inWriteTx(() -> {
+			nodeService.setProperty(ingNodeRef, BeCPGModel.PROP_IS_DELETED, true);
+			return null;
+		});
+	}
+
+	private void deleteTox(NodeRef toxNodeRef) {
+		inWriteTx(() -> {
+			nodeService.deleteNode(toxNodeRef);
+			return null;
+		});
+		waitForBatchQueueToDrain();
+	}
+
+	private NodeRef createAdultLOBodyTox() {
+		NodeRef existingNodeRef = BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_CHARACT_NAME, ADULT_LO_BODY_NAME).singleValue();
+		if (existingNodeRef != null) {
+			nodeService.deleteNode(existingNodeRef);
+		}
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, ADULT_LO_BODY_NAME);
+		properties.put(PLMModel.PROP_TOX_VALUE, ADULT_LO_BODY_TOX_VALUE);
+		properties.put(PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
+		properties.put(PLMModel.PROP_TOX_CALCULATE_MAX, true);
+		properties.put(PLMModel.PROP_TOX_TYPES, new ArrayList<>(List.of(ToxType.SkinIrritationRinseOff, ToxType.Sensitization, ToxType.SystemicIngredient)));
+		return nodeService.createNode(toxFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, ADULT_LO_BODY_NAME), PLMModel.TYPE_TOX, properties).getChildRef();
+	}
+
+	private String getSystemicValues(NodeRef ingNodeRef) {
+		return inReadTx(() -> (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES));
+	}
+
+	private String getMaxValues(NodeRef ingNodeRef) {
+		return inReadTx(() -> (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES));
+	}
+
 }

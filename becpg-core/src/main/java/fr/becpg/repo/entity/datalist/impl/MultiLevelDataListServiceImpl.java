@@ -197,69 +197,160 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef, int currDepth,
 			int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
 		int accessMode = securityService.computeAccessMode(ret.getEntityNodeRef(), nodeType, dataType.toPrefixString(namespaceService));
+		if (SecurityService.NONE_ACCESS == accessMode) {
+			return;
+		}
 
-		if (SecurityService.NONE_ACCESS != accessMode) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataType);
+		NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataType);
+		if (dataListNodeRef == null) {
+			return;
+		}
 
-			if (dataListNodeRef != null) {
+		// Adv search already filter by perm
+		List<NodeRef> rows = getListNodeRef(dataListNodeRef, dataListFilter, dataType);
+		TreeVisit visit = new TreeVisit(dataListFilter, currDepth, maxDepthLevel, parentNodeRefs, useExpandedCache, resetTree,
+				!dataType.equals(dataListFilter.getDataType()), groupRowsByParent(rows, dataListNodeRef), new HashSet<>());
 
-				boolean isSecondary = !dataType.equals(dataListFilter.getDataType());
+		appendChildren(ret, dataListNodeRef, visit);
+		appendUnreachedRows(ret, rows, visit);
+	}
 
-				List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter, dataType);
-				// Adv search already filter by perm
+	/**
+	 * State shared while the rows of one list are appended to the tree. Rows are grouped by the row they hang
+	 * under, the rows at the root of the list being grouped under the list itself, each group keeping the order
+	 * the list was sorted in.
+	 */
+	private record TreeVisit(DataListFilter dataListFilter, int currDepth, int maxDepthLevel, Set<NodeRef> parentNodeRefs,
+			boolean useExpandedCache, boolean resetTree, boolean isSecondary, Map<NodeRef, List<NodeRef>> childrenByParent,
+			Set<NodeRef> visitedRows) {
 
-				Map<NodeRef, MultiLevelListData> currTmp = new HashMap<>();
+		List<NodeRef> childrenOf(NodeRef nodeRef) {
+			return childrenByParent.getOrDefault(nodeRef, List.of());
+		}
+	}
 
-				for (NodeRef childRef : childRefs) {
-					NodeRef currEntityNodeRef = getEntityNodeRef(childRef);
+	/**
+	 * Groups the rows of a list under the row they hang under, keeping the order the list was sorted in, so that
+	 * a sort applies among the roots first and then among the children of each row. A row without parent, being
+	 * its own parent or whose parent is filtered out of the list hangs under the list itself.
+	 *
+	 * @param rows the rows of the list, in the requested order
+	 * @param dataListNodeRef the list, key of the rows displayed at its root
+	 * @return the rows grouped by the row they hang under
+	 */
+	private Map<NodeRef, List<NodeRef>> groupRowsByParent(List<NodeRef> rows, NodeRef dataListNodeRef) {
+		Set<NodeRef> rowSet = new HashSet<>(rows);
+		Map<NodeRef, List<NodeRef>> childrenByParent = new HashMap<>();
+		for (NodeRef row : rows) {
+			NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(row, BeCPGModel.PROP_PARENT_LEVEL);
+			boolean hangsUnderParent = (parentNodeRef != null) && !parentNodeRef.equals(row) && rowSet.contains(parentNodeRef);
+			childrenByParent.computeIfAbsent(hangsUnderParent ? parentNodeRef : dataListNodeRef, k -> new ArrayList<>()).add(row);
+		}
+		return childrenByParent;
+	}
 
-					Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
-					if (depthLevel == null) {
-						depthLevel = 1;
-					}
-					int nextDepth = currDepth + depthLevel;
-					NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(childRef, BeCPGModel.PROP_PARENT_LEVEL);
-					if (isExpandedNode(useExpandedCache ? parentNodeRef : null, ((maxDepthLevel == 0) && (parentNodeRef != null))
-							|| (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel) || (depthLevel == 1), resetTree)) {
-						MultiLevelListData tmp;
-						if (currEntityNodeRef != null) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-										+ nodeService.getProperty(currEntityNodeRef, ContentModel.PROP_NAME));
-							}
-
-							Set<NodeRef> curVisitedNodeRef = new HashSet<>(parentNodeRefs);
-
-							tmp = getMultiLevelListData(dataListFilter, currEntityNodeRef, nextDepth, maxDepthLevel, childRef, curVisitedNodeRef,
-									useExpandedCache, resetTree);
-						} else {
-							tmp = new MultiLevelListData(new ArrayList<>(), nextDepth);
-							tmp.setLeaf(!getIsGroup(childRef));
-						}
-
-						currTmp.put(childRef, tmp);
-
-						if (!isSecondary || (!tmp.getTree().isEmpty())) {
-							if ((parentNodeRef != null) && !parentNodeRef.equals(childRef) && currTmp.containsKey(parentNodeRef)) {
-								MultiLevelListData parent = currTmp.get(parentNodeRef);
-								parent.getTree().put(childRef, tmp);
-							} else {
-								ret.getTree().put(childRef, tmp);
-							}
-						}
-
-					} 
-					
-					if (parentNodeRef != null && !parentNodeRef.equals(childRef) && currTmp.containsKey(parentNodeRef) && currEntityNodeRef == null) {
-						MultiLevelListData parent = currTmp.get(parentNodeRef);
-						if (currEntityNodeRef == null) {
-							parent.setLeaf(false);
-						}
-					}
-				}
-
+	/**
+	 * Appends, in the order they were sorted in, the rows hanging under a row (or under the list for its roots).
+	 *
+	 * @param parentData the tree node the rows are appended to
+	 * @param parentNodeRef the row, or the list, the rows hang under
+	 * @param visit the state of the list being visited
+	 */
+	private void appendChildren(MultiLevelListData parentData, NodeRef parentNodeRef, TreeVisit visit) {
+		for (NodeRef row : visit.childrenOf(parentNodeRef)) {
+			if (visit.visitedRows().add(row)) {
+				appendRow(parentData, row, visit);
 			}
 		}
+	}
+
+	/**
+	 * Appends at the root the rows no root leads to, ie. rows whose parents form a cycle, so that they are still
+	 * displayed.
+	 *
+	 * @param ret the tree of the list
+	 * @param rows the rows of the list, in the requested order
+	 * @param visit the state of the list being visited
+	 */
+	private void appendUnreachedRows(MultiLevelListData ret, List<NodeRef> rows, TreeVisit visit) {
+		List<NodeRef> unreachedRows = rows.stream().filter(row -> !visit.visitedRows().contains(row)).toList();
+		visit.visitedRows().addAll(unreachedRows);
+		for (NodeRef row : unreachedRows) {
+			appendRow(ret, row, visit);
+		}
+	}
+
+	/**
+	 * Appends a row and its descendants under a tree node, unless a collapsed ancestor hides it: its descendants
+	 * are then hidden too.
+	 *
+	 * @param parentData the tree node the row is appended to
+	 * @param row the row
+	 * @param visit the state of the list being visited
+	 */
+	private void appendRow(MultiLevelListData parentData, NodeRef row, TreeVisit visit) {
+		NodeRef rowEntityNodeRef = getEntityNodeRef(row);
+		if (rowEntityNodeRef == null) {
+			parentData.setLeaf(false);
+		}
+
+		int depthLevel = getDepthLevel(row);
+		int nextDepth = visit.currDepth() + depthLevel;
+		if (!isRowDisplayed(row, depthLevel, nextDepth, visit)) {
+			markDescendantsVisited(row, visit);
+			return;
+		}
+
+		MultiLevelListData rowData = createRowData(row, rowEntityNodeRef, nextDepth, visit);
+		if (!visit.isSecondary() || !rowData.getTree().isEmpty()) {
+			parentData.getTree().put(row, rowData);
+		}
+		appendChildren(rowData, row, visit);
+	}
+
+	private int getDepthLevel(NodeRef row) {
+		Integer depthLevel = (Integer) nodeService.getProperty(row, BeCPGModel.PROP_DEPTH_LEVEL);
+		return depthLevel != null ? depthLevel : 1;
+	}
+
+	private boolean isRowDisplayed(NodeRef row, int depthLevel, int nextDepth, TreeVisit visit) {
+		NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(row, BeCPGModel.PROP_PARENT_LEVEL);
+		int maxDepthLevel = visit.maxDepthLevel();
+		boolean displayedByDepth = ((maxDepthLevel == 0) && (parentNodeRef != null)) || (maxDepthLevel < 0) || (nextDepth <= maxDepthLevel)
+				|| (depthLevel == 1);
+		return isExpandedNode(visit.useExpandedCache() ? parentNodeRef : null, displayedByDepth, visit.resetTree());
+	}
+
+	private void markDescendantsVisited(NodeRef row, TreeVisit visit) {
+		for (NodeRef child : visit.childrenOf(row)) {
+			if (visit.visitedRows().add(child)) {
+				markDescendantsVisited(child, visit);
+			}
+		}
+	}
+
+	/**
+	 * Creates the tree node of a row: the sub tree of the entity it points to, or an empty node for a row
+	 * pointing to no entity.
+	 *
+	 * @param row the row
+	 * @param rowEntityNodeRef the entity the row points to, null if none
+	 * @param nextDepth the depth of the row
+	 * @param visit the state of the list being visited
+	 * @return the tree node of the row
+	 */
+	private MultiLevelListData createRowData(NodeRef row, NodeRef rowEntityNodeRef, int nextDepth, TreeVisit visit) {
+		if (rowEntityNodeRef == null) {
+			MultiLevelListData rowData = new MultiLevelListData(new ArrayList<>(), nextDepth);
+			rowData.setLeaf(!getIsGroup(row));
+			return rowData;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Append depth " + nextDepth + " at currLevel " + visit.currDepth() + " for "
+					+ nodeService.getProperty(rowEntityNodeRef, ContentModel.PROP_NAME));
+		}
+		return getMultiLevelListData(visit.dataListFilter(), rowEntityNodeRef, nextDepth, visit.maxDepthLevel(), row,
+				new HashSet<>(visit.parentNodeRefs()), visit.useExpandedCache(), visit.resetTree());
 	}
 
 	/**

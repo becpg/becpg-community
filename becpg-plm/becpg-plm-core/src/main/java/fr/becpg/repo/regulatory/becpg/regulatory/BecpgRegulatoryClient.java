@@ -58,10 +58,14 @@ public class BecpgRegulatoryClient {
 			PLMModel.TYPE_PHYSICOCHEMLIST.getLocalName(), PLMModel.TYPE_ALLERGENLIST.getLocalName(), PLMModel.TYPE_LABELCLAIMLIST.getLocalName(),
 			PLMModel.TYPE_SVHCLIST.getLocalName());
 
-	/** Ingredient identifiers read on every ingredient a recipe points to (ingredient lines, substances). */
-	private static final Set<QName> INGREDIENT_IDENTIFIERS = Set.of(PLMModel.PROP_CAS_NUMBER, PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER,
-			PLMModel.PROP_FDA_NUMBER, PLMModel.PROP_FEMA_NUMBER, PLMModel.PROP_FL_NUMBER, PLMModel.PROP_ING_TYPE_V2,
-			PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, PLMModel.PROP_PLURAL_LEGAL_NAME);
+	/**
+	 * Ingredient identifiers read on every ingredient a recipe points to (ingredient lines, substances). The
+	 * regulatory code carries the becpg-regulatory codes stored by previous checks, which identify the ingredient
+	 * before its CAS, EC or name.
+	 */
+	private static final Set<QName> INGREDIENT_IDENTIFIERS = Set.of(PLMModel.PROP_REGULATORY_CODE, PLMModel.PROP_CAS_NUMBER,
+			PLMModel.PROP_CE_NUMBER, PLMModel.PROP_EC_NUMBER, PLMModel.PROP_FDA_NUMBER, PLMModel.PROP_FEMA_NUMBER, PLMModel.PROP_FL_NUMBER,
+			PLMModel.PROP_ING_TYPE_V2, PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, PLMModel.PROP_PLURAL_LEGAL_NAME);
 
 	/** Product attributes that select the applicable limits: use mode, body zones, exposure, population, serving. */
 	private static final Set<QName> PRODUCT_ATTRIBUTES = Set.of(ContentModel.PROP_SYS_NAME, PLMModel.PROP_REGULATORY_USE_MODE,

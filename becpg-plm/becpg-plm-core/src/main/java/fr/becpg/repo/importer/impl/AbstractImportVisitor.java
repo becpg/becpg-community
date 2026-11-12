@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
@@ -63,6 +65,7 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -265,6 +268,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// import properties
 		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values);
+		Map<QName, List<NodeRef>> associationTargets = findAssociationTargets(importContext, values);
 
 		// work around since CodePolicy is asynchronous, so we need to generate
 		// code if empty
@@ -289,8 +293,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_NO_PARENT));
 			}
 
+			Map<QName, Serializable> nodeProperties = ImportHelper.cleanProperties(properties);
+			keepImportedSortOfRootRow(importContext.getType(), nodeProperties);
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
-					ImportHelper.cleanProperties(properties)).getChildRef();
+					nodeProperties).getChildRef();
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("create node ("+nodeRef+"). Type: " + importContext.getType() + " - Properties: " + properties);
@@ -354,7 +360,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		// import associations
 		logger.debug("Import Assocs");
-		importAssociations(importContext, values, nodeRef);
+		updateAssociations(nodeRef, associationTargets);
 
 		// import files
 		logger.debug("Import Files");
@@ -363,6 +369,26 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		logger.debug("Node Imported");
 
 		return nodeRef;
+	}
+
+	/**
+	 * Keeps the sort imported on a new root row of a hierarchical list (#36836): once its depth level is
+	 * set, the sortable list policy leaves the row as imported instead of computing a new sort. A row
+	 * with a parent level is still placed under its parent by the policy.
+	 *
+	 * @param type the type of the imported row
+	 * @param properties the properties of the row to create, completed with the root depth level when needed
+	 */
+	protected void keepImportedSortOfRootRow(QName type, Map<QName, Serializable> properties) {
+		if ((properties.get(BeCPGModel.PROP_SORT) != null) && (properties.get(BeCPGModel.PROP_DEPTH_LEVEL) == null)
+				&& (properties.get(BeCPGModel.PROP_PARENT_LEVEL) == null) && hasDepthLevelAspect(type)) {
+			properties.put(BeCPGModel.PROP_DEPTH_LEVEL, RepoConsts.DEFAULT_LEVEL);
+		}
+	}
+
+	private boolean hasDepthLevelAspect(QName type) {
+		ClassDefinition classDefinition = entityDictionaryService.getClass(type);
+		return (classDefinition != null) && classDefinition.getDefaultAspectNames().contains(BeCPGModel.ASPECT_DEPTH_LEVEL);
 	}
 
 	/**
@@ -662,50 +688,58 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	/**
-	 * Import the associations of the node
+	 * Finds the targets of the association columns of a line, before the line writes anything: a
+	 * missing or ambiguous target then fails the line alone. Found after the node was written, it left
+	 * that node without its mandatory association, which failed the commit of the whole batch and hid
+	 * the error of the line behind an integrity error.
 	 *
-	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object.
-	 * @param values a {@link java.util.List} object.
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 * @param importContext the import context
+	 * @param values the values of the line
+	 * @return the targets of each association column, an empty list clearing the association
+	 * @throws ImporterException if a target is not found, is ambiguous, or a mandatory one is missing
 	 */
-	protected void importAssociations(ImportContext importContext, List<String> values, NodeRef nodeRef) throws ImporterException {
-
+	protected Map<QName, List<NodeRef>> findAssociationTargets(ImportContext importContext, List<String> values) throws ImporterException {
+		Map<QName, List<NodeRef>> associationTargets = new LinkedHashMap<>();
 		for (int z_idx = 0; (z_idx < values.size()) && (z_idx < importContext.getColumns().size()); z_idx++) {
-
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
-
-			if (attributeMapping instanceof AttributeMapping) {
-				ClassAttributeDefinition column = attributeMapping.getAttribute();
-
-				if (column instanceof AssociationDefinition) {
-					AssociationDefinition assocDef = (AssociationDefinition) column;
-					String value = values.get(z_idx);
-
-					if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
-						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
-						QName targetKey = ((AttributeMapping) attributeMapping).getTargetKey();
-						logger.debug("importAssociations targetClass" + targetClass);
-						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
-								targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName(), targetKey);
-
-						// mandatory target not found
-						if (targetRefs.isEmpty()) {
-							throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
-						}
-
-						associationService.update(nodeRef, assocDef.getName(), targetRefs);
-
-					} else if ((value != null) && value.isEmpty() || ImportHelper.NULL_VALUE.equals(value)) {
-
-						associationService.update(nodeRef, assocDef.getName(), new ArrayList<>());
-
-					} else if (assocDef.isTargetMandatory()) {
-
-						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
-					}
+			if ((attributeMapping instanceof AttributeMapping columnMapping) && (columnMapping.getAttribute() instanceof AssociationDefinition assocDef)) {
+				String value = values.get(z_idx);
+				if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
+					associationTargets.put(assocDef.getName(), findColumnTargets(importContext, columnMapping, assocDef, value));
+				} else if (value != null) {
+					associationTargets.put(assocDef.getName(), new ArrayList<>());
+				} else if (assocDef.isTargetMandatory()) {
+					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
 				}
 			}
+		}
+		return associationTargets;
+	}
+
+	private List<NodeRef> findColumnTargets(ImportContext importContext, AttributeMapping columnMapping, AssociationDefinition assocDef, String value)
+			throws ImporterException {
+		QName targetClass = columnMapping.getTargetClass();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Find association targets, targetClass: " + targetClass);
+		}
+		List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
+				targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName(), columnMapping.getTargetKey());
+		if (targetRefs.isEmpty()) {
+			throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, assocDef.getName(), value));
+		}
+		return targetRefs;
+	}
+
+	/**
+	 * Sets the associations of the node to the targets found for the line.
+	 *
+	 * @param nodeRef the imported node
+	 * @param associationTargets the targets of each association, as found by
+	 *            {@link #findAssociationTargets(ImportContext, List)}
+	 */
+	protected void updateAssociations(NodeRef nodeRef, Map<QName, List<NodeRef>> associationTargets) {
+		for (Map.Entry<QName, List<NodeRef>> associationTarget : associationTargets.entrySet()) {
+			associationService.update(nodeRef, associationTarget.getKey(), associationTarget.getValue());
 		}
 	}
 
@@ -1242,21 +1276,80 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				queryBuilder.parent(importContext.getParentNodeRef());
 			} else if (parentRef != null && ! hasParent) {
 				queryBuilder.inParent(parentRef);
+			} else if (!hasParent && isImportedRowLookup(importContext, type, useContextPath) && isDataList(importContext.getParentNodeRef())) {
+				// #36836 rows imported into a data list must never update the rows of another list of the same type
+				queryBuilder.parent(importContext.getParentNodeRef());
 			}
 			if(logger.isDebugEnabled()) {
 				logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 			}
-			
-			for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
-				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-					return tmpNodeRef;
-				}
-			}
+
+			return findImportCandidate(queryBuilder, isImportedRowLookup(importContext, type, useContextPath) ? type : null);
 
 		}
 
 		return nodeRef;
+	}
+
+	/**
+	 * Tells whether the lookup is for the node the import line creates or updates, as opposed to a
+	 * target or the parent entity of an entity list item.
+	 *
+	 * @param importContext the import context
+	 * @param type the type looked up
+	 * @param useContextPath whether the lookup may use the PATH of the import
+	 * @return true when the lookup is for the imported row itself
+	 */
+	private boolean isImportedRowLookup(ImportContext importContext, QName type, boolean useContextPath) {
+		return useContextPath && type.equals(importContext.getType());
+	}
+
+	/**
+	 * @param folderNodeRef the folder given by the PATH of the import, may be null
+	 * @return true when the folder is a data list
+	 */
+	private boolean isDataList(NodeRef folderNodeRef) {
+		return (folderNodeRef != null) && DataListModel.TYPE_DATALIST.equals(nodeService.getType(folderNodeRef));
+	}
+
+	/**
+	 * Returns the first node matching the query, versions and templates excluded. When the lookup is
+	 * for the imported row, a key matching several nodes is rejected instead of silently updating the
+	 * first one; working copies and branches are not counted since they may share the key of the
+	 * entity they come from.
+	 *
+	 * @param queryBuilder the query on the key of the line
+	 * @param importedRowType the type of the imported row, or null when several matching nodes are allowed
+	 * @return the matching node, or null when none matches
+	 * @throws ImporterException if the key is ambiguous
+	 */
+	private NodeRef findImportCandidate(BeCPGQueryBuilder queryBuilder, QName importedRowType) throws ImporterException {
+		NodeRef candidate = null;
+		int mainNodeCount = 0;
+		for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
+			if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+				if (candidate == null) {
+					candidate = tmpNodeRef;
+				}
+				if (importedRowType == null) {
+					return candidate;
+				}
+				if (isMainNode(tmpNodeRef) && (++mainNodeCount > 1)) {
+					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_AMBIGUOUS_KEY,
+							importedRowType.toPrefixString(namespaceService), queryBuilder.toString()));
+				}
+			}
+		}
+		return candidate;
+	}
+
+	/**
+	 * @param nodeRef a node matching the key of the line
+	 * @return true when the node is neither a working copy nor a branch
+	 */
+	private boolean isMainNode(NodeRef nodeRef) {
+		return !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 	}
 
 	/**
@@ -1424,13 +1517,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc, QName assocKey)
 			throws ImporterException {
 		NodeRef nodeRef = null;
-		NodeRef parentRef = null;
 		String assocPath = null;
 
-		Map<QName, Serializable> properties = new HashMap<>();
-
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
-		boolean doQuery = false;
 
 		if (classMapping != null) {
 			if (assoc != null) {
@@ -1443,68 +1532,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		// look in the cache
 		String key = String.format(CACHE_KEY, type, value);
 		key = StringUtils.isEmpty(assocPath) ? key : key + assocPath;
+		key = assocKey == null ? key : key + assocKey;
 
 		if (importContext.getCacheNodes().containsKey(key)) {
 			nodeRef = importContext.getCacheNodes().get(key);
 		} else {
 
+			NodeRef parentRef = findTargetParent(importContext, classMapping, assoc, assocPath);
+
 			if (assocKey != null) {
-				properties.put(assocKey, value);
-				doQuery = true;
-			} else if ((classMapping != null) && (classMapping.getNodeColumnKeys() != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
-
-				for (QName attribute : classMapping.getNodeColumnKeys()) {
-					properties.put(attribute, value);
-					doQuery = true;
-					break;
-				}
+				nodeRef = findTargetNodeByExplicitKey(type, assocKey, value, parentRef);
 			} else {
-
-				// look for codeAspect
-				if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {
-					for (AspectDefinition aspectDef : entityDictionaryService.getType(type).getDefaultAspects()) {
-						if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
-							properties.put(BeCPGModel.PROP_CODE, value);
-							doQuery = true;
-							break;
-						}
-					}
-				}
-
-				// we try with the name
-				if (!doQuery) {
-					properties.put(RemoteHelper.getPropName(type, entityDictionaryService), value);
-					doQuery = true;
-				}
+				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, buildTargetKeyProperties(classMapping, type, value), parentRef, false);
 			}
 
-			if (doQuery) {
-
-				if ((classMapping != null) && StringUtils.isNotEmpty(assocPath)) {
-					parentRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							AbstractBeCPGQueryBuilder.encodePath(assocPath));
-				} else if (PLMModel.ASSOC_ILL_GRP.equals(assoc)) {
-					// there is no explicit path, so we assume the group mode is NOT 'Model'. Therefore, we need to add the entity path to avoid retrieving the group from another entity
-					NodeRef listContainer = entityListDAO.getListContainer(importContext.getEntityNodeRef());
-					parentRef = entityListDAO.getList(listContainer, PLMModel.TYPE_INGLABELINGLIST);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Find parent ref for assoc bcpg:illGrp: " + parentRef);
-					}
-				}
-
-				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef, false);
-
-				if (nodeRef == null) {
-					String typeTitle = type.toString();
-					TypeDefinition typeDef = entityDictionaryService.getType(type);
-					if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService) != null)
-							&& !typeDef.getTitle(entityDictionaryService).isEmpty()) {
-						typeTitle = typeDef.getTitle(entityDictionaryService);
-					}
-
-					logger.error(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
-					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
-				}
+			if (nodeRef == null) {
+				logger.error(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, getTypeTitle(type), value));
+				throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_NOT_FOUND, getTypeTitle(type), value));
 			}
 
 			// add in the cache
@@ -1512,6 +1556,129 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		return nodeRef;
+	}
+
+	/**
+	 * Gives the folder the target of an association must be looked for in: the path declared on the
+	 * association, or the labeling group list of the imported entity.
+	 *
+	 * @param importContext the import context
+	 * @param classMapping the mapping of the target type, may be null
+	 * @param assoc the association, may be null
+	 * @param assocPath the path declared on the association, may be empty
+	 * @return the folder to look in, or null to look in the whole repository
+	 */
+	private NodeRef findTargetParent(ImportContext importContext, ClassMapping classMapping, QName assoc, String assocPath) {
+		if ((classMapping != null) && StringUtils.isNotEmpty(assocPath)) {
+			return BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), AbstractBeCPGQueryBuilder.encodePath(assocPath));
+		}
+		if (PLMModel.ASSOC_ILL_GRP.equals(assoc)) {
+			// there is no explicit path, so we assume the group mode is NOT 'Model'. Therefore, we need to add the entity path to avoid retrieving the group from another entity
+			NodeRef listContainer = entityListDAO.getListContainer(importContext.getEntityNodeRef());
+			NodeRef parentRef = entityListDAO.getList(listContainer, PLMModel.TYPE_INGLABELINGLIST);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Find parent ref for assoc bcpg:illGrp: " + parentRef);
+			}
+			return parentRef;
+		}
+		return null;
+	}
+
+	/**
+	 * Builds the key properties a target is looked up by when the column declares no key: the first
+	 * key of the mapping of the target type, else its code, else its name.
+	 *
+	 * @param classMapping the mapping of the target type, may be null
+	 * @param type the target type
+	 * @param value the value of the column
+	 * @return the key properties of the lookup
+	 */
+	private Map<QName, Serializable> buildTargetKeyProperties(ClassMapping classMapping, QName type, String value) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		if ((classMapping != null) && (classMapping.getNodeColumnKeys() != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
+			properties.put(classMapping.getNodeColumnKeys().get(0), value);
+		} else if (hasCodeAspect(type)) {
+			properties.put(BeCPGModel.PROP_CODE, value);
+		} else {
+			properties.put(RemoteHelper.getPropName(type, entityDictionaryService), value);
+		}
+		return properties;
+	}
+
+	private boolean hasCodeAspect(QName type) {
+		TypeDefinition typeDef = entityDictionaryService.getType(type);
+		if ((typeDef != null) && (typeDef.getDefaultAspects() != null)) {
+			for (AspectDefinition aspectDef : typeDef.getDefaultAspects()) {
+				if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Finds the target of an association by the key the column declares with
+	 * <code>@Assoc(key="...")</code>, whether or not the target type has a mapping. A key matching
+	 * several nodes is rejected instead of silently linking the first one: versions and templates are
+	 * ignored, and working copies, branches and deleted nodes are only used when nothing else matches.
+	 *
+	 * @param type the target type
+	 * @param key the property identifying the target
+	 * @param value the value of the column
+	 * @param parentRef the folder to look in, or null to look in the whole repository
+	 * @return the target, or null when no node matches
+	 * @throws ImporterException if several nodes match the key
+	 */
+	private NodeRef findTargetNodeByExplicitKey(QName type, QName key, String value, NodeRef parentRef) throws ImporterException {
+		if (NodeRef.isNodeRef(value)) {
+			return new NodeRef(value);
+		}
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(key, value);
+		if (parentRef != null) {
+			queryBuilder.inParent(parentRef);
+		}
+
+		List<NodeRef> candidates = new ArrayList<>();
+		List<NodeRef> activeCandidates = new ArrayList<>();
+		for (NodeRef candidate : queryBuilder.inDB().ftsLanguage().list()) {
+			if (!nodeService.hasAspect(candidate, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(candidate, BeCPGModel.ASPECT_ENTITY_TPL)) {
+				candidates.add(candidate);
+				if (isActiveNode(candidate)) {
+					activeCandidates.add(candidate);
+				}
+			}
+		}
+
+		if (activeCandidates.size() > 1) {
+			throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_TARGET_ASSOC_SEVERAL, getTypeTitle(type), value));
+		}
+		if (!activeCandidates.isEmpty()) {
+			return activeCandidates.get(0);
+		}
+		return candidates.isEmpty() ? null : candidates.get(0);
+	}
+
+	/**
+	 * @param nodeRef a node matching the key of a target
+	 * @return true when the node is neither a working copy, a branch nor a deleted node
+	 */
+	private boolean isActiveNode(NodeRef nodeRef) {
+		return !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)
+				&& !Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED));
+	}
+
+	/**
+	 * @param type a type
+	 * @return the title of the type, or its name when it has none
+	 */
+	private String getTypeTitle(QName type) {
+		TypeDefinition typeDef = entityDictionaryService.getType(type);
+		if ((typeDef != null) && (typeDef.getTitle(entityDictionaryService) != null) && !typeDef.getTitle(entityDictionaryService).isEmpty()) {
+			return typeDef.getTitle(entityDictionaryService);
+		}
+		return type.toString();
 	}
 
 }

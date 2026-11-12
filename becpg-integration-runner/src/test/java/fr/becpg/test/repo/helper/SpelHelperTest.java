@@ -74,8 +74,7 @@ public class SpelHelperTest {
 			sb.append("+'x'");
 		}
 		try {
-			parser.parseExpression(sb.toString());
-			System.out.println("Deep expression successfully parsed without StackOverflowError");
+			Assert.assertNotNull(parser.parseExpression(sb.toString()));
 		} catch (Exception e) {
 			System.out.println("Deep expression parsing threw expected exception: " + e.getMessage());
 		}

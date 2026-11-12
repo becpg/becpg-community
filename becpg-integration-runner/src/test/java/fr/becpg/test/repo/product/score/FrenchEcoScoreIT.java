@@ -137,8 +137,9 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 			frenchEcoScore.formulateScore(finishedProductData);
 
+			// A from 75 on the grid of September 2024, the non recyclable packaging no longer caps it
 			Assert.assertEquals((Double) 77d, finishedProductData.getEcoScore());
-			Assert.assertEquals("B", finishedProductData.getEcoScoreClass());
+			Assert.assertEquals("A", finishedProductData.getEcoScoreClass());
 
 			alfrescoRepository.save(finishedProductData);
 

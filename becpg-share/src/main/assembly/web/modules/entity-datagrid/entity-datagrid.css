@@ -731,6 +731,16 @@ div.filterButtonsBar {
     display: inline-block;
 }
 
+/* Keeps a wrapped label aligned under its first line instead of the cell edge */
+.datagrid div.mtl-label {
+    display: flex;
+    align-items: flex-start;
+}
+
+.datagrid div.mtl-label > div.onCollapsedAndExpanded {
+    flex: none;
+}
+
 .datagrid  span.gicon {
     height: 15px;
     width: 18px;

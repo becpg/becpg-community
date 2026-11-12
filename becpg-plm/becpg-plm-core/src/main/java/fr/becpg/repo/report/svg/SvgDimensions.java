@@ -33,9 +33,9 @@ public record SvgDimensions(double width, double height) {
 
 	private static final String POINT_ATTRIBUTE = "\\s%s=\"([0-9]+(?:\\.[0-9]+)?)pt\"";
 
-	private static final Pattern WIDTH = Pattern.compile(String.format(POINT_ATTRIBUTE, ATTR_WIDTH));
+	private static final Pattern WIDTH_IN_POINTS = Pattern.compile(String.format(POINT_ATTRIBUTE, ATTR_WIDTH));
 
-	private static final Pattern HEIGHT = Pattern.compile(String.format(POINT_ATTRIBUTE, ATTR_HEIGHT));
+	private static final Pattern HEIGHT_IN_POINTS = Pattern.compile(String.format(POINT_ATTRIBUTE, ATTR_HEIGHT));
 
 	/**
 	 * <p>Reads the size an SVG declares in points on its root element.</p>
@@ -51,8 +51,8 @@ public record SvgDimensions(double width, double height) {
 		if (!root.find()) {
 			return Optional.empty();
 		}
-		Optional<Double> width = points(WIDTH, root.group());
-		Optional<Double> height = points(HEIGHT, root.group());
+		Optional<Double> width = points(WIDTH_IN_POINTS, root.group());
+		Optional<Double> height = points(HEIGHT_IN_POINTS, root.group());
 		return width.isPresent() && height.isPresent() ? Optional.of(new SvgDimensions(width.get(), height.get())) : Optional.empty();
 	}
 

@@ -389,12 +389,48 @@ div.dataTypeList .title {
 }
 
 
+.rclFilterElt > div > div {
+	break-inside: avoid
+}
+
+.rclFilterElt > div > .div-regulatorycodes {
+	column-span: all;
+	margin-top: 4px
+}
+
+div .div-regulatorycodes ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	height: auto;
+	margin-top: 4px
+}
+
 div .div-regulatorycodes ul li {
-	display: flex
+	display: block;
+	min-width: 0;
+	max-width: 100%;
+	margin: 0;
+	padding: 0
+}
+
+div .div-regulatorycodes ul li a {
+	display: block;
+	text-decoration: none
 }
 
 div .div-regulatorycodes ul li span {
-	display: flex;
+	display: block;
+	max-width: 24em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 1px 6px;
+	border-radius: 3px;
+	background-color: #e4e4e4
+}
+
+div .div-regulatorycodes ul li a:hover span {
 	background-color: #d3d3d3
 }
 

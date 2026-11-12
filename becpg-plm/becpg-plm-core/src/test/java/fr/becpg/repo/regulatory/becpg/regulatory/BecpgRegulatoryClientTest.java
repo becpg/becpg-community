@@ -105,6 +105,14 @@ public class BecpgRegulatoryClientTest {
 	}
 
 	@Test
+	public void projectionSendsTheRegulatoryCodesStoredOnIngredientsAndSubstances() {
+		RemoteParams params = BecpgRegulatoryClient.recipeParams();
+
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_INGLIST_ING).contains(PLMModel.PROP_REGULATORY_CODE));
+		assertTrue(params.getFilteredAssocProperties().get(PLMModel.ASSOC_SVHCLIST_ING).contains(PLMModel.PROP_REGULATORY_CODE));
+	}
+
+	@Test
 	public void projectionTellsAnImpurityFromTheIngredientThatCarriesIt() {
 		RemoteParams params = BecpgRegulatoryClient.recipeParams();
 

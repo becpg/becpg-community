@@ -1,9 +1,5 @@
 package fr.becpg.repo.activity;
 
-import java.util.List;
-
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.quartz.DisallowConcurrentExecution;
@@ -12,6 +8,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+
+import fr.becpg.repo.helper.TenantJobHelper;
 
 /**
  * <p>EntityActivityJob class.</p>
@@ -37,24 +35,7 @@ public class EntityActivityJob  extends AbstractScheduledLockedJob implements Jo
 		final EntityActivityService entityActivityService = (EntityActivityService) jobData.get(KEY_ENTITY_ACTIVITY_SERVICE);
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
 
-		AuthenticationUtil.runAsSystem(() -> {
-			entityActivityService.cleanActivities();
-			return null;
-		});
-
-		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
-			@SuppressWarnings("deprecation")
-			List<Tenant> tenants = tenantAdminService.getAllTenants();
-			for (Tenant tenant : tenants) {
-				if(tenant.isEnabled()) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.runAs(() -> {
-						entityActivityService.cleanActivities();
-						return null;
-					} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-				}
-			}
-		}
+		TenantJobHelper.runForEachTenant(tenantAdminService, entityActivityService::cleanActivities);
 
 	}
 }

@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationFilters;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -210,7 +211,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 			if (alfrescoRepository.hasDataList(packagingMaterial, PackModel.PACK_MATERIAL_LIST_TYPE)
 					&& (packagingMaterial.getPackMaterialList() != null)) {
 
-				for (PackMaterialListDataItem packMateriDataItem : packagingMaterial.getPackMaterialList()) {
+				for (PackMaterialListDataItem packMateriDataItem : CompositePackMaterials.materialsOf(packagingMaterial.getPackMaterialList())) {
 					if (packMateriDataItem.getPmlWeight() != null) {
 
 							if (charactDetails.hasElement(packMateriDataItem.getCharactNodeRef())) {

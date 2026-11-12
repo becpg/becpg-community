@@ -132,14 +132,15 @@ var AuditViewer = {
 
     /**
      * The columns a filter row can match on: the ones holding a plain value. Dates are filtered
-     * with the date range instead.
+     * with the date range instead, and a column declared not filterable is left out: the audit
+     * query cannot match every value it holds.
      */
     getFilterableColumns: function() {
         var cols = this.columns[this.currentTab] || [];
         var filterable = [];
         for (var i = 0; i < cols.length; i++) {
             var col = cols[i];
-            if (col.key && col.key !== "id" && col.format !== "inspect" && col.format !== "date") {
+            if (col.key && col.key !== "id" && col.format !== "inspect" && col.format !== "date" && col.filterable !== false) {
                 filterable.push(col);
             }
         }
@@ -330,7 +331,7 @@ var AuditViewer = {
         if (format === "date") {
             return this.compareNumbers(new Date(left).getTime(), new Date(right).getTime());
         }
-        if (format === "duration" || format === "size" || format === "errors") {
+        if (format === "duration" || format === "size" || format === "errors" || format === "number") {
             return this.compareNumbers(parseFloat(left), parseFloat(right));
         }
         return this.compareStrings(String(left), String(right));
@@ -382,7 +383,8 @@ var AuditViewer = {
 
     /**
      * Start a new search, from the newest entry of the audit application. The entries read by the
-     * previous search are dropped.
+     * previous search are dropped. A reversed date range is reported without querying the server,
+     * which would reject it.
      */
     search: function() {
         this.fetchedRecords = [];
@@ -390,7 +392,35 @@ var AuditViewer = {
         this.nextStartAfterId = null;
         this.scanInterrupted = false;
         this.pageIndex = 0;
+        if (this.isDateRangeReversed()) {
+            this.onInvalidDateRange();
+            return;
+        }
         this.load(null, 0);
+    },
+
+    /**
+     * Tell whether the lower date bound comes after the upper one. The pickers hold "yyyy-MM-dd"
+     * values, which compare in date order.
+     */
+    isDateRangeReversed: function() {
+        var fromInput = document.getElementById("audit-from-date-input");
+        var toInput = document.getElementById("audit-to-date-input");
+        return !!(fromInput && toInput && fromInput.value && toInput.value && fromInput.value > toInput.value);
+    },
+
+    onInvalidDateRange: function() {
+        var message = this.msg.invalidDateRange || "Invalid date range";
+        this.requestSeq++;
+        this.isLoading = false;
+        this.renderMessageRow(message, "audit-empty-msg audit-error-msg");
+        this.showNotice(message);
+        this.updatePager();
+
+        var statusBar = document.getElementById("audit-status-bar");
+        if (statusBar) {
+            statusBar.textContent = "";
+        }
     },
 
     /**

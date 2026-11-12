@@ -617,6 +617,7 @@ public class ImportServiceImpl implements ImportService {
 
 		Element mappingElt = null;
 		String[] arrStr;
+		String[] columnsLine = null;
 
 		Map<String, Object> annotationMapping = new HashMap<>();
 
@@ -626,6 +627,7 @@ public class ImportServiceImpl implements ImportService {
 
 				if (prefix.equals(ImportHelper.PFX_PATH)) {
 
+					columnsLine = null;
 					importContext.setParentNodeRef(null);
 
 					String pathValue = arrStr[COLUMN_PATH];
@@ -689,6 +691,7 @@ public class ImportServiceImpl implements ImportService {
 
 				} else if (prefix.equals(ImportHelper.PFX_TYPE)) {
 
+					columnsLine = null;
 					importContext.setType(null);
 
 					String typeValue = arrStr[COLUMN_TYPE];
@@ -733,22 +736,9 @@ public class ImportServiceImpl implements ImportService {
 								mappingLoaderFactory.getMappingLoader(MappingType.ANNOTATION));
 					}
 
-					boolean undefinedColumns = true;
-					List<String> columns = new ArrayList<>(arrStr.length);
+					importContext = importNodeVisitor.loadMappingColumns(mappingElt, readColumns(importContext, arrStr), importContext);
+					columnsLine = arrStr;
 
-					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
-						if (!arrStr[z_idx].isEmpty()) {
-							columns.add(arrStr[z_idx]);
-							undefinedColumns = false;
-						}
-					}
-					if (undefinedColumns) {
-						throw new ImporterException(
-								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMS, importContext.getImportIndex()));
-					}
-
-					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
-					
 				} else if (prefix.equals(ImportHelper.PFX_COLUMNS_PARAMS)) {
 					@SuppressWarnings("unchecked")
 					List<List<String>> columnsParams = (List<List<String>>) annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
@@ -761,6 +751,10 @@ public class ImportServiceImpl implements ImportService {
 					if (annotationMapping.isEmpty()) {
 						throw new ImporterException(
 								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMNS_PARAMS, importContext.getImportIndex()));
+					}
+
+					if (columnsLine != null) {
+						importContext = loadColumnsParamsAfterColumns(importContext, mappingElt, columnsLine, arrStr);
 					}
 
 				} else if (prefix.equals(ImportHelper.PFX_MAPPING)) {
@@ -777,6 +771,7 @@ public class ImportServiceImpl implements ImportService {
 
 				} else if (prefix.equals(ImportHelper.PFX_VALUES)) {
 
+					columnsLine = null;
 					try {
 
 						boolean undefinedValues = true;
@@ -855,6 +850,50 @@ public class ImportServiceImpl implements ImportService {
 		}
 
 		return importContext;
+	}
+
+	/**
+	 * Reads the column names of a COLUMNS line.
+	 *
+	 * @param importContext the import context
+	 * @param columnsLine the COLUMNS line, its prefix included
+	 * @return the column names, empty cells skipped
+	 * @throws ImporterException if the line names no column
+	 */
+	private List<String> readColumns(ImportContext importContext, String[] columnsLine) throws ImporterException {
+		List<String> columns = new ArrayList<>(columnsLine.length);
+		for (int z_idx = 1; z_idx < columnsLine.length; z_idx++) {
+			if (!columnsLine[z_idx].isEmpty()) {
+				columns.add(columnsLine[z_idx]);
+			}
+		}
+		if (columns.isEmpty()) {
+			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMS, importContext.getImportIndex()));
+		}
+		return columns;
+	}
+
+	/**
+	 * Applies a COLUMNS_PARAMS line written after the COLUMNS line of its block, before any VALUES
+	 * line: the columns are mapped again so that the annotations of the line, such as
+	 * <code>@Assoc(key="...")</code>, are not silently ignored.
+	 *
+	 * @param importContext the import context
+	 * @param mappingElt the XML mapping of the import, may be null
+	 * @param columnsLine the COLUMNS line of the block, its prefix included
+	 * @param columnsParamsLine the COLUMNS_PARAMS line, its prefix included
+	 * @return the import context with the columns mapped again
+	 * @throws ImporterException if the COLUMNS line names no column
+	 * @throws MappingException if an annotation cannot be mapped
+	 */
+	private ImportContext loadColumnsParamsAfterColumns(ImportContext importContext, Element mappingElt, String[] columnsLine,
+			String[] columnsParamsLine) throws ImporterException, MappingException {
+		Map<String, Object> lateAnnotationMapping = new HashMap<>();
+		lateAnnotationMapping.put(ImportHelper.PFX_COLUMS, Arrays.asList(columnsLine));
+		lateAnnotationMapping.put(ImportHelper.PFX_COLUMNS_PARAMS, List.of(Arrays.asList(columnsParamsLine)));
+		ImportContext annotatedContext = importNodeVisitor.loadClassMapping(lateAnnotationMapping, importContext,
+				mappingLoaderFactory.getMappingLoader(MappingType.ANNOTATION));
+		return importNodeVisitor.loadMappingColumns(mappingElt, readColumns(annotatedContext, columnsLine), annotatedContext);
 	}
 
 	/**

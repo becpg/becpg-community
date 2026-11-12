@@ -3,6 +3,7 @@ package fr.becpg.repo.sample;
 import java.io.Serializable;
 import java.util.*;
 
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -15,6 +16,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import fr.becpg.repo.regulatory.decernis.RegulatoryMode;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -56,6 +58,11 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	public static final String SKIN_IRRIT_2_H_315_SKIN_SENS_1_H_317 = "Skin Irrit. 2:H315, Skin Sens. 1:H317";
 	public static final String FLAM_LIQ_3_H_226_SKIN_SENS_1_H_317 = "Flam. Liq. 3:H226, Skin Sens. 1:H317";
 	public static final String ACUTE_TOX_4_H_302 = "Acute Tox. 4:H302";
+
+	private static final String USE_MODE_LEAVE_ON = "LEAVE_ON";
+	private static final String TARGET_POPULATION_ADULT = "ADULT";
+	private static final String APPLICATION_ZONE_BODY = "BODY";
+	private static final String LEGAL_STATUS_COSMETIC = "COSMETIC";
 
 	static {
 		ISO_COUNTRY_NAMES.put("ES", "Spain");
@@ -159,7 +166,16 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 		addOptionalLists(bodyMilkProduct);
 
+		if (isWithRegulatory) {
+			bodyMilkProduct.setRegulatoryMode(RegulatoryMode.REGULATORY);
+		}
+
 		alfrescoRepository.create(destFolder, bodyMilkProduct);
+
+		if (isWithRegulatory) {
+			addRegulatoryProductAspect(bodyMilkProduct);
+			setMarketsLegalStatus(bodyMilkProduct);
+		}
 
 		// Save associations if specifications are enabled
 		if (isWithSpecification) {
@@ -202,10 +218,39 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		}
 
 		return buildMarketList(countryRefs, List.of(
-				getOrCreateUsageRef("Body soap", "COSMETIC_BODY_SOAP,DECERNIS_Body Soap"),
-				getOrCreateUsageRef("Hand soap", "COSMETIC_HAND_SOAP,DECERNIS_Hand Soap"),
-				getOrCreateUsageRef("Body Cream/Lotion", "COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion")
+				getOrCreateUsageRef("Soap products", "COSMETIC_SOAP_PRODUCTS,DECERNIS_Body Soap"),
+				getOrCreateUsageRef("Bath / shower products", "COSMETIC_BATH_SHOWER_PRODUCTS,DECERNIS_Hand Soap"),
+				getOrCreateUsageRef("Body care products", "COSMETIC_BODY_CARE_PRODUCTS,DECERNIS_Body Cream/Lotion")
 		));
+	}
+
+	/**
+	 * Sets the regulatory attributes selecting the limits that apply to the body milk: a leave-on product for the
+	 * body of adults, with no mucous contact and no professional use. They are written through the node service, as
+	 * the repository mapping does not hold them.
+	 *
+	 * @param bodyMilkProduct the created body milk
+	 */
+	private void addRegulatoryProductAspect(RawMaterialData bodyMilkProduct) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(PLMModel.PROP_REGULATORY_PROFESSIONAL_USE, false);
+		properties.put(PLMModel.PROP_REGULATORY_MUCOUS_CONTACT, false);
+		properties.put(PLMModel.PROP_REGULATORY_TARGET_POPULATION, TARGET_POPULATION_ADULT);
+		properties.put(PLMModel.PROP_REGULATORY_APPLICATION_ZONES, new ArrayList<>(List.of(APPLICATION_ZONE_BODY)));
+		properties.put(PLMModel.PROP_REGULATORY_USE_MODE, USE_MODE_LEAVE_ON);
+		nodeService.addAspect(bodyMilkProduct.getNodeRef(), PLMModel.ASPECT_REGULATORY_PRODUCT, properties);
+	}
+
+	/**
+	 * Sets the cosmetic legal status on every market of the regulatory list. It is written through the node service,
+	 * as the repository mapping of a regulatory line does not hold it.
+	 *
+	 * @param bodyMilkProduct the created body milk
+	 */
+	private void setMarketsLegalStatus(RawMaterialData bodyMilkProduct) {
+		for (RegulatoryListDataItem market : bodyMilkProduct.getRegulatoryList()) {
+			nodeService.setProperty(market.getNodeRef(), PLMModel.PROP_REGULATORY_LEGAL_STATUS, LEGAL_STATUS_COSMETIC);
+		}
 	}
 
 	/**
@@ -237,9 +282,9 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	 */
 	private void saveEntityAssociations(RawMaterialData bodyMilkProduct) {
 		if (bodyMilkProduct.getProductSpecifications() != null) {
-			for (fr.becpg.repo.product.data.ProductSpecificationData productSpecificationData : bodyMilkProduct.getProductSpecifications()) {
+			for (ProductSpecificationData productSpecificationData : bodyMilkProduct.getProductSpecifications()) {
 				nodeService.createAssociation(bodyMilkProduct.getNodeRef(), productSpecificationData.getNodeRef(),
-						fr.becpg.model.PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+						PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			}
 		}
 	}

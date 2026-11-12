@@ -2267,6 +2267,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>Renders the precautionary allergen labelling (PAL) of the labelled product.</p>
+	 *
+	 * <p>The involuntary allergens are those whose contamination exceeds the action limit of
+	 * the selected regulatory framework. Returns an empty string when the product carries no
+	 * framework, so that a labelling rule dedicated to PAL leaves the products still relying
+	 * on the fixed thresholds untouched.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderPALAllergens() {
+		if (!hasAllergenRegulatoryFramework()) {
+			return "";
+		}
+		return renderInvoluntaryAllergens();
+	}
+
+	/**
+	 * <p>Tells whether a PAL regulatory framework is selected on the labelled product.</p>
+	 *
+	 * @return true when a framework is selected
+	 */
+	private boolean hasAllergenRegulatoryFramework() {
+		String framework = (entity != null) ? entity.getAllergenRegulatoryFramework() : null;
+		return (framework != null) && !framework.isBlank();
+	}
+
+	/**
 	 * <p>sorted.</p>
 	 *
 	 * @param toSortHashMap a {@link java.util.Map} object
@@ -4064,6 +4091,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if ((renderedRatio == null) || (qtyTotal == null) || (subIngsQty == null) || (subIngsQty == 0d)) {
 			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		// After the yield, a composite ingredient without evaporation rate holds exactly what its sub ingredients hold
+		// once they lost their water : they are rendered as their share of it, whatever the water they lost. A
+		// composite carrying its own rate loses water its sub ingredients do not : they add up to more than it and are
+		// scaled back to it, keeping the proportions of the recipe (#34702).
+		Double qtyWithYield = useVolume ? composite.getVolume(true) : composite.getQty(true);
+		if (withYield && (composite instanceof IngItem) && (qtyWithYield != null) && (qtyWithYield > 0d)) {
+			return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION)
+					.divide(BigDecimal.valueOf(Math.max(qtyWithYield, subIngsQty)), PRECISION);
 		}
 
 		// Sub ingredients falling short of their parent are a partial declaration, which is legitimate :

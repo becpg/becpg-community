@@ -4,11 +4,7 @@
  "version": 1,
  "theme": {
   "mode": "light",
-  "ground": "#f4f7f8",
-  "surface": "#ffffff",
-  "fg": "#0d2b33",
-  "muted": "#5b7780",
-  "accent": "#009dcc"
+  "preset": "becpg"
  },
  "nav": {
   "position": "rail",
@@ -24,14 +20,15 @@
  },
  "assistantSlot": {
   "enabled": true,
-  "title": "Assistant fournisseur",
+  "title": "Chef IA",
+  "icon": "chef",
   "persona": "Analyste des fournisseurs et de la conformité beCPG",
-  "scope": "Répondre uniquement sur les cubes products, projectsSteps et requirements.",
-  "greeting": "Posez une question sur les fournisseurs, leurs tâches ou la conformité.",
+  "scope": "Répond à partir du cube Produits.",
+  "greeting": "Posez une question sur les fournisseurs et leurs produits.",
   "suggestedPrompts": [
-   "Top 10 des fournisseurs",
-   "Durée prévue contre réelle des tâches du portail",
-   "Exigences non respectées"
+   "Top 10 des fournisseurs par nombre de produits",
+   "Produits par famille de fournisseurs",
+   "Produits fournisseurs par état"
   ],
   "cube": {
    "connectionName": "beCPG",

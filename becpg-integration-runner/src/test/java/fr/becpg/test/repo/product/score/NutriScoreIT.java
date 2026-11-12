@@ -16,6 +16,8 @@ import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
@@ -86,6 +88,36 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		super.tearDown();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			systemConfigurationService.resetConfValue("beCPG.formulation.score.nutriscore.regulatoryClass");
+			return null;
+		}, false, true);
+	}
+
+	/**
+	 * A formula of the product declares a rounding step for salt: the labelled value keeps three
+	 * decimals instead of the EU rounding to 0.01 g, and the low value is no longer forced to zero
+	 * (#37516).
+	 */
+	@Test
+	public void testSaltRoundingStepDeclaredByFormula() {
+		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<NutListDataItem> nutList = new ArrayList<>();
+			nutList.add(NutListDataItem.build().withValue(0.9912d).withNut(saltNode).withIsManual(true));
+
+			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setName("Salt rounding step");
+			finishedProductData.setNutList(nutList);
+			finishedProductData.getCompoListView().setDynamicCharactList(List.of(DynamicCharactListItem.build().withTitle("Salt rounding step")
+					.withFormula("nutrientRoundingSteps = {NACL: 0.001}").withExecOrder(DynamicCharactExecOrder.Pre)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			NutListDataItem salt = finishedProduct.getNutList().get(0);
+
+			Assert.assertEquals(0.991d, salt.value("EU"), 0.0000001d);
 			return null;
 		}, false, true);
 	}

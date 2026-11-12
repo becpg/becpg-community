@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.json.JSONException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
@@ -20,9 +21,13 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
+import fr.becpg.repo.score.marking.FrontOfPackMarkingService;
 import fr.becpg.repo.score.marking.RenderedScoreMarking;
 import fr.becpg.repo.score.marking.ScoreMarkingRenderer;
 
@@ -74,6 +79,28 @@ public class ScoreMarkingWebScript extends AbstractWebScript {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	private FrontOfPackMarkingService frontOfPackMarkingService;
+
+	private EntityListDAO entityListDAO;
+
+	/**
+	 * <p>Setter for the field <code>frontOfPackMarkingService</code>.</p>
+	 *
+	 * @param frontOfPackMarkingService a {@link fr.becpg.repo.score.marking.FrontOfPackMarkingService} object
+	 */
+	public void setFrontOfPackMarkingService(FrontOfPackMarkingService frontOfPackMarkingService) {
+		this.frontOfPackMarkingService = frontOfPackMarkingService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -115,17 +142,48 @@ public class ScoreMarkingWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		NodeRef scoreLineNodeRef = readableScoreLine(req.getServiceMatch().getTemplateVars());
 
-		// the whole line, not its breakdown alone: a score entered by hand has no breakdown
-		RepositoryEntity scoreLine = alfrescoRepository.findOne(scoreLineNodeRef);
-		Optional<RenderedScoreMarking> marking = scoreLine instanceof RegulatoryScoreListDataItem line
-				? scoreMarkingRenderer.render(line, I18NUtil.getLocale())
-				: Optional.empty();
+		Optional<RenderedScoreMarking> marking = render(scoreLineNodeRef);
 
 		if (marking.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_NOT_FOUND, NO_MARKING + scoreLineNodeRef);
 		}
 
 		writeSvg(marking.get().svg(), res);
+	}
+
+	/**
+	 * The traffic lights per portion are the front of pack marking the technical sheet prints, so
+	 * their line shows that marking; any other line shows the marking of its own score.
+	 */
+	private Optional<RenderedScoreMarking> render(NodeRef scoreLineNodeRef) {
+		// the whole line, not its breakdown alone: a score entered by hand has no breakdown
+		RepositoryEntity scoreLine = alfrescoRepository.findOne(scoreLineNodeRef);
+		if (!(scoreLine instanceof RegulatoryScoreListDataItem line)) {
+			return Optional.empty();
+		}
+		if (isTrafficLightsPerPortion(line)) {
+			return renderFrontOfPack(scoreLineNodeRef);
+		}
+		return scoreMarkingRenderer.render(line, I18NUtil.getLocale());
+	}
+
+	private static boolean isTrafficLightsPerPortion(RegulatoryScoreListDataItem line) {
+		String details = line.getDetails();
+		if ((details == null) || details.isBlank()) {
+			return false;
+		}
+		try {
+			return FrontOfPackMarkingService.MTL_PORTION_CODE.equals(ScoreContext.parse(details).getCode());
+		} catch (JSONException e) {
+			// a breakdown that cannot be read has no marking: the renderer answers none and Share falls back
+			return false;
+		}
+	}
+
+	private Optional<RenderedScoreMarking> renderFrontOfPack(NodeRef scoreLineNodeRef) {
+		NodeRef entityNodeRef = entityListDAO.getEntity(scoreLineNodeRef);
+		RepositoryEntity entity = entityNodeRef != null ? alfrescoRepository.findOne(entityNodeRef) : null;
+		return entity instanceof ProductData product ? frontOfPackMarkingService.render(product, I18NUtil.getLocale()) : Optional.empty();
 	}
 
 	/**

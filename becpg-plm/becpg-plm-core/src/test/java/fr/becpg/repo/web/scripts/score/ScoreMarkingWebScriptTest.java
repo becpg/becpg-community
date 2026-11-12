@@ -31,9 +31,12 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
+import fr.becpg.repo.score.marking.FrontOfPackMarkingService;
 import fr.becpg.repo.score.marking.RenderedScoreMarking;
 import fr.becpg.repo.score.marking.ScoreMarkingRenderer;
 
@@ -49,6 +52,14 @@ public class ScoreMarkingWebScriptTest {
 	private static final String DETAILS = "{\"code\":\"MTL\",\"scale\":\"Traffic\"}";
 
 	private static final String SVG = "<svg xmlns=\"http://www.w3.org/2000/svg\"/>";
+
+	private static final String PORTION_DETAILS = "{\"code\":\"MTL_PORTION\",\"scale\":\"Traffic\"}";
+
+	private static final String FRONT_OF_PACK_SVG = "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"fop\"/>";
+
+	private final FrontOfPackMarkingService frontOfPackMarkingService = mock(FrontOfPackMarkingService.class);
+
+	private final EntityListDAO entityListDAO = mock(EntityListDAO.class);
 
 	private NodeService nodeService;
 
@@ -78,6 +89,8 @@ public class ScoreMarkingWebScriptTest {
 		webScript.setPermissionService(permissionService);
 		webScript.setScoreMarkingRenderer(renderer);
 		webScript.setAlfrescoRepository(alfrescoRepository);
+		webScript.setFrontOfPackMarkingService(frontOfPackMarkingService);
+		webScript.setEntityListDAO(entityListDAO);
 
 		request = requestFor(SCORE_LINE);
 		body = new ByteArrayOutputStream();
@@ -147,6 +160,31 @@ public class ScoreMarkingWebScriptTest {
 	@Test
 	public void testMissingNodeIsNotFound() throws IOException {
 		when(nodeService.exists(SCORE_LINE)).thenReturn(false);
+
+		assertEquals(Status.STATUS_NOT_FOUND, statusOf(request));
+	}
+
+	@Test
+	public void testTrafficLightsPerPortionShowTheFrontOfPackMarking() throws IOException {
+		NodeRef productNodeRef = new NodeRef("workspace://SpacesStore/product");
+		RegulatoryScoreListDataItem line = new RegulatoryScoreListDataItem();
+		line.setDetails(PORTION_DETAILS);
+		when(alfrescoRepository.findOne(SCORE_LINE)).thenReturn(line);
+		when(entityListDAO.getEntity(SCORE_LINE)).thenReturn(productNodeRef);
+		when(alfrescoRepository.findOne(productNodeRef)).thenReturn(new FinishedProductData());
+		when(frontOfPackMarkingService.render(any(), any())).thenReturn(Optional.of(new RenderedScoreMarking("MTL_FOP", "High", FRONT_OF_PACK_SVG)));
+
+		webScript.execute(request, response);
+
+		assertEquals(FRONT_OF_PACK_SVG, body.toString(StandardCharsets.UTF_8));
+	}
+
+	@Test
+	public void testMalformedBreakdownIsNotFound() throws IOException {
+		RegulatoryScoreListDataItem line = new RegulatoryScoreListDataItem();
+		line.setDetails("{\"code\":");
+		when(alfrescoRepository.findOne(SCORE_LINE)).thenReturn(line);
+		when(renderer.render(any(RegulatoryScoreListDataItem.class), any())).thenReturn(Optional.empty());
 
 		assertEquals(Status.STATUS_NOT_FOUND, statusOf(request));
 	}

@@ -73,6 +73,12 @@ public interface GS1Model {
 	/** Constant <code>PROP_PRODUCT_PER_INNER_PACK</code> */
 	QName PROP_PRODUCT_PER_INNER_PACK = QName.createQName(GS1_URI, "productPerInnerPack");
 
+	/** Constant <code>PROP_CONTAINER_NUTRIENT_BASIS_QUANTITY</code> */
+	QName PROP_CONTAINER_NUTRIENT_BASIS_QUANTITY = QName.createQName(GS1_URI, "containerNutrientBasisQuantity");
+
+	/** Constant <code>PROP_CONTAINER_NUTRIENT_BASIS_QUANTITY_UNIT</code> */
+	QName PROP_CONTAINER_NUTRIENT_BASIS_QUANTITY_UNIT = QName.createQName(GS1_URI, "containerNutrientBasisQuantityUnit");
+
 
 	/** Constant <code>PROP_TERTIARY_WEIGHT</code> */
 	QName PROP_TERTIARY_WEIGHT = QName.createQName(GS1_URI, "tertiaryWeight");

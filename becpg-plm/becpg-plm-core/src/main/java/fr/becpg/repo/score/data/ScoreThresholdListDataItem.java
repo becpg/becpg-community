@@ -50,6 +50,14 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 
 	private Double ratioFactor;
 
+	private Boolean lowerBoundIncluded;
+
+	private String conditionNutCode;
+
+	private Double conditionLowerBound;
+
+	private Double conditionUpperBound;
+
 	/**
 	 * <p>Getter for the field <code>nutCode</code>.</p>
 	 *
@@ -92,7 +100,8 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 	}
 
 	/**
-	 * Lower bound of the range, excluded. Null means no lower bound.
+	 * Lower bound of the range, excluded unless {@link #getLowerBoundIncluded()} says
+	 * otherwise. Null means no lower bound.
 	 *
 	 * @return a {@link java.lang.Double} object
 	 */
@@ -234,6 +243,89 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 	}
 
 	/**
+	 * Whether a value equal to the lower bound falls inside the range, for the regulations
+	 * written with "greater than or equal to". Null or false keeps the bound excluded.
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlLowerBoundIncluded")
+	public Boolean getLowerBoundIncluded() {
+		return lowerBoundIncluded;
+	}
+
+	/**
+	 * <p>Setter for the field <code>lowerBoundIncluded</code>.</p>
+	 *
+	 * @param lowerBoundIncluded a {@link java.lang.Boolean} object
+	 */
+	public void setLowerBoundIncluded(Boolean lowerBoundIncluded) {
+		this.lowerBoundIncluded = lowerBoundIncluded;
+	}
+
+	/**
+	 * Characteristic the threshold depends on, such as the energy of a beverage that only
+	 * counts as a no calorie beverage below a few kilocalories. Empty means the threshold
+	 * always applies.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlConditionNutCode")
+	public String getConditionNutCode() {
+		return conditionNutCode;
+	}
+
+	/**
+	 * <p>Setter for the field <code>conditionNutCode</code>.</p>
+	 *
+	 * @param conditionNutCode a {@link java.lang.String} object
+	 */
+	public void setConditionNutCode(String conditionNutCode) {
+		this.conditionNutCode = conditionNutCode;
+	}
+
+	/**
+	 * Lower bound of the condition, excluded. Null means no lower bound.
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlConditionLowerBound")
+	public Double getConditionLowerBound() {
+		return conditionLowerBound;
+	}
+
+	/**
+	 * <p>Setter for the field <code>conditionLowerBound</code>.</p>
+	 *
+	 * @param conditionLowerBound a {@link java.lang.Double} object
+	 */
+	public void setConditionLowerBound(Double conditionLowerBound) {
+		this.conditionLowerBound = conditionLowerBound;
+	}
+
+	/**
+	 * Upper bound of the condition, included. Null means no upper bound.
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlConditionUpperBound")
+	public Double getConditionUpperBound() {
+		return conditionUpperBound;
+	}
+
+	/**
+	 * <p>Setter for the field <code>conditionUpperBound</code>.</p>
+	 *
+	 * @param conditionUpperBound a {@link java.lang.Double} object
+	 */
+	public void setConditionUpperBound(Double conditionUpperBound) {
+		this.conditionUpperBound = conditionUpperBound;
+	}
+
+	/**
 	 * Value actually compared to the bounds: the raw value, or its share of another
 	 * characteristic when the regulation reasons in ratio.
 	 *
@@ -264,10 +356,43 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 		if (value == null) {
 			return false;
 		}
-		if ((lowerBound != null) && (value <= lowerBound)) {
+		if ((lowerBound != null) && isBelowLowerBound(value)) {
 			return false;
 		}
 		return (upperBound == null) || (value <= upperBound);
+	}
+
+	/**
+	 * <p>isBelowLowerBound.</p>
+	 *
+	 * @param value the value of the nutrient
+	 * @return a boolean
+	 */
+	private boolean isBelowLowerBound(double value) {
+		return Boolean.TRUE.equals(lowerBoundIncluded) ? value < lowerBound : value <= lowerBound;
+	}
+
+	/**
+	 * <p>Checks whether the condition of this threshold holds for a product.</p>
+	 *
+	 * <p>An undocumented condition characteristic does not hold: a beverage whose energy is
+	 * unknown cannot be judged a no calorie beverage.</p>
+	 *
+	 * @param values every documented characteristic of the product
+	 * @return a boolean, true when the threshold has no condition
+	 */
+	public boolean conditionHolds(Map<String, Double> values) {
+		if ((conditionNutCode == null) || conditionNutCode.isBlank()) {
+			return true;
+		}
+
+		Double value = values.get(conditionNutCode);
+		if (value == null) {
+			return false;
+		}
+
+		return ((conditionLowerBound == null) || (value > conditionLowerBound))
+				&& ((conditionUpperBound == null) || (value <= conditionUpperBound));
 	}
 
 	/**
@@ -283,7 +408,7 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), nutCode, category, lowerBound, upperBound);
+		return Objects.hash(super.hashCode(), nutCode, category, lowerBound, upperBound, lowerBoundIncluded, conditionNutCode);
 	}
 
 	/** {@inheritDoc} */
@@ -297,7 +422,8 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 		}
 		ScoreThresholdListDataItem other = (ScoreThresholdListDataItem) obj;
 		return Objects.equals(nutCode, other.nutCode) && Objects.equals(category, other.category)
-				&& Objects.equals(lowerBound, other.lowerBound) && Objects.equals(upperBound, other.upperBound);
+				&& Objects.equals(lowerBound, other.lowerBound) && Objects.equals(upperBound, other.upperBound)
+				&& Objects.equals(lowerBoundIncluded, other.lowerBoundIncluded) && Objects.equals(conditionNutCode, other.conditionNutCode);
 	}
 
 	/** {@inheritDoc} */

@@ -1077,6 +1077,7 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
+					<value>OTHER</value>
 					<value>AEROSOL</value>
 					<value>PUMP_SPRAY</value>
 					<value>POWDER</value>
@@ -2136,6 +2137,23 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:stlRatioFactor">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlLowerBoundIncluded">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionNutCode">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionLowerBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlConditionUpperBound">
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>

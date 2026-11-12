@@ -1067,46 +1067,49 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	/**
-	 * Answers the methodology point of #34702: the same ingredient may be used both as a simple
-	 * component and as a composite one, so an evaporation rate is often carried by a parent and by one
-	 * of its sub-ingredients at the same time. The sub-ingredient rate must then win, so that the
-	 * water is not counted twice and the result is identical to the child-only declaration.
+	 * Answers the methodology point of #34702: an evaporation rate may be carried by a composite
+	 * ingredient and by one of its sub-ingredients at the same time. Once the composite is used in a
+	 * recipe, it is the composite that loses water (a mozzarella, not the milk it contains): the
+	 * parent rate must win and the result be identical to the parent-only declaration. The two rates
+	 * differ on purpose, so that the child-only declaration would give another result.
 	 */
 	@Test
 	public void testEvaporationRateOnBothParentAndChild() {
 
-		final NodeRef childOnlyNodeRef = buildEvaporatingCompositeProduct("34702f", false);
-		final NodeRef parentAndChildNodeRef = buildEvaporatingCompositeProduct("34702g", true);
+		final NodeRef parentOnlyNodeRef = buildEvaporatingCompositeProduct("34702p", EvaporationRatePlacement.PARENT);
+		final NodeRef parentAndChildNodeRef = buildEvaporatingCompositeProduct("34702q", EvaporationRatePlacement.BOTH);
 
 		inWriteTx(() -> {
-			productService.formulate(childOnlyNodeRef);
+			productService.formulate(parentOnlyNodeRef);
 			productService.formulate(parentAndChildNodeRef);
 			return null;
 		});
 
 		inReadTx(() -> {
-			List<IngListDataItem> childOnly = ((FinishedProductData) alfrescoRepository.findOne(childOnlyNodeRef)).getIngList();
+			List<IngListDataItem> parentOnly = ((FinishedProductData) alfrescoRepository.findOne(parentOnlyNodeRef)).getIngList();
 			List<IngListDataItem> parentAndChild = ((FinishedProductData) alfrescoRepository.findOne(parentAndChildNodeRef)).getIngList();
-			Assert.assertNotNull("Child-only ingredient list should not be null", childOnly);
+			Assert.assertNotNull("Parent-only ingredient list should not be null", parentOnly);
 			Assert.assertNotNull("Parent and child ingredient list should not be null", parentAndChild);
 
 			for (String ingName : List.of("ING Tomato puree", "ING Tomato", "ING Oil", "ING Cheese")) {
-				IngListDataItem expected = findIngByName(childOnly, ingName + " 34702f");
-				IngListDataItem actual = findIngByName(parentAndChild, ingName + " 34702g");
-				Assert.assertNotNull(ingName + " missing in the child-only product", expected);
+				IngListDataItem expected = findIngByName(parentOnly, ingName + " 34702p");
+				IngListDataItem actual = findIngByName(parentAndChild, ingName + " 34702q");
+				Assert.assertNotNull(ingName + " missing in the parent-only product", expected);
 				Assert.assertNotNull(ingName + " missing in the parent and child product", actual);
 				Assert.assertEquals(ingName + " qtyPerc must not depend on where the evaporation rate is entered", expected.getQtyPerc(),
 						actual.getQtyPerc(), 0.05);
 				Assert.assertNotNull(ingName + " Qty with yield should not be null", actual.getQtyPercWithYield());
-				Assert.assertEquals(ingName + " Qty with yield must ignore the parent rate when a sub-ingredient evaporates",
+				Assert.assertEquals(ingName + " Qty with yield must ignore the sub-ingredient rate under an evaporating composite",
 						expected.getQtyPercWithYield(), actual.getQtyPercWithYield(), 0.1);
 			}
 
-			IngListDataItem puree = findIngByName(parentAndChild, "ING Tomato puree 34702g");
-			IngListDataItem tomato = findIngByName(parentAndChild, "ING Tomato 34702g");
-			IngListDataItem oil = findIngByName(parentAndChild, "ING Oil 34702g");
-			Assert.assertEquals("Puree must equal the sum of its children", tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(),
-					puree.getQtyPercWithYield(), 0.1);
+			// 100 kg in, 95 kg net: the puree loses the 5 kg, its 99 / 1 make-up is kept
+			IngListDataItem puree = findIngByName(parentAndChild, "ING Tomato puree 34702q");
+			IngListDataItem tomato = findIngByName(parentAndChild, "ING Tomato 34702q");
+			IngListDataItem oil = findIngByName(parentAndChild, "ING Oil 34702q");
+			Assert.assertEquals("Puree loses the water", 36.84d, puree.getQtyPercWithYield(), 0.01);
+			Assert.assertEquals("Tomato keeps its declared share of the puree", 36.47d, tomato.getQtyPercWithYield(), 0.01);
+			Assert.assertEquals("Oil keeps its declared share of the puree", 0.37d, oil.getQtyPercWithYield(), 0.01);
 
 			double topLevelWithYield = 0d;
 			for (IngListDataItem item : parentAndChild) {
@@ -1119,15 +1122,19 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		});
 	}
 
+	private enum EvaporationRatePlacement {
+		PARENT, BOTH
+	}
+
 	/**
-	 * Builds a finished product whose tomato puree is detailed by an evaporating tomato, optionally
-	 * carrying the same evaporation rate on the composite parent itself.
+	 * Builds a finished product whose tomato puree is detailed by a tomato, the puree carrying a 50 %
+	 * evaporation rate and, optionally, the tomato a 10 % one.
 	 *
 	 * @param suffix the ingredient naming suffix, so each product owns its own characteristics
-	 * @param rateOnParent true to also set the evaporation rate on the composite parent
+	 * @param placement where the evaporation rates are entered
 	 * @return the created finished product node reference
 	 */
-	private NodeRef buildEvaporatingCompositeProduct(String suffix, boolean rateOnParent) {
+	private NodeRef buildEvaporatingCompositeProduct(String suffix, EvaporationRatePlacement placement) {
 		return inWriteTx(() -> {
 
 			NodeRef ingTomatoPuree = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato puree " + suffix);
@@ -1135,9 +1142,9 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			NodeRef ingOil = CharactTestHelper.getOrCreateIng(nodeService, "ING Oil " + suffix);
 			NodeRef ingCheese = CharactTestHelper.getOrCreateIng(nodeService, "ING Cheese " + suffix);
 
-			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
-			if (rateOnParent) {
-				nodeService.setProperty(ingTomatoPuree, PLMModel.PROP_EVAPORATED_RATE, 50d);
+			nodeService.setProperty(ingTomatoPuree, PLMModel.PROP_EVAPORATED_RATE, 50d);
+			if (placement == EvaporationRatePlacement.BOTH) {
+				nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 10d);
 			}
 
 			IngListDataItem puree = buildIng(ingTomatoPuree, 40d);
@@ -1149,7 +1156,6 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 					.withIngList(List.of(puree, tomato, oil, cheese));
 			NodeRef sauceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sauce).getNodeRef();
 
-			// 100 kg in, 95 kg net: the 5 kg lost come from the evaporating tomato
 			FinishedProductData fp = FinishedProductData.build().withName("FP Sauce " + suffix).withUnit(ProductUnit.kg).withQty(95d)
 					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.kg)
 							.withDeclarationType(DeclarationType.Detail).withProduct(sauceNodeRef)));
@@ -1159,14 +1165,13 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	/**
-	 * #34702 : the water lost by a composite ingredient must be shared over all its sub-ingredients,
-	 * proportionally to their declared percentages. The evaporation budget is consumed by the
-	 * sub-ingredient carrying the rate, so that one alone used to bear the whole loss : a composite
-	 * detailed 60 % / 40 % came out as 50 % / 50 % in the "Qty with yield" column, while the labeling
-	 * kept showing the declared 60 % / 40 % split.
+	 * #34702, retest of 2026-11-05 : under a composite ingredient without evaporation rate, the sub-ingredient
+	 * carrying the rate loses the water on its own account, as it would at the top level, and the other
+	 * sub-ingredients keep their quantity. The composite declared 60 % / 40 % therefore comes out 50 % / 50 %
+	 * once the tomato lost its water. The recipe proportions are only kept under a composite carrying its own rate.
 	 */
 	@Test
-	public void testEvaporationSpreadOverSubIngredients() {
+	public void testEvaporationStaysOnTheEvaporatingSubIngredient() {
 
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
@@ -1209,10 +1214,10 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			Assert.assertNotNull("Tomato sub-ingredient missing", tomato);
 			Assert.assertNotNull("Oil sub-ingredient missing", oil);
 
-			// The composite is the whole product and the loss does not change the declared make-up
+			// 80 kg out : tomato 60 - 20 = 40 kg, oil 40 kg
 			Assert.assertEquals("Sauce Qty with yield should be 100%", 100d, sauce.getQtyPercWithYield(), 0.1);
-			Assert.assertEquals("Evaporating sub-ingredient must keep its declared share", 60d, tomato.getQtyPercWithYield(), 0.1);
-			Assert.assertEquals("Non evaporating sub-ingredient must keep its declared share", 40d, oil.getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Evaporating sub-ingredient must bear its own loss", 50d, tomato.getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Non evaporating sub-ingredient must keep its quantity", 50d, oil.getQtyPercWithYield(), 0.1);
 			Assert.assertEquals("Parent Qty with yield should equal the sum of its children",
 					tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(), sauce.getQtyPercWithYield(), 0.1);
 
@@ -1298,4 +1303,228 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			return null;
 		});
 	}
+	private static final String ING_LARDONS = "lardons 34702e";
+	private static final String ING_MILK = "lait 34702e";
+	private static final String ING_EGGS = "oeufs 34702e";
+	private static final String ING_CREAM = "creme 34702e";
+	private static final String ING_WATER = "eau 34702e";
+	private static final String ING_TOMATO = "tomate 34702e";
+	private static final String ING_CHEESE = "fromage 34702e";
+	private static final String ING_OIL = "huile 34702e";
+	private static final String QUICHE_MIX_WITHOUT_RATE = "appareil vide 34702e";
+	private static final String QUICHE_MIX_RATE_80 = "appareil 80 34702e";
+	private static final String QUICHE_MIX_RATE_0 = "appareil 0 34702e";
+	private static final String SAUCE_WITHOUT_RATE = "sauce vide 34702e";
+	private static final String PUREE_WITHOUT_RATE = "puree vide 34702e";
+
+	/**
+	 * #34702, retest of 2026-11-05 (PF98451): the quiche mix carries no evaporation rate, its milk, eggs and cream
+	 * do. Each sub-ingredient evaporates for itself as if it were a top-level ingredient, the mix loses the sum of
+	 * their losses, and the label gives the same percentages as the ingredient list.
+	 * <pre>
+	 * 1 kg in, 0.85 kg net : 15 lost over the available water lardons 15, milk 31.5, eggs 15.75, cream 8.4 = 70.65
+	 * lardons 30 - 3.18 -> 31.55 %, milk 35 - 6.69 -> 33.31 %, eggs 21 - 3.34 -> 20.77 %, cream 14 - 1.78 -> 14.37 %
+	 * mix 33.31 + 20.77 + 14.37 = 68.45 %
+	 * </pre>
+	 */
+	@Test
+	public void testCompositeWithoutRateLosesTheWaterOfItsSubIngredients() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createQuicheProduct(QUICHE_MIX_WITHOUT_RATE, null));
+
+		formulate(finishedProductNodeRef);
+
+		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 68.45d, 33.31d, 20.77d, 14.37d, 31.55d }, QUICHE_MIX_WITHOUT_RATE, ING_MILK,
+				ING_EGGS, ING_CREAM, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(QUICHE_MIX_WITHOUT_RATE),
+				"appareil vide 34702e 68,45% (lait 34702e 33,31%, oeufs 34702e 20,77%, creme 34702e 14,37%), lardons 34702e 31,55%",
+				Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, retest of 2026-11-05 (PF98462): the sauce carries no rate and holds water. The water evaporates first,
+	 * even as a sub-ingredient, and covers the whole loss : the tomato and the lardons keep their quantity.
+	 * <pre>
+	 * 1 kg in, 0.85 kg net : water 28 - 15 = 13 -> 15.29 %, tomato 42 -> 49.41 %, lardons 30 -> 35.29 %
+	 * sauce 13 + 42 = 55 -> 64.71 %
+	 * </pre>
+	 */
+	@Test
+	public void testWaterOfCompositeWithoutRateEvaporatesFirst() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createSauceProduct);
+
+		formulate(finishedProductNodeRef);
+
+		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 64.71d, 49.41d, 15.29d, 35.29d }, SAUCE_WITHOUT_RATE, ING_TOMATO,
+				ING_WATER, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(SAUCE_WITHOUT_RATE),
+				"sauce vide 34702e 64,71% (tomate 34702e 49,41%, eau 34702e 15,29%), lardons 34702e 35,29%", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, retest of 2026-11-05 (PF98466): the puree carries no rate and is only partially declared (tomato
+	 * 75 %, oil without percentage). The tomato loss is taken off the puree, which is shown on the label without
+	 * its sub-ingredients.
+	 * <pre>
+	 * 1 kg in, 0.98 kg net : tomato 30 - 2 = 28 -> 28.57 %, puree 40 - 2 = 38 -> 38.78 %, cheese 60 -> 61.22 %
+	 * </pre>
+	 */
+	@Test
+	public void testPartiallyDeclaredCompositeWithoutRateLosesTheWaterOfItsSubIngredients() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createPureeProduct);
+
+		List<LabelingRuleListDataItem> labelingRules = labelingRulesWithYield();
+		labelingRules.add(LabelingRuleListDataItem.build().withName("DoNotDetails").withLabelingRuleType(LabelingRuleType.DoNotDetails)
+				.withComponents(List.of(inReadTx(() -> ing(PUREE_WITHOUT_RATE)))).withReplacements(null));
+		formulate(finishedProductNodeRef);
+
+		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 61.22d, 38.78d, 28.57d }, ING_CHEESE, PUREE_WITHOUT_RATE, ING_TOMATO);
+
+		checkILL(finishedProductNodeRef, labelingRules, "fromage 34702e 61,22%, puree vide 34702e 38,78%", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, control validated on 2026-11-05 (PF98465): the rate of a composite prevails over the rates of its
+	 * sub-ingredients, and its loss is spread over them by their recipe proportions.
+	 */
+	@Test
+	public void testCompositeRatePrevailsOverItsSubIngredients() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createQuicheProduct(QUICHE_MIX_RATE_80, 80d));
+		formulate(finishedProductNodeRef);
+
+		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 68.43d, 34.22d, 20.53d, 13.69d, 31.57d }, QUICHE_MIX_RATE_80, ING_MILK,
+				ING_EGGS, ING_CREAM, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(QUICHE_MIX_RATE_80),
+				"appareil 80 34702e 68,43% (lait 34702e 34,22%, oeufs 34702e 20,53%, creme 34702e 13,69%), lardons 34702e 31,57%",
+				Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, control validated on 2026-11-05 (PF98453): a composite at 0 % blocks the evaporation of its
+	 * sub-ingredients, the lardons take the whole loss.
+	 */
+	@Test
+	public void testCompositeAtZeroRateBlocksItsSubIngredients() {
+		NodeRef finishedProductNodeRef = inWriteTx(() -> createQuicheProduct(QUICHE_MIX_RATE_0, 0d));
+		formulate(finishedProductNodeRef);
+
+		assertQtyPercWithYield(finishedProductNodeRef, new double[] { 82.35d, 41.18d, 24.71d, 16.47d, 17.65d }, QUICHE_MIX_RATE_0, ING_MILK,
+				ING_EGGS, ING_CREAM, ING_LARDONS);
+
+		checkILL(finishedProductNodeRef, detailedLabelingRules(QUICHE_MIX_RATE_0),
+				"appareil 0 34702e 82,35% (lait 34702e 41,18%, oeufs 34702e 24,71%, creme 34702e 16,47%), lardons 34702e 17,65%",
+				Locale.FRENCH);
+	}
+
+	/**
+	 * Builds the quiche of the #34702 retests : lardons 30 % and a quiche mix of 70 % made of milk 35 %, eggs 21 %
+	 * and cream 14 % of the product, sub-ingredients being declared as percentages of their parent.
+	 */
+	private NodeRef createQuicheProduct(String mixName, Double mixRate) {
+		NodeRef mix = ing(mixName);
+		nodeService.setProperty(mix, PLMModel.PROP_EVAPORATED_RATE, mixRate);
+		IngListDataItem quicheMix = buildIng(mix, 70d);
+		List<IngListDataItem> ingList = List.of(buildIng(ingWithRate(ING_LARDONS, 50d), 30d), quicheMix,
+				buildIng(ingWithRate(ING_MILK, 90d), 50d).withParent(quicheMix), buildIng(ingWithRate(ING_EGGS, 75d), 30d).withParent(quicheMix),
+				buildIng(ingWithRate(ING_CREAM, 60d), 20d).withParent(quicheMix));
+		return createFinishedProduct(mixName, ingList, 0.85d);
+	}
+
+	private NodeRef createSauceProduct() {
+		NodeRef water = ing(ING_WATER);
+		if (!nodeService.hasAspect(water, PLMModel.ASPECT_WATER)) {
+			nodeService.addAspect(water, PLMModel.ASPECT_WATER, null);
+		}
+		IngListDataItem sauce = buildIng(ing(SAUCE_WITHOUT_RATE), 70d);
+		List<IngListDataItem> ingList = List.of(sauce, buildIng(water, 40d).withParent(sauce),
+				buildIng(ingWithRate(ING_TOMATO, 10d), 60d).withParent(sauce), buildIng(ingWithRate(ING_LARDONS, 50d), 30d));
+		return createFinishedProduct(SAUCE_WITHOUT_RATE, ingList, 0.85d);
+	}
+
+	private NodeRef createPureeProduct() {
+		IngListDataItem puree = buildIng(ing(PUREE_WITHOUT_RATE), 40d);
+		List<IngListDataItem> ingList = List.of(buildIng(ing(ING_CHEESE), 60d), puree, buildIng(ingWithRate(ING_TOMATO, 10d), 75d).withParent(puree),
+				buildIngWithoutQtyPerc(ing(ING_OIL)).withParent(puree));
+		return createFinishedProduct(PUREE_WITHOUT_RATE, ingList, 0.98d);
+	}
+
+	/**
+	 * #34702 : a sub-ingredient not declared on the label still loses its own water, and only its own : the sauce
+	 * holds 28 % of hidden water out of which 15 evaporate, the lardons keep their quantity.
+	 * <pre>
+	 * 1 kg in, 0.85 kg net : sauce 70 - 15 = 55 -> 64.71 %, lardons 30 -> 35.29 %
+	 * </pre>
+	 */
+	@Test
+	public void testHiddenSubIngredientLosesOnlyItsOwnWater() {
+		NodeRef finishedProductNodeRef = inWriteTx(this::createSauceProduct);
+
+		List<LabelingRuleListDataItem> labelingRules = detailedLabelingRules(SAUCE_WITHOUT_RATE);
+		labelingRules.add(LabelingRuleListDataItem.build().withName("Hide water").withLabelingRuleType(LabelingRuleType.DoNotDeclare)
+				.withComponents(List.of(inReadTx(() -> ing(ING_WATER)))).withReplacements(null));
+
+		checkILL(finishedProductNodeRef, labelingRules, "sauce vide 34702e 64,71% (tomate 34702e 49,41%), lardons 34702e 35,29%", Locale.FRENCH);
+	}
+
+	private NodeRef createFinishedProduct(String name, List<IngListDataItem> ingList, double netQty) {
+		RawMaterialData rawMaterial = RawMaterialData.build().withName("MP " + name).withQty(1d).withUnit(ProductUnit.kg).withIngList(ingList);
+		NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		FinishedProductData finishedProduct = FinishedProductData.build().withName("PF " + name).withUnit(ProductUnit.kg).withQty(netQty)
+				.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterialNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
+	private void formulate(NodeRef productNodeRef) {
+		inWriteTx(() -> {
+			productService.formulate(productNodeRef);
+			return null;
+		});
+	}
+
+	private NodeRef ing(String name) {
+		return CharactTestHelper.getOrCreateIng(nodeService, name);
+	}
+
+	private NodeRef ingWithRate(String name, double rate) {
+		NodeRef ingNodeRef = ing(name);
+		nodeService.setProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE, rate);
+		return ingNodeRef;
+	}
+
+	private List<LabelingRuleListDataItem> labelingRulesWithYield() {
+		return new ArrayList<>(List.of(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
+				LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.##%} ({2})").withLabelingRuleType(LabelingRuleType.Format),
+				LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true").withLabelingRuleType(LabelingRuleType.Prefs),
+				LabelingRuleListDataItem.build().withName("Param2").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.##%} ({2})\"")
+						.withLabelingRuleType(LabelingRuleType.Prefs)));
+	}
+
+	private List<LabelingRuleListDataItem> detailedLabelingRules(String compositeName) {
+		List<LabelingRuleListDataItem> labelingRules = labelingRulesWithYield();
+		labelingRules.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(List.of(inReadTx(() -> ing(compositeName)))).withReplacements(null));
+		return labelingRules;
+	}
+
+	private void assertQtyPercWithYield(NodeRef finishedProductNodeRef, double[] expectedPercs, String... ingNames) {
+		inReadTx(() -> {
+			List<IngListDataItem> ingList = ((FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef)).getIngList();
+			StringBuilder actualPercs = new StringBuilder();
+			for (IngListDataItem item : ingList) {
+				actualPercs.append(nodeService.getProperty(item.getIng(), BeCPGModel.PROP_CHARACT_NAME)).append('=').append(item.getQtyPerc()).append('/')
+						.append(item.getQtyPercWithYield()).append(' ');
+			}
+			for (int i = 0; i < ingNames.length; i++) {
+				IngListDataItem item = findIngByName(ingList, ingNames[i]);
+				Assert.assertNotNull(ingNames[i] + " missing from the ingredient list", item);
+				Assert.assertEquals(ingNames[i] + " Qty with yield, ingredient list : " + actualPercs, expectedPercs[i], item.getQtyPercWithYield(), 0.01d);
+			}
+			return null;
+		});
+	}
+
 }

@@ -9,6 +9,7 @@
 			   new beCPG.module.EntityDataGrid("simpleView-${el}",true).setOptions(
 			   {
 			      entityNodeRef: "${args.nodeRef}" ,
+			      entityType: "${(entityType!"")?js_string}",
 			      list: "${args.list}",
 			      dataUrl :  Alfresco.constants.PROXY_URI+ "becpg/entity/datalists/data/node/",
 			      itemUrl :  Alfresco.constants.PROXY_URI+ "becpg/entity/datalists/item/node/",

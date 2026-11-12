@@ -47,6 +47,21 @@ function getOrCreateBeCPGMenu() {
               }
            })
       }
+
+      // read-only access to the regulatory database, for the members of GROUP_RegulatoryUser
+      var regulatorySSOUrl = getRegulatorySSOUrl(user);
+      if (regulatorySSOUrl) {
+          toolsWidget.push( {
+              name : "alfresco/header/AlfMenuItem",
+              config : {
+                 label : "header.becpg-regulatory.label",
+                 iconClass : "becpg-regulatory-header",
+                 targetUrl : regulatorySSOUrl,
+                 targetUrlType: "FULL_PATH",
+                 targetUrlLocation: "NEW"
+              }
+           })
+      }
       
       beCPGMenu.config.widgets.push({
          id : "HEADER_TOOLS_BECPG",
@@ -137,6 +152,17 @@ function getOlapSSOUrl(user){
     for(var i  in user.capabilities){
        if(i.indexOf("olapSSOUrl_") == 0){
            return i.substring(11);
+       }
+    }
+    return null;
+}
+
+
+function getRegulatorySSOUrl(user){
+    var prefix = "regulatorySSOUrl_";
+    for(var i  in user.capabilities){
+       if(i.indexOf(prefix) == 0){
+           return i.substring(prefix.length);
        }
     }
     return null;

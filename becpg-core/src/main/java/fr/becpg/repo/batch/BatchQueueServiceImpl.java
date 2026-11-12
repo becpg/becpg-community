@@ -36,6 +36,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantContextHolder;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -200,7 +201,32 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		return false;
 	}
-	
+
+	/**
+	 * Runs a work that sets its own authentication on the thread, and gives the thread back the authentication
+	 * and the tenant it held before, whatever the outcome. Batch threads are pooled: an authentication left on
+	 * one of them is inherited by the next batch it runs.
+	 *
+	 * @param work the work to run
+	 */
+	static void runRestoringAuthentication(Runnable work) {
+		AuthenticationUtil.pushAuthentication();
+		try {
+			work.run();
+		} finally {
+			AuthenticationUtil.popAuthentication();
+		}
+	}
+
+	static void setFullyAuthenticatedBatchUser(String batchUser, String tenantDomain) {
+		if (tenantDomain != null) {
+			// A pooled thread may still hold the tenant of a previous batch, which setFullyAuthenticatedUser keeps:
+			// the work provider then queries another tenant store than the one the workers read
+			TenantContextHolder.setTenantDomain(tenantDomain);
+		}
+		AuthenticationUtil.setFullyAuthenticatedUser(batchUser);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isBatchInQueue(BatchInfo batchInfo) {
@@ -454,9 +480,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		@Override
 		public void run() {
-			
-			pushAndSetBatchAuthentication(null);
-			
+			runRestoringAuthentication(this::runAsBatchUser);
+		}
+
+		private void runAsBatchUser() {
+
+			setBatchAuthentication(null);
+
 			batchQueueLock.lock();
 			try {
 				BatchCommand<?> currentRunningCommand = getRunningCommand();
@@ -499,16 +529,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				for (BatchStep<T> batchStep : batchSteps) {
 
 					if (batchStep.getBatchStepListener() != null) {
-
-						pushAndSetBatchAuthentication(batchStep);
-
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().beforeStep();
-							return true;
-						}, false, true);
-
-						AuthenticationUtil.popAuthentication();
-
+						runStepListener(batchStep, batchStep.getBatchStepListener()::beforeStep);
 					}
 					
 					batchInfo.setCurrentItem(0);
@@ -542,16 +563,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 					
 					if (batchStep.getBatchStepListener() != null) {
-
-						pushAndSetBatchAuthentication(batchStep);
-
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().afterStep();
-							return true;
-						}, false, true);
-
-						AuthenticationUtil.popAuthentication();
-
+						runStepListener(batchStep, batchStep.getBatchStepListener()::afterStep);
 					}
 				}
 
@@ -636,9 +648,21 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			}
 		}
 		
-		private void pushAndSetBatchAuthentication(BatchStep<T> batchStep) {
-			AuthenticationUtil.pushAuthentication();
-			
+		/**
+		 * Runs a step listener callback in its own transaction, as the user of the step.
+		 */
+		private void runStepListener(BatchStep<T> batchStep, Runnable callback) {
+			runRestoringAuthentication(() -> {
+				setBatchAuthentication(batchStep);
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					callback.run();
+					return true;
+				}, false, true);
+			});
+		}
+
+		private void setBatchAuthentication(BatchStep<T> batchStep) {
+
 			Boolean runAsSystem = batchStep != null && batchStep.getRunAsSystem() != null ? batchStep.getRunAsSystem() : batchInfo.getRunAsSystem();
 			String batchUser = batchStep != null && batchStep.getBatchUser() != null ? batchStep.getBatchUser() : batchInfo.getBatchUser();
 			
@@ -653,7 +677,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					batchUser = AuthenticationUtil.getSystemUserName();
 				}
 			}
-			AuthenticationUtil.setFullyAuthenticatedUser(batchUser);
+			setFullyAuthenticatedBatchUser(batchUser, tenantAdminService.isEnabled() ? tenantAdminService.getUserDomain(batchUser) : null);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
@@ -757,7 +781,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				@Override
 				public void beforeProcess() throws Throwable {
 					checkPausedCommand();
-					pushAndSetBatchAuthentication(batchStep);
+					AuthenticationUtil.pushAuthentication();
+					setBatchAuthentication(batchStep);
 					batchStep.getProcessWorker().beforeProcess();
 				}
 
@@ -778,8 +803,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void afterProcess() throws Throwable {
-					batchStep.getProcessWorker().afterProcess();
-					AuthenticationUtil.popAuthentication();
+					try {
+						batchStep.getProcessWorker().afterProcess();
+					} finally {
+						AuthenticationUtil.popAuthentication();
+					}
 				}
 
 			};
@@ -1019,12 +1047,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 								logger.debug("Retrying the formulation for " + entry + " due to exception: " + e.getMessage());
 								throw e; // Re-throw to trigger retry
 							}
-							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							logger.error("Error processing entry '" + entry + "' for batch : '" + batchInfo.getBatchId(), e);
-							markEntryInError(batchFullId, entry, e);
-							if (errorHandler != null) {
-								errorHandler.accept(entry, e);
-							}
+							// Joins the entry transaction, or opens one when the step is not transactional
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								markEntryInError(batchFullId, entry, e);
+								if (errorHandler != null) {
+									errorHandler.accept(entry, e);
+								}
+								return null;
+							}, false, false);
 						}
 					} else {
 						if (logger.isDebugEnabled()) {

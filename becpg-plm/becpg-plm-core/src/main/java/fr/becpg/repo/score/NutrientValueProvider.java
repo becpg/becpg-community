@@ -16,6 +16,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 
 /**
  * Reads the documented characteristics of a product, indexed by their code.
@@ -138,7 +139,7 @@ public class NutrientValueProvider {
 			}
 
 			String code = (String) nodeService.getProperty(nutList.getNut(), GS1Model.PROP_NUTRIENT_TYPE_CODE);
-			Double value = extractValue(product, nutList);
+			Double value = extractValue(product, nutList, code);
 
 			if ((code != null) && (value != null)) {
 				values.put(code, value);
@@ -147,18 +148,24 @@ public class NutrientValueProvider {
 	}
 
 	/**
-	 * <p>extractValue.</p>
+	 * Reads the value of a nutrient in the unit of the nutrient list, which is the unit the
+	 * thresholds are written in.
+	 *
+	 * <p>The EU rounded value is stored in the unit of the regulation, grams for the sodium,
+	 * so it is converted back: read as it stands, 400 mg of sodium would be compared as 0.4.</p>
 	 *
 	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param nutList a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @param code the nutrient code
 	 * @return a {@link java.lang.Double} object
 	 */
-	private Double extractValue(ProductData product, NutListDataItem nutList) {
+	private Double extractValue(ProductData product, NutListDataItem nutList, String code) {
 		if (product.useUnroundedNutrients()) {
 			return product.isPrepared() && (nutList.getPreparedValue() != null) ? nutList.getPreparedValue() : nutList.getValue();
 		}
-		return product.isPrepared() && (nutList.preparedValue(EU_ROUNDING) != null) ? nutList.preparedValue(EU_ROUNDING)
+		Double rounded = product.isPrepared() && (nutList.preparedValue(EU_ROUNDING) != null) ? nutList.preparedValue(EU_ROUNDING)
 				: nutList.value(EU_ROUNDING);
+		return RegulationFormulationHelper.toNutUnit(rounded, code, nutList.getUnit(), EU_ROUNDING);
 	}
 
 	/**

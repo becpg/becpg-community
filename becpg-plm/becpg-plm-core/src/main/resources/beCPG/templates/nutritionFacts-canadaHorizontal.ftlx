@@ -1,30 +1,78 @@
 <#--
-  Canadian horizontal panel, B.01.401 horizontal format.
+  Canadian horizontal panel, B.01.401 horizontal format, figure 4.1 of the directory of formats.
 
-  The regulation lays this format out across the width, in three bands: the title, the serving and
-  the calories on the left, then the nutrients in two columns, each carrying its own daily value
-  header, the footnote closing the panel underneath. It is the format a package that is wide and
-  short is allowed to use, and the directory of formats only figures it in both languages.
+  The regulation lays this format out across the width, in three bands: the title, the serving,
+  the calories and the legend of the daily value header on the left, then the nutrients in two
+  columns, each carrying its own daily value header, the footnote closing the two columns
+  underneath. It is the format a package that is wide and short is allowed to use, and the
+  directory of formats only figures it in both languages.
 
-  None of that matches the vertical panels, so this template draws its own body. The wording of
-  the left band runs from the top down, the calories closing it right under the serving, and the
-  columns are closed by a rule of the medium weight, as is the block of the minerals.
+  None of that matches the vertical panels, so this template draws its own body. No vertical rule
+  parts the bands, five points of air do, after the longest line of the left band and between the
+  two columns. Each column closes on a thick rule of its own, the two stopping short of each other,
+  and the minerals open on a thick rule and run without any rule between them. The whole table is
+  set in a condensed face, which is what lets two columns of nutrients fit the band.
+
+  Every leading is the one figure 4.1 states, from one baseline to the next, and differs from one
+  column to the other: the second column of the figure runs its lines 9 points apart, 13 under a
+  hairline, the third one 8 points apart, 11 under a hairline and 13 under a thick rule.
 
   The width the format gives it lets the panel state its header and its footnote on one line, in
-  the shortened form the regulation words, "%DV* / %VQ*".
+  the shortened form the regulation words, "% DV* / % VQ*", which the legend under the calories
+  explains.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#assign WIDTH = 504>
 <#assign W = WIDTH in nf>
 
-<#assign LEFT_W = 176>
-<#assign COL_W = (WIDTH - LEFT_W) / 2>
-<#assign COL1_X = LEFT_W>
-<#assign COL2_X = LEFT_W + COL_W>
-<#assign TITLE_LINE = 15>
+<#-- Type and rules of figure 4.1. -->
+<#assign TITLE_SIZE = 13>
+<#assign SERVING_SIZE = 8>
+<#assign CALORIES_SIZE = 9>
+<#assign NUTRIENT_SIZE = 7>
+<#assign FOOTNOTE_SIZE = 6>
+<#assign RULE_THICK = 2>
+<#assign INDENT = 6>
 
-<#-- The calories are stated in the left band and not on a line of their own, so they run smaller. -->
-<#assign CALORIES_SIZE = 11>
+<#-- Leadings of figure 4.1, from one baseline to the next. -->
+<#assign SERVING_LEAD = 13>
+<#assign SECOND_SERVING_LEAD = 8>
+<#assign CALORIES_LEAD = 13>
+<#assign LEGEND_LEAD = 11>
+<#assign SECOND_LEGEND_LEAD = 7>
+<#assign FOOTNOTE_LEAD = 12>
+<#assign COLUMN_LEADS = [{"row": 9, "hairline": 13, "thick": 13}, {"row": 8, "hairline": 11, "thick": 13}]>
+
+<#--
+  Width of a condensed glyph, as a ratio of the same glyph of Arial: the widths the panels measure
+  text with are those of Arial, and the condensed face runs at 82 % of them.
+-->
+<#assign CONDENSED_RATIO = 0.82>
+<#assign COLUMN_GAP = 5>
+
+<#-- Width the longest line of the left band takes, set in the condensed face. -->
+<#function leftBandWidth>
+	<#local serving = nf_data.serving().servingSize()!"">
+	<#local widths = [nf.heavyWidth(nf_data.label("servingSize") + " " + serving, SERVING_SIZE)]>
+	<#if nf_data.isBilingual()>
+	<#local secondServing = nf_data.secondary().hasServingSize()?then(nf_data.secondary().servingSize(), serving)>
+	<#local widths = widths + [nf.heavyWidth(nf_data.secondaryLabel("servingSize") + " " + secondServing, SERVING_SIZE)]>
+	</#if>
+	<#list nf.panelWordings(nf_data, "title") as title>
+	<#local widths = widths + [nf.heavyWidth(title, TITLE_SIZE)]>
+	</#list>
+	<#if nf_data.calories()??>
+	<#local widths = widths + [nf.heavyWidth(nf.caloriesText(nf_data), CALORIES_SIZE)]>
+	</#if>
+	<#list nf.panelWordings(nf_data, "dailyValueLegend") as legend>
+	<#local widths = widths + [legend?length * FOOTNOTE_SIZE * nf.GLYPH_RATIO]>
+	</#list>
+	<#return widths?max * CONDENSED_RATIO>
+</#function>
+
+<#assign COL1_X = nf.PAD + leftBandWidth() + COLUMN_GAP>
+<#assign COL_W = (WIDTH - nf.PAD - COL1_X - COLUMN_GAP) / 2>
+<#assign COL2_X = COL1_X + COL_W + COLUMN_GAP>
 
 <#-- Nutrients split over two columns, the break falling between two groups and never inside one. -->
 <#assign lines = nf_data.nutrients() + nf_data.micronutrients()>
@@ -39,63 +87,82 @@
 </#list>
 
 <#--
-  One column of nutrients, leaving the ordinate it ended on in columnBottom. The block of the
-  minerals opens on a rule of the medium weight, wherever the split between the two columns put
-  it; the rule closing the columns is drawn by the caller, both columns closing on one level.
+  One column of nutrients, under its daily value header, leaving its last baseline in nf.lastBaseline.
+  A hairline heads the column and parts its top level declarations, the block of the minerals opens
+  on a thick rule wherever the split put it, and its lines are not ruled. The rules closing the
+  columns are drawn by the footnote, both columns closing on one level.
 -->
-<#macro nutrientColumn columnLines x y startIndex>
-	<#assign columnBottom = y>
+<#macro nutrientColumn columnLines x startIndex leads headerBaseline>
+	<#assign lastBaseline = headerBaseline in nf>
+	<#assign lastSize = nf.CAPTION_SIZE in nf>
 	<#list columnLines as line>
-	<#if (startIndex + line?index) == MICRO_START>
-	<@nf.bandRule x=x y=columnBottom width=COL_W height=nf.RULE_MEDIUM/>
-	<#assign columnBottom = columnBottom + nf.RULE_MEDIUM>
-	<#elseif (line.indentLevel() lte 1) || (line?index == 0)>
-	<@nf.bandRule x=x y=columnBottom width=COL_W/>
-	<#assign columnBottom = columnBottom + nf.HAIRLINE>
+	<#local index = startIndex + line?index>
+	<#if index == MICRO_START>
+	<@columnRow line=line x=x lead=leads.thick ruleHeight=RULE_THICK rowLead=leads.row/>
+	<#elseif (index lt MICRO_START) && ((line.indentLevel() lte 1) || line?is_first)>
+	<@columnRow line=line x=x lead=leads.hairline ruleHeight=nf.CA_HAIRLINE rowLead=leads.row/>
+	<#else>
+	<@columnRow line=line x=x lead=leads.row ruleHeight=0 rowLead=leads.row/>
 	</#if>
-	<@nf.tabularRow line=line y=columnBottom labelX=x + 4 percentX=x + COL_W - 4 boldPercent=false/>
-	<#assign columnBottom = columnBottom + nf.NUTRIENT_ROW_H>
 	</#list>
+</#macro>
+
+<#-- A nutrient of a column, under the rule parting it from the line above, if any. -->
+<#macro columnRow line x lead ruleHeight rowLead>
+	<#local base = nf.lastBaseline + lead>
+	<#if (ruleHeight gt 0)>
+	<@nf.bandRule x=x y=nf.centredRuleTop(base, NUTRIENT_SIZE, ruleHeight) width=COL_W height=ruleHeight/>
+	</#if>
+	<text x="${x + (line.indentLevel() - 1) * INDENT}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="${nf.HEAVY_WEIGHT}"</#if>>${line.label()}<#if line.printsValue()> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
+	<#if line.hasDailyValue()>
+	<text x="${x + COL_W}" y="${base + line.hasSharedDailyValue()?then(rowLead / 2, 0)}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${line.dailyValuePercent()}</text>
+	</#if>
+	<@nf.advance lead=lead size=NUTRIENT_SIZE/>
 </#macro>
 
 <#assign body>
 	<#assign top = nf.BORDER + 2>
+	<g font-family="${nf.CONDENSED_FONT_FAMILY}">
 
+	<#assign headerBaseline = nf.baseline(top, nf.CAPTION_SIZE)>
 	<#assign header = nf.joined(nf_data.label("dailyValueShort"), nf_data.isBilingual()?then(nf_data.secondaryLabel("dailyValueShort"), ""))>
 	<#list [COL1_X, COL2_X] as columnX>
-	<text x="${columnX + COL_W - 4}" y="${nf.baseline(top, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end">${header}</text>
+	<text x="${columnX + COL_W}" y="${headerBaseline}" font-size="${nf.CAPTION_SIZE}" font-weight="${nf.HEAVY_WEIGHT}" text-anchor="end"><@nf.asterisked text=header/></text>
 	</#list>
-	<#assign headerY = top + nf.lineHeight(nf.CAPTION_SIZE)>
 
-	<@nutrientColumn columnLines=lines[0..*splitIndex] x=COL1_X y=headerY + 1 startIndex=0/>
-	<#assign firstBottom = columnBottom>
-	<@nutrientColumn columnLines=lines[splitIndex..] x=COL2_X y=headerY + 1 startIndex=splitIndex/>
-	<#assign columnsBottom = [firstBottom, columnBottom]?max>
+	<@nutrientColumn columnLines=lines[0..*splitIndex] x=COL1_X startIndex=0 leads=COLUMN_LEADS[0] headerBaseline=headerBaseline/>
+	<#assign firstBaseline = nf.lastBaseline>
+	<@nutrientColumn columnLines=lines[splitIndex..] x=COL2_X startIndex=splitIndex leads=COLUMN_LEADS[1] headerBaseline=headerBaseline/>
+	<#assign lastBaseline = [firstBaseline, nf.lastBaseline]?max in nf>
+	<#assign lastSize = NUTRIENT_SIZE in nf>
 
-	<#list [COL1_X, COL2_X] as columnX>
-	<@nf.bandRule x=columnX y=columnsBottom width=COL_W height=nf.RULE_MEDIUM/>
+	<#assign closingRules = [{"x": COL1_X, "width": COL_W}, {"x": COL2_X, "width": COL_W}]>
+	<#if nf_data.footNote()?has_content>
+	<@nf.canadianFootNote data=nf_data size=FOOTNOTE_SIZE firstLead=FOOTNOTE_LEAD indent=COL1_X singleLine=true ruleWidths=closingRules ruleHeight=RULE_THICK/>
+	<#else>
+	<#assign ruleTop = nf.centredRuleTop(nf.lastBaseline + FOOTNOTE_LEAD, FOOTNOTE_SIZE, RULE_THICK)>
+	<#list closingRules as band>
+	<@nf.bandRule x=band.x y=ruleTop width=band.width height=RULE_THICK/>
 	</#list>
-	<#assign columnsBottom = columnsBottom + nf.RULE_MEDIUM>
+	<#assign lastBaseline = ruleTop + RULE_THICK in nf>
+	<#assign lastSize = 0 in nf>
+	</#if>
+	<#assign columnsBottom = nf.canadianBottom()>
 
-	<@nf.canadianHeading data=nf_data y=top titleSize=TITLE_LINE x=nf.PAD width=LEFT_W - 2 * nf.PAD/>
-	<#assign leftBottom = nf.cursorY>
+	<@nf.canadianHeading data=nf_data y=top titleSize=TITLE_SIZE servingSize=SERVING_SIZE x=nf.PAD
+		servingLead=SERVING_LEAD secondServingLead=SECOND_SERVING_LEAD/>
 
 	<#if nf_data.calories()??>
-	<text x="${nf.PAD}" y="${nf.baseline(leftBottom, CALORIES_SIZE)}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
-	<#assign leftBottom = leftBottom + nf.lineHeight(CALORIES_SIZE)>
+	<@nf.advance lead=CALORIES_LEAD size=CALORIES_SIZE/>
+	<text x="${nf.PAD}" y="${nf.lastBaseline}" font-weight="${nf.HEAVY_WEIGHT}" font-size="${CALORIES_SIZE}">${nf.caloriesText(nf_data)}</text>
 	</#if>
 
-	<#assign bandsBottom = [leftBottom, columnsBottom]?max>
-	<@nf.columnRule x=COL1_X fromY=0 toY=bandsBottom/>
-	<@nf.columnRule x=COL2_X fromY=0 toY=bandsBottom/>
+	<#list nf.panelWordings(nf_data, "dailyValueLegend") as legend>
+	<@nf.advance lead=legend?is_first?then(LEGEND_LEAD, SECOND_LEGEND_LEAD) size=FOOTNOTE_SIZE/>
+	<text x="${nf.PAD}" y="${nf.lastBaseline}" font-size="${FOOTNOTE_SIZE}">${legend}</text>
+	</#list>
+	</g>
 
-	<#assign panelH = bandsBottom>
-	<#if nf_data.footNote()?has_content>
-	<@nf.bandRule x=0 y=panelH width=WIDTH/>
-	<#assign panelH = panelH + nf.HAIRLINE + 1>
-	<@nf.emphasisedFootNote data=nf_data y=panelH singleLine=true/>
-	<#assign panelH = nf.cursorY>
-	</#if>
-	<#assign panelH = panelH + nf.BORDER + 2>
+	<#assign panelH = [nf.canadianBottom(), columnsBottom]?max>
 </#assign>
 <@nf.panel height=panelH>${body}</@nf.panel>

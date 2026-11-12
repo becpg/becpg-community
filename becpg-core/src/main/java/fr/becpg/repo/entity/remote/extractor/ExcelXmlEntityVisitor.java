@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -167,18 +168,18 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		xmlw.writeStartElement(name != null ? name : getXmlName(nodeType));
 
-		NodeRef parentRef = getPrimaryParentRef(nodeRef);
+		Optional<Path> parentPath = findReadableParentPath(nodeRef);
+		if (parentPath.isPresent()) {
+			xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, parentPath.get().toPrefixString(namespaceService));
+		}
 
-		Path path = nodeService.getPath(parentRef);
-
-		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME,
 				(String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType, entityDictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE) && canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 			xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
 		}
 
@@ -249,7 +250,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && assocDef.isChild()) {
+					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && assocDef.isChild() && canReadField(nodeRef, assocDef.getName())) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				xmlw.writeStartElement(getXmlName(nodeType));
 				xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.CHILD_ASSOC_TYPE);
@@ -269,7 +270,7 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild()) {
+					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild() && canReadField(nodeRef, assocDef.getName())) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				xmlw.writeStartElement(getXmlName(nodeType));
 
@@ -312,7 +313,8 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 				QName propQName = entry.getKey();
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
+						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)
+						&& canReadField(nodeRef, propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
@@ -333,9 +335,10 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * <p>visitPropValue.</p>
+	 * Writes a property value. A <code>d:noderef</code> value whose target is deleted or not readable
+	 * by the current user is left out, see {@link #isExportableValue(Serializable)}.
 	 *
-	 * @param value a {@link java.io.Serializable} object
+	 * @param value the property value
 	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
 	 * @throws javax.xml.stream.XMLStreamException if any.
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
@@ -343,18 +346,47 @@ public class ExcelXmlEntityVisitor extends AbstractEntityVisitor {
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {
-			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
-			for (Serializable subEl : (List<Serializable>) value) {
+			visitPropValues((List<Serializable>) value, xmlw);
+		} else if (isExportableValue(value)) {
+			writeSingleValue(value, xmlw);
+		}
+	}
+
+	/**
+	 * Writes the values of a multi-valued property, one element per exportable value: a left out
+	 * reference leaves no empty element behind.
+	 *
+	 * @param values the values of the property
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitPropValues(List<Serializable> values, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
+		for (Serializable value : values) {
+			if (isExportableValue(value)) {
 				xmlw.writeStartElement(RemoteEntityService.ELEM_LIST_VALUE);
-				visitPropValue(subEl, xmlw);
+				writeSingleValue(value, xmlw);
 				xmlw.writeEndElement();
 			}
-			xmlw.writeEndElement();
-		} else if (value instanceof NodeRef node) {
+		}
+		xmlw.writeEndElement();
+	}
+
+	/**
+	 * Writes a single property value, a referenced node being written as a nested node element.
+	 *
+	 * @param value a single property value
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void writeSingleValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
+		if (value instanceof NodeRef node) {
 			visitNode(node, null, xmlw, false, false, false);
 		} else if (value instanceof Date date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format(date));
-		} else {
+		} else if (value != null) {
 			xmlw.writeCData(value.toString());
 		}
 	}

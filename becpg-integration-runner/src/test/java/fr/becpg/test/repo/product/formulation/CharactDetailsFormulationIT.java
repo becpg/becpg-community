@@ -322,6 +322,56 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testEnteredZeroIsShownInNutDetails() {
+
+		final NodeRef zeroFatNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Zero fat raw material");
+			rawMaterial.setUnit(ProductUnit.kg);
+			List<NutListDataItem> nutList = new ArrayList<>();
+			nutList.add(NutListDataItem.build().withValue(0d).withUnit("g/100g").withNut(nut1).withIsManual(false));
+			nutList.add(NutListDataItem.build().withValue(null).withUnit("g/100g").withNut(nut2).withIsManual(false));
+			rawMaterial.setNutList(nutList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Zero fat finished product");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+					.withProduct(zeroFatNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			List<NutListDataItem> nutList = new ArrayList<>();
+			nutList.add(NutListDataItem.build().withUnit("g/100g").withNut(nut1).withIsManual(false));
+			nutList.add(NutListDataItem.build().withUnit("g/100g").withNut(nut2).withIsManual(false));
+			finishedProduct.setNutList(nutList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			CharactDetails details = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST, "nutList", new ArrayList<>(),
+					null);
+
+			Assert.assertEquals("an entered zero is a value", Double.valueOf(0d), detailOf(details, nut1, zeroFatNodeRef).getValue());
+			Assert.assertNull("a missing value stays blank", detailOf(details, nut2, zeroFatNodeRef).getValue());
+			return null;
+		});
+	}
+
+	private static CharactDetailsValue detailOf(CharactDetails details, NodeRef charactNodeRef, NodeRef componentNodeRef) {
+		for (CharactDetailsValue value : details.getData().get(charactNodeRef)) {
+			if (componentNodeRef.equals(value.getKeyNodeRef())) {
+				return value;
+			}
+		}
+		throw new AssertionError("No detail of the component for " + charactNodeRef);
+	}
+
+	@Test
 	public void testCalculateNutDetails() throws Exception {
 
 		logger.info("testCalculateNutDetails");

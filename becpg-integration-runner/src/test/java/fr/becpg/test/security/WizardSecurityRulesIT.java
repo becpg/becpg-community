@@ -55,13 +55,13 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.form.BecpgFormService;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
-import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.utils.TestWebscriptExecuters;
@@ -347,7 +347,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		TestWebscriptExecuters.sendRequest(new GetRequest(uri), 400, "admin").release();
 
 		NodeRef entityNodeRef = inWriteTx(() -> {
-			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Wizard next step entity");
+			NodeRef rawMaterialNodeRef = createTestRawMaterial("Wizard next step entity");
 			nodeService.createAssociation(noEntityProjectNodeRef, rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
 			return rawMaterialNodeRef;
 		});
@@ -518,6 +518,17 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		project.setStartDate(new Date());
 
 		return alfrescoRepository.create(getTestFolderNodeRef(), project).getNodeRef();
+	}
+
+	/**
+	 * Creates a bare raw material, without the PLM test referential, so that this test does not depend on a PLM test
+	 * having run before it.
+	 */
+	private NodeRef createTestRawMaterial(String name) {
+		RawMaterialData rawMaterial = new RawMaterialData();
+		rawMaterial.setName(name);
+
+		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 	}
 
 	/**

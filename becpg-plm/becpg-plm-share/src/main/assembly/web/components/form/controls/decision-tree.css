@@ -41,6 +41,24 @@
 	display : block;
 }
 
+/* Each choice row wraps its radio and label so a click never lands on the next row */
+.form-container .decision-tree-control p.form-field,
+.large-dialog .bd .form-container .decision-tree-control p.form-field {
+	display: flex;
+	align-items: center;
+	margin: .2em 0;
+}
+
+.bd .form-container .decision-tree-control p.form-field {
+	display: inline-flex;
+}
+
+.form-container .decision-tree-control p.form-field input[type="radio"] {
+	flex-shrink: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 
 .yui-dialog .form-container .decision-tree-control input[type="radio"] ,
 .form-container .decision-tree-control input[type="radio"],

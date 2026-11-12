@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -55,8 +56,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -102,6 +101,10 @@ import fr.becpg.repo.helper.json.JsonHelper;
  * factor six between an administrator and a supplier account on
  * <code>becpg/remote/entity/list</code>. What a caller is allowed to see is settled upstream, by
  * the search that produced the page.
+ * <p>
+ * The fields a security rule hides from the caller are left out when the export webscripts ask for
+ * it. That check is answered once per type and field for the request, not once per value, so that
+ * it does not bring back the cost described above.
  *
  * @author matthieu
  * @version $Id: $Id
@@ -129,13 +132,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private final LockService lockService;
 	private final AssociationService associationService;
 	private final EntityListDAO entityListDAO;
-	private final PermissionService permissionService;
 
 	/** Association definitions assembled during this request, keyed by node type and aspects. */
 	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
-
-	/** Read access of the nodes checked during this request, one evaluation per node. */
-	private final Map<NodeRef, Boolean> readAccessByNode = new HashMap<>();
 
 	private Boolean requiresAssocs = null;
 
@@ -152,7 +151,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		this.lockService = remoteServiceRegisty.lockService();
 		this.associationService = remoteServiceRegisty.associationService();
 		this.entityListDAO = remoteServiceRegisty.entityListDAO();
-		this.permissionService = remoteServiceRegisty.permissionService();
 	}
 
 	/** {@inheritDoc} */
@@ -318,12 +316,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						}
 
 						String codeKey = BeCPGModel.PROP_CODE.toPrefixString(namespaceService);
-						if (archivedEntity.has(codeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
+						if (archivedEntity.has(codeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))
+								&& canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 							entity.put(codeKey, archivedEntity.get(codeKey));
 						}
 
 						String erpCodeKey = BeCPGModel.PROP_ERP_CODE.toPrefixString(namespaceService);
-						if (archivedEntity.has(erpCodeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
+						if (archivedEntity.has(erpCodeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))
+								&& canReadField(nodeRef, BeCPGModel.PROP_ERP_CODE)) {
 							entity.put(erpCodeKey, archivedEntity.get(erpCodeKey));
 						}
 
@@ -355,7 +355,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 						if (shouldExtractAttributes(type, assocName, nodeType) && archivedEntity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
 							JSONObject archivedAttributes = archivedEntity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES);
-							JSONObject filteredAttributes = filterArchivedAttributes(archivedAttributes, assocName);
+							JSONObject filteredAttributes = filterArchivedAttributes(archivedAttributes, assocName, field -> canReadField(nodeRef, field));
 							entity.put(RemoteEntityService.ELEM_ATTRIBUTES, filteredAttributes);
 						}
 
@@ -485,19 +485,21 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 
-		extractStandardCodeProperties(entity, properties, context);
+		extractStandardCodeProperties(nodeRef, entity, properties, context);
 		extractVersionLabel(entity, properties);
 		extractLockedPreviousVersion(nodeRef, entity);
 		extractNodeId(nodeRef, entity, context);
 	}
 
-	private void extractStandardCodeProperties(JSONObject entity, Map<QName, Serializable> properties, RemoteJSONContext context) throws JSONException, RemoteException {
+	private void extractStandardCodeProperties(NodeRef nodeRef, JSONObject entity, Map<QName, Serializable> properties, RemoteJSONContext context) throws JSONException, RemoteException {
 		if (properties.get(BeCPGModel.PROP_CODE) != null
-				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
+				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))
+				&& canReadField(nodeRef, BeCPGModel.PROP_CODE)) {
 			visitPropValue(BeCPGModel.PROP_CODE, entity, properties.get(BeCPGModel.PROP_CODE), context);
 		}
 		if (properties.get(BeCPGModel.PROP_ERP_CODE) != null
-				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
+				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))
+				&& canReadField(nodeRef, BeCPGModel.PROP_ERP_CODE)) {
 			visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 		}
 	}
@@ -765,7 +767,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		// and the entity is returned without it exactly as intended. The ACL that says so is set by
 		// SecurityFormulationHandler on the list node itself, one per list, and its items inherit it
 		// — so one question here answers for the whole list.
-		if (!canRead(listNodeRef)) {
+		if (!canReadNode(listNodeRef)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Datalist " + listNodeRef + " of node " + entityNodeRef
 						+ " is not readable by the current user, returning entity without it");
@@ -779,6 +781,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
+		if (!canReadField(entityNodeRef, dataListTypeQName)) {
+			return;
+		}
+
 		String dataListName = (String) unsecuredNodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 		if (dataListName == null || dataListName.startsWith(RepoConsts.WUSED_PREFIX) || dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 			return;
@@ -940,7 +946,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * The enumeration goes through the unsecured <code>NodeService</code> so as not to pay one
 	 * permission evaluation per child in the AOP chain. Enumerating without filtering would export
 	 * nodes the caller may not read, so the filtering the secured service used to do is made
-	 * explicit here: {@link #canRead} asks once per node, cached for the request.
+	 * explicit here: {@link #canReadNode} asks once per node, cached for the request.
 	 * <p>
 	 * An unreadable child is <b>omitted</b> rather than marked <code>#AccessDenied</code> like an
 	 * association target: a child association describes a composition — a subfolder, an attachment —
@@ -950,7 +956,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private void visitChildAssociations(NodeRef nodeRef, JSONObject entity, Map<QName, AssociationDefinition> assocs, RemoteJSONContext context) throws JSONException, RemoteException {
 		List<ChildAssociationRef> assocRefs = new ArrayList<>();
 		for (ChildAssociationRef assocRef : unsecuredNodeService.getChildAssocs(nodeRef)) {
-			if (canRead(assocRef.getChildRef())) {
+			if (canReadNode(assocRef.getChildRef())) {
 				assocRefs.add(assocRef);
 			} else if (logger.isDebugEnabled()) {
 				logger.debug("Child " + assocRef.getChildRef() + " of " + nodeRef + " (assoc " + assocRef.getTypeQName()
@@ -976,8 +982,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private void processChildAssociationEntry(NodeRef nodeRef, JSONObject entity, AssociationDefinition assocDef, List<ChildAssociationRef> assocRefs, RemoteJSONContext context) throws JSONException, RemoteException {
 		QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-		if (params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()
-				&& !params.getFilteredProperties().contains(nodeType)) {
+		if ((params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()
+				&& !params.getFilteredProperties().contains(nodeType)) || !canReadField(nodeRef, assocDef.getName())) {
 			return;
 		}
 
@@ -1023,7 +1029,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-		if (!matchProp(assocName, nodeType, false)) {
+		if (!matchProp(assocName, nodeType, false) || !canReadField(nodeRef, assocDef.getName())) {
 			return;
 		}
 
@@ -1063,13 +1069,12 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private JSONObject createTargetAssociationNode(NodeRef nodeRef, NodeRef childRef, AssociationDefinition assocDef, QName nodeType, RemoteJSONContext context) throws JSONException, RemoteException {
 		JSONObject jsonAssocNode = new JSONObject();
 
-		if (!canRead(childRef)) {
+		if (!canReadNode(childRef)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Association target " + childRef + " of " + nodeRef + " (assoc " + assocDef.getName()
 						+ ") not accessible for current user, marking as #AccessDenied");
 			}
-			jsonAssocNode.put(RemoteEntityService.ATTR_ID, childRef.getId());
-			jsonAssocNode.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), ACCESS_DENIED_VALUE);
+			markAccessDenied(childRef, jsonAssocNode);
 			return jsonAssocNode;
 		}
 
@@ -1078,24 +1083,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * Whether the caller may read a node, answered once per node and per request.
-	 * <p>
-	 * This is the whole of the access control this visitor performs, and it is asked in the two
-	 * places nothing else filters: an association target, and a datalist of the entity. Everywhere
-	 * else the metadata is read without a check, because the page came from a search that had
-	 * already granted it.
-	 * <p>
-	 * The same node comes back over and over — <code>bcpg:entityTpl</code> is one node for every
-	 * product of a listing — and each visit would otherwise be one permission evaluation. The cache
-	 * is what keeps this check from becoming the cost that reading through the public
-	 * <code>NodeService</code> was.
+	 * Writes the placeholder of a node the caller may not read: its id and
+	 * <code>#AccessDenied</code> as its name, nothing else (no code, no path, no type).
 	 *
-	 * @param nodeRef the node to test
-	 * @return true when the node is readable
+	 * @param nodeRef the unreadable node
+	 * @param node the JSON object standing for it
+	 * @throws org.json.JSONException if any.
 	 */
-	private boolean canRead(NodeRef nodeRef) {
-		return readAccessByNode.computeIfAbsent(nodeRef,
-				ref -> AccessStatus.ALLOWED.equals(permissionService.hasPermission(ref, PermissionService.READ)));
+	private void markAccessDenied(NodeRef nodeRef, JSONObject node) throws JSONException {
+		node.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+		node.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), ACCESS_DENIED_VALUE);
 	}
 
 	/**
@@ -1162,7 +1159,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 
-		if (!matchProp(assocName, propName, false)) {
+		if (!matchProp(assocName, propName, false) || !canReadField(nodeRef, propQName)) {
 			return;
 		}
 
@@ -1230,9 +1227,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					while (keys.hasNext()) {
 						String key = keys.next();
 						String listName = extractArchivedListName(key);
-						if (params.shouldExtractList(listName)) {
+						QName listTypeQName = extractArchivedListTypeQName(key);
+						QName ruleListTypeQName = extractArchivedListRuleTypeQName(key);
+						if (params.shouldExtractList(listName) && ((ruleListTypeQName == null) || canReadField(nodeRef, ruleListTypeQName))) {
 							Object listVal = archivedLists.get(key);
-							QName listTypeQName = extractArchivedListTypeQName(key);
 							Object filteredListVal = filterSubJsonValue(listVal, listTypeQName);
 							if (filteredListVal != null) {
 								filteredLists.put(key, filteredListVal);
@@ -1249,7 +1247,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
-	private JSONObject filterArchivedAttributes(JSONObject attributes, QName assocName) throws JSONException {
+	private JSONObject filterArchivedAttributes(JSONObject attributes, QName assocName, Predicate<QName> readableField) throws JSONException {
 		JSONObject filtered = new JSONObject();
 		Iterator<String> keys = attributes.keys();
 		while (keys.hasNext()) {
@@ -1261,7 +1259,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				continue;
 			}
 			ParsedAttributeKey parsedKey = parseArchivedAttributeKey(key, assocName);
-			if (isArchivedAttributeMatching(parsedKey, assocName)) {
+			if (isArchivedAttributeMatching(parsedKey, assocName) && readableField.test(parsedKey.qname())) {
 				Object value = attributes.get(key);
 				QName childAssocName = parsedKey.qname();
 				Object filteredValue = filterSubJsonValue(value, childAssocName != null ? childAssocName : assocName);
@@ -1291,6 +1289,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private JSONObject filterSubJsonObject(JSONObject jsonObj, QName assocName) throws JSONException {
+		QName ownerType = getDirectQName(jsonObj.optString(RemoteEntityService.ATTR_TYPE, null));
+		Predicate<QName> readableField = field -> canReadField(ownerType, field);
 		JSONObject filteredObj = new JSONObject();
 		Iterator<String> keys = jsonObj.keys();
 		while (keys.hasNext()) {
@@ -1311,13 +1311,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 
 			if (RemoteEntityService.ELEM_ATTRIBUTES.equals(key) && val instanceof JSONObject attrsObj) {
-				JSONObject filteredAttrs = filterArchivedAttributes(attrsObj, assocName);
+				JSONObject filteredAttrs = filterArchivedAttributes(attrsObj, assocName, readableField);
 				filteredObj.put(key, filteredAttrs);
 				continue;
 			}
 
 			ParsedAttributeKey parsedKey = parseArchivedAttributeKey(key, assocName);
-			if (isArchivedAttributeMatching(parsedKey, assocName)) {
+			if (isArchivedAttributeMatching(parsedKey, assocName) && readableField.test(parsedKey.qname())) {
 				QName childAssoc = parsedKey.qname();
 				Object filteredVal = filterSubJsonValue(val, childAssoc != null ? childAssoc : assocName);
 				if (filteredVal != null) {
@@ -1335,6 +1335,22 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @param isLocalized whether the key represents a localized variant (e.g. {@code _fr_FR}, {@code _sv_SE})
 	 */
 	private record ParsedAttributeKey(QName qname, boolean isLocalized) {}
+
+	/**
+	 * The data list type a security rule is set on, for an archived list key such as
+	 * <code>bcpg:compoList</code>, <code>bcpg:compoList|name</code> or
+	 * <code>bcpg:compoList@bcpg:nestedType</code>: the nested item type is not part of the rule.
+	 */
+	private QName extractArchivedListRuleTypeQName(String key) {
+		int endIdx = key.length();
+		for (String separator : new String[] { DATALIST_TYPE_SEPARATOR, DATALIST_NAME_SEPARATOR }) {
+			int separatorIdx = key.indexOf(separator);
+			if ((separatorIdx >= 0) && (separatorIdx < endIdx)) {
+				endIdx = separatorIdx;
+			}
+		}
+		return getDirectQName(key.substring(0, endIdx));
+	}
 
 	private QName extractArchivedListTypeQName(String key) {
 		if (key == null) {
@@ -1507,7 +1523,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			tmpArray.put(node);
-			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			visitReferencedNode(propType, nodeRef, node, context);
 		} else {
 			logDanglingReference(propType, nodeRef);
 		}
@@ -1529,10 +1545,33 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			entity.put(entityDictionaryService.toPrefixString(propType), node);
-			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			visitReferencedNode(propType, nodeRef, node, context);
 		} else {
 			logDanglingReference(propType, nodeRef);
 		}
+	}
+
+	/**
+	 * Serializes the node a <code>d:noderef</code> value points to, or reports it as
+	 * <code>#AccessDenied</code> when the caller may not read it, as for an association target.
+	 * The metadata is read through the unsecured node service, so the check must be made here:
+	 * without it, the name and codes of an unreadable node would be exported.
+	 *
+	 * @param propType the property holding the reference
+	 * @param nodeRef the referenced node
+	 * @param node the JSON object standing for it
+	 * @param context the context of the current visit
+	 * @throws org.json.JSONException if any.
+	 */
+	private void visitReferencedNode(QName propType, NodeRef nodeRef, JSONObject node, RemoteJSONContext context) throws JSONException {
+		if (canReadNode(nodeRef)) {
+			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
+			return;
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Target " + nodeRef + " of " + propType + " not accessible for current user, marking as #AccessDenied");
+		}
+		markAccessDenied(nodeRef, node);
 	}
 
 	/**

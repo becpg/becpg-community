@@ -26,6 +26,7 @@
 	"ANIMALWELFARE": {"layout": "tag", "colours": {"A": "#00694e", "B": "#3f9c6d", "C": "#8cc06a", "D": "#e0a02c", "E": "#b0763a"}},
 	"NUTRIGRADE": {"layout": "tag", "colours": {"A": "#00853f", "B": "#64bf21", "C": "#f0a30a", "D": "#d0021b", "E": "#d0021b"}, "classes": ["A", "B", "C", "D"]},
 	"FLORINDEX": {"layout": "strip", "colours": {"A": "#1f6f4a", "B": "#5aa469", "C": "#c8b560", "D": "#c98a3c", "E": "#a8503a"}},
+	"GREENSCORE": {"layout": "strip", "colours": {"A+": "#3d8b55", "A": "#458b56", "B": "#66c979", "C": "#ecc244", "D": "#e08537", "E": "#d15032", "F": "#b23a2c"}, "classes": ["A+", "A", "B", "C", "D", "E", "F"]},
 	"PPWR": {"layout": "strip", "colours": {"A": "#00853f", "B": "#64bf21", "C": "#ffc800", "NR": "#ff0100"}, "classes": ["A", "B", "C", "NR"]}
 }>
 

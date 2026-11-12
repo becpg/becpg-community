@@ -1,10 +1,5 @@
 package fr.becpg.repo.product.requirement;
 
-import java.util.List;
-
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.apache.commons.logging.Log;
@@ -15,6 +10,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+
+import fr.becpg.repo.helper.TenantJobHelper;
 
 import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler;
 
@@ -62,28 +59,7 @@ public class ProductSpecificationFormulationJob extends AbstractScheduledLockedJ
 		final ProductSpecificationsFormulationHandler productSpecificationsFormulationHandler = (ProductSpecificationsFormulationHandler) jobData.get("productSpecificationsFormulationHandler");
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
 
-		AuthenticationUtil.runAsSystem(new RunAsWork<Object>() {
-			public Object doWork() throws Exception {
-				productSpecificationsFormulationHandler.run();
-				return null;
-			}
-		});
-		
-		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
-			@SuppressWarnings("deprecation")
-			List<Tenant> tenants = tenantAdminService.getAllTenants();
-			for (Tenant tenant : tenants) {
-				if(tenant.isEnabled()) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.runAs(new RunAsWork<Object>() {
-						public Object doWork() throws Exception {
-							productSpecificationsFormulationHandler.run();
-							return null;
-						}
-					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-				}
-			}
-		} 
+		TenantJobHelper.runForEachTenant(tenantAdminService, productSpecificationsFormulationHandler::run);
 		logger.info("End of Product Specification Formulation Job.");
 	}
 
