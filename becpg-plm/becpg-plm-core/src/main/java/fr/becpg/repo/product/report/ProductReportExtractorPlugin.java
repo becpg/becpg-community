@@ -73,6 +73,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
@@ -2365,7 +2366,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		BigDecimal unitTare = unitTareInG(packagingMaterial);
 
-		for (PackMaterialListDataItem dataItem : packagingMaterial.getPackMaterialList()) {
+		for (PackMaterialListDataItem dataItem : CompositePackMaterials.materialsOf(packagingMaterial.getPackMaterialList())) {
 			if (dataItem.getPmlWeight() == null) {
 				continue;
 			}

@@ -906,6 +906,26 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 
+    // The components of a composite packaging material are indented under it (#38305).
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pack:packMaterial_pack:pmlMaterial"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+
+            var padding = 0;
+            var depthLevel = oRecord.getData("itemData")["prop_bcpg_depthLevel"];
+
+            if (depthLevel && depthLevel.value) {
+                padding = (depthLevel.value - 1) * 25;
+
+                Dom.addClass(scope.widgets.dataTable.getTrEl(elCell), "mtl-level-" + depthLevel.value);
+            }
+
+            return '<span class="' + (data.metadata || "") + '" ' + (padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+        }
+
+    });
+
     // Packaging components carry their hierarchy on a free-text column, so none of the
     // association renderers above applies and the rows used to be drawn flat even though
     // the level and the parent were stored (#34468).

@@ -221,6 +221,50 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	}
 
 	/**
+	 * A composite material (a line with component lines) is computed from its components on the
+	 * packaging, then reaches the finished product as one material: its components are not counted
+	 * on their own (see #38305).
+	 */
+	@Test
+	public void testCompositeMaterialCountsAsOneMaterial() throws Exception {
+		final NodeRef compositePackagingNodeRef = inWriteTx(() -> {
+			PackMaterialListDataItem film = PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withPkgLevel(PackagingLevel.Primary);
+			PackagingMaterialData lid = PackagingMaterialData.build().withName("Composite lid").withTare(0.0035d, TareUnit.kg)
+					.withPackMaterialList(List.of(film,
+							PackMaterialListDataItem.build().withMaterial(packMaterial2NodeRef).withWeight(1.5d).withPkgLevel(PackagingLevel.Primary)
+									.withParent(film),
+							PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(2d).withRecycledPerc(30d)
+									.withPkgLevel(PackagingLevel.Primary).withParent(film)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), lid).getNodeRef();
+		});
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			productService.formulate(compositePackagingNodeRef);
+
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Produit fini composite").withUnit(ProductUnit.P).withQty(1d)
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+							.withPkgLevel(PackagingLevel.Primary).withProduct(compositePackagingNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertEquals("Only the composite reaches the finished product", 1, formulatedProduct.getPackMaterialList().size());
+
+			PackMaterialListDataItem composite = formulatedProduct.getPackMaterialList().get(0);
+			assertEquals(packMaterial1NodeRef, composite.getPmlMaterial());
+			assertEquals(3.5d, composite.getPmlWeight(), 0.001d);
+			assertEquals(17.143d, composite.getPmlRecycledPercentage(), 0.001d);
+			return null;
+		});
+	}
+
+	/**
 	 * The geographical origins of the packaging materials must reach the finished product: an origin
 	 * declared on a material line is carried up as is, and the origins of every contributor of the same
 	 * material are merged (see #35025). A packaging that declares no origin on its material lines falls
