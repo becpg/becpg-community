@@ -403,7 +403,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * concentration is compared to the action limit while a discrete particle is
 	 * assessed on its own dose; when the raw materials declare both, the worst of the
 	 * two decides. The flag is left untouched when neither assessment applies, which
-	 * preserves the presence declared by the parts.
+	 * preserves the presence declared by the parts. It is not lowered either when a
+	 * process resource declares the contamination: a resource carries no quantity,
+	 * so its share is unknown and the computed percentage cannot rule it out.
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
@@ -417,7 +419,35 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			return;
 		}
 
-		allergenListDataItem.setInVoluntary(Boolean.TRUE.equals(exceedsHomogeneous) || Boolean.TRUE.equals(exceedsParticle));
+		boolean exceedsThreshold = Boolean.TRUE.equals(exceedsHomogeneous) || Boolean.TRUE.equals(exceedsParticle);
+
+		if (!exceedsThreshold && hasUnquantifiedContamination(allergenListDataItem)) {
+			return;
+		}
+
+		allergenListDataItem.setInVoluntary(exceedsThreshold);
+	}
+
+	/**
+	 * Whether a process resource is among the involuntary sources of the allergen. A
+	 * cleaned line is excluded: cleaning already discards the presence declared by
+	 * the resources.
+	 *
+	 * @param allergenListDataItem the allergen line of the formulated product
+	 * @return {@code true} when the contamination cannot be quantified
+	 */
+	private boolean hasUnquantifiedContamination(AllergenListDataItem allergenListDataItem) {
+		if (Boolean.TRUE.equals(allergenListDataItem.getIsCleaned())) {
+			return false;
+		}
+
+		for (NodeRef source : allergenListDataItem.getInVoluntarySources()) {
+			if (alfrescoRepository.findOne(source) instanceof ResourceProductData) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -676,7 +706,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								newAllergenListDataItem.setQtyPerc(allergenListDataItem.getQtyPerc());
 							}
 						}
-					} else {
+					} else if (!(partProduct instanceof ResourceProductData)) {
 
 						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergen));
 						RequirementListDataItem error = errors.get(message);
