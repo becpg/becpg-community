@@ -1,13 +1,19 @@
 package fr.becpg.repo.helper.impl;
 
+import java.io.Serializable;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
+import fr.becpg.repo.helper.MLTextHelper;
 
 /**
  * <p>Abstract AbstractExprNameExtractor class.</p>
@@ -40,6 +46,32 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	 */
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
 		return clean(expressionService.extractExpr(nodeRef,null, exprFormat));
+	}
+
+	/**
+	 * Extracts the display name of an entity. An entity template is shown under its title when
+	 * it has one: the title is multilingual, so each user reads the template in their own
+	 * language, whereas the name format only knows the single technical name.
+	 *
+	 * @param nodeRef the entity
+	 * @param exprFormat the name format applied to an entity that is not a titled template
+	 * @return the display name, possibly {@code null}
+	 */
+	protected String extractEntityName(NodeRef nodeRef, String exprFormat) {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+			String title = toLocalizedText(nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE));
+			if ((title != null) && !title.isBlank()) {
+				return title;
+			}
+		}
+		return extractExpr(nodeRef, exprFormat);
+	}
+
+	private String toLocalizedText(Serializable value) {
+		if (value instanceof MLText mlText) {
+			return MLTextHelper.getClosestValue(mlText, I18NUtil.getContentLocale());
+		}
+		return value != null ? value.toString() : null;
 	}
 	
 	/**
