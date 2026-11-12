@@ -80,7 +80,7 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		} else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
 			result = type.toPrefixString();
 		} else if (ProjectModel.TYPE_PROJECT.equals(type)) {
-			result = extractExpr(nodeRef, projectNameFormat());
+			result = extractEntityName(nodeRef, projectNameFormat());
 		} else {
 			result = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 		}

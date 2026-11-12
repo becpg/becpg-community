@@ -89,7 +89,7 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Override
 	@Nonnull
 	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
-		String result = extractExpr(nodeRef, productNameFormat());
+		String result = extractEntityName(nodeRef, productNameFormat());
 		return result != null ? result : "";
 	}
 
