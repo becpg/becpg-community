@@ -333,7 +333,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.5.4</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -357,7 +357,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.6.1</version>
+							<version>3.5.4</version>
 						</dependency>
 					</dependencies>
 				</plugin>
