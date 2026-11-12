@@ -165,7 +165,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                     + displayName + (url != null ? '</a>' : '') + '</span>';
             }
 
-            return (toogleGroupButton != null ? toogleGroupButton : '') + content;
+            return '<div class="mtl-label">' + (toogleGroupButton != null ? toogleGroupButton : '') + content + '</div>';
         }
 
     });
