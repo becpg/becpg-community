@@ -248,6 +248,10 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
+				<property name="pack:pmlBioBasedPercentage">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
 				<property name="pack:pmlLevel">
 					<type>d:text</type>
 					<index enabled="true">
@@ -285,7 +289,7 @@
 				</association>
 			</associations>
 			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
 	</type>
 

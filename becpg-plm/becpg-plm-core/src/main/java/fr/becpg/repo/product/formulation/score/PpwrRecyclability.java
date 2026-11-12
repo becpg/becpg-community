@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.project.formulation.ScoreRangeConverter;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
@@ -238,7 +239,7 @@ public class PpwrRecyclability implements ScoreCalculatingPlugin {
 	private List<WeighedLine> weighLines(ProductData product, ScoreDefinitionItem definition) {
 		List<WeighedLine> lines = new ArrayList<>();
 
-		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
+		for (PackMaterialListDataItem line : CompositePackMaterials.materialsOf(product.getPackMaterialList())) {
 			if ((line.getPmlWeight() == null) || (line.getPmlWeight() <= 0d)) {
 				continue;
 			}

@@ -208,7 +208,10 @@ public class PackagingComponentFormulationHandler extends FormulationBaseHandler
 		List<PackMaterialListDataItem> toRemove = new ArrayList<>();
 
 		for (PackMaterialListDataItem material : formulatedProduct.getPackMaterialList()) {
-			if (Boolean.TRUE.equals(material.getIsManual())) {
+			if (CompositePackMaterials.isComponent(material)) {
+				continue;
+			}
+			if (Boolean.TRUE.equals(material.getIsManual()) || isComposite(formulatedProduct, material)) {
 				toCreate.remove(material.getPmlMaterial());
 			} else if (toCreate.containsKey(material.getPmlMaterial())) {
 				updateMaterial(material, toCreate.remove(material.getPmlMaterial()), totalWeight);
@@ -224,6 +227,18 @@ public class PackagingComponentFormulationHandler extends FormulationBaseHandler
 			updateMaterial(material, entry.getValue(), totalWeight);
 			formulatedProduct.getPackMaterialList().add(material);
 		}
+	}
+
+	/**
+	 * Whether the line is a composite material detailed by component lines: it is computed
+	 * from them, never from the packaging components.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param material a material line of the product
+	 * @return {@code true} when the line has components
+	 */
+	private boolean isComposite(ProductData formulatedProduct, PackMaterialListDataItem material) {
+		return !CompositePackMaterials.componentsOf(material, formulatedProduct.getPackMaterialList()).isEmpty();
 	}
 
 	/**

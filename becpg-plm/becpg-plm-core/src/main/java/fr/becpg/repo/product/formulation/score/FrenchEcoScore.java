@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.CompositePackMaterials;
 import fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext;
 import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService;
 import fr.becpg.repo.product.formulation.ecoscore.EcoScoreService.EnvironmentalFootprintValue;
@@ -211,7 +212,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 				ecoScore = 19;
 			} else {
 
-				List<PackMaterialListDataItem> packMaterialList = productData.getPackMaterialList();
+				List<PackMaterialListDataItem> packMaterialList = CompositePackMaterials.materialsOf(productData.getPackMaterialList());
 
 				packagingMalus = computePackagingMalus(packMaterialList);
 

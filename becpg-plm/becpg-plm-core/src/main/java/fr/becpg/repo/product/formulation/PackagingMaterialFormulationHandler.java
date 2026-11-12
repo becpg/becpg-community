@@ -86,6 +86,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								&& !formulatedProduct.hasPackagingListEl(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING))) {
 
 					calculateMaterialWeight(formulatedProduct);
+					CompositePackMaterials.rollUp(formulatedProduct.getPackMaterialList());
 
 					return true;
 				}
@@ -106,7 +107,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 				List<PackMaterialListDataItem> toRemove = new ArrayList<>();
 				for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
-					if (Boolean.TRUE.equals(packmaterial.getIsManual())) {
+					if (CompositePackMaterials.isComponent(packmaterial)) {
+						continue;
+					}
+					if (Boolean.TRUE.equals(packmaterial.getIsManual()) || isComposite(formulatedProduct, packmaterial)) {
 						toUpdate.remove(new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial()));
 						continue;
 					}
@@ -118,6 +122,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						packmaterial.setPmlWeight(contribution.weight().doubleValue());
 						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), contribution.weight()));
 						packmaterial.setPmlRecycledPercentage(contribution.recycledPercentage());
+						packmaterial.setPmlBioBasedPercentage(contribution.bioBasedPercentage());
 						packmaterial.setGeoOrigins(contribution.geoOriginList());
 						toUpdate.remove(key);
 					}
@@ -131,12 +136,15 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								.add(PackMaterialListDataItem.build().withMaterial(entry.getKey().getSecond())
 										.withWeight(contribution.weight().doubleValue())
 										.withPerc(calculatePerc(formulatedProduct, entry.getKey().getFirst(), contribution.weight()))
-										.withRecycledPerc(contribution.recycledPercentage()).withGeoOrigins(contribution.geoOriginList())
+										.withRecycledPerc(contribution.recycledPercentage()).withBioBasedPerc(contribution.bioBasedPercentage())
+										.withGeoOrigins(contribution.geoOriginList())
 										.withPkgLevel(entry.getKey().getFirst()));
 					}
 				}
 
 				formulatedProduct.getPackMaterialList().removeAll(toRemove);
+
+				CompositePackMaterials.rollUp(formulatedProduct.getPackMaterialList());
 
 				// add detailable aspect
 				for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
@@ -149,6 +157,18 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Whether the line is a composite material detailed by component lines. Such a line
+	 * is computed from its components, never from the packaging of the product.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packMaterial a material line of the product
+	 * @return {@code true} when the line has components
+	 */
+	private boolean isComposite(ProductData formulatedProduct, PackMaterialListDataItem packMaterial) {
+		return !CompositePackMaterials.componentsOf(packMaterial, formulatedProduct.getPackMaterialList()).isEmpty();
 	}
 
 	/**
@@ -240,7 +260,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 									qtyUsed = FormulationHelper.getQtyInKg(compoList);
 								}
 
-								for (PackMaterialListDataItem packMateriDataItem : compoProduct.getPackMaterialList()) {
+								for (PackMaterialListDataItem packMateriDataItem : CompositePackMaterials.materialsOf(compoProduct.getPackMaterialList())) {
 									if (packMateriDataItem.getPmlWeight() != null) {
 										if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
 												&& (compoProductQty != 0d)) {
@@ -248,11 +268,6 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 											BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
 													.multiply(BigDecimal.valueOf(qtyUsed))
 													.divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
-											BigDecimal pmlRecycledPercentage = BigDecimal
-													.valueOf(packMateriDataItem.getPmlRecycledPercentage() != null
-															? packMateriDataItem.getPmlRecycledPercentage()
-															: 0d)
-													.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
 											PackagingLevel pkgLevel = packMateriDataItem.getPkgLevel();
 
 											if (pkgLevel == null && compoProduct.isRawMaterial()) {
@@ -261,8 +276,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 											Pair<PackagingLevel, NodeRef> key = new Pair<>(pkgLevel, packMateriDataItem.getPmlMaterial());
 
-											accumulate(toUpdate, key, MaterialContribution.of(plmWeight, pmlRecycledPercentage,
-													packMateriDataItem.getGeoOrigins()));
+											accumulate(toUpdate, key,
+													MaterialContribution.of(packMateriDataItem, plmWeight, packMateriDataItem.getGeoOrigins()));
 										} else {
 											logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty
 													+ " for " + compoList.getProduct());
@@ -332,7 +347,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 			if (hasPackMaterialList(packagingProduct)) {
 
-				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
+				for (PackMaterialListDataItem packMateriDataItem : CompositePackMaterials.materialsOf(packagingProduct.getPackMaterialList())) {
 					if (packMateriDataItem.getPmlWeight() != null) {
 
 						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
@@ -341,14 +356,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						if (productTare != null && productTare.doubleValue() != 0d) {
 							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 						}
-						BigDecimal pmlRecycledPercentage = BigDecimal
-								.valueOf(packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage() : 0d)
-								.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
-
 						Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packMateriDataItem.getPmlMaterial());
 
 						accumulate(toUpdate, key,
-								MaterialContribution.of(plmWeight, pmlRecycledPercentage, geoOriginsOf(packMateriDataItem, packagingProduct)));
+								MaterialContribution.of(packMateriDataItem, plmWeight, geoOriginsOf(packMateriDataItem, packagingProduct)));
 					}
 				}
 
@@ -359,7 +370,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packagingMaterial);
 
-					accumulate(toUpdate, key, MaterialContribution.of(tareByMaterial, BigDecimal.ZERO, packagingProduct.getGeoOrigins()));
+					accumulate(toUpdate, key, MaterialContribution.ofVirginMaterial(tareByMaterial, packagingProduct.getGeoOrigins()));
 				}
 			}
 		}
@@ -414,29 +425,58 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 *
 	 * @param weight the material weight, in grams
 	 * @param recycledWeight the share of that weight made of recycled material, in grams
+	 * @param bioBasedWeight the share of that weight made of bio-based plastic, in grams
 	 * @param geoOrigins the geographical origins declared by the contributing material lines
 	 */
-	private record MaterialContribution(BigDecimal weight, BigDecimal recycledWeight, Set<NodeRef> geoOrigins) {
+	private record MaterialContribution(BigDecimal weight, BigDecimal recycledWeight, BigDecimal bioBasedWeight, Set<NodeRef> geoOrigins) {
 
-		static MaterialContribution of(BigDecimal weight, BigDecimal recycledWeight, List<NodeRef> geoOrigins) {
-			return new MaterialContribution(weight, recycledWeight, geoOrigins != null ? new LinkedHashSet<>(geoOrigins) : new LinkedHashSet<>());
+		private static final BigDecimal HUNDRED = BigDecimal.valueOf(100d);
+
+		static MaterialContribution of(PackMaterialListDataItem packMaterial, BigDecimal weight, List<NodeRef> geoOrigins) {
+			return new MaterialContribution(weight, shareOf(weight, packMaterial.getPmlRecycledPercentage()),
+					shareOf(weight, packMaterial.getPmlBioBasedPercentage()), toSet(geoOrigins));
+		}
+
+		static MaterialContribution ofVirginMaterial(BigDecimal weight, List<NodeRef> geoOrigins) {
+			return new MaterialContribution(weight, BigDecimal.ZERO, BigDecimal.ZERO, toSet(geoOrigins));
 		}
 
 		MaterialContribution add(MaterialContribution other) {
 			Set<NodeRef> mergedGeoOrigins = new LinkedHashSet<>(geoOrigins);
 			mergedGeoOrigins.addAll(other.geoOrigins);
-			return new MaterialContribution(weight.add(other.weight), recycledWeight.add(other.recycledWeight), mergedGeoOrigins);
+			return new MaterialContribution(weight.add(other.weight), recycledWeight.add(other.recycledWeight),
+					bioBasedWeight.add(other.bioBasedWeight), mergedGeoOrigins);
 		}
 
 		Double recycledPercentage() {
-			if (weight.doubleValue() == 0d) {
-				return null;
-			}
-			return recycledWeight.divide(weight, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue();
+			return percentageOf(recycledWeight);
+		}
+
+		/**
+		 * The bio-based share stays empty when no contributing material declares one, so
+		 * that products without bio-based plastic keep an empty column.
+		 */
+		Double bioBasedPercentage() {
+			return bioBasedWeight.signum() == 0 ? null : percentageOf(bioBasedWeight);
 		}
 
 		List<NodeRef> geoOriginList() {
 			return new ArrayList<>(geoOrigins);
+		}
+
+		private Double percentageOf(BigDecimal share) {
+			if (weight.doubleValue() == 0d) {
+				return null;
+			}
+			return share.divide(weight, MathContext.DECIMAL64).multiply(HUNDRED).doubleValue();
+		}
+
+		private static BigDecimal shareOf(BigDecimal weight, Double percentage) {
+			return BigDecimal.valueOf(percentage != null ? percentage : 0d).multiply(weight).divide(HUNDRED, MathContext.DECIMAL64);
+		}
+
+		private static Set<NodeRef> toSet(List<NodeRef> geoOrigins) {
+			return geoOrigins != null ? new LinkedHashSet<>(geoOrigins) : new LinkedHashSet<>();
 		}
 	}
 }
