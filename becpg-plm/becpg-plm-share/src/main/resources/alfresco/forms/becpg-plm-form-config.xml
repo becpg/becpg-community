@@ -10400,6 +10400,8 @@
                     <show id="bcpg:ingListIng" />
                     <show id="bcpg:ingListVolumeQtyPerc" />
                     <show id="bcpg:ingListQtyPerc" />
+                    <show id="bcpg:ingListQtyMini" />
+                    <show id="bcpg:ingListQtyMaxi" />
                     <show id="bcpg:ingListQtyPercWithYield" />
                     <show id="bcpg:ingListQtyPercWithSecondaryYield" />
                     <show id="bcpg:ingListQtyPerc1" />
@@ -10529,6 +10531,8 @@
                     <show id="bcpg:depthLevel" />
                     <show id="bcpg:ingListIng" />
                     <show id="bcpg:ingListQtyPerc" />
+                    <show id="bcpg:ingListQtyMini" />
+                    <show id="bcpg:ingListQtyMaxi" />
                     <show id="bcpg:ingListQtyPerc1" />
                     <show id="bcpg:ingListQtyPerc2" />
                     <show id="bcpg:ingListQtyPerc3" />
