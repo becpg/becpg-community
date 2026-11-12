@@ -49,6 +49,7 @@ public class RegulationFormulationHelper {
 	public static final String ATTR_NUT_CODE = "nutCode";
 	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
+	private static final String KEY_ROUNDING_STEP = "step";
 	/**
 	 * Key of the maximum tolerated value. The stored keys are historical: "tl" holds the maximum
 	 * and "tu" the minimum, which is how the nutrient list screen reads them.
@@ -297,12 +298,13 @@ public class RegulationFormulationHelper {
 		Double value = extractValue(roundedValue, locKey);
 		Double valuePerServing = extractValuePerServing(roundedValue, locKey);
 		Double valuePerContainer = extractValuePerContainer(roundedValue, locKey);
+		RoundedNutrientDisplay display = new RoundedNutrientDisplay(hasCustomRounding(roundedValue, locKey), nutCode, precision, locale, locKey);
 
 		return new RegulatedNutrient(nutCode, toDisplayRule(getRegulation(locKey).getNutrientDefinition(nutCode)), value, valuePerServing,
 				valuePerContainer, extractGDAPerc(roundedValue, locKey), extractGDAPercPerContainer(roundedValue, locKey),
-				toDisplayValue(nutListItem.getValue(), value, nutCode, precision, locale, locKey, nutListItem.getUnit()),
-				toDisplayValue(nutListItem.getValuePerServing(), valuePerServing, nutCode, precision, locale, locKey, nutListItem.getUnit()),
-				toDisplayValue(valuePerContainer, valuePerContainer, nutCode, precision, locale, locKey, null));
+				display.format(nutListItem.getValue(), value, nutListItem.getUnit()),
+				display.format(nutListItem.getValuePerServing(), valuePerServing, nutListItem.getUnit()),
+				display.format(valuePerContainer, valuePerContainer, null));
 	}
 
 	private static NutrientDisplayRule toDisplayRule(NutrientDefinition definition) {
@@ -314,12 +316,16 @@ public class RegulationFormulationHelper {
 				Boolean.TRUE.equals(definition.getShowGDAPerc()), definition.getGda(), definition.getUl(), definition.getUnit());
 	}
 
-	private static String toDisplayValue(Double value, Double roundedValue, String nutCode, String precision, Locale locale, String locKey,
-			String nutUnit) {
-		if (value == null) {
-			return null;
-		}
-		return displayValue(value, roundedValue, nutCode, precision, locale, locKey, nutUnit);
+	/**
+	 * Whether the rounded values were computed with a rounding step declared by the product
+	 * instead of the rule of the regulation.
+	 *
+	 * @param roundedValue the rounded value blob of the nutrient line
+	 * @param locKey the regulation key
+	 * @return {@code true} when a custom step was applied for that regulation
+	 */
+	public static boolean hasCustomRounding(String roundedValue, String locKey) {
+		return extractValueByKey(roundedValue, KEY_ROUNDING_STEP, locKey) != null;
 	}
 
 	/**
@@ -496,10 +502,12 @@ public class RegulationFormulationHelper {
 							}
 						}
 
+						RoundedNutrientDisplay display = new RoundedNutrientDisplay(hasCustomRounding(roundedValue, locKey), nutCode,
+								measurementPrecision, locale, locKey);
+
 						if ((nutListValue != null) && (!nutListValue.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey),
-											nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutListUnit));
 							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
@@ -508,14 +516,14 @@ public class RegulationFormulationHelper {
 						}
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey),
+											nutListUnit));
 						}
 
 						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix,
-									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePrepared),
-											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey, nutListUnit));
+									display.format(Double.parseDouble(nutListValuePrepared), extractPreparedValue(roundedValue, locKey),
+											nutListUnit));
 
 							Double nutListValuePreparedPerServing = extractPreparedValuePerServing(roundedValue, locKey);
 
@@ -590,6 +598,8 @@ public class RegulationFormulationHelper {
 			return "ToleranceMin";
 		case KEY_UL:
 			return "UpperLimit";
+		case KEY_ROUNDING_STEP:
+			return "RoundingStep";
 		default:
 			break;
 		}
@@ -656,17 +666,26 @@ public class RegulationFormulationHelper {
 			JSONObject gdaPerContainer = new JSONObject();
 			Map<String, JSONObject> variants = new HashMap<>();
 
+			Double roundingStep = formulatedProduct.getNutrientRoundingSteps().get(nutCode);
+			JSONObject customRoundingStep = new JSONObject();
+
 			for (String key : getAvailableRegulations()) {
 
 				String nutUnit = n.getUnit();
 
 				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
-				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
+				NutrientRounding rounding = new NutrientRounding(regulation, nutCode, nutUnit, roundingStep);
+				if (rounding.isCustom()) {
+					customRoundingStep.put(key, roundingStep);
+					jsonRound.put(KEY_ROUNDING_STEP, customRoundingStep);
+					jsonPreparedRound.put(KEY_ROUNDING_STEP, customRoundingStep);
+				}
+				value.put(key, rounding.round(n.getValue()));
+				secondaryValue.put(key, rounding.round(n.getPreparedValue()));
 
-				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
-				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
+				mini.put(key, rounding.round(n.getMini()));
+				maxi.put(key, rounding.round(n.getMaxi()));
 
 				Double servingSize = getServingSize(key, formulatedProduct);
 				NutrientToleranceCriteria servingCriteria = criteria.withServingSize(servingSize);
@@ -687,8 +706,7 @@ public class RegulationFormulationHelper {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 						if (((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
 							JSONObject variant = new JSONObject();
-							variant.put(key, regulation.round(((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i),
-									nutCode, nutUnit));
+							variant.put(key, rounding.round(((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i)));
 							variants.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i, variant);
 						}
 					}
@@ -700,7 +718,7 @@ public class RegulationFormulationHelper {
 						valuePerserving = n.getManualValuePerServing();
 					}
 
-					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
+					Double vps = rounding.round(valuePerserving);
 					valuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						gda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
@@ -711,7 +729,7 @@ public class RegulationFormulationHelper {
 				if ((n.getPreparedValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
 
-					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
+					Double vps = rounding.round(valuePerserving);
 					secondaryValuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						secondaryGda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
@@ -722,14 +740,14 @@ public class RegulationFormulationHelper {
 				Double containerQty = getContainerQty(formulatedProduct);
 				if ((key.equals("US"))) {
 					if ((n.getValue() != null)) {
-						Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
+						Double vpc = rounding.round(n.getValue() * containerQty * 10);
 						valuePerContainer.put(key, vpc);
 						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 							gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
 						}
 					}
 					if ((n.getPreparedValue() != null)) {
-						Double vpc = regulation.round(n.getPreparedValue() * containerQty * 10, nutCode, nutUnit);
+						Double vpc = rounding.round(n.getPreparedValue() * containerQty * 10);
 						secondaryValuePerContainer.put(key, vpc);
 						if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 							secondaryGdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
