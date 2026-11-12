@@ -122,6 +122,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						packmaterial.setPmlWeight(contribution.weight().doubleValue());
 						packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), contribution.weight()));
 						packmaterial.setPmlRecycledPercentage(contribution.recycledPercentage());
+						packmaterial.setPmlBioBasedPercentage(contribution.bioBasedPercentage());
 						packmaterial.setGeoOrigins(contribution.geoOriginList());
 						toUpdate.remove(key);
 					}
@@ -135,7 +136,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								.add(PackMaterialListDataItem.build().withMaterial(entry.getKey().getSecond())
 										.withWeight(contribution.weight().doubleValue())
 										.withPerc(calculatePerc(formulatedProduct, entry.getKey().getFirst(), contribution.weight()))
-										.withRecycledPerc(contribution.recycledPercentage()).withGeoOrigins(contribution.geoOriginList())
+										.withRecycledPerc(contribution.recycledPercentage()).withBioBasedPerc(contribution.bioBasedPercentage())
+										.withGeoOrigins(contribution.geoOriginList())
 										.withPkgLevel(entry.getKey().getFirst()));
 					}
 				}
@@ -423,28 +425,39 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	 *
 	 * @param weight the material weight, in grams
 	 * @param recycledWeight the share of that weight made of recycled material, in grams
+	 * @param bioBasedWeight the share of that weight made of bio-based plastic, in grams
 	 * @param geoOrigins the geographical origins declared by the contributing material lines
 	 */
-	private record MaterialContribution(BigDecimal weight, BigDecimal recycledWeight, Set<NodeRef> geoOrigins) {
+	private record MaterialContribution(BigDecimal weight, BigDecimal recycledWeight, BigDecimal bioBasedWeight, Set<NodeRef> geoOrigins) {
 
 		private static final BigDecimal HUNDRED = BigDecimal.valueOf(100d);
 
 		static MaterialContribution of(PackMaterialListDataItem packMaterial, BigDecimal weight, List<NodeRef> geoOrigins) {
-			return new MaterialContribution(weight, shareOf(weight, packMaterial.getPmlRecycledPercentage()), toSet(geoOrigins));
+			return new MaterialContribution(weight, shareOf(weight, packMaterial.getPmlRecycledPercentage()),
+					shareOf(weight, packMaterial.getPmlBioBasedPercentage()), toSet(geoOrigins));
 		}
 
 		static MaterialContribution ofVirginMaterial(BigDecimal weight, List<NodeRef> geoOrigins) {
-			return new MaterialContribution(weight, BigDecimal.ZERO, toSet(geoOrigins));
+			return new MaterialContribution(weight, BigDecimal.ZERO, BigDecimal.ZERO, toSet(geoOrigins));
 		}
 
 		MaterialContribution add(MaterialContribution other) {
 			Set<NodeRef> mergedGeoOrigins = new LinkedHashSet<>(geoOrigins);
 			mergedGeoOrigins.addAll(other.geoOrigins);
-			return new MaterialContribution(weight.add(other.weight), recycledWeight.add(other.recycledWeight), mergedGeoOrigins);
+			return new MaterialContribution(weight.add(other.weight), recycledWeight.add(other.recycledWeight),
+					bioBasedWeight.add(other.bioBasedWeight), mergedGeoOrigins);
 		}
 
 		Double recycledPercentage() {
 			return percentageOf(recycledWeight);
+		}
+
+		/**
+		 * The bio-based share stays empty when no contributing material declares one, so
+		 * that products without bio-based plastic keep an empty column.
+		 */
+		Double bioBasedPercentage() {
+			return bioBasedWeight.signum() == 0 ? null : percentageOf(bioBasedWeight);
 		}
 
 		List<NodeRef> geoOriginList() {

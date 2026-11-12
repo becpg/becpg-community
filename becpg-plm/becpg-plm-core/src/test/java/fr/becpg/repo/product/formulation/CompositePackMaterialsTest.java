@@ -48,6 +48,15 @@ public class CompositePackMaterialsTest {
 	}
 
 	@Test
+	public void compositeBioBasedShareIsWeightedByComponentWeight() {
+		pet.setPmlBioBasedPercentage(70d);
+
+		CompositePackMaterials.rollUp(lidAndTray());
+
+		assertEquals(30d, film.getPmlBioBasedPercentage(), DELTA);
+	}
+
+	@Test
 	public void monoMaterialIsLeftUntouched() {
 		tray.setPmlRecycledPercentage(12d);
 
