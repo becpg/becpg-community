@@ -207,6 +207,7 @@ public class ProductData extends AbstractScorableEntity
 	private String nutrientProfileCategory;
 	private String nutrientProfileVersion;
 	private Boolean useUnroundedNutrients;
+	private Map<String, Double> nutrientRoundingSteps = new HashMap<>();
 
 
 	/*
@@ -2980,6 +2981,28 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setUseUnroundedNutrients(Boolean useUnroundedNutrients) {
 		this.useUnroundedNutrients = useUnroundedNutrients;
+	}
+
+	/**
+	 * The rounding steps the product declares for its nutrients, keyed by nutrient code
+	 * (eg. {@code NACL}) and expressed in the unit of the regulation. A step replaces the
+	 * rounding rule of the regulations for the labelled value of that nutrient, and
+	 * therefore for the scores computed from it. Not persisted: it is set by a formula of
+	 * the product or of its template, eg. {@code nutrientRoundingSteps = {NACL: 0.001}}.
+	 *
+	 * @return the steps by nutrient code, never {@code null}
+	 */
+	public Map<String, Double> getNutrientRoundingSteps() {
+		return nutrientRoundingSteps;
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutrientRoundingSteps</code>.</p>
+	 *
+	 * @param nutrientRoundingSteps the steps by nutrient code, {@code null} to clear them
+	 */
+	public void setNutrientRoundingSteps(Map<String, Double> nutrientRoundingSteps) {
+		this.nutrientRoundingSteps = nutrientRoundingSteps != null ? new HashMap<>(nutrientRoundingSteps) : new HashMap<>();
 	}
 
 	/*
