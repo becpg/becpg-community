@@ -12,7 +12,7 @@ import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
  * Composite packaging materials of a material list. A composite (layers that cannot
  * be separated, such as a PET/PE lidding film) is a line with component lines under
  * it. The composite counts as one material: its weight is the sum of its components
- * and its recycled and bio-based shares are their weight-weighted averages, while
+ * and its recycled share is their weight-weighted average, while
  * the component lines only detail it and must never be counted on their own.
  *
  * @author matthieu
@@ -91,20 +91,17 @@ public final class CompositePackMaterials {
 	private static void rollUp(PackMaterialListDataItem composite, List<PackMaterialListDataItem> components) {
 		BigDecimal weight = BigDecimal.ZERO;
 		BigDecimal recycledWeight = BigDecimal.ZERO;
-		BigDecimal bioBasedWeight = BigDecimal.ZERO;
 
 		for (PackMaterialListDataItem component : components) {
 			if (component.getPmlWeight() != null) {
 				BigDecimal componentWeight = BigDecimal.valueOf(component.getPmlWeight());
 				weight = weight.add(componentWeight);
 				recycledWeight = recycledWeight.add(shareOf(componentWeight, component.getPmlRecycledPercentage()));
-				bioBasedWeight = bioBasedWeight.add(shareOf(componentWeight, component.getPmlBioBasedPercentage()));
 			}
 		}
 
 		composite.setPmlWeight(weight.doubleValue());
 		composite.setPmlRecycledPercentage(percentageOf(recycledWeight, weight));
-		composite.setPmlBioBasedPercentage(percentageOf(bioBasedWeight, weight));
 	}
 
 	private static BigDecimal shareOf(BigDecimal weight, Double percentage) {

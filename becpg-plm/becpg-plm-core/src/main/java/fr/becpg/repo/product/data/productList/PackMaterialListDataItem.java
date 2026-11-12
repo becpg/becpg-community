@@ -39,7 +39,6 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 	private Double pmlPerc;
 	private Double pmlWeight;
 	private Double pmlRecycledPercentage;
-	private Double pmlBioBasedPercentage;
 	private Integer depthLevel;
 	private PackMaterialListDataItem parent;
 	private NodeRef pmlMaterial;
@@ -113,26 +112,6 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 	 */
 	public void setPmlRecycledPercentage(Double pmlRecycledPercentage) {
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
-	}
-
-	/**
-	 * <p>Getter for the field <code>pmlBioBasedPercentage</code>.</p>
-	 *
-	 * @return the share of bio-based plastic incorporated in the material, in percent
-	 */
-	@AlfProp
-	@AlfQname(qname = "pack:pmlBioBasedPercentage")
-	public Double getPmlBioBasedPercentage() {
-		return pmlBioBasedPercentage;
-	}
-
-	/**
-	 * <p>Setter for the field <code>pmlBioBasedPercentage</code>.</p>
-	 *
-	 * @param pmlBioBasedPercentage the share of bio-based plastic incorporated in the material, in percent
-	 */
-	public void setPmlBioBasedPercentage(Double pmlBioBasedPercentage) {
-		this.pmlBioBasedPercentage = pmlBioBasedPercentage;
 	}
 
 	/**
@@ -337,17 +316,6 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 	}
 
 	/**
-	 * <p>withBioBasedPerc.</p>
-	 *
-	 * @param pmlBioBasedPercentage the share of bio-based plastic, in percent
-	 * @return a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
-	 */
-	public PackMaterialListDataItem withBioBasedPerc(Double pmlBioBasedPercentage) {
-		this.pmlBioBasedPercentage = pmlBioBasedPercentage;
-		return this;
-	}
-
-	/**
 	 * Declares the line as a component of a composite material.
 	 *
 	 * @param parent the composite line
@@ -394,7 +362,6 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 		this.pmlWeight = o.pmlWeight;
 		this.pkgLevel = o.pkgLevel;
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
-		this.pmlBioBasedPercentage = o.pmlBioBasedPercentage;
 		this.depthLevel = o.depthLevel;
 		this.parent = o.parent;
 		this.isManual = o.isManual;
@@ -416,7 +383,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(geoOrigins, isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlBioBasedPercentage, depthLevel,
+		result = prime * result + Objects.hash(geoOrigins, isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, depthLevel,
 				parent != null ? parent.getNodeRef() : null, pmlWeight);
 		return result;
 	}
@@ -434,7 +401,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject
 		return Objects.equals(geoOrigins, other.geoOrigins) && Objects.equals(isManual, other.isManual) && pkgLevel == other.pkgLevel
 				&& Objects.equals(pmlMaterial, other.pmlMaterial)
 				&& Objects.equals(pmlPerc, other.pmlPerc) && Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage)
-				&& Objects.equals(pmlBioBasedPercentage, other.pmlBioBasedPercentage) && Objects.equals(depthLevel, other.depthLevel)
+				&& Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(parent, other.parent)
 				&& Objects.equals(pmlWeight, other.pmlWeight);
 	}

@@ -233,7 +233,6 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
-					<show id="pack:pmlBioBasedPercentage" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
@@ -265,7 +264,6 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
-					<show id="pack:pmlBioBasedPercentage" />
 					<show id="bcpg:depthLevel" force="true" />
 					<show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -288,7 +286,6 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />
-                    <show id="pack:pmlBioBasedPercentage" />
                     <show id="bcpg:depthLevel" force="true" />
                     <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
@@ -311,7 +308,6 @@
                     <show id="pack:pmlPerc" />
                     <show id="pack:pmlWeight" />
                     <show id="pack:pmlRecycledPercentage" />    
-                    <show id="pack:pmlBioBasedPercentage" />
                     <show id="bcpg:depthLevel" force="true" />
                     <show id="entity_pack:pmlMaterial_pack:packMaterial@ecoScore_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
@@ -362,7 +358,6 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
-					<show id="pack:pmlBioBasedPercentage" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
