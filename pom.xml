@@ -68,10 +68,9 @@
 		     Deployment still goes through artifactregistry:// in becpg-enterprise. -->
 		<repository>
 			<id>becpg-registry</id>
-			<url>https://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
+			<url>https://europe-maven.pkg.dev/becpg-314807/becpg-mvn-public</url>
 			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
